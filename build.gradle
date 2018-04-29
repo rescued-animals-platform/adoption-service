@@ -1,7 +1,8 @@
+apply plugin: 'java'
+apply plugin: 'info.solidsoft.pitest'
+
 group 'ec.animal.adoption'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
@@ -13,6 +14,16 @@ ext {
     springBootVersion = "2.0.1.RELEASE"
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.3.0")
+    }
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
         exclude module: 'spring-boot-starter-tomcat'
@@ -21,4 +32,14 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+}
+
+pitest {
+    targetClasses = ['ec.animal.adoption.*']
+    excludedClasses = ['ec.animal.adoption.AnimalAdoptionApplication']
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    coverageThreshold = 99
+    mutationThreshold = 99
+    timeoutConstInMillis = 5000
 }
