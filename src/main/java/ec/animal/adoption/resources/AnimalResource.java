@@ -10,7 +10,7 @@ public class AnimalResource {
         this.animalService = animalService;
     }
 
-    public void create(Animal animal) {
-        this.animalService.create(animal);
+    public Animal create(Animal animal) {
+        return animalService.create(animal);
     }
 }
