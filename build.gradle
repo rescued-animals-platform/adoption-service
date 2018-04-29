@@ -39,7 +39,5 @@ pitest {
     excludedClasses = ['ec.animal.adoption.AnimalAdoptionApplication']
     threads = 4
     outputFormats = ['XML', 'HTML']
-    coverageThreshold = 99
-    mutationThreshold = 99
     timeoutConstInMillis = 5000
 }
