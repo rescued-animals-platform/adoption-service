@@ -32,6 +32,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.apache.commons:commons-lang3:3.7")
 }
 
 pitest {
