@@ -1,16 +1,23 @@
 package ec.animal.adoption.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 public class AnimalForAdoptionTest {
 
@@ -76,5 +83,31 @@ public class AnimalForAdoptionTest {
         );
 
         assertNotEquals(animalForAdoption.hashCode(), differentAnimalForAdoption.hashCode());
+    }
+
+    @Test
+    public void shouldBeSerializable() throws JsonProcessingException {
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+        String expectedSerializedAnimalForAdoption = "{\"uuid\":\"" + uuid +
+                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + registrationDate.toString() + "\"}";
+        String serializedAnimalForAdoption = objectMapper.writeValueAsString(animalForAdoption);
+
+        assertThat(serializedAnimalForAdoption, is(expectedSerializedAnimalForAdoption));
+    }
+
+    @Test
+    public void shouldBeDeserializable() throws IOException {
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+        String serializedAnimalForAdoption = "{\"uuid\":\"" + uuid +
+                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + registrationDate.toString() + "\"}";
+        AnimalForAdoption deserializedAnimalForAdoption = objectMapper.readValue(
+                serializedAnimalForAdoption, AnimalForAdoption.class
+        );
+
+        assertThat(deserializedAnimalForAdoption, is(animalForAdoption));
     }
 }

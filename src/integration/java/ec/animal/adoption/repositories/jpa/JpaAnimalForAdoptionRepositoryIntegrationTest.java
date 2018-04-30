@@ -1,11 +1,10 @@
 package ec.animal.adoption.repositories.jpa;
 
+import ec.animal.adoption.IntegrationTest;
+import ec.animal.adoption.domain.AnimalForAdoption;
 import ec.animal.adoption.models.JpaAnimalForAdoption;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -15,9 +14,7 @@ import java.time.ZoneId;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class JpaAnimalForAdoptionRepositoryIntegrationTest {
+public class JpaAnimalForAdoptionRepositoryIntegrationTest extends IntegrationTest {
 
     @Autowired
     private JpaAnimalForAdoptionRepository jpaAnimalForAdoptionRepository;
@@ -25,7 +22,7 @@ public class JpaAnimalForAdoptionRepositoryIntegrationTest {
     @Test
     public void shouldSaveAnAnimalForAdoption() {
         JpaAnimalForAdoption entity = new JpaAnimalForAdoption(
-                new ec.animal.adoption.domain.AnimalForAdoption(
+                new AnimalForAdoption(
                         randomAlphabetic(10),
                         randomAlphabetic(10),
                         LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
