@@ -14,7 +14,7 @@ public class AnimalForAdoptionRepositoryPsql implements AnimalForAdoptionReposit
 
     @Override
     public AnimalForAdoption save(AnimalForAdoption animalForAdoption) {
-        JpaAnimalForAdoption savedJpaAnimalForAdoption = jpaAnimalForAdoptionRepository.saveAndFlush(
+        JpaAnimalForAdoption savedJpaAnimalForAdoption = jpaAnimalForAdoptionRepository.save(
                 new JpaAnimalForAdoption(animalForAdoption)
         );
         return savedJpaAnimalForAdoption.toAvailableAnimal();

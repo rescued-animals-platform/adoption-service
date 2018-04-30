@@ -1,0 +1,24 @@
+apply plugin: 'idea'
+
+idea {
+    module {
+        testSourceDirs += file('src/integration/java')
+
+        iml {
+            withXml {
+                def testResourceFolders = it.asNode().component.content.sourceFolder
+                        .findAll { it.@url in ['file://$MODULE_DIR$/src/test/resources'] }
+                testResourceFolders.each { resourceFolder ->
+                    def atts = resourceFolder.attributes()
+                    atts.remove('isTestSource')
+                    atts.put('type', 'java-test-resource')
+                }
+                def mainResource = it.asNode().component.content.sourceFolder
+                        .find { it.@url == 'file://$MODULE_DIR$/src/main/resources' }
+                        .attributes()
+                mainResource.remove('isSource')
+                mainResource.put('type', 'java-resource')
+            }
+        }
+    }
+}

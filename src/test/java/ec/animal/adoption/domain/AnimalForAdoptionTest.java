@@ -44,4 +44,37 @@ public class AnimalForAdoptionTest {
 
         assertNotEquals(animalForAdoption, differentAnimalForAdoption);
     }
+
+    @Test
+    public void shouldNotBeEqualToAnotherObject() {
+        assertNotEquals(animalForAdoption, new Object());
+    }
+
+    @Test
+    public void shouldNotBeEqualToNull() {
+        assertNotEquals(animalForAdoption, null);
+    }
+
+    @Test
+    public void shouldBeEqualToItself() {
+        assertEquals(animalForAdoption, animalForAdoption);
+    }
+
+    @Test
+    public void shouldHaveSameHashCodeWhenHavingSameValues() {
+        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+
+        assertEquals(animalForAdoption.hashCode(), sameAnimalForAdoption.hashCode());
+    }
+
+    @Test
+    public void shouldHaveDifferentHashCodeWhenHavingDifferentValues() {
+        AnimalForAdoption differentAnimalForAdoption = new AnimalForAdoption(
+                randomAlphabetic(10),
+                randomAlphabetic(10),
+                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+        );
+
+        assertNotEquals(animalForAdoption.hashCode(), differentAnimalForAdoption.hashCode());
+    }
 }

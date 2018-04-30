@@ -2,13 +2,26 @@ package ec.animal.adoption.models;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@Entity
+@Table(name = "animal_for_adoption")
 public class JpaAnimalForAdoption {
-    private final String uuid;
-    private final String name;
-    private final Timestamp registrationDate;
+    @Id
+    private String uuid;
+
+    private String name;
+
+    private Timestamp registrationDate;
+
+    @SuppressWarnings(value = "unused")
+    public JpaAnimalForAdoption() {
+        // required by jpa
+    }
 
     public JpaAnimalForAdoption(AnimalForAdoption animalForAdoption) {
         this.uuid = animalForAdoption.getUuid();

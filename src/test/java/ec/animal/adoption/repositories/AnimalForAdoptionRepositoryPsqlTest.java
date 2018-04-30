@@ -50,13 +50,13 @@ public class AnimalForAdoptionRepositoryPsqlTest {
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
         );
         JpaAnimalForAdoption expectedJpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
-        when(jpaAnimalForAdoptionRepository.saveAndFlush(any(JpaAnimalForAdoption.class))).thenReturn(expectedJpaAnimalForAdoption);
+        when(jpaAnimalForAdoptionRepository.save(any(JpaAnimalForAdoption.class))).thenReturn(expectedJpaAnimalForAdoption);
 
-        animalForAdoptionRepositoryPsql.save(animalForAdoption);
+        AnimalForAdoption savedAnimalForAdoption = animalForAdoptionRepositoryPsql.save(animalForAdoption);
 
-        verify(jpaAnimalForAdoptionRepository).saveAndFlush(jpaAnimalArgumentCaptor.capture());
+        verify(jpaAnimalForAdoptionRepository).save(jpaAnimalArgumentCaptor.capture());
         JpaAnimalForAdoption jpaAnimalForAdoption = jpaAnimalArgumentCaptor.getValue();
         assertThat(jpaAnimalForAdoption, is(expectedJpaAnimalForAdoption));
-        assertThat(jpaAnimalForAdoption.toAvailableAnimal(), is(animalForAdoption));
+        assertThat(jpaAnimalForAdoption.toAvailableAnimal(), is(savedAnimalForAdoption));
     }
 }

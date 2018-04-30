@@ -1,0 +1,23 @@
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['migrations/','src/main/resources']
+        }
+    }
+    integrationTest {
+        java.srcDir file('src/integration/java')
+        resources.srcDir file('src/integration/resources')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+task integrationTest(type: Test){
+    setTestClassesDirs(sourceSets.integrationTest.output)
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    testResultsDirName = file("$buildDir/test-results")
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+}

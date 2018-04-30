@@ -47,7 +47,7 @@ public class JpaAnimalForAdoptionTest {
 
     @Test
     public void shouldNotBeEqualToAJpaAvailableAnimalWithDifferentValues() {
-        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(this.animalForAdoption);
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
         AnimalForAdoption anotherAnimalForAdoption = new AnimalForAdoption(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
@@ -56,5 +56,55 @@ public class JpaAnimalForAdoptionTest {
         JpaAnimalForAdoption anotherJpaAnimalForAdoption = new JpaAnimalForAdoption(anotherAnimalForAdoption);
 
         assertNotEquals(jpaAnimalForAdoption, anotherJpaAnimalForAdoption);
+    }
+
+    @Test
+    public void shouldNotBeEqualToAnotherObject() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+
+        assertNotEquals(jpaAnimalForAdoption, new Object());
+    }
+
+    @Test
+    public void shouldNotBeEqualToNull() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+
+        assertNotEquals(jpaAnimalForAdoption, null);
+    }
+
+    @Test
+    public void shouldBeEqualToItself() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+
+        assertEquals(jpaAnimalForAdoption, jpaAnimalForAdoption);
+    }
+
+    @Test
+    public void shouldBeEqual() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption();
+        JpaAnimalForAdoption sameJpaAnimalForAdoption = new JpaAnimalForAdoption();
+
+        assertEquals(jpaAnimalForAdoption, sameJpaAnimalForAdoption);
+    }
+
+    @Test
+    public void shouldHaveSameHashCodeWhenHavingSameValues() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+        JpaAnimalForAdoption sameJpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+
+        assertEquals(jpaAnimalForAdoption.hashCode(), sameJpaAnimalForAdoption.hashCode());
+    }
+
+    @Test
+    public void shouldHaveDifferentHashCodeWhenHavingDifferentValues() {
+        JpaAnimalForAdoption jpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
+        AnimalForAdoption anotherAnimalForAdoption = new AnimalForAdoption(
+                randomAlphabetic(10),
+                randomAlphabetic(10),
+                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+        );
+        JpaAnimalForAdoption anotherJpaAnimalForAdoption = new JpaAnimalForAdoption(anotherAnimalForAdoption);
+
+        assertNotEquals(jpaAnimalForAdoption.hashCode(), anotherJpaAnimalForAdoption.hashCode());
     }
 }

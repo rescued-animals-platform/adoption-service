@@ -1,0 +1,12 @@
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+    compile("org.postgresql:postgresql:9.4-1206-jdbc42")
+    compile("org.flywaydb:flyway-core:5.0.7")
+
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.apache.commons:commons-lang3:3.7")
+}
