@@ -2,6 +2,7 @@ apply plugin: 'idea'
 
 idea {
     module {
+        sourceDirs -= file('src/integration/java')
         testSourceDirs += file('src/integration/java')
 
         iml {

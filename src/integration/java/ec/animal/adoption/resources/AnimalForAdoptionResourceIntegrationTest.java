@@ -2,10 +2,13 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.AnimalForAdoption;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,23 +21,51 @@ import static org.hamcrest.Matchers.is;
 
 public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
+    private static final String ANIMALS_URL = "/adoption/animals";
+
+    private String uuid;
+    private String name;
+    private LocalDateTime registrationDate;
+
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate testRestTemplate;
+
+    @Before
+    public void setUp() {
+        uuid = randomAlphabetic(10);
+        name = randomAlphabetic(10);
+        registrationDate = LocalDateTime.now();
+    }
 
     @Test
     public void shouldReturn201Created() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        String uuid = randomAlphabetic(10);
-        String name = "Pocho";
-        LocalDateTime registrationDate = LocalDateTime.now();
         AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
 
-        ResponseEntity<AnimalForAdoption> response = restTemplate.postForEntity(
-                "/adoption/animal", animalForAdoption, AnimalForAdoption.class, headers
+        ResponseEntity<AnimalForAdoption> response = testRestTemplate.postForEntity(
+                ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders()
         );
 
         assertThat(response.getStatusCode().value(), is(HttpStatus.CREATED.value()));
         assertThat(response.getBody(), is(animalForAdoption));
+    }
+
+    @Test
+    public void shouldReturn400BadRequest() {
+        String wrongRegistrationDate = randomAlphabetic(10);
+        String animalForAdoptionWithWrongData = "{\"uuid\":\"" + uuid +
+                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate + "\"}";
+        HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithWrongData, getHttpHeaders());
+
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                ANIMALS_URL, HttpMethod.POST, entity, String.class
+        );
+
+        assertThat(response.getStatusCode().value(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return headers;
     }
 }

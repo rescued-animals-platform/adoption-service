@@ -19,7 +19,7 @@ public class AnimalForAdoptionResource {
         this.animalForAdoptionService = animalForAdoptionService;
     }
 
-    @RequestMapping(path = "/animal", method = RequestMethod.POST)
+    @RequestMapping(path = "/animals", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public AnimalForAdoption create(@RequestBody AnimalForAdoption animalForAdoption) {
         return animalForAdoptionService.create(animalForAdoption);
