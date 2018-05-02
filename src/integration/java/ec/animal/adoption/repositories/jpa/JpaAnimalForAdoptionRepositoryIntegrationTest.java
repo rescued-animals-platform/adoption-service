@@ -2,7 +2,7 @@ package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.AnimalForAdoption;
-import ec.animal.adoption.models.JpaAnimalForAdoption;
+import ec.animal.adoption.models.jpa.JpaAnimalForAdoption;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

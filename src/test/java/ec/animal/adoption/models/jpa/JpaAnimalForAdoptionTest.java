@@ -1,4 +1,4 @@
-package ec.animal.adoption.models;
+package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
 import org.junit.Before;
@@ -17,16 +17,13 @@ import static org.junit.Assert.assertThat;
 
 public class JpaAnimalForAdoptionTest {
 
-    private LocalDateTime registrationDate;
-    private String uuid;
-    private String name;
     private AnimalForAdoption animalForAdoption;
 
     @Before
     public void setUp() {
-        registrationDate = LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
-        uuid = randomAlphabetic(10);
-        name = randomAlphabetic(10);
+        LocalDateTime registrationDate = LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
+        String uuid = randomAlphabetic(10);
+        String name = randomAlphabetic(10);
         animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
     }
 

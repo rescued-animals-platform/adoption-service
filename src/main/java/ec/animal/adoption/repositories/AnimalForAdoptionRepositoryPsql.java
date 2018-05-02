@@ -1,7 +1,7 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
-import ec.animal.adoption.models.JpaAnimalForAdoption;
+import ec.animal.adoption.models.jpa.JpaAnimalForAdoption;
 import ec.animal.adoption.repositories.jpa.JpaAnimalForAdoptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

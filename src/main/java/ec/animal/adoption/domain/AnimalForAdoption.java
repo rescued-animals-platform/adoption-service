@@ -12,7 +12,6 @@ public class AnimalForAdoption implements Serializable {
     @NotNull
     private String name;
 
-
     private LocalDateTime registrationDate;
 
     public AnimalForAdoption() {

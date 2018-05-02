@@ -1,4 +1,4 @@
-package ec.animal.adoption.models;
+package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
 
