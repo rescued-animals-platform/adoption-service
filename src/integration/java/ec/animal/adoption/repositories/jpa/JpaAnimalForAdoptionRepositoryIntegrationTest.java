@@ -2,6 +2,7 @@ package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.models.jpa.JpaAnimalForAdoption;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,8 @@ public class JpaAnimalForAdoptionRepositoryIntegrationTest extends IntegrationTe
                 new AnimalForAdoption(
                         randomAlphabetic(10),
                         randomAlphabetic(10),
-                        LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+                        LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
+                        Type.CAT
                 )
         );
         JpaAnimalForAdoption animalForAdoption = jpaAnimalForAdoptionRepository.save(entity);

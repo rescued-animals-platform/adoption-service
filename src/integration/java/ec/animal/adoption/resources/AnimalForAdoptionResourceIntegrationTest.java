@@ -2,6 +2,7 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn201Created() {
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, Type.CAT);
 
         ResponseEntity<AnimalForAdoption> response = testRestTemplate.postForEntity(
                 ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders()
@@ -87,7 +88,7 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, Type.DOG);
         testRestTemplate.postForEntity(ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders());
 
         ResponseEntity<ApiError> conflictResponse = testRestTemplate.postForEntity(

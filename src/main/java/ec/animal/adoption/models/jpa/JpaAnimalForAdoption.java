@@ -1,6 +1,7 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,9 @@ public class JpaAnimalForAdoption {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String type;
+
     private Timestamp registrationDate;
 
     @SuppressWarnings(value = "unused")
@@ -36,10 +40,11 @@ public class JpaAnimalForAdoption {
         this.uuid = animalForAdoption.getUuid();
         this.name = animalForAdoption.getName();
         this.registrationDate = Timestamp.valueOf(animalForAdoption.getRegistrationDate());
+        this.type = animalForAdoption.getType();
     }
 
     public AnimalForAdoption toAvailableAnimal() {
-        return new AnimalForAdoption(uuid, name, registrationDate.toLocalDateTime());
+        return new AnimalForAdoption(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type));
     }
 
     @Override
@@ -47,13 +52,15 @@ public class JpaAnimalForAdoption {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JpaAnimalForAdoption that = (JpaAnimalForAdoption) o;
-        return Objects.equals(uuid, that.uuid) &&
+        return Objects.equals(id, that.id) &&
+                Objects.equals(uuid, that.uuid) &&
                 Objects.equals(name, that.name) &&
+                Objects.equals(type, that.type) &&
                 Objects.equals(registrationDate, that.registrationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, name, registrationDate);
+        return Objects.hash(id, uuid, name, type, registrationDate);
     }
 }

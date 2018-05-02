@@ -1,6 +1,7 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.jpa.JpaAnimalForAdoption;
 import ec.animal.adoption.repositories.jpa.JpaAnimalForAdoptionRepository;
@@ -42,7 +43,8 @@ public class AnimalForAdoptionRepositoryPsqlTest {
         animalForAdoption = new AnimalForAdoption(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
+                Type.DOG
         );
 
         animalForAdoptionRepositoryPsql = new AnimalForAdoptionRepositoryPsql(jpaAnimalForAdoptionRepository);

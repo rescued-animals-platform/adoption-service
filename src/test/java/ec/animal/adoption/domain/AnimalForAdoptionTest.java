@@ -27,6 +27,7 @@ public class AnimalForAdoptionTest {
     private LocalDateTime registrationDate;
     private String uuid;
     private String name;
+    private Type type;
     private AnimalForAdoption animalForAdoption;
 
     @Before
@@ -34,12 +35,13 @@ public class AnimalForAdoptionTest {
         registrationDate = LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
         uuid = randomAlphabetic(10);
         name = randomAlphabetic(10);
-        animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        type = Type.DOG;
+        animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
     }
 
     @Test
     public void shouldBeEqualToAnAvailableAnimalWithSameValues() {
-        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
 
         assertEquals(animalForAdoption, sameAnimalForAdoption);
     }
@@ -49,7 +51,8 @@ public class AnimalForAdoptionTest {
         AnimalForAdoption differentAnimalForAdoption = new AnimalForAdoption(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
+                Type.CAT
         );
 
         assertNotEquals(animalForAdoption, differentAnimalForAdoption);
@@ -72,7 +75,7 @@ public class AnimalForAdoptionTest {
 
     @Test
     public void shouldHaveSameHashCodeWhenHavingSameValues() {
-        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
 
         assertEquals(animalForAdoption.hashCode(), sameAnimalForAdoption.hashCode());
     }
@@ -82,7 +85,8 @@ public class AnimalForAdoptionTest {
         AnimalForAdoption differentAnimalForAdoption = new AnimalForAdoption(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
+                type
         );
 
         assertNotEquals(animalForAdoption.hashCode(), differentAnimalForAdoption.hashCode());
@@ -105,7 +109,7 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonNullUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(null, randomAlphabetic(10), LocalDateTime.now());
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(null, randomAlphabetic(10), LocalDateTime.now(), type);
 
         Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
 
@@ -118,7 +122,7 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonEmptyUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption("", randomAlphabetic(10), LocalDateTime.now());
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption("", randomAlphabetic(10), LocalDateTime.now(), type);
 
         Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
 
@@ -131,7 +135,7 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonNullName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), null, LocalDateTime.now());
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), null, LocalDateTime.now(), type);
 
         Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
 
@@ -144,7 +148,7 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonEmptyName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), "", LocalDateTime.now());
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), "", LocalDateTime.now(), type);
 
         Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
 
