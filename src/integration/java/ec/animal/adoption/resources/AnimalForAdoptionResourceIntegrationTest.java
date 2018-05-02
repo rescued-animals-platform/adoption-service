@@ -2,6 +2,7 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +57,13 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate + "\"}";
         HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithWrongData, getHttpHeaders());
 
-        ResponseEntity<String> response = testRestTemplate.exchange(
-                ANIMALS_URL, HttpMethod.POST, entity, String.class
+        ResponseEntity<ApiError> response = testRestTemplate.exchange(
+                ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
         );
 
         assertThat(response.getStatusCode().value(), is(HttpStatus.BAD_REQUEST.value()));
+        assertThat(response.getBody().getMessage(), is("Malformed JSON request"));
+        assertThat(response.getBody().getStatus(), is(HttpStatus.BAD_REQUEST));
     }
 
     private HttpHeaders getHttpHeaders() {
