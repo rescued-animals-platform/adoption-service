@@ -37,7 +37,7 @@ public class ApiErrorTest {
 
     @Test
     public void shouldCreateApiErrorFromStatusMessageAndException() {
-        apiError = new ApiError(status, message, exception);
+        apiError = new ApiError(status, message, debugMessage);
 
         assertThat(apiError.getStatus(), is(status));
         assertThat(apiError.getMessage(), is(message));
@@ -57,7 +57,7 @@ public class ApiErrorTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        apiError = new ApiError(status, message, exception);
+        apiError = new ApiError(status, message, debugMessage);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();

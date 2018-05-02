@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
@@ -51,7 +52,7 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void shouldReturn400BadRequest() {
+    public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         String wrongRegistrationDate = randomAlphabetic(10);
         String animalForAdoptionWithWrongData = "{\"uuid\":\"" + uuid +
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate + "\"}";
@@ -68,7 +69,24 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void shouldReturn409ConflictWhenAnimalAlreadyExists() {
+    public void shouldReturn400BadRequestWhenMissingOrInvalidDataIsProvided() {
+        String animalForAdoptionWithMissingOrInvalidData = "{\"uuid\":\"\",\"registrationDate\":\"" + registrationDate + "\"}";
+        HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithMissingOrInvalidData, getHttpHeaders());
+
+        ResponseEntity<ApiError> response = testRestTemplate.exchange(
+                ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
+        );
+
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+        ApiError apiError = response.getBody();
+        assertThat(apiError.getMessage(), is("Validation failed"));
+        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
+        assertTrue(apiError.getDebugMessage().contains("name: must not be empty"));
+        assertTrue(apiError.getDebugMessage().contains("uuid: must not be empty"));
+    }
+
+    @Test
+    public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
         testRestTemplate.postForEntity(ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders());
 

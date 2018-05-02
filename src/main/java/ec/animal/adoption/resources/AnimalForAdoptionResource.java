@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 public class AnimalForAdoptionResource {
     private final AnimalForAdoptionService animalForAdoptionService;
@@ -22,7 +24,7 @@ public class AnimalForAdoptionResource {
 
     @RequestMapping(path = "/animals", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public AnimalForAdoption create(@RequestBody AnimalForAdoption animalForAdoption) throws EntityAlreadyExistsException {
+    public AnimalForAdoption create(@RequestBody @Valid AnimalForAdoption animalForAdoption) throws EntityAlreadyExistsException {
         return animalForAdoptionService.create(animalForAdoption);
     }
 }

@@ -5,13 +5,19 @@ import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.ArrayList;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -23,10 +29,18 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RestExceptionHandlerTest {
 
+    @Mock
+    private WebRequest webRequest;
+
+    @Mock
+    private HttpHeaders headers;
+
+    private HttpStatus status;
     private RestExceptionHandler restExceptionHandler;
 
     @Before
     public void setUp() {
+        status = HttpStatus.MULTI_STATUS;
         restExceptionHandler = new RestExceptionHandler();
     }
 
@@ -38,9 +52,6 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithHttpStatusBadRequestForHttpMessageNotReadableException() {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
-        WebRequest webRequest = mock(WebRequest.class);
-        HttpHeaders headers = mock(HttpHeaders.class);
-        HttpStatus status = HttpStatus.MULTI_STATUS;
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleHttpMessageNotReadable(
                 httpMessageNotReadableException, headers, status, webRequest
@@ -54,9 +65,6 @@ public class RestExceptionHandlerTest {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
         String debugMessage = randomAlphabetic(10);
         when(httpMessageNotReadableException.getLocalizedMessage()).thenReturn(debugMessage);
-        HttpHeaders headers = mock(HttpHeaders.class);
-        HttpStatus status = HttpStatus.MULTI_STATUS;
-        WebRequest webRequest = mock(WebRequest.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleHttpMessageNotReadable(
                 httpMessageNotReadableException, headers, status, webRequest
@@ -89,5 +97,40 @@ public class RestExceptionHandlerTest {
         assertThat(apiError.getStatus(), is(HttpStatus.CONFLICT));
         assertThat(apiError.getMessage(), is("The resource already exists"));
         assertThat(apiError.getDebugMessage(), is(""));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForMethodArgumentNotValidException() {
+        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException, headers, status, webRequest
+        );
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForMethodArgumentNotValidException() {
+        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        ArrayList<FieldError> fieldErrors = new ArrayList<>();
+        FieldError fieldError = new FieldError(randomAlphabetic(10), "field", "default message");
+        fieldErrors.add(fieldError);
+        String debugMessage = "field: default message";
+        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException, headers, status, webRequest
+        );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
+        assertThat(apiError.getMessage(), is("Validation failed"));
+        assertThat(apiError.getDebugMessage(), is(debugMessage));
     }
 }

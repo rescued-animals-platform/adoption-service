@@ -1,15 +1,16 @@
 package ec.animal.adoption.domain;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class AnimalForAdoption implements Serializable {
-    @NotNull
+
+    @NotEmpty
     private String uuid;
 
-    @NotNull
+    @NotEmpty
     private String name;
 
     private LocalDateTime registrationDate;

@@ -16,11 +16,11 @@ public class ApiError implements Serializable {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiError(HttpStatus status, String message, Throwable exception) {
+    public ApiError(HttpStatus status, String message, String debugMessage) {
         this();
         this.status = status;
         this.message = message;
-        this.debugMessage = exception.getLocalizedMessage();
+        this.debugMessage = debugMessage;
     }
 
     public ApiError(HttpStatus status, String message) {
