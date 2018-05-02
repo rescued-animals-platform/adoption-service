@@ -33,11 +33,12 @@ public class ApiErrorTest {
         status = HttpStatus.BAD_GATEWAY;
         message = randomAlphabetic(10);
 
-        apiError = new ApiError(status, message, exception);
     }
 
     @Test
     public void shouldCreateApiErrorFromStatusMessageAndException() {
+        apiError = new ApiError(status, message, exception);
+
         assertThat(apiError.getStatus(), is(status));
         assertThat(apiError.getMessage(), is(message));
         assertThat(apiError.getDebugMessage(), is(debugMessage));
@@ -45,7 +46,18 @@ public class ApiErrorTest {
     }
 
     @Test
+    public void shouldCreateApiErrorFromStatusAndMessage() {
+        apiError = new ApiError(status, message);
+
+        assertThat(apiError.getStatus(), is(status));
+        assertThat(apiError.getMessage(), is(message));
+        assertThat(apiError.getDebugMessage(), is(""));
+        assertThat(apiError.getTimestamp(), is(instanceOf(LocalDateTime.class)));
+    }
+
+    @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
+        apiError = new ApiError(status, message, exception);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();

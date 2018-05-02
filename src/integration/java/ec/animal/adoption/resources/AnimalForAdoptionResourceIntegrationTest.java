@@ -46,7 +46,7 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
                 ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders()
         );
 
-        assertThat(response.getStatusCode().value(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
         assertThat(response.getBody(), is(animalForAdoption));
     }
 
@@ -61,9 +61,25 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
                 ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
         );
 
-        assertThat(response.getStatusCode().value(), is(HttpStatus.BAD_REQUEST.value()));
-        assertThat(response.getBody().getMessage(), is("Malformed JSON request"));
-        assertThat(response.getBody().getStatus(), is(HttpStatus.BAD_REQUEST));
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+        ApiError apiError = response.getBody();
+        assertThat(apiError.getMessage(), is("Malformed JSON request"));
+        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void shouldReturn409ConflictWhenAnimalAlreadyExists() {
+        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate);
+        testRestTemplate.postForEntity(ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders());
+
+        ResponseEntity<ApiError> conflictResponse = testRestTemplate.postForEntity(
+                ANIMALS_URL, animalForAdoption, ApiError.class, getHttpHeaders()
+        );
+
+        assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
+        ApiError apiError = conflictResponse.getBody();
+        assertThat(apiError.getMessage(), is("The resource already exists"));
+        assertThat(apiError.getStatus(), is(HttpStatus.CONFLICT));
     }
 
     private HttpHeaders getHttpHeaders() {

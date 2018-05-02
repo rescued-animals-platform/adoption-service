@@ -1,6 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.services.AnimalForAdoptionService;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.when;
 public class AnimalForAdoptionResourceTest {
 
     @Test
-    public void shouldCreateAnAnimal() {
+    public void shouldCreateAnAnimal() throws EntityAlreadyExistsException {
         AnimalForAdoption expectedAnimalForAdoption = mock(AnimalForAdoption.class);
         AnimalForAdoption animalForAdoption = mock(AnimalForAdoption.class);
         AnimalForAdoptionService animalForAdoptionService = mock(AnimalForAdoptionService.class);

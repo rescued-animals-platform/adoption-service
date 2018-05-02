@@ -1,5 +1,7 @@
 CREATE TABLE animal_for_adoption (
-  uuid varchar(40) CONSTRAINT primarykey PRIMARY KEY,
-  name varchar(40) NOT NULL,
-  registration_date timestamp DEFAULT current_timestamp
+  id BIGSERIAL CONSTRAINT primarykey PRIMARY KEY,
+  uuid VARCHAR(40) NOT NULL,
+  name VARCHAR(40) NOT NULL,
+  registration_date TIMESTAMP DEFAULT current_timestamp,
+  CONSTRAINT uniqueuuid UNIQUE(uuid)
 );

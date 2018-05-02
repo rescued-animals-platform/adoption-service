@@ -1,6 +1,7 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.repositories.AnimalForAdoptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class AnimalForAdoptionService {
         this.animalForAdoptionRepository = animalForAdoptionRepository;
     }
 
-    public AnimalForAdoption create(AnimalForAdoption animalForAdoption) {
+    public AnimalForAdoption create(AnimalForAdoption animalForAdoption) throws EntityAlreadyExistsException {
         return animalForAdoptionRepository.save(animalForAdoption);
     }
 }

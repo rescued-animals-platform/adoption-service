@@ -1,6 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.services.AnimalForAdoptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class AnimalForAdoptionResource {
 
     @RequestMapping(path = "/animals", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public AnimalForAdoption create(@RequestBody AnimalForAdoption animalForAdoption) {
+    public AnimalForAdoption create(@RequestBody AnimalForAdoption animalForAdoption) throws EntityAlreadyExistsException {
         return animalForAdoptionService.create(animalForAdoption);
     }
 }

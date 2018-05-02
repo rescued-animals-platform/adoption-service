@@ -23,6 +23,13 @@ public class ApiError implements Serializable {
         this.debugMessage = exception.getLocalizedMessage();
     }
 
+    public ApiError(HttpStatus status, String message) {
+        this();
+        this.status = status;
+        this.message = message;
+        this.debugMessage = "";
+    }
+
     public HttpStatus getStatus() {
         return status;
     }
