@@ -24,6 +24,9 @@ import static org.junit.Assert.assertThat;
 
 public class AnimalTest {
 
+    private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
+    private static final String ANIMAL_UUID_IS_REQUIRED = "Animal uuid is required";
+
     private LocalDateTime registrationDate;
     private String uuid;
     private String name;
@@ -115,7 +118,7 @@ public class AnimalTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is("must not be empty"));
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_UUID_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("uuid"));
     }
 
@@ -128,7 +131,7 @@ public class AnimalTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is("must not be empty"));
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_UUID_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("uuid"));
     }
 
@@ -141,7 +144,7 @@ public class AnimalTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is("must not be empty"));
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
     }
 
@@ -154,7 +157,7 @@ public class AnimalTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is("must not be empty"));
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
 
     }

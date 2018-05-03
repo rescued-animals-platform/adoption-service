@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class Animal implements Serializable {
 
-    @NotEmpty
+    @NotEmpty(message = "Animal uuid is required")
     private String uuid;
 
-    @NotEmpty
+    @NotEmpty(message = "Animal name is required")
     private String name;
 
     @JsonSerialize

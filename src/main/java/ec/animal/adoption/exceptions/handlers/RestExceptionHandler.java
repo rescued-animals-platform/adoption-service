@@ -2,6 +2,8 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.models.rest.suberrors.ApiSubError;
+import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -35,11 +38,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request
     ) {
         final String error = "Validation failed";
-        String debugMessage = ex.getBindingResult().getFieldErrors()
+        List<ApiSubError> apiSubErrors = ex.getBindingResult().getFieldErrors()
                 .stream()
-                .map(e -> String.format("%s: %s", e.getField(), e.getDefaultMessage()))
-                .collect(Collectors.joining(", "));
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, debugMessage));
+                .map(f -> new ValidationError(f.getField(), f.getDefaultMessage()))
+                .collect(Collectors.toList());
+
+        return buildResponseEntity(
+                new ApiError(HttpStatus.BAD_REQUEST, error, ex.getLocalizedMessage()).setSubErrors(apiSubErrors)
+        );
     }
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {

@@ -1,9 +1,9 @@
-package ec.animal.adoption.models.rest;
+package ec.animal.adoption.models.rest.suberrors;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ValidationError implements Serializable {
+public class ValidationError extends ApiSubError implements Serializable {
     private String field;
     private String message;
 

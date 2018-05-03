@@ -1,9 +1,11 @@
 package ec.animal.adoption.models.rest;
 
+import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ApiError implements Serializable {
 
@@ -11,6 +13,7 @@ public class ApiError implements Serializable {
     private String debugMessage;
     private HttpStatus status;
     private String message;
+    private List<ApiSubError> subErrors;
 
     private ApiError() {
         this.timestamp = LocalDateTime.now();
@@ -44,5 +47,14 @@ public class ApiError implements Serializable {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public ApiError setSubErrors(List<ApiSubError> subErrors) {
+        this.subErrors = subErrors;
+        return this;
+    }
+
+    public List<ApiSubError> getSubErrors() {
+        return subErrors;
     }
 }

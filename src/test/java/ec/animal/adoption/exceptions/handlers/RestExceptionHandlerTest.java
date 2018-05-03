@@ -2,6 +2,8 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.models.rest.suberrors.ApiSubError;
+import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +20,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -117,11 +121,8 @@ public class RestExceptionHandlerTest {
         MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
-        ArrayList<FieldError> fieldErrors = new ArrayList<>();
-        FieldError fieldError = new FieldError(randomAlphabetic(10), "field", "default message");
-        fieldErrors.add(fieldError);
-        String debugMessage = "field: default message";
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+        String debugMessage = randomAlphabetic(10);
+        when(methodArgumentNotValidException.getLocalizedMessage()).thenReturn(debugMessage);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
                 methodArgumentNotValidException, headers, status, webRequest
@@ -132,5 +133,37 @@ public class RestExceptionHandlerTest {
         assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
         assertThat(apiError.getMessage(), is("Validation failed"));
         assertThat(apiError.getDebugMessage(), is(debugMessage));
+
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithValidationErrorsForMethodArgumentNotValidException() {
+        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        List<FieldError> fieldErrors = createFieldErrors();
+        List<ApiSubError> expectedSubErrors = fieldErrors.stream()
+                .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                .collect(Collectors.toList());
+        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException, headers, status, webRequest
+        );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError.getSubErrors().size(), is(fieldErrors.size()));
+        assertThat(apiError.getSubErrors(), is(expectedSubErrors));
+
+    }
+
+    private ArrayList<FieldError> createFieldErrors() {
+        ArrayList<FieldError> fieldErrors = new ArrayList<>();
+        FieldError fieldError = new FieldError(randomAlphabetic(10), "field", "default message");
+        FieldError anotherFieldError = new FieldError(randomAlphabetic(10), "another field", "another default message");
+        fieldErrors.add(fieldError);
+        fieldErrors.add(anotherFieldError);
+        return fieldErrors;
     }
 }

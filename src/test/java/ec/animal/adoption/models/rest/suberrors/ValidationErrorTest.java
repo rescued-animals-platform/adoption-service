@@ -1,4 +1,4 @@
-package ec.animal.adoption.models.rest;
+package ec.animal.adoption.models.rest.suberrors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -6,12 +6,20 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 public class ValidationErrorTest {
+
+    @Test
+    public void shouldBeAnInstanceOfApiSubError() {
+        ValidationError validationError = new ValidationError(randomAlphabetic(10), randomAlphabetic(10));
+
+        assertThat(validationError, is(instanceOf(ApiSubError.class)));
+    }
 
     @Test
     public void shouldBeEqualToAnotherObjectWithSameValues() {

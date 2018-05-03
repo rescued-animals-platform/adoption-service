@@ -4,6 +4,8 @@ import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.models.rest.suberrors.ApiSubError;
+import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,8 +85,9 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         ApiError apiError = response.getBody();
         assertThat(apiError.getMessage(), is("Validation failed"));
         assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
-        assertTrue(apiError.getDebugMessage().contains("name: must not be empty"));
-        assertTrue(apiError.getDebugMessage().contains("uuid: must not be empty"));
+        List<ApiSubError> subErrors = apiError.getSubErrors();
+        assertTrue(subErrors.contains(new ValidationError("name", "Animal name is required")));
+        assertTrue(subErrors.contains(new ValidationError("uuid", "Animal uuid is required")));
     }
 
     @Test
