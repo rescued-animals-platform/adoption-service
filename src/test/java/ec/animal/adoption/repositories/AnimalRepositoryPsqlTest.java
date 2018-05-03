@@ -1,10 +1,10 @@
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.models.jpa.JpaAnimalForAdoption;
-import ec.animal.adoption.repositories.jpa.JpaAnimalForAdoptionRepository;
+import ec.animal.adoption.models.jpa.JpaAnimal;
+import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,51 +30,51 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AnimalForAdoptionRepositoryPsqlTest {
+public class AnimalRepositoryPsqlTest {
 
     @Mock
-    private JpaAnimalForAdoptionRepository jpaAnimalForAdoptionRepository;
+    private JpaAnimalRepository jpaAnimalRepository;
 
-    private AnimalForAdoptionRepositoryPsql animalForAdoptionRepositoryPsql;
-    private AnimalForAdoption animalForAdoption;
+    private AnimalRepositoryPsql animalRepositoryPsql;
+    private Animal animal;
 
     @Before
     public void setUp() {
-        animalForAdoption = new AnimalForAdoption(
+        animal = new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
                 Type.DOG
         );
 
-        animalForAdoptionRepositoryPsql = new AnimalForAdoptionRepositoryPsql(jpaAnimalForAdoptionRepository);
+        animalRepositoryPsql = new AnimalRepositoryPsql(jpaAnimalRepository);
     }
 
     @Test
     public void shouldBeAnInstanceOfAnimalRepository() {
-        assertThat(animalForAdoptionRepositoryPsql, is(instanceOf(AnimalForAdoptionRepository.class)));
+        assertThat(animalRepositoryPsql, is(instanceOf(AnimalRepository.class)));
     }
 
     @Test
     public void shouldSaveJpaAvailableAnimal() throws EntityAlreadyExistsException {
-        ArgumentCaptor<JpaAnimalForAdoption> jpaAnimalArgumentCaptor = ArgumentCaptor.forClass(JpaAnimalForAdoption.class);
-        JpaAnimalForAdoption expectedJpaAnimalForAdoption = new JpaAnimalForAdoption(animalForAdoption);
-        when(jpaAnimalForAdoptionRepository.save(any(JpaAnimalForAdoption.class))).thenReturn(expectedJpaAnimalForAdoption);
+        ArgumentCaptor<JpaAnimal> jpaAnimalArgumentCaptor = ArgumentCaptor.forClass(JpaAnimal.class);
+        JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
+        when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
 
-        AnimalForAdoption savedAnimalForAdoption = animalForAdoptionRepositoryPsql.save(animalForAdoption);
+        Animal savedAnimal = animalRepositoryPsql.save(animal);
 
-        verify(jpaAnimalForAdoptionRepository).save(jpaAnimalArgumentCaptor.capture());
-        JpaAnimalForAdoption jpaAnimalForAdoption = jpaAnimalArgumentCaptor.getValue();
-        assertThat(jpaAnimalForAdoption, is(expectedJpaAnimalForAdoption));
-        assertThat(jpaAnimalForAdoption.toAvailableAnimal(), is(savedAnimalForAdoption));
+        verify(jpaAnimalRepository).save(jpaAnimalArgumentCaptor.capture());
+        JpaAnimal jpaAnimal = jpaAnimalArgumentCaptor.getValue();
+        assertThat(jpaAnimal, is(expectedJpaAnimal));
+        assertThat(jpaAnimal.toAnimal(), is(savedAnimal));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
     public void shouldThrowEntityAlreadyExistException() throws EntityAlreadyExistsException {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
-        }).when(jpaAnimalForAdoptionRepository).save(any(JpaAnimalForAdoption.class));
+        }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
-        animalForAdoptionRepositoryPsql.save(animalForAdoption);
+        animalRepositoryPsql.save(animal);
     }
 }

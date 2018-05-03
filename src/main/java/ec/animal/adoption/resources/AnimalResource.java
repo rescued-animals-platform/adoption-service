@@ -1,8 +1,8 @@
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.services.AnimalForAdoptionService;
+import ec.animal.adoption.services.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-public class AnimalForAdoptionResource {
-    private final AnimalForAdoptionService animalForAdoptionService;
+public class AnimalResource {
+    private final AnimalService animalService;
 
     @Autowired
-    public AnimalForAdoptionResource(AnimalForAdoptionService animalForAdoptionService) {
-        this.animalForAdoptionService = animalForAdoptionService;
+    public AnimalResource(AnimalService animalService) {
+        this.animalService = animalService;
     }
 
     @RequestMapping(path = "/animals", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public AnimalForAdoption create(@RequestBody @Valid AnimalForAdoption animalForAdoption) throws EntityAlreadyExistsException {
-        return animalForAdoptionService.create(animalForAdoption);
+    public Animal create(@RequestBody @Valid Animal animal) throws EntityAlreadyExistsException {
+        return animalService.create(animal);
     }
 }

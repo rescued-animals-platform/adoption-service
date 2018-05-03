@@ -1,6 +1,6 @@
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Type;
 
 import javax.persistence.Column;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "animal_for_adoption")
-public class JpaAnimalForAdoption {
+public class JpaAnimal {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -32,26 +32,26 @@ public class JpaAnimalForAdoption {
     private Timestamp registrationDate;
 
     @SuppressWarnings(value = "unused")
-    public JpaAnimalForAdoption() {
+    public JpaAnimal() {
         // required by jpa
     }
 
-    public JpaAnimalForAdoption(AnimalForAdoption animalForAdoption) {
-        this.uuid = animalForAdoption.getUuid();
-        this.name = animalForAdoption.getName();
-        this.registrationDate = Timestamp.valueOf(animalForAdoption.getRegistrationDate());
-        this.type = animalForAdoption.getType();
+    public JpaAnimal(Animal animal) {
+        this.uuid = animal.getUuid();
+        this.name = animal.getName();
+        this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
+        this.type = animal.getType();
     }
 
-    public AnimalForAdoption toAvailableAnimal() {
-        return new AnimalForAdoption(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type));
+    public Animal toAnimal() {
+        return new Animal(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JpaAnimalForAdoption that = (JpaAnimalForAdoption) o;
+        JpaAnimal that = (JpaAnimal) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(uuid, that.uuid) &&
                 Objects.equals(name, that.name) &&

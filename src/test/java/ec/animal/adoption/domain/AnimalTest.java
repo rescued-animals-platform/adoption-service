@@ -22,13 +22,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
-public class AnimalForAdoptionTest {
+public class AnimalTest {
 
     private LocalDateTime registrationDate;
     private String uuid;
     private String name;
     private Type type;
-    private AnimalForAdoption animalForAdoption;
+    private Animal animal;
 
     @Before
     public void setUp() {
@@ -36,60 +36,60 @@ public class AnimalForAdoptionTest {
         uuid = randomAlphabetic(10);
         name = randomAlphabetic(10);
         type = Type.DOG;
-        animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
+        animal = new Animal(uuid, name, registrationDate, type);
     }
 
     @Test
     public void shouldBeEqualToAnAvailableAnimalWithSameValues() {
-        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
+        Animal sameAnimal = new Animal(uuid, name, registrationDate, type);
 
-        assertEquals(animalForAdoption, sameAnimalForAdoption);
+        assertEquals(animal, sameAnimal);
     }
 
     @Test
     public void shouldNotBeEqualToAnAvailableAnimalWithDifferentValues() {
-        AnimalForAdoption differentAnimalForAdoption = new AnimalForAdoption(
+        Animal differentAnimal = new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
                 Type.CAT
         );
 
-        assertNotEquals(animalForAdoption, differentAnimalForAdoption);
+        assertNotEquals(animal, differentAnimal);
     }
 
     @Test
     public void shouldNotBeEqualToAnotherObject() {
-        assertNotEquals(animalForAdoption, new Object());
+        assertNotEquals(animal, new Object());
     }
 
     @Test
     public void shouldNotBeEqualToNull() {
-        assertNotEquals(animalForAdoption, null);
+        assertNotEquals(animal, null);
     }
 
     @Test
     public void shouldBeEqualToItself() {
-        assertEquals(animalForAdoption, animalForAdoption);
+        assertEquals(animal, animal);
     }
 
     @Test
     public void shouldHaveSameHashCodeWhenHavingSameValues() {
-        AnimalForAdoption sameAnimalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, type);
+        Animal sameAnimal = new Animal(uuid, name, registrationDate, type);
 
-        assertEquals(animalForAdoption.hashCode(), sameAnimalForAdoption.hashCode());
+        assertEquals(animal.hashCode(), sameAnimal.hashCode());
     }
 
     @Test
     public void shouldHaveDifferentHashCodeWhenHavingDifferentValues() {
-        AnimalForAdoption differentAnimalForAdoption = new AnimalForAdoption(
+        Animal differentAnimal = new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
                 type
         );
 
-        assertNotEquals(animalForAdoption.hashCode(), differentAnimalForAdoption.hashCode());
+        assertNotEquals(animal.hashCode(), differentAnimal.hashCode());
     }
 
     @Test
@@ -97,24 +97,24 @@ public class AnimalForAdoptionTest {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
-        String serializedAnimalForAdoption = objectMapper.writeValueAsString(animalForAdoption);
+        String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
 
-        AnimalForAdoption deserializedAnimalForAdoption = objectMapper.readValue(
-                serializedAnimalForAdoption, AnimalForAdoption.class
+        Animal deserializedAnimal = objectMapper.readValue(
+                serializedAnimalForAdoption, Animal.class
         );
 
-        assertThat(deserializedAnimalForAdoption, is(animalForAdoption));
+        assertThat(deserializedAnimal, is(animal));
     }
 
     @Test
     public void shouldValidateNonNullUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(null, randomAlphabetic(10), LocalDateTime.now(), type);
+        Animal animal = new Animal(null, randomAlphabetic(10), LocalDateTime.now(), type);
 
-        Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<AnimalForAdoption> constraintViolation = constraintViolations.iterator().next();
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is("must not be empty"));
         assertThat(constraintViolation.getPropertyPath().toString(), is("uuid"));
     }
@@ -122,12 +122,12 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonEmptyUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption("", randomAlphabetic(10), LocalDateTime.now(), type);
+        Animal animal = new Animal("", randomAlphabetic(10), LocalDateTime.now(), type);
 
-        Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<AnimalForAdoption> constraintViolation = constraintViolations.iterator().next();
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is("must not be empty"));
         assertThat(constraintViolation.getPropertyPath().toString(), is("uuid"));
     }
@@ -135,12 +135,12 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonNullName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), null, LocalDateTime.now(), type);
+        Animal animal = new Animal(randomAlphabetic(10), null, LocalDateTime.now(), type);
 
-        Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<AnimalForAdoption> constraintViolation = constraintViolations.iterator().next();
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is("must not be empty"));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
     }
@@ -148,12 +148,12 @@ public class AnimalForAdoptionTest {
     @Test
     public void shouldValidateNonEmptyName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(randomAlphabetic(10), "", LocalDateTime.now(), type);
+        Animal animal = new Animal(randomAlphabetic(10), "", LocalDateTime.now(), type);
 
-        Set<ConstraintViolation<AnimalForAdoption>> constraintViolations = localValidatorFactory.validate(animalForAdoption);
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<AnimalForAdoption> constraintViolation = constraintViolations.iterator().next();
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is("must not be empty"));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
 

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class AnimalForAdoption implements Serializable {
+public class Animal implements Serializable {
 
     @NotEmpty
     private String uuid;
@@ -22,11 +22,11 @@ public class AnimalForAdoption implements Serializable {
 
     private LocalDateTime registrationDate;
 
-    public AnimalForAdoption() {
+    public Animal() {
         // Required for serialization
     }
 
-    public AnimalForAdoption(String uuid, String name, LocalDateTime registrationDate, Type type) {
+    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type) {
         this.uuid = uuid;
         this.name = name;
         this.registrationDate = registrationDate;
@@ -53,7 +53,7 @@ public class AnimalForAdoption implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AnimalForAdoption that = (AnimalForAdoption) o;
+        Animal that = (Animal) o;
         return Objects.equals(uuid, that.uuid) &&
                 Objects.equals(name, that.name) &&
                 type == that.type &&

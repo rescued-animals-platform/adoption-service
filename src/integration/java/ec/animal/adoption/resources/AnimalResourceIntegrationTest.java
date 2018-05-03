@@ -1,7 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.IntegrationTest;
-import ec.animal.adoption.domain.AnimalForAdoption;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
 
-public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
+public class AnimalResourceIntegrationTest extends IntegrationTest {
 
     private static final String ANIMALS_URL = "/adoption/animals";
 
@@ -42,14 +42,14 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn201Created() {
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, Type.CAT);
+        Animal animal = new Animal(uuid, name, registrationDate, Type.CAT);
 
-        ResponseEntity<AnimalForAdoption> response = testRestTemplate.postForEntity(
-                ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders()
+        ResponseEntity<Animal> response = testRestTemplate.postForEntity(
+                ANIMALS_URL, animal, Animal.class, getHttpHeaders()
         );
 
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        assertThat(response.getBody(), is(animalForAdoption));
+        assertThat(response.getBody(), is(animal));
     }
 
     @Test
@@ -88,11 +88,11 @@ public class AnimalForAdoptionResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
-        AnimalForAdoption animalForAdoption = new AnimalForAdoption(uuid, name, registrationDate, Type.DOG);
-        testRestTemplate.postForEntity(ANIMALS_URL, animalForAdoption, AnimalForAdoption.class, getHttpHeaders());
+        Animal animal = new Animal(uuid, name, registrationDate, Type.DOG);
+        testRestTemplate.postForEntity(ANIMALS_URL, animal, Animal.class, getHttpHeaders());
 
         ResponseEntity<ApiError> conflictResponse = testRestTemplate.postForEntity(
-                ANIMALS_URL, animalForAdoption, ApiError.class, getHttpHeaders()
+                ANIMALS_URL, animal, ApiError.class, getHttpHeaders()
         );
 
         assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
