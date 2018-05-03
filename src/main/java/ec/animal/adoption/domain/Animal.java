@@ -1,8 +1,5 @@
 package ec.animal.adoption.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,8 +13,6 @@ public class Animal implements Serializable {
     @NotEmpty(message = "Animal name is required")
     private String name;
 
-    @JsonSerialize
-    @JsonDeserialize
     private Type type;
 
     private LocalDateTime registrationDate;
