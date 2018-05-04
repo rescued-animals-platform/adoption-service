@@ -1,6 +1,10 @@
 package ec.animal.adoption.domain;
 
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
+
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,8 +17,13 @@ public class Animal implements Serializable {
     @NotEmpty(message = "Animal name is required")
     private String name;
 
+    @NotNull(message = "Animal type is required")
     private Type type;
 
+    @NotNull(message = "Animal state is required")
+    private State state;
+
+    @NotNull(message = "Animal registration date is required")
     private LocalDateTime registrationDate;
 
     public Animal() {
@@ -22,10 +31,12 @@ public class Animal implements Serializable {
     }
 
     public Animal(String uuid, String name, LocalDateTime registrationDate, Type type) {
+        this();
         this.uuid = uuid;
         this.name = name;
         this.registrationDate = registrationDate;
         this.type = type;
+        this.state = new LookingForHuman(registrationDate);
     }
 
     public String getUuid() {
@@ -42,6 +53,14 @@ public class Animal implements Serializable {
 
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
     @Override

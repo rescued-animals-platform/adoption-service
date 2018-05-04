@@ -2,6 +2,9 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ec.animal.adoption.domain.state.Adopted;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.Unavailable;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +15,7 @@ import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
@@ -26,6 +30,9 @@ public class AnimalTest {
 
     private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
     private static final String ANIMAL_UUID_IS_REQUIRED = "Animal uuid is required";
+    private static final String ANIMAL_TYPE_IS_REQUIRED = "Animal type is required";
+    private static final String ANIMAL_STATE_IS_REQUIRED = "Animal state is required";
+    private static final String ANIMAL_REGISTRATION_DATE_IS_REQUIRED = "Animal registration date is required";
 
     private LocalDateTime registrationDate;
     private String uuid;
@@ -35,11 +42,16 @@ public class AnimalTest {
 
     @Before
     public void setUp() {
-        registrationDate = LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
+        registrationDate = LocalDateTime.now();
         uuid = randomAlphabetic(10);
         name = randomAlphabetic(10);
         type = Type.DOG;
         animal = new Animal(uuid, name, registrationDate, type);
+    }
+
+    @Test
+    public void shouldCreateAnimalWithDefaultStateLookingForHuman() {
+        assertThat(animal.getState(), is(new LookingForHuman(registrationDate)));
     }
 
     @Test
@@ -96,23 +108,53 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
-        String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
 
-        Animal deserializedAnimal = objectMapper.readValue(
+        String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
+        Animal deserializedAnimalForAdoption = objectMapper.readValue(
                 serializedAnimalForAdoption, Animal.class
         );
 
-        assertThat(deserializedAnimal, is(animal));
+        assertThat(deserializedAnimalForAdoption, is(animal));
+    }
+
+    @Test
+    public void shouldBeSerializableAndDeserializableWithAdoptedState() throws IOException {
+        animal.setState(new Adopted(LocalDate.now(), randomAlphabetic(10)));
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+
+        String serializedAdoptedAnimal = objectMapper.writeValueAsString(animal);
+        Animal deserializedAdoptedAnimal = objectMapper.readValue(
+                serializedAdoptedAnimal, Animal.class
+        );
+
+        assertThat(deserializedAdoptedAnimal, is(animal));
+    }
+
+    @Test
+    public void shouldBeSerializableAndDeserializableWithUnavailableState() throws IOException {
+        animal.setState(new Unavailable(randomAlphabetic(10)));
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+
+        String serializedUnavailableAnimal = objectMapper.writeValueAsString(animal);
+        Animal deserializedUnavailableAnimal = objectMapper.readValue(
+                serializedUnavailableAnimal, Animal.class
+        );
+
+        assertThat(deserializedUnavailableAnimal, is(animal));
     }
 
     @Test
     public void shouldValidateNonNullUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(null, randomAlphabetic(10), LocalDateTime.now(), type);
+        Animal animal = new Animal(null, name, registrationDate, type);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -125,7 +167,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonEmptyUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal("", randomAlphabetic(10), LocalDateTime.now(), type);
+        Animal animal = new Animal("", name, registrationDate, type);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -138,7 +180,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(randomAlphabetic(10), null, LocalDateTime.now(), type);
+        Animal animal = new Animal(uuid, null, registrationDate, type);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -151,7 +193,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonEmptyName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(randomAlphabetic(10), "", LocalDateTime.now(), type);
+        Animal animal = new Animal(uuid, "", registrationDate, type);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -159,7 +201,46 @@ public class AnimalTest {
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
+    }
 
+    @Test
+    public void shouldValidateNonNullType() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Animal animal = new Animal(uuid, name, registrationDate, null);
+
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_TYPE_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("type"));
+    }
+
+    @Test
+    public void shouldValidateNonNullState() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Animal animal = new Animal(uuid, name, registrationDate, type);
+        animal.setState(null);
+
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_STATE_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("state"));
+    }
+
+    @Test
+    public void shouldValidateNonNullRegistrationDate() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Animal animal = new Animal(uuid, name, null, type);
+
+        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_REGISTRATION_DATE_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("registrationDate"));
     }
 
     private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
