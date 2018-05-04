@@ -1,6 +1,7 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
 
 import javax.persistence.Column;
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "animal_for_adoption")
+@Table(name = "animal")
 public class JpaAnimal {
 
     @Id
@@ -29,6 +30,9 @@ public class JpaAnimal {
     @Column(nullable = false)
     private String type;
 
+    @Column(nullable = false)
+    private String estimatedAge;
+
     private Timestamp registrationDate;
 
     @SuppressWarnings(value = "unused")
@@ -40,27 +44,30 @@ public class JpaAnimal {
         this.uuid = animal.getUuid();
         this.name = animal.getName();
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
-        this.type = animal.getType();
+        this.type = animal.getType().name();
+        this.estimatedAge = animal.getEstimatedAge().name();
     }
 
     public Animal toAnimal() {
-        return new Animal(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type));
+        return new Animal(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type), EstimatedAge.valueOf(estimatedAge));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JpaAnimal that = (JpaAnimal) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(type, that.type) &&
-                Objects.equals(registrationDate, that.registrationDate);
+        JpaAnimal jpaAnimal = (JpaAnimal) o;
+        return Objects.equals(id, jpaAnimal.id) &&
+                Objects.equals(uuid, jpaAnimal.uuid) &&
+                Objects.equals(name, jpaAnimal.name) &&
+                Objects.equals(type, jpaAnimal.type) &&
+                Objects.equals(estimatedAge, jpaAnimal.estimatedAge) &&
+                Objects.equals(registrationDate, jpaAnimal.registrationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, name, type, registrationDate);
+
+        return Objects.hash(id, uuid, name, type, estimatedAge, registrationDate);
     }
 }

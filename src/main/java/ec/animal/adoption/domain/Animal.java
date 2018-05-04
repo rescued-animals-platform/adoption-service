@@ -26,17 +26,30 @@ public class Animal implements Serializable {
     @NotNull(message = "Animal registration date is required")
     private LocalDateTime registrationDate;
 
+    @NotNull(message = "Animal estimated age is required")
+    private EstimatedAge estimatedAge;
+
     public Animal() {
         // Required for serialization
     }
 
-    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type) {
+    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type, EstimatedAge estimatedAge) {
         this();
         this.uuid = uuid;
         this.name = name;
         this.registrationDate = registrationDate;
         this.type = type;
+        this.estimatedAge = estimatedAge;
         this.state = new LookingForHuman(registrationDate);
+    }
+
+    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type, EstimatedAge estimatedAge, State state) {
+        this.uuid = uuid;
+        this.name = name;
+        this.registrationDate = registrationDate;
+        this.type = type;
+        this.estimatedAge = estimatedAge;
+        this.state = state;
     }
 
     public String getUuid() {
@@ -47,8 +60,8 @@ public class Animal implements Serializable {
         return name;
     }
 
-    public String getType() {
-        return type.name();
+    public Type getType() {
+        return type;
     }
 
     public LocalDateTime getRegistrationDate() {
@@ -63,19 +76,25 @@ public class Animal implements Serializable {
         this.state = state;
     }
 
+    public EstimatedAge getEstimatedAge() {
+        return estimatedAge;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Animal that = (Animal) o;
-        return Objects.equals(uuid, that.uuid) &&
-                Objects.equals(name, that.name) &&
-                type == that.type &&
-                Objects.equals(registrationDate, that.registrationDate);
+        Animal animal = (Animal) o;
+        return Objects.equals(uuid, animal.uuid) &&
+                Objects.equals(name, animal.name) &&
+                type == animal.type &&
+                Objects.equals(state, animal.state) &&
+                Objects.equals(registrationDate, animal.registrationDate) &&
+                estimatedAge == animal.estimatedAge;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, name, type, registrationDate);
+        return Objects.hash(uuid, name, type, state, registrationDate, estimatedAge);
     }
 }

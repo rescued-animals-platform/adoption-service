@@ -1,6 +1,7 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,8 @@ public class JpaAnimalTest {
         String uuid = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         Type type = Type.DOG;
-        animal = new Animal(uuid, name, registrationDate, type);
+        EstimatedAge estimatedAge = EstimatedAge.SENIOR_ADULT;
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge);
     }
 
     @Test
@@ -51,7 +53,8 @@ public class JpaAnimalTest {
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
-                Type.CAT
+                Type.CAT,
+                EstimatedAge.YOUNG
         );
         JpaAnimal anotherJpaAnimal = new JpaAnimal(anotherAnimal);
 
@@ -102,7 +105,8 @@ public class JpaAnimalTest {
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
-                Type.CAT
+                Type.CAT,
+                EstimatedAge.YOUNG_ADULT
         );
         JpaAnimal anotherJpaAnimal = new JpaAnimal(anotherAnimal);
 

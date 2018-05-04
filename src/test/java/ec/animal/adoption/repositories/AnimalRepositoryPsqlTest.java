@@ -1,6 +1,7 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -14,10 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.postgresql.util.PSQLException;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -43,8 +41,9 @@ public class AnimalRepositoryPsqlTest {
         animal = new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
-                Type.DOG
+                LocalDateTime.now(),
+                Type.DOG,
+                EstimatedAge.YOUNG_ADULT
         );
 
         animalRepositoryPsql = new AnimalRepositoryPsql(jpaAnimalRepository);
@@ -56,7 +55,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldSaveJpaAvailableAnimal() throws EntityAlreadyExistsException {
+    public void shouldSaveJpaAnimal() throws EntityAlreadyExistsException {
         ArgumentCaptor<JpaAnimal> jpaAnimalArgumentCaptor = ArgumentCaptor.forClass(JpaAnimal.class);
         JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
