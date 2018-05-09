@@ -1,9 +1,10 @@
 package ec.animal.adoption.domain.state;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class LookingForHuman extends State {
+public class LookingForHuman extends State implements Serializable {
 
     private LocalDateTime registrationDate;
 

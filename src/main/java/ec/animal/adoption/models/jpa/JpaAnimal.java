@@ -3,13 +3,9 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.state.State;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -35,6 +31,10 @@ public class JpaAnimal {
 
     private Timestamp registrationDate;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "state_id")
+    private JpaState jpaState;
+
     @SuppressWarnings(value = "unused")
     public JpaAnimal() {
         // required by jpa
@@ -46,10 +46,22 @@ public class JpaAnimal {
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
         this.type = animal.getType().name();
         this.estimatedAge = animal.getEstimatedAge().name();
+        this.jpaState = new JpaState(animal.getState());
     }
 
     public Animal toAnimal() {
-        return new Animal(uuid, name, registrationDate.toLocalDateTime(), Type.valueOf(type), EstimatedAge.valueOf(estimatedAge));
+        return new Animal(
+                uuid,
+                name,
+                registrationDate.toLocalDateTime(),
+                Type.valueOf(type),
+                EstimatedAge.valueOf(estimatedAge),
+                jpaState.toState()
+        );
+    }
+
+    public void setState(State state) {
+        this.jpaState.setState(state);
     }
 
     @Override
@@ -62,12 +74,12 @@ public class JpaAnimal {
                 Objects.equals(name, jpaAnimal.name) &&
                 Objects.equals(type, jpaAnimal.type) &&
                 Objects.equals(estimatedAge, jpaAnimal.estimatedAge) &&
-                Objects.equals(registrationDate, jpaAnimal.registrationDate);
+                Objects.equals(registrationDate, jpaAnimal.registrationDate) &&
+                Objects.equals(jpaState, jpaAnimal.jpaState);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, uuid, name, type, estimatedAge, registrationDate);
+        return Objects.hash(id, uuid, name, type, estimatedAge, registrationDate, jpaState);
     }
 }

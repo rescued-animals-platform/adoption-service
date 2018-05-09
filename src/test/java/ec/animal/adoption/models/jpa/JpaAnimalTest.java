@@ -3,19 +3,17 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.state.Adopted;
+import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.Unavailable;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class JpaAnimalTest {
 
@@ -23,7 +21,7 @@ public class JpaAnimalTest {
 
     @Before
     public void setUp() {
-        LocalDateTime registrationDate = LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
+        LocalDateTime registrationDate = LocalDateTime.now();
         String uuid = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         Type type = Type.DOG;
@@ -32,14 +30,31 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldCreateAJpaAvailableAnimalFromAnAvailableAnimal() {
+    public void shouldCreateAJpaAnimalFromAnAnimalWithDefaultState() {
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         assertThat(jpaAnimal.toAnimal(), is(animal));
     }
 
     @Test
-    public void shouldBeEqualToAJpaAvailableAnimalWithSameValues() {
+    public void shouldCreateAJpaAnimalFromAnAnimalWithAnotherState() {
+        animal.setState(new Unavailable(randomAlphabetic(10)));
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        assertThat(jpaAnimal.toAnimal(), is(animal));
+    }
+
+    @Test
+    public void shouldUpdateState() {
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+        State newState = new Adopted(LocalDate.now(), randomAlphabetic(10));
+        jpaAnimal.setState(newState);
+
+        assertThat(jpaAnimal.toAnimal().getState(), is(newState));
+    }
+
+    @Test
+    public void shouldBeEqualToAJpaAnimalWithSameValues() {
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
         JpaAnimal sameJpaAnimal = new JpaAnimal(animal);
 
@@ -47,7 +62,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldNotBeEqualToAJpaAvailableAnimalWithDifferentValues() {
+    public void shouldNotBeEqualToAJpaAnimalWithDifferentValues() {
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
         Animal anotherAnimal = new Animal(
                 randomAlphabetic(10),
