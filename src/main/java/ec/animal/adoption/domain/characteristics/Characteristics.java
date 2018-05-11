@@ -1,18 +1,17 @@
 package ec.animal.adoption.domain.characteristics;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Characteristics {
 
     private Size size;
     private PhysicalActivity physicalActivity;
-    private List<FriendlyWith> friendlyWith;
+    private Set<FriendlyWith> friendlyWith;
 
     public Characteristics(Size size, PhysicalActivity physicalActivity, FriendlyWith ... friendlyWith) {
         this.size = size;
         this.physicalActivity = physicalActivity;
-        this.friendlyWith = Arrays.asList(friendlyWith);
+        this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
     }
 
     public Size getSize() {
@@ -24,6 +23,6 @@ public class Characteristics {
     }
 
     public List<FriendlyWith> getFriendlyWith() {
-        return friendlyWith;
+        return new ArrayList<>(this.friendlyWith);
     }
 }

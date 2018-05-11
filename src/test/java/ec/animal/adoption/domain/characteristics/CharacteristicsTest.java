@@ -70,6 +70,17 @@ public class CharacteristicsTest {
         assertTrue(characteristics.getFriendlyWith().contains(friendlyWithChildren));
     }
 
+    @Test
+    public void shouldEliminateDuplicatesOnFriendlyWith() {
+        characteristics = new Characteristics(
+                size, physicalActivity, FriendlyWith.CATS, FriendlyWith.CATS, FriendlyWith.CHILDREN
+        );
+
+        assertThat(characteristics.getFriendlyWith().size(), is(2));
+        assertTrue(characteristics.getFriendlyWith().contains(FriendlyWith.CATS));
+        assertTrue(characteristics.getFriendlyWith().contains(FriendlyWith.CHILDREN));
+    }
+
     private static Size getRandomSize(Random random) {
         List<Size> sizes = Arrays.asList(Size.values());
         int randomSizeIndex = random.nextInt(sizes.size());
