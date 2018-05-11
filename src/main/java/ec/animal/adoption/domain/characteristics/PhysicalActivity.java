@@ -1,4 +1,4 @@
-package ec.animal.adoption.domain;
+package ec.animal.adoption.domain.characteristics;
 
 public enum PhysicalActivity {
     HIGH, MEDIUM, LOW;

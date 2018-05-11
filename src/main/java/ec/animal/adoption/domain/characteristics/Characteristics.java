@@ -1,4 +1,4 @@
-package ec.animal.adoption.domain;
+package ec.animal.adoption.domain.characteristics;
 
 public class Characteristics {
     private Size size;

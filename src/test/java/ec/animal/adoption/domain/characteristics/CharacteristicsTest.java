@@ -1,4 +1,4 @@
-package ec.animal.adoption.domain;
+package ec.animal.adoption.domain.characteristics;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +13,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class CharacteristicsTest {
 
     private Size size;
-    private  Characteristics characteristics;
     private PhysicalActivity physicalActivity;
+    private Characteristics characteristics;
 
     @Before
     public void setUp() {
