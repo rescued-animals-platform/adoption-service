@@ -35,4 +35,20 @@ public class Characteristics {
     public List<Temperament> getTemperaments() {
         return new ArrayList<>(temperaments);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Characteristics that = (Characteristics) o;
+        return size == that.size &&
+                physicalActivity == that.physicalActivity &&
+                Objects.equals(friendlyWith, that.friendlyWith) &&
+                Objects.equals(temperaments, that.temperaments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, physicalActivity, friendlyWith, temperaments);
+    }
 }
