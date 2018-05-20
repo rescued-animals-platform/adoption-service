@@ -1,35 +1,32 @@
 package ec.animal.adoption.domain.state;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-public class LookingForHuman extends State implements Serializable {
+public class LookingForHuman extends State {
 
-    private LocalDateTime registrationDate;
+    @JsonProperty("registrationDate")
+    private final LocalDateTime registrationDate;
 
-    public LookingForHuman() {
-        // Required for serialization
-    }
-
-    public LookingForHuman(LocalDateTime registrationDate) {
+    @JsonCreator
+    public LookingForHuman(@JsonProperty("registrationDate") LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
-    }
-
-    public LocalDateTime getRegistrationDate() {
-        return registrationDate;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         LookingForHuman that = (LookingForHuman) o;
-        return Objects.equals(registrationDate, that.registrationDate);
+
+        return registrationDate != null ? registrationDate.equals(that.registrationDate) : that.registrationDate == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(registrationDate);
+        return registrationDate != null ? registrationDate.hashCode() : 0;
     }
 }
