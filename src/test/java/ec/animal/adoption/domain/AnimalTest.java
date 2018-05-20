@@ -31,7 +31,6 @@ public class AnimalTest {
     private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
     private static final String ANIMAL_UUID_IS_REQUIRED = "Animal uuid is required";
     private static final String ANIMAL_TYPE_IS_REQUIRED = "Animal type is required";
-    private static final String ANIMAL_STATE_IS_REQUIRED = "Animal state is required";
     private static final String ANIMAL_REGISTRATION_DATE_IS_REQUIRED = "Animal registration date is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
 
@@ -55,30 +54,33 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldCreateAnimalWithState() {
-        assertThat(animal.getState(), is(state));
+    public void shouldCreateAnimalWithDefaultLookingForHumanStateWhenStateIsNull() {
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, null);
+        LookingForHuman expectedLookingForHumanState = new LookingForHuman(registrationDate);
+
+        assertThat(animal.getState(), is(expectedLookingForHumanState));
     }
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
+        EqualsVerifier.forClass(Animal.class).usingGetClass().withNonnullFields("state").verify();
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializableWithLookingForHumanState() throws IOException {
+    public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
         State lookingForHumanState = new LookingForHuman(registrationDate);
-        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, lookingForHumanState);
+        Animal expectedAnimal = new Animal(uuid, name, registrationDate, type, estimatedAge, lookingForHumanState);
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, null);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
 
         String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
-        System.err.println(serializedAnimalForAdoption);
         Animal deserializedAnimalForAdoption = objectMapper.readValue(
                 serializedAnimalForAdoption, Animal.class
         );
 
-        assertThat(deserializedAnimalForAdoption, is(animal));
+        assertThat(deserializedAnimalForAdoption, is(expectedAnimal));
     }
 
     @Test
@@ -176,19 +178,6 @@ public class AnimalTest {
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_TYPE_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("type"));
-    }
-
-    @Test
-    public void shouldValidateNonNullState() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, name, registrationDate, type, estimatedAge, null);
-
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
-
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(ANIMAL_STATE_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("state"));
     }
 
     @Test

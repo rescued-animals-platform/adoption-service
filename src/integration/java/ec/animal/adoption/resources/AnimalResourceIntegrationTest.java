@@ -24,6 +24,7 @@ import java.util.List;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class AnimalResourceIntegrationTest extends IntegrationTest {
@@ -59,10 +60,29 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSend() {
+        Animal expectedAnimal = new Animal(
+                uuid, name, registrationDate, Type.DOG, EstimatedAge.YOUNG, lookingForHumanState
+        );
+        String animalForAdoption = "{\"uuid\":\"" + uuid +
+                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + registrationDate +
+                "\",\"type\":\"" + Type.DOG + "\",\"estimatedAge\":\"" + EstimatedAge.YOUNG + "\"}";
+        HttpEntity<String> entity = new HttpEntity<String>(animalForAdoption, getHttpHeaders());
+
+        ResponseEntity<Animal> response = testRestTemplate.exchange(
+                ANIMALS_URL, HttpMethod.POST, entity, Animal.class
+        );
+
+        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        assertThat(response.getBody(), is(expectedAnimal));
+    }
+
+    @Test
     public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         String wrongRegistrationDate = randomAlphabetic(10);
         String animalForAdoptionWithWrongData = "{\"uuid\":\"" + uuid +
-                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate + "\"}";
+                "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate +
+                "\",\"type\":\"" + Type.CAT + "\",\"estimatedAge\":\"" + EstimatedAge.YOUNG + "\"}";
         HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithWrongData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testRestTemplate.exchange(
@@ -71,13 +91,15 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
 
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
         ApiError apiError = response.getBody();
+        assertNotNull(apiError);
         assertThat(apiError.getMessage(), is("Malformed JSON request"));
         assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenMissingOrInvalidDataIsProvided() {
-        String animalForAdoptionWithMissingOrInvalidData = "{\"uuid\":\"\",\"registrationDate\":\"" + registrationDate + "\"}";
+    public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
+        String animalForAdoptionWithMissingOrInvalidData = "{\"uuid\":\"\",\"name\":\"" + name +
+                "\",\"registrationDate\":\"" + registrationDate + "\",\"type\":\"" + Type.DOG + "\"}";
         HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithMissingOrInvalidData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testRestTemplate.exchange(
@@ -86,11 +108,15 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
 
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
         ApiError apiError = response.getBody();
+        assertNotNull(apiError);
         assertThat(apiError.getMessage(), is("Validation failed"));
         assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
         List<ApiSubError> subErrors = apiError.getSubErrors();
-        assertTrue(subErrors.contains(new ValidationError("name", "Animal name is required")));
+        assertThat(subErrors.size(), is(2));
         assertTrue(subErrors.contains(new ValidationError("uuid", "Animal uuid is required")));
+        assertTrue(subErrors.contains(
+                new ValidationError("estimatedAge", "Animal estimated age is required")
+        ));
     }
 
     @Test
@@ -104,6 +130,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
 
         assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
         ApiError apiError = conflictResponse.getBody();
+        assertNotNull(apiError);
         assertThat(apiError.getMessage(), is("The resource already exists"));
         assertThat(apiError.getStatus(), is(HttpStatus.CONFLICT));
     }

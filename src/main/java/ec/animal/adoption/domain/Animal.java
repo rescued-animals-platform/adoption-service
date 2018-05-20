@@ -2,6 +2,7 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 
 import javax.validation.constraints.NotEmpty;
@@ -30,7 +31,6 @@ public class Animal {
     @JsonProperty("estimatedAge")
     private final EstimatedAge estimatedAge;
 
-    @NotNull(message = "Animal state is required")
     @JsonProperty("state")
     private final State state;
 
@@ -48,7 +48,12 @@ public class Animal {
         this.registrationDate = registrationDate;
         this.type = type;
         this.estimatedAge = estimatedAge;
-        this.state = state;
+
+        if(state == null) {
+            this.state = new LookingForHuman(registrationDate);
+        } else {
+            this.state = state;
+        }
     }
 
     public String getUuid() {
@@ -88,7 +93,7 @@ public class Animal {
             return false;
         if (type != animal.type) return false;
         if (estimatedAge != animal.estimatedAge) return false;
-        return state != null ? state.equals(animal.state) : animal.state == null;
+        return state.equals(animal.state);
     }
 
     @Override
@@ -98,7 +103,7 @@ public class Animal {
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + state.hashCode();
         return result;
     }
 }
