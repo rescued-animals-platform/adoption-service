@@ -4,6 +4,7 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.Adopted;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import org.junit.Before;
@@ -18,15 +19,22 @@ import static org.junit.Assert.*;
 public class JpaAnimalTest {
 
     private Animal animal;
+    private String uuid;
+    private String name;
+    private LocalDateTime registrationDate;
+    private Type type;
+    private EstimatedAge estimatedAge;
+    private State lookingForHumanState;
 
     @Before
     public void setUp() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        String uuid = randomAlphabetic(10);
-        String name = randomAlphabetic(10);
-        Type type = Type.DOG;
-        EstimatedAge estimatedAge = EstimatedAge.SENIOR_ADULT;
-        animal = new Animal(uuid, name, registrationDate, type, estimatedAge);
+        uuid = randomAlphabetic(10);
+        name = randomAlphabetic(10);
+        registrationDate = LocalDateTime.now();
+        type = Type.DOG;
+        estimatedAge = EstimatedAge.SENIOR_ADULT;
+        lookingForHumanState = new LookingForHuman(registrationDate);
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, lookingForHumanState);
     }
 
     @Test
@@ -38,7 +46,8 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldCreateAJpaAnimalFromAnAnimalWithAnotherState() {
-        animal.setState(new Unavailable(randomAlphabetic(10)));
+        State state = new Unavailable(randomAlphabetic(10));
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, state);
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         assertThat(jpaAnimal.toAnimal(), is(animal));
@@ -69,7 +78,8 @@ public class JpaAnimalTest {
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
                 Type.CAT,
-                EstimatedAge.YOUNG
+                EstimatedAge.YOUNG,
+                new Unavailable(randomAlphabetic(10))
         );
         JpaAnimal anotherJpaAnimal = new JpaAnimal(anotherAnimal);
 
@@ -121,7 +131,8 @@ public class JpaAnimalTest {
                 randomAlphabetic(10),
                 LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
                 Type.CAT,
-                EstimatedAge.YOUNG_ADULT
+                EstimatedAge.YOUNG_ADULT,
+                new Unavailable(randomAlphabetic(10))
         );
         JpaAnimal anotherJpaAnimal = new JpaAnimal(anotherAnimal);
 

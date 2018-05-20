@@ -3,6 +3,7 @@ package ec.animal.adoption.repositories;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
@@ -38,12 +39,14 @@ public class AnimalRepositoryPsqlTest {
 
     @Before
     public void setUp() {
+        LocalDateTime registrationDate = LocalDateTime.now();
         animal = new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
-                LocalDateTime.now(),
+                registrationDate,
                 Type.DOG,
-                EstimatedAge.YOUNG_ADULT
+                EstimatedAge.YOUNG_ADULT,
+                new LookingForHuman(registrationDate)
         );
 
         animalRepositoryPsql = new AnimalRepositoryPsql(jpaAnimalRepository);

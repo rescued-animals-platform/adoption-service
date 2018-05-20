@@ -4,6 +4,8 @@ import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -31,6 +33,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     private String uuid;
     private String name;
     private LocalDateTime registrationDate;
+    private State lookingForHumanState;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -40,11 +43,12 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         uuid = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
+        lookingForHumanState = new LookingForHuman(registrationDate);
     }
 
     @Test
     public void shouldReturn201Created() {
-        Animal animal = new Animal(uuid, name, registrationDate, Type.CAT, EstimatedAge.YOUNG);
+        Animal animal = new Animal(uuid, name, registrationDate, Type.CAT, EstimatedAge.YOUNG, lookingForHumanState);
 
         ResponseEntity<Animal> response = testRestTemplate.postForEntity(
                 ANIMALS_URL, animal, Animal.class, getHttpHeaders()
@@ -91,7 +95,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
-        Animal animal = new Animal(uuid, name, registrationDate, Type.DOG, EstimatedAge.YOUNG);
+        Animal animal = new Animal(uuid, name, registrationDate, Type.DOG, EstimatedAge.YOUNG, lookingForHumanState);
         testRestTemplate.postForEntity(ANIMALS_URL, animal, Animal.class, getHttpHeaders());
 
         ResponseEntity<ApiError> conflictResponse = testRestTemplate.postForEntity(

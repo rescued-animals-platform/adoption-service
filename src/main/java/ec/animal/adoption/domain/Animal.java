@@ -1,49 +1,48 @@
 package ec.animal.adoption.domain;
 
-import ec.animal.adoption.domain.state.LookingForHuman;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.state.State;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-public class Animal implements Serializable {
+public class Animal {
 
     @NotEmpty(message = "Animal uuid is required")
-    private String uuid;
+    @JsonProperty("uuid")
+    private final String uuid;
 
     @NotEmpty(message = "Animal name is required")
-    private String name;
-
-    @NotNull(message = "Animal type is required")
-    private Type type;
-
-    @NotNull(message = "Animal state is required")
-    private State state;
+    @JsonProperty("name")
+    private final String name;
 
     @NotNull(message = "Animal registration date is required")
-    private LocalDateTime registrationDate;
+    @JsonProperty("registrationDate")
+    private final LocalDateTime registrationDate;
+
+    @NotNull(message = "Animal type is required")
+    @JsonProperty("type")
+    private final Type type;
 
     @NotNull(message = "Animal estimated age is required")
-    private EstimatedAge estimatedAge;
+    @JsonProperty("estimatedAge")
+    private final EstimatedAge estimatedAge;
 
-    public Animal() {
-        // Required for serialization
-    }
+    @NotNull(message = "Animal state is required")
+    @JsonProperty("state")
+    private final State state;
 
-    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type, EstimatedAge estimatedAge) {
-        this();
-        this.uuid = uuid;
-        this.name = name;
-        this.registrationDate = registrationDate;
-        this.type = type;
-        this.estimatedAge = estimatedAge;
-        this.state = new LookingForHuman(registrationDate);
-    }
-
-    public Animal(String uuid, String name, LocalDateTime registrationDate, Type type, EstimatedAge estimatedAge, State state) {
+    @JsonCreator
+    public Animal(
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("name") String name,
+            @JsonProperty("registrationDate") LocalDateTime registrationDate,
+            @JsonProperty("type") Type type,
+            @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
+            @JsonProperty("state") State state
+    ) {
         this.uuid = uuid;
         this.name = name;
         this.registrationDate = registrationDate;
@@ -60,41 +59,46 @@ public class Animal implements Serializable {
         return name;
     }
 
-    public Type getType() {
-        return type;
-    }
-
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
+    public Type getType() {
+        return type;
     }
 
     public EstimatedAge getEstimatedAge() {
         return estimatedAge;
     }
 
+    public State getState() {
+        return state;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Animal animal = (Animal) o;
-        return Objects.equals(uuid, animal.uuid) &&
-                Objects.equals(name, animal.name) &&
-                type == animal.type &&
-                Objects.equals(state, animal.state) &&
-                Objects.equals(registrationDate, animal.registrationDate) &&
-                estimatedAge == animal.estimatedAge;
+
+        if (uuid != null ? !uuid.equals(animal.uuid) : animal.uuid != null) return false;
+        if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
+        if (registrationDate != null ? !registrationDate.equals(animal.registrationDate) : animal.registrationDate != null)
+            return false;
+        if (type != animal.type) return false;
+        if (estimatedAge != animal.estimatedAge) return false;
+        return state != null ? state.equals(animal.state) : animal.state == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, name, type, state, registrationDate, estimatedAge);
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        return result;
     }
 }

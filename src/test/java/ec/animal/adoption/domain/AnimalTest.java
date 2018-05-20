@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,17 +15,15 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 public class AnimalTest {
@@ -40,6 +40,7 @@ public class AnimalTest {
     private String name;
     private Type type;
     private EstimatedAge estimatedAge;
+    private State state;
     private Animal animal;
 
     @Before
@@ -49,84 +50,30 @@ public class AnimalTest {
         name = randomAlphabetic(10);
         type = Type.DOG;
         estimatedAge = EstimatedAge.YOUNG_ADULT;
-        animal = new Animal(uuid, name, registrationDate, type, estimatedAge);
-    }
-
-    @Test
-    public void shouldCreateAnimalWithDefaultStateLookingForHuman() {
-        assertThat(animal.getState(), is(new LookingForHuman(registrationDate)));
+        state = getRandomState();
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, state);
     }
 
     @Test
     public void shouldCreateAnimalWithState() {
-        Unavailable unavailable = new Unavailable(randomAlphabetic(10));
-        Animal animal = new Animal(uuid, name, registrationDate, type, estimatedAge, unavailable);
-
-        assertThat(animal.getState(), is(unavailable));
+        assertThat(animal.getState(), is(state));
     }
 
     @Test
-    public void shouldBeEqualToAnAvailableAnimalWithSameValues() {
-        Animal sameAnimal = new Animal(uuid, name, registrationDate, type, estimatedAge);
-
-        assertEquals(animal, sameAnimal);
+    public void shouldVerifyEqualsAndHashCodeMethods() {
+        EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
     }
 
     @Test
-    public void shouldNotBeEqualToAnAvailableAnimalWithDifferentValues() {
-        Animal differentAnimal = new Animal(
-                randomAlphabetic(10),
-                randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
-                Type.CAT,
-                EstimatedAge.YOUNG
-        );
-
-        assertNotEquals(animal, differentAnimal);
-    }
-
-    @Test
-    public void shouldNotBeEqualToAnotherObject() {
-        assertNotEquals(animal, new Object());
-    }
-
-    @Test
-    public void shouldNotBeEqualToNull() {
-        assertNotEquals(animal, null);
-    }
-
-    @Test
-    public void shouldBeEqualToItself() {
-        assertEquals(animal, animal);
-    }
-
-    @Test
-    public void shouldHaveSameHashCodeWhenHavingSameValues() {
-        Animal sameAnimal = new Animal(uuid, name, registrationDate, type, estimatedAge);
-
-        assertEquals(animal.hashCode(), sameAnimal.hashCode());
-    }
-
-    @Test
-    public void shouldHaveDifferentHashCodeWhenHavingDifferentValues() {
-        Animal differentAnimal = new Animal(
-                randomAlphabetic(10),
-                randomAlphabetic(10),
-                LocalDateTime.now(Clock.fixed(Instant.now(), ZoneId.systemDefault())),
-                type,
-                EstimatedAge.SENIOR_ADULT
-        );
-
-        assertNotEquals(animal.hashCode(), differentAnimal.hashCode());
-    }
-
-    @Test
-    public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
+    public void shouldBeSerializableAndDeserializableWithLookingForHumanState() throws IOException {
+        State lookingForHumanState = new LookingForHuman(registrationDate);
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, lookingForHumanState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
 
         String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
+        System.err.println(serializedAnimalForAdoption);
         Animal deserializedAnimalForAdoption = objectMapper.readValue(
                 serializedAnimalForAdoption, Animal.class
         );
@@ -136,7 +83,8 @@ public class AnimalTest {
 
     @Test
     public void shouldBeSerializableAndDeserializableWithAdoptedState() throws IOException {
-        animal.setState(new Adopted(LocalDate.now(), randomAlphabetic(10)));
+        State adoptedState = new Adopted(LocalDate.now(), randomAlphabetic(10));
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, adoptedState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -151,7 +99,8 @@ public class AnimalTest {
 
     @Test
     public void shouldBeSerializableAndDeserializableWithUnavailableState() throws IOException {
-        animal.setState(new Unavailable(randomAlphabetic(10)));
+        Unavailable unavailableState = new Unavailable(randomAlphabetic(10));
+        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, unavailableState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -167,7 +116,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(null, name, registrationDate, type, estimatedAge);
+        Animal animal = new Animal(null, name, registrationDate, type, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -180,7 +129,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonEmptyUuid() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal("", name, registrationDate, type, estimatedAge);
+        Animal animal = new Animal("", name, registrationDate, type, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -193,7 +142,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, null, registrationDate, type, estimatedAge);
+        Animal animal = new Animal(uuid, null, registrationDate, type, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -206,7 +155,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonEmptyName() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, "", registrationDate, type, estimatedAge);
+        Animal animal = new Animal(uuid, "", registrationDate, type, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -219,7 +168,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullType() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, name, registrationDate, null, estimatedAge);
+        Animal animal = new Animal(uuid, name, registrationDate, null, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -232,8 +181,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullState() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, name, registrationDate, type, estimatedAge);
-        animal.setState(null);
+        Animal animal = new Animal(uuid, name, registrationDate, type, estimatedAge, null);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -246,7 +194,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullRegistrationDate() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, name, null, type, estimatedAge);
+        Animal animal = new Animal(uuid, name, null, type, estimatedAge, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -259,7 +207,7 @@ public class AnimalTest {
     @Test
     public void shouldValidateNonNullEstimatedAge() {
         LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
-        Animal animal = new Animal(uuid, name, registrationDate, type, null);
+        Animal animal = new Animal(uuid, name, registrationDate, type, null, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
 
@@ -267,6 +215,17 @@ public class AnimalTest {
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_ESTIMATED_AGE_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("estimatedAge"));
+    }
+
+    private State getRandomState() {
+        Random random = new Random();
+        List<State> states = Arrays.asList(
+                new LookingForHuman(registrationDate),
+                new Adopted(LocalDate.now(), randomAlphabetic(10)),
+                new Unavailable(randomAlphabetic(10))
+        );
+        int randomStateIndex = random.nextInt(states.size());
+        return states.get(randomStateIndex);
     }
 
     private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
