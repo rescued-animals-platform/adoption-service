@@ -7,8 +7,6 @@ import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.suberrors.ApiSubError;
-import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class AnimalResourceIntegrationTest extends IntegrationTest {
 
@@ -92,8 +88,6 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
-        assertThat(apiError.getMessage(), is("Malformed JSON request"));
-        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
@@ -109,14 +103,6 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
-        assertThat(apiError.getMessage(), is("Validation failed"));
-        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
-        List<ApiSubError> subErrors = apiError.getSubErrors();
-        assertThat(subErrors.size(), is(2));
-        assertTrue(subErrors.contains(new ValidationError("uuid", "Animal uuid is required")));
-        assertTrue(subErrors.contains(
-                new ValidationError("estimatedAge", "Animal estimated age is required")
-        ));
     }
 
     @Test
@@ -131,7 +117,5 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
         ApiError apiError = conflictResponse.getBody();
         assertNotNull(apiError);
-        assertThat(apiError.getMessage(), is("The resource already exists"));
-        assertThat(apiError.getStatus(), is(HttpStatus.CONFLICT));
     }
 }

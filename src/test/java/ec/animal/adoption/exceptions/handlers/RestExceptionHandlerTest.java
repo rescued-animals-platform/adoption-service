@@ -2,7 +2,6 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,6 +68,9 @@ public class RestExceptionHandlerTest {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
         String debugMessage = randomAlphabetic(10);
         when(httpMessageNotReadableException.getLocalizedMessage()).thenReturn(debugMessage);
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.BAD_REQUEST, "Malformed JSON request", debugMessage
+        );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleHttpMessageNotReadable(
                 httpMessageNotReadableException, headers, status, webRequest
@@ -76,9 +78,7 @@ public class RestExceptionHandlerTest {
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
-        assertThat(apiError.getMessage(), is("Malformed JSON request"));
-        assertThat(apiError.getDebugMessage(), is(debugMessage));
+        assertThat(apiError, is(expectedApiError));
     }
 
     @Test
@@ -93,14 +93,13 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForEntityAlreadyExistsException() {
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException();
+        ApiError expectedApiError = new ApiError(HttpStatus.CONFLICT, "The resource already exists");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityAlreadyExistsException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError.getStatus(), is(HttpStatus.CONFLICT));
-        assertThat(apiError.getMessage(), is("The resource already exists"));
-        assertThat(apiError.getDebugMessage(), is(""));
+        assertThat(apiError, is(expectedApiError));
     }
 
     @Test
@@ -121,8 +120,16 @@ public class RestExceptionHandlerTest {
         MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        List<FieldError> fieldErrors = createFieldErrors();
+        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         String debugMessage = randomAlphabetic(10);
         when(methodArgumentNotValidException.getLocalizedMessage()).thenReturn(debugMessage);
+        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
+                .setSubErrors(
+                        fieldErrors.stream()
+                        .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                        .collect(Collectors.toList())
+                );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
                 methodArgumentNotValidException, headers, status, webRequest
@@ -130,38 +137,17 @@ public class RestExceptionHandlerTest {
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError.getStatus(), is(HttpStatus.BAD_REQUEST));
-        assertThat(apiError.getMessage(), is("Validation failed"));
-        assertThat(apiError.getDebugMessage(), is(debugMessage));
-
-    }
-
-    @Test
-    public void shouldReturnAResponseEntityWithValidationErrorsForMethodArgumentNotValidException() {
-        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
-        List<FieldError> fieldErrors = createFieldErrors();
-        List<ApiSubError> expectedSubErrors = fieldErrors.stream()
-                .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
-                .collect(Collectors.toList());
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
-
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
-                methodArgumentNotValidException, headers, status, webRequest
-        );
-
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError.getSubErrors().size(), is(fieldErrors.size()));
-        assertThat(apiError.getSubErrors(), is(expectedSubErrors));
-
+        assertThat(apiError, is(expectedApiError));
     }
 
     private ArrayList<FieldError> createFieldErrors() {
         ArrayList<FieldError> fieldErrors = new ArrayList<>();
-        FieldError fieldError = new FieldError(randomAlphabetic(10), "field", "default message");
-        FieldError anotherFieldError = new FieldError(randomAlphabetic(10), "another field", "another default message");
+        FieldError fieldError = new FieldError(
+                randomAlphabetic(10), randomAlphabetic(10), randomAlphabetic(10)
+        );
+        FieldError anotherFieldError = new FieldError(
+                randomAlphabetic(10), randomAlphabetic(10), randomAlphabetic(10)
+        );
         fieldErrors.add(fieldError);
         fieldErrors.add(anotherFieldError);
         return fieldErrors;

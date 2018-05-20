@@ -25,12 +25,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request
     ) {
         final String error = "Malformed JSON request";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex.getLocalizedMessage()));
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        return buildResponseEntity(new ApiError(badRequest, error, ex.getLocalizedMessage()), badRequest);
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     protected ResponseEntity<Object> handleEntityNotFound(EntityAlreadyExistsException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, ex.getMessage()));
+        HttpStatus conflict = HttpStatus.CONFLICT;
+        return buildResponseEntity(new ApiError(conflict, ex.getMessage()), conflict);
     }
 
     @Override
@@ -43,12 +45,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(f -> new ValidationError(f.getField(), f.getDefaultMessage()))
                 .collect(Collectors.toList());
 
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         return buildResponseEntity(
-                new ApiError(HttpStatus.BAD_REQUEST, error, ex.getLocalizedMessage()).setSubErrors(apiSubErrors)
+                new ApiError(badRequest, error, ex.getLocalizedMessage()).setSubErrors(apiSubErrors), badRequest
         );
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+    private ResponseEntity<Object> buildResponseEntity(ApiError apiError, HttpStatus status) {
+        return new ResponseEntity<>(apiError, status);
     }
 }
