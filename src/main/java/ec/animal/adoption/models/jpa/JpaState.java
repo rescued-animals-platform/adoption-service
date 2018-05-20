@@ -7,7 +7,6 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity
@@ -25,12 +24,13 @@ public class JpaState {
     @Column(columnDefinition = "jsonb", nullable = false)
     private State state;
 
-    @SuppressWarnings(value = "unused")
-    public JpaState() {
+
+    private JpaState() {
         // required by jpa
     }
 
     public JpaState(State state) {
+        this();
         this.stateName = state.getClass().getSimpleName();
         this.state = state;
     }
@@ -48,14 +48,19 @@ public class JpaState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         JpaState jpaState = (JpaState) o;
-        return Objects.equals(id, jpaState.id) &&
-                Objects.equals(stateName, jpaState.stateName) &&
-                Objects.equals(state, jpaState.state);
+
+        if (id != null ? !id.equals(jpaState.id) : jpaState.id != null) return false;
+        if (stateName != null ? !stateName.equals(jpaState.stateName) : jpaState.stateName != null) return false;
+        return state != null ? state.equals(jpaState.state) : jpaState.state == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, stateName, state);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (stateName != null ? stateName.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        return result;
     }
 }

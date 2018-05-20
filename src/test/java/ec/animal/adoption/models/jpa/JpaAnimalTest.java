@@ -1,12 +1,12 @@
 package ec.animal.adoption.models.jpa;
 
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.state.Unavailable;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +14,6 @@ import org.junit.Test;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
@@ -38,7 +35,7 @@ public class JpaAnimalTest {
         registrationDate = LocalDateTime.now();
         type = Type.DOG;
         estimatedAge = EstimatedAge.SENIOR_ADULT;
-        State state = getRandomState();
+        State state = TestUtils.getRandomState();
         animal = new Animal(uuid, name, registrationDate, type, estimatedAge, state);
     }
 
@@ -66,16 +63,5 @@ public class JpaAnimalTest {
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now().minusDays(2))
         ).verify();
-    }
-
-    private State getRandomState() {
-        Random random = new Random();
-        List<State> states = Arrays.asList(
-                new LookingForHuman(registrationDate),
-                new Adopted(LocalDate.now(), randomAlphabetic(10)),
-                new Unavailable(randomAlphabetic(10))
-        );
-        int randomStateIndex = random.nextInt(states.size());
-        return states.get(randomStateIndex);
     }
 }

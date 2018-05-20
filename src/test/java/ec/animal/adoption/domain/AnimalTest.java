@@ -2,6 +2,7 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -17,9 +18,6 @@ import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -49,7 +47,7 @@ public class AnimalTest {
         name = randomAlphabetic(10);
         type = Type.DOG;
         estimatedAge = EstimatedAge.YOUNG_ADULT;
-        state = getRandomState();
+        state = TestUtils.getRandomState();
         animal = new Animal(uuid, name, registrationDate, type, estimatedAge, state);
     }
 
@@ -204,17 +202,6 @@ public class AnimalTest {
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_ESTIMATED_AGE_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("estimatedAge"));
-    }
-
-    private State getRandomState() {
-        Random random = new Random();
-        List<State> states = Arrays.asList(
-                new LookingForHuman(registrationDate),
-                new Adopted(LocalDate.now(), randomAlphabetic(10)),
-                new Unavailable(randomAlphabetic(10))
-        );
-        int randomStateIndex = random.nextInt(states.size());
-        return states.get(randomStateIndex);
     }
 
     private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
