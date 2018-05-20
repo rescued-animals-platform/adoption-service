@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Characteristics {
 
-    private Size size;
-    private PhysicalActivity physicalActivity;
-    private Set<FriendlyWith> friendlyWith;
-    private Set<Temperament> temperaments;
+    private final Size size;
+    private final PhysicalActivity physicalActivity;
+    private final Set<Temperament> temperaments;
+    private final Set<FriendlyWith> friendlyWith;
 
     public Characteristics(
-            Size size, PhysicalActivity physicalActivity, List<Temperament> temperaments, FriendlyWith ... friendlyWith
+            Size size, PhysicalActivity physicalActivity, List<Temperament> temperaments, FriendlyWith... friendlyWith
     ) {
         this.size = size;
         this.physicalActivity = physicalActivity;
@@ -40,15 +40,21 @@ public class Characteristics {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Characteristics that = (Characteristics) o;
-        return size == that.size &&
-                physicalActivity == that.physicalActivity &&
-                Objects.equals(friendlyWith, that.friendlyWith) &&
-                Objects.equals(temperaments, that.temperaments);
+
+        if (size != that.size) return false;
+        if (physicalActivity != that.physicalActivity) return false;
+        if (temperaments != null ? !temperaments.equals(that.temperaments) : that.temperaments != null) return false;
+        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(size, physicalActivity, friendlyWith, temperaments);
+        int result = size != null ? size.hashCode() : 0;
+        result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
+        result = 31 * result + (temperaments != null ? temperaments.hashCode() : 0);
+        result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
+        return result;
     }
 }

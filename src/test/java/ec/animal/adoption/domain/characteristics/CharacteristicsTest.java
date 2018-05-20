@@ -1,6 +1,7 @@
 package ec.animal.adoption.domain.characteristics;
 
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,6 @@ import java.util.Random;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -128,58 +127,8 @@ public class CharacteristicsTest {
     }
 
     @Test
-    public void shouldBeEqualToCharacteristicsWithSameValues() {
-        Characteristics characteristics = new Characteristics(size, physicalActivity, temperaments, FriendlyWith.CATS);
-        Characteristics sameCharacteristics = new Characteristics(size, physicalActivity, temperaments, FriendlyWith.CATS);
-
-        assertEquals(characteristics, sameCharacteristics);
-    }
-
-    @Test
-    public void shouldNotBeEqualToCharacteristicsWithDifferentValues() {
-        Characteristics characteristics = new Characteristics(
-                Size.TINY, PhysicalActivity.HIGH, newArrayList(mock(Temperament.class)), FriendlyWith.DOGS
-        );
-        Characteristics differentCharacteristics = new Characteristics(
-                Size.BIG, PhysicalActivity.LOW, newArrayList(mock(Temperament.class)), FriendlyWith.CATS
-        );
-
-        assertNotEquals(characteristics, differentCharacteristics);
-    }
-
-    @Test
-    public void shouldBeEqualToItself() {
-        assertEquals(characteristics, characteristics);
-    }
-
-    @Test
-    public void shouldNotBeEqualToAnotherObject() {
-        assertNotEquals(characteristics, new Object());
-    }
-
-    @Test
-    public void shouldNotBeEqualToNull() {
-        assertNotEquals(characteristics, null);
-    }
-
-    @Test
-    public void shouldHaveSameHashCodeWhenHavingSameValues() {
-        Characteristics characteristics = new Characteristics(size, physicalActivity, temperaments, FriendlyWith.CATS);
-        Characteristics sameCharacteristics = new Characteristics(size, physicalActivity, temperaments, FriendlyWith.CATS);
-
-        assertEquals(characteristics.hashCode(), sameCharacteristics.hashCode());
-    }
-
-    @Test
-    public void shouldHaveDifferentHashCodeWhenHavingDifferentValues() {
-        Characteristics characteristics = new Characteristics(
-                Size.TINY, PhysicalActivity.HIGH, newArrayList(mock(Temperament.class)), FriendlyWith.DOGS
-        );
-        Characteristics differentCharacteristics = new Characteristics(
-                Size.BIG, PhysicalActivity.LOW, newArrayList(mock(Temperament.class)), FriendlyWith.CATS
-        );
-
-        assertNotEquals(characteristics.hashCode(), differentCharacteristics.hashCode());
+    public void shouldVerifyEqualsAndHashCodeMethods() {
+        EqualsVerifier.forClass(Characteristics.class).usingGetClass().verify();
     }
 
     private static Size getRandomSize(Random random) {
