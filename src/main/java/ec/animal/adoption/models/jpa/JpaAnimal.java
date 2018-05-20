@@ -7,7 +7,6 @@ import ec.animal.adoption.domain.state.State;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 @Entity
 @Table(name = "animal")
@@ -35,12 +34,12 @@ public class JpaAnimal {
     @JoinColumn(name = "state_id")
     private JpaState jpaState;
 
-    @SuppressWarnings(value = "unused")
-    public JpaAnimal() {
-        // required by jpa
+    private JpaAnimal() {
+        // Required by jpa
     }
 
     public JpaAnimal(Animal animal) {
+        this();
         this.uuid = animal.getUuid();
         this.name = animal.getName();
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
@@ -68,18 +67,29 @@ public class JpaAnimal {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         JpaAnimal jpaAnimal = (JpaAnimal) o;
-        return Objects.equals(id, jpaAnimal.id) &&
-                Objects.equals(uuid, jpaAnimal.uuid) &&
-                Objects.equals(name, jpaAnimal.name) &&
-                Objects.equals(type, jpaAnimal.type) &&
-                Objects.equals(estimatedAge, jpaAnimal.estimatedAge) &&
-                Objects.equals(registrationDate, jpaAnimal.registrationDate) &&
-                Objects.equals(jpaState, jpaAnimal.jpaState);
+
+        if (id != null ? !id.equals(jpaAnimal.id) : jpaAnimal.id != null) return false;
+        if (uuid != null ? !uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid != null) return false;
+        if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
+        if (type != null ? !type.equals(jpaAnimal.type) : jpaAnimal.type != null) return false;
+        if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
+            return false;
+        if (registrationDate != null ? !registrationDate.equals(jpaAnimal.registrationDate) : jpaAnimal.registrationDate != null)
+            return false;
+        return jpaState != null ? jpaState.equals(jpaAnimal.jpaState) : jpaAnimal.jpaState == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, name, type, estimatedAge, registrationDate, jpaState);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
+        result = 31 * result + (jpaState != null ? jpaState.hashCode() : 0);
+        return result;
     }
 }
