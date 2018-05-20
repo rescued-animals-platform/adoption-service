@@ -1,9 +1,9 @@
-apply plugin: 'info.solidsoft.pitest'
-
 pitest {
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = ['ec.animal.adoption.AnimalAdoptionApplication']
+    excludedMethods = ['equals', 'hashCode']
     threads = 4
+    timestampedReports = false
     outputFormats = ['XML', 'HTML']
     coverageThreshold = 95
     mutationThreshold = 95

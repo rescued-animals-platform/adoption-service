@@ -1,41 +1,42 @@
 package ec.animal.adoption.domain.state;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
-import java.util.Objects;
 
-public class Adopted extends State implements Serializable {
-    private LocalDate adoptionDate;
-    private String adoptionFormId;
+public class Adopted extends State {
+    @JsonProperty("adoptionDate")
+    private final LocalDate adoptionDate;
 
-    public Adopted() {
-        // Required for serialization
-    }
+    @JsonProperty("adoptionFormId")
+    private final String adoptionFormId;
 
-    public Adopted(LocalDate adoptionDate, String adoptionFormId) {
+    @JsonCreator
+    public Adopted(
+            @JsonProperty("adoptionDate") LocalDate adoptionDate,
+            @JsonProperty("adoptionFormId") String adoptionFormId
+    ) {
         this.adoptionDate = adoptionDate;
         this.adoptionFormId = adoptionFormId;
-    }
-
-    public LocalDate getAdoptionDate() {
-        return adoptionDate;
-    }
-
-    public String getAdoptionFormId() {
-        return adoptionFormId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Adopted adopted = (Adopted) o;
-        return Objects.equals(adoptionDate, adopted.adoptionDate) &&
-                Objects.equals(adoptionFormId, adopted.adoptionFormId);
+
+        if (adoptionDate != null ? !adoptionDate.equals(adopted.adoptionDate) : adopted.adoptionDate != null)
+            return false;
+        return adoptionFormId != null ? adoptionFormId.equals(adopted.adoptionFormId) : adopted.adoptionFormId == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adoptionDate, adoptionFormId);
+        int result = adoptionDate != null ? adoptionDate.hashCode() : 0;
+        result = 31 * result + (adoptionFormId != null ? adoptionFormId.hashCode() : 0);
+        return result;
     }
 }

@@ -11,4 +11,5 @@ dependencies {
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
     testCompile("org.apache.commons:commons-lang3:3.7")
+    testCompile("nl.jqno.equalsverifier:equalsverifier:2.4.6")
 }
