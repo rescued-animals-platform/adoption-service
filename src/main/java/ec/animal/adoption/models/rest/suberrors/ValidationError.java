@@ -1,40 +1,37 @@
 package ec.animal.adoption.models.rest.suberrors;
 
-import java.io.Serializable;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ValidationError extends ApiSubError implements Serializable {
-    private String field;
-    private String message;
+public class ValidationError extends ApiSubError {
 
-    public ValidationError() {
-        // Required for serialization
-    }
+    @JsonProperty("field")
+    private final String field;
 
-    public ValidationError(String field, String message) {
+    @JsonProperty("message")
+    private final String message;
+
+    @JsonCreator
+    public ValidationError(@JsonProperty("field") String field, @JsonProperty("message") String message) {
         this.field = field;
         this.message = message;
-    }
-
-    public String getField() {
-        return field;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         ValidationError that = (ValidationError) o;
-        return Objects.equals(field, that.field) &&
-                Objects.equals(message, that.message);
+
+        if (field != null ? !field.equals(that.field) : that.field != null) return false;
+        return message != null ? message.equals(that.message) : that.message == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(field, message);
+        int result = field != null ? field.hashCode() : 0;
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        return result;
     }
 }
