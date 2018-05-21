@@ -2,6 +2,7 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
@@ -43,6 +44,7 @@ public class AnimalRepositoryPsqlTest {
                 registrationDate,
                 Type.DOG,
                 EstimatedAge.YOUNG_ADULT,
+                Sex.FEMALE,
                 new LookingForHuman(registrationDate)
         );
 
@@ -71,6 +73,7 @@ public class AnimalRepositoryPsqlTest {
         assertThat(animal.getRegistrationDate(), is(this.animal.getRegistrationDate()));
         assertThat(animal.getType(), is(this.animal.getType()));
         assertThat(animal.getEstimatedAge(), is(this.animal.getEstimatedAge()));
+        assertThat(animal.getSex(), is(this.animal.getSex()));
         assertThat(animal.getState(), is(this.animal.getState()));
         assertThat(expectedJpaAnimal.toAnimal(), is(savedAnimal));
     }

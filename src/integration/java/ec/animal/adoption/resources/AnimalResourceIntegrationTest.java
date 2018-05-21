@@ -3,6 +3,7 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.IntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -28,6 +29,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class AnimalResourceIntegrationTest extends IntegrationTest {
 
+    private static final List<Type> types = Arrays.asList(Type.values());
+    private static final List<EstimatedAge> estimatedAges = Arrays.asList(EstimatedAge.values());
+    private static final List<Sex> sexes = Arrays.asList(Sex.values());
     private static final String ANIMALS_URL = "/adoption/animals";
 
     private String clinicalRecord;
@@ -35,6 +39,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     private LocalDateTime registrationDate;
     private Type type;
     private EstimatedAge estimatedAge;
+    private Sex sex;
     private State lookingForHumanState;
 
     @Autowired
@@ -45,15 +50,16 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        type = getRandomType();
-        estimatedAge = getEstimatedAge();
+        type = types.get(getRandomIndex(types));
+        estimatedAge = estimatedAges.get(getRandomIndex(estimatedAges));
+        sex = sexes.get(getRandomIndex(sexes));
         lookingForHumanState = new LookingForHuman(registrationDate);
     }
 
     @Test
     public void shouldReturn201Created() {
         Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate,type, estimatedAge, lookingForHumanState
+                clinicalRecord, name, registrationDate,type, estimatedAge, sex, lookingForHumanState
         );
 
         ResponseEntity<Animal> response = testRestTemplate.postForEntity(
@@ -67,7 +73,8 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSend() {
         String animalForAdoption = "{\"clinicalRecord\":\"" + clinicalRecord +
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + registrationDate +
-                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge + "\"}";
+                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge +
+                "\",\"sex\":\"" + sex + "\"}";
         HttpEntity<String> entity = new HttpEntity<String>(animalForAdoption, getHttpHeaders());
 
         ResponseEntity<Animal> response = testRestTemplate.exchange(
@@ -82,7 +89,8 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         String wrongRegistrationDate = randomAlphabetic(10);
         String animalForAdoptionWithWrongData = "{\"clinicalRecord\":\"" + clinicalRecord +
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate +
-                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge + "\"}";
+                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge +
+                "\",\"sex\":\"12345\"}";
         HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithWrongData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testRestTemplate.exchange(
@@ -112,7 +120,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         Animal animal = new Animal(
-                clinicalRecord, name, registrationDate, type, estimatedAge, lookingForHumanState
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
         );
         testRestTemplate.postForEntity(ANIMALS_URL, animal, Animal.class, getHttpHeaders());
 
@@ -125,18 +133,9 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         assertNotNull(apiError);
     }
 
-    private static Type getRandomType() {
+    private static int getRandomIndex(List items) {
         Random random = new Random();
-        List<Type> types = Arrays.asList(Type.values());
-        int randomTypeIndex = random.nextInt(types.size());
-        return types.get(randomTypeIndex);
-    }
-
-    private static EstimatedAge getEstimatedAge() {
-        Random random = new Random();
-        List<EstimatedAge> estimatedAges = Arrays.asList(EstimatedAge.values());
-        int randomEstimatedAgeIndex = random.nextInt(estimatedAges.size());
-        return estimatedAges.get(randomEstimatedAgeIndex);
+        return random.nextInt(items.size());
     }
 
     private void assertCreated(ResponseEntity<Animal> response) {

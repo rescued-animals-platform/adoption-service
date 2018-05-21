@@ -3,6 +3,7 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -26,6 +27,7 @@ public class JpaAnimalTest {
     private LocalDateTime registrationDate;
     private Type type;
     private EstimatedAge estimatedAge;
+    private Sex sex;
     private Animal animal;
 
     @Before
@@ -33,10 +35,11 @@ public class JpaAnimalTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        type = Type.DOG;
-        estimatedAge = EstimatedAge.SENIOR_ADULT;
+        type = TestUtils.getRandomType();
+        estimatedAge = TestUtils.getRandomEstimatedAge();
+        sex = TestUtils.getRandomSex();
         State state = TestUtils.getRandomState();
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, state);
+        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
     }
 
     @Test
@@ -49,13 +52,14 @@ public class JpaAnimalTest {
         assertThat(animal.getRegistrationDate(), is(this.animal.getRegistrationDate()));
         assertThat(animal.getType(), is(this.animal.getType()));
         assertThat(animal.getEstimatedAge(), is(this.animal.getEstimatedAge()));
+        assertThat(animal.getSex(), is(this.animal.getSex()));
         assertThat(animal.getState(), is(this.animal.getState()));
     }
 
     @Test
     public void shouldUpdateState() {
         animal = new Animal(
-                clinicalRecord, name, registrationDate, type, estimatedAge, new LookingForHuman(registrationDate)
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, new LookingForHuman(registrationDate)
         );
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
         State newState = new Adopted(LocalDate.now(), randomAlphabetic(10));

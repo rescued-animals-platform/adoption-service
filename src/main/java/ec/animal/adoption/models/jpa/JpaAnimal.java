@@ -2,6 +2,7 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.State;
 
@@ -29,6 +30,9 @@ public class JpaAnimal {
     @Column(nullable = false)
     private String estimatedAge;
 
+    @Column(nullable = false)
+    private String sex;
+
     private Timestamp registrationDate;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -47,6 +51,7 @@ public class JpaAnimal {
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
         this.type = animal.getType().name();
         this.estimatedAge = animal.getEstimatedAge().name();
+        this.sex = animal.getSex().name();
         this.jpaState = new JpaState(animal.getState());
     }
 
@@ -57,6 +62,7 @@ public class JpaAnimal {
                 registrationDate.toLocalDateTime(),
                 Type.valueOf(type),
                 EstimatedAge.valueOf(estimatedAge),
+                Sex.valueOf(sex),
                 jpaState.toState()
         ).setUuid(uuid);
     }
@@ -79,6 +85,7 @@ public class JpaAnimal {
         if (type != null ? !type.equals(jpaAnimal.type) : jpaAnimal.type != null) return false;
         if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
             return false;
+        if (sex != null ? !sex.equals(jpaAnimal.sex) : jpaAnimal.sex != null) return false;
         if (registrationDate != null ? !registrationDate.equals(jpaAnimal.registrationDate) : jpaAnimal.registrationDate != null)
             return false;
         return jpaState != null ? jpaState.equals(jpaAnimal.jpaState) : jpaAnimal.jpaState == null;
@@ -91,6 +98,7 @@ public class JpaAnimal {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaState != null ? jpaState.hashCode() : 0);
         return result;

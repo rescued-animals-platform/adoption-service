@@ -35,6 +35,10 @@ public class Animal {
     @JsonProperty("estimatedAge")
     private final EstimatedAge estimatedAge;
 
+    @NotNull(message = "Animal sex is required")
+    @JsonProperty("sex")
+    private final Sex sex;
+
     @JsonProperty("state")
     private final State state;
 
@@ -45,6 +49,7 @@ public class Animal {
             @JsonProperty("registrationDate") LocalDateTime registrationDate,
             @JsonProperty("type") Type type,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
+            @JsonProperty("sex") Sex sex,
             @JsonProperty("state") State state
     ) {
         this.clinicalRecord = clinicalRecord;
@@ -52,6 +57,7 @@ public class Animal {
         this.registrationDate = registrationDate;
         this.type = type;
         this.estimatedAge = estimatedAge;
+        this.sex = sex;
 
         if(state == null) {
             this.state = new LookingForHuman(registrationDate);
@@ -89,6 +95,10 @@ public class Animal {
         return estimatedAge;
     }
 
+    public Sex getSex() {
+        return sex;
+    }
+
     public State getState() {
         return state;
     }
@@ -108,6 +118,7 @@ public class Animal {
             return false;
         if (type != animal.type) return false;
         if (estimatedAge != animal.estimatedAge) return false;
+        if (sex != animal.sex) return false;
         return state != null ? state.equals(animal.state) : animal.state == null;
     }
 
@@ -119,6 +130,7 @@ public class Animal {
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
