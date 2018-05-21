@@ -10,6 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ValidationError.class, name = "validationError")
 })
-public abstract class ApiSubError {
+public interface ApiSubError {
 
 }

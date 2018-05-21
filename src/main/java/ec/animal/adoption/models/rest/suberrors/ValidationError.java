@@ -3,7 +3,7 @@ package ec.animal.adoption.models.rest.suberrors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ValidationError extends ApiSubError {
+public class ValidationError implements ApiSubError {
 
     @JsonProperty("field")
     private final String field;
