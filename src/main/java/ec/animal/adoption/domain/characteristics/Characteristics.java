@@ -1,18 +1,31 @@
 package ec.animal.adoption.domain.characteristics;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 
 import java.util.*;
 
 public class Characteristics {
 
+    @JsonProperty("size")
     private final Size size;
+
+    @JsonProperty("physicalActivity")
     private final PhysicalActivity physicalActivity;
+
+    @JsonProperty("temperaments")
     private final Set<Temperament> temperaments;
+
+    @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;
 
+    @JsonCreator
     public Characteristics(
-            Size size, PhysicalActivity physicalActivity, List<Temperament> temperaments, FriendlyWith... friendlyWith
+            @JsonProperty("size") Size size,
+            @JsonProperty("physicalActivity") PhysicalActivity physicalActivity,
+            @JsonProperty("temperaments") List<Temperament> temperaments,
+            @JsonProperty("friendlyWith") FriendlyWith... friendlyWith
     ) {
         this.size = size;
         this.physicalActivity = physicalActivity;
