@@ -20,22 +20,6 @@ public class Characteristics {
         this.temperaments = new HashSet<>(temperaments);
     }
 
-    public Size getSize() {
-        return size;
-    }
-
-    public PhysicalActivity getPhysicalActivity() {
-        return physicalActivity;
-    }
-
-    public List<FriendlyWith> getFriendlyWith() {
-        return new ArrayList<>(this.friendlyWith);
-    }
-
-    public List<Temperament> getTemperaments() {
-        return new ArrayList<>(temperaments);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
