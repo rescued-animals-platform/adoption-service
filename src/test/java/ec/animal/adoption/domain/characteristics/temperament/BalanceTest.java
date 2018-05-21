@@ -1,10 +1,7 @@
 package ec.animal.adoption.domain.characteristics.temperament;
 
+import ec.animal.adoption.TestUtils;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -14,15 +11,8 @@ public class BalanceTest {
 
     @Test
     public void shouldBeAnInstanceOfTemperament() {
-        Balance balance = getRandomBalance();
+        Balance balance = TestUtils.getRandomBalance();
 
         assertThat(balance, is(instanceOf(Temperament.class)));
-    }
-
-    private static Balance getRandomBalance() {
-        Random random = new Random();
-        List<Balance> balanceScales = Arrays.asList(Balance.values());
-        int randomBalanceIndex = random.nextInt(balanceScales.size());
-        return balanceScales.get(randomBalanceIndex);
     }
 }

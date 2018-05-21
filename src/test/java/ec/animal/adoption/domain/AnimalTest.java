@@ -94,7 +94,6 @@ public class AnimalTest {
                 .build();
 
         String serializedAnimalForAdoption = objectMapper.writeValueAsString(animal);
-        System.err.println(serializedAnimalForAdoption);
         Animal deserializedAnimalForAdoption = objectMapper.readValue(
                 serializedAnimalForAdoption, Animal.class
         );

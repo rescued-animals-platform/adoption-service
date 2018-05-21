@@ -1,10 +1,7 @@
 package ec.animal.adoption.domain.characteristics.temperament;
 
+import ec.animal.adoption.TestUtils;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -14,15 +11,8 @@ public class DocilityTest {
 
     @Test
     public void shouldBeAnInstanceOfTemperament() {
-        Docility docility = getRandomDocility();
+        Docility docility = TestUtils.getRandomDocility();
 
         assertThat(docility, is(instanceOf(Temperament.class)));
-    }
-
-    private static Docility getRandomDocility() {
-        Random random = new Random();
-        List<Docility> docilityScales = Arrays.asList(Docility.values());
-        int randomDocilityIndex = random.nextInt(docilityScales.size());
-        return docilityScales.get(randomDocilityIndex);
     }
 }

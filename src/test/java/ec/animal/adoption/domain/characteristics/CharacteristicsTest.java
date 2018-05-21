@@ -1,17 +1,14 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.domain.characteristics.temperament.Balance;
-import ec.animal.adoption.domain.characteristics.temperament.Docility;
-import ec.animal.adoption.domain.characteristics.temperament.Sociability;
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
@@ -27,9 +24,9 @@ public class CharacteristicsTest {
 
     @Before
     public void setUp() {
-        size = getRandomSize();
-        physicalActivity = getRandomPhysicalActivity();
-        temperament = getRandomTemperament();
+        size = TestUtils.getRandomSize();
+        physicalActivity = TestUtils.getRandomPhysicalActivity();
+        temperament = TestUtils.getRandomTemperament();
         temperaments = newArrayList(temperament);
     }
 
@@ -76,30 +73,6 @@ public class CharacteristicsTest {
                 serializedCharacteristics, Characteristics.class
         );
 
-        Assert.assertThat(deserializedCharacteristics, is(characteristics));
-    }
-
-    private static Size getRandomSize() {
-        Random random = new Random();
-        List<Size> sizes = Arrays.asList(Size.values());
-        int randomSizeIndex = random.nextInt(sizes.size());
-        return sizes.get(randomSizeIndex);
-    }
-
-    private static PhysicalActivity getRandomPhysicalActivity() {
-        Random random = new Random();
-        List<PhysicalActivity> physicalActivities = Arrays.asList(PhysicalActivity.values());
-        int randomPhysicalActivityIndex = random.nextInt(physicalActivities.size());
-        return physicalActivities.get(randomPhysicalActivityIndex);
-    }
-
-    private static Temperament getRandomTemperament() {
-        Random random = new Random();
-        List<Temperament> temperaments = new ArrayList<>();
-        Collections.addAll(temperaments, Sociability.values());
-        Collections.addAll(temperaments, Docility.values());
-        Collections.addAll(temperaments, Balance.values());
-        int randomTemperamentIndex = random.nextInt(temperaments.size());
-        return temperaments.get(randomTemperamentIndex);
+        assertThat(deserializedCharacteristics, is(characteristics));
     }
 }

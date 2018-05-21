@@ -33,6 +33,22 @@ public class Characteristics {
         this.temperaments = new HashSet<>(temperaments);
     }
 
+    public Size getSize() {
+        return size;
+    }
+
+    public PhysicalActivity getPhysicalActivity() {
+        return physicalActivity;
+    }
+
+    public List<Temperament> getTemperaments() {
+        return new ArrayList<>(temperaments);
+    }
+
+    public List<FriendlyWith> getFriendlyWith() {
+        return new ArrayList<>(friendlyWith);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
