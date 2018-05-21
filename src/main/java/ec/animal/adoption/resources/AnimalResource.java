@@ -15,6 +15,7 @@ import javax.validation.Valid;
 
 @RestController
 public class AnimalResource {
+
     private final AnimalService animalService;
 
     @Autowired
