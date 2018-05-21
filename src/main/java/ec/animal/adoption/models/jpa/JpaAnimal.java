@@ -7,17 +7,18 @@ import ec.animal.adoption.domain.state.State;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Table(name = "animal")
 public class JpaAnimal {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    @org.hibernate.annotations.Type(type="org.hibernate.type.PostgresUUIDType")
+    private UUID uuid;
 
     @Column(nullable = false)
-    private String uuid;
+    private String clinicalRecord;
 
     @Column(nullable = false)
     private String name;
@@ -40,7 +41,8 @@ public class JpaAnimal {
 
     public JpaAnimal(Animal animal) {
         this();
-        this.uuid = animal.getUuid();
+        this.uuid = UUID.randomUUID();
+        this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
         this.type = animal.getType().name();
@@ -50,13 +52,13 @@ public class JpaAnimal {
 
     public Animal toAnimal() {
         return new Animal(
-                uuid,
+                clinicalRecord,
                 name,
                 registrationDate.toLocalDateTime(),
                 Type.valueOf(type),
                 EstimatedAge.valueOf(estimatedAge),
                 jpaState.toState()
-        );
+        ).setUuid(uuid);
     }
 
     public void setState(State state) {
@@ -70,8 +72,9 @@ public class JpaAnimal {
 
         JpaAnimal jpaAnimal = (JpaAnimal) o;
 
-        if (id != null ? !id.equals(jpaAnimal.id) : jpaAnimal.id != null) return false;
         if (uuid != null ? !uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid != null) return false;
+        if (clinicalRecord != null ? !clinicalRecord.equals(jpaAnimal.clinicalRecord) : jpaAnimal.clinicalRecord != null)
+            return false;
         if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
         if (type != null ? !type.equals(jpaAnimal.type) : jpaAnimal.type != null) return false;
         if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
@@ -83,8 +86,8 @@ public class JpaAnimal {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);

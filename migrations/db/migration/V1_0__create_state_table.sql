@@ -1,5 +1,5 @@
 CREATE TABLE state (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   state_name VARCHAR(20) NOT NULL,
   state JSONB NOT NULL
 );

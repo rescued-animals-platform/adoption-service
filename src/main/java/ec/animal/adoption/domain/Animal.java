@@ -8,12 +8,16 @@ import ec.animal.adoption.domain.state.State;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Animal {
 
-    @NotEmpty(message = "Animal uuid is required")
     @JsonProperty("uuid")
-    private final String uuid;
+    private UUID uuid;
+
+    @NotEmpty(message = "Animal clinical record is required")
+    @JsonProperty("clinicalRecord")
+    private final String clinicalRecord;
 
     @NotEmpty(message = "Animal name is required")
     @JsonProperty("name")
@@ -36,14 +40,14 @@ public class Animal {
 
     @JsonCreator
     public Animal(
-            @JsonProperty("uuid") String uuid,
+            @JsonProperty("clinicalRecord") String clinicalRecord,
             @JsonProperty("name") String name,
             @JsonProperty("registrationDate") LocalDateTime registrationDate,
             @JsonProperty("type") Type type,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
             @JsonProperty("state") State state
     ) {
-        this.uuid = uuid;
+        this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.registrationDate = registrationDate;
         this.type = type;
@@ -56,8 +60,17 @@ public class Animal {
         }
     }
 
-    public String getUuid() {
+    public Animal setUuid(UUID uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public UUID getUuid() {
         return uuid;
+    }
+
+    public String getClinicalRecord() {
+        return clinicalRecord;
     }
 
     public String getName() {
@@ -88,22 +101,25 @@ public class Animal {
         Animal animal = (Animal) o;
 
         if (uuid != null ? !uuid.equals(animal.uuid) : animal.uuid != null) return false;
+        if (clinicalRecord != null ? !clinicalRecord.equals(animal.clinicalRecord) : animal.clinicalRecord != null)
+            return false;
         if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
         if (registrationDate != null ? !registrationDate.equals(animal.registrationDate) : animal.registrationDate != null)
             return false;
         if (type != animal.type) return false;
         if (estimatedAge != animal.estimatedAge) return false;
-        return state.equals(animal.state);
+        return state != null ? state.equals(animal.state) : animal.state == null;
     }
 
     @Override
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
-        result = 31 * result + state.hashCode();
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 }

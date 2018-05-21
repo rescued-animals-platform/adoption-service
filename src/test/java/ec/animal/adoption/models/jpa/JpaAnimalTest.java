@@ -21,34 +21,42 @@ import static org.junit.Assert.assertThat;
 
 public class JpaAnimalTest {
 
-    private LocalDateTime registrationDate;
-    private Animal animal;
-    private String uuid;
+    private String clinicalRecord;
     private String name;
+    private LocalDateTime registrationDate;
     private Type type;
     private EstimatedAge estimatedAge;
+    private Animal animal;
 
     @Before
     public void setUp() {
-        uuid = randomAlphabetic(10);
+        clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
         type = Type.DOG;
         estimatedAge = EstimatedAge.SENIOR_ADULT;
         State state = TestUtils.getRandomState();
-        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, state);
+        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, state);
     }
 
     @Test
     public void shouldCreateAJpaAnimalFromAnAnimal() {
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
-        assertThat(jpaAnimal.toAnimal(), is(animal));
+        Animal animal = jpaAnimal.toAnimal();
+        assertThat(animal.getClinicalRecord(), is(this.animal.getClinicalRecord()));
+        assertThat(animal.getName(), is(this.animal.getName()));
+        assertThat(animal.getRegistrationDate(), is(this.animal.getRegistrationDate()));
+        assertThat(animal.getType(), is(this.animal.getType()));
+        assertThat(animal.getEstimatedAge(), is(this.animal.getEstimatedAge()));
+        assertThat(animal.getState(), is(this.animal.getState()));
     }
 
     @Test
     public void shouldUpdateState() {
-        animal = new Animal(uuid, name, registrationDate, type, estimatedAge, new LookingForHuman(registrationDate));
+        animal = new Animal(
+                clinicalRecord, name, registrationDate, type, estimatedAge, new LookingForHuman(registrationDate)
+        );
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
         State newState = new Adopted(LocalDate.now(), randomAlphabetic(10));
         jpaAnimal.setState(newState);

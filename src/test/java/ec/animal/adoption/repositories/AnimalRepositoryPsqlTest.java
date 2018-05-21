@@ -21,12 +21,9 @@ import java.time.LocalDateTime;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnimalRepositoryPsqlTest {
@@ -67,8 +64,15 @@ public class AnimalRepositoryPsqlTest {
 
         verify(jpaAnimalRepository).save(jpaAnimalArgumentCaptor.capture());
         JpaAnimal jpaAnimal = jpaAnimalArgumentCaptor.getValue();
-        assertThat(jpaAnimal, is(expectedJpaAnimal));
-        assertThat(jpaAnimal.toAnimal(), is(savedAnimal));
+        Animal animal = jpaAnimal.toAnimal();
+
+        assertThat(animal.getClinicalRecord(), is(this.animal.getClinicalRecord()));
+        assertThat(animal.getName(), is(this.animal.getName()));
+        assertThat(animal.getRegistrationDate(), is(this.animal.getRegistrationDate()));
+        assertThat(animal.getType(), is(this.animal.getType()));
+        assertThat(animal.getEstimatedAge(), is(this.animal.getEstimatedAge()));
+        assertThat(animal.getState(), is(this.animal.getState()));
+        assertThat(expectedJpaAnimal.toAnimal(), is(savedAnimal));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)

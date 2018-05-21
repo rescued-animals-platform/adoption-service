@@ -6,7 +6,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
 
 @TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity
@@ -14,8 +18,8 @@ import javax.persistence.*;
 public class JpaState {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Type(type="org.hibernate.type.PostgresUUIDType")
+    private UUID id;
 
     @Column(nullable = false)
     private String stateName;
@@ -31,6 +35,7 @@ public class JpaState {
 
     public JpaState(State state) {
         this();
+        this.id = UUID.randomUUID();
         this.stateName = state.getClass().getSimpleName();
         this.state = state;
     }
