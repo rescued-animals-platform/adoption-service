@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 
-public class Adopted extends State {
+public class Adopted implements State {
     @JsonProperty("adoptionDate")
     private final LocalDate adoptionDate;
 

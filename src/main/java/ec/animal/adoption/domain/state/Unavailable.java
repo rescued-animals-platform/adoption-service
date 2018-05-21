@@ -3,7 +3,7 @@ package ec.animal.adoption.domain.state;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Unavailable extends State {
+public class Unavailable implements State {
 
     @JsonProperty("notes")
     private final String notes;

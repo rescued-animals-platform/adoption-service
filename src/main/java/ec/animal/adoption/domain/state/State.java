@@ -11,5 +11,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
         @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
 })
-public abstract class State {
+public interface State {
 }
