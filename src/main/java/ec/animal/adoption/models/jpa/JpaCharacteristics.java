@@ -16,20 +16,22 @@ public class JpaCharacteristics {
     private final Timestamp timestamp;
     private final String size;
     private final String physicalActivity;
-    private final List<String> temperaments;
-    private final List<String> friendlyWith;
+    private final List<JpaTemperament> temperaments;
+    private final List<JpaFriendlyWith> friendlyWith;
 
     public JpaCharacteristics(Characteristics characteristics) {
         timestamp = Timestamp.valueOf(LocalDateTime.now());
         size = characteristics.getSize().name();
         physicalActivity = characteristics.getPhysicalActivity().name();
-        temperaments = characteristics.getTemperaments().stream().map(Temperament::name).collect(Collectors.toList());
-        friendlyWith = characteristics.getFriendlyWith().stream().map(FriendlyWith::name).collect(Collectors.toList());
+        temperaments = characteristics.getTemperaments().stream().map(JpaTemperament::new).collect(Collectors.toList());
+        friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new).collect(Collectors.toList());
     }
 
     public Characteristics toCharacteristics() {
-        List<Temperament> temperaments = this.temperaments.stream().map(Temperament::valueOf).collect(Collectors.toList());
-        List<FriendlyWith> friendlyWith = this.friendlyWith.stream().map(FriendlyWith::valueOf).collect(Collectors.toList());
+        List<Temperament> temperaments = this.temperaments.stream().map(JpaTemperament::toTemperament)
+                .collect(Collectors.toList());
+        List<FriendlyWith> friendlyWith = this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith)
+                .collect(Collectors.toList());
         return new Characteristics(
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
