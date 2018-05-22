@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,9 +57,11 @@ public class CharacteristicsTest {
         assertThat(characteristics, is(expectedCharacteristics));
     }
 
+    //TODO:  Should not allow more than one temperament of the same type
+
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Characteristics.class).usingGetClass().verify();
+        EqualsVerifier.forClass(Characteristics.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
     @Test

@@ -2,16 +2,26 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+
+@Entity(name = "friendly_with")
 public class JpaFriendlyWith {
 
-    private final String friendlyWith;
+    @EmbeddedId
+    private JpaFriendlyWithId jpaFriendlyWithId;
 
-    public JpaFriendlyWith(FriendlyWith friendlyWith) {
-        this.friendlyWith = friendlyWith.name();
+    private JpaFriendlyWith() {
+        // Required by jpa
+    }
+
+    public JpaFriendlyWith(FriendlyWith friendlyWith, JpaCharacteristics jpaCharacteristics) {
+        this();
+        this.jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith.name(), jpaCharacteristics);
     }
 
     public FriendlyWith toFriendlyWith() {
-        return FriendlyWith.valueOf(this.friendlyWith);
+        return FriendlyWith.valueOf(this.jpaFriendlyWithId.getFriendlyWith());
     }
 
     @Override
@@ -21,11 +31,11 @@ public class JpaFriendlyWith {
 
         JpaFriendlyWith that = (JpaFriendlyWith) o;
 
-        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
+        return jpaFriendlyWithId != null ? jpaFriendlyWithId.equals(that.jpaFriendlyWithId) : that.jpaFriendlyWithId == null;
     }
 
     @Override
     public int hashCode() {
-        return friendlyWith != null ? friendlyWith.hashCode() : 0;
+        return jpaFriendlyWithId != null ? jpaFriendlyWithId.hashCode() : 0;
     }
 }

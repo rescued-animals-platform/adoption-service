@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class JpaFriendlyWithTest {
 
@@ -14,13 +15,17 @@ public class JpaFriendlyWithTest {
     public void shouldCreateJpaTemperamentFromTemperament() {
         FriendlyWith friendlyWith = TestUtils.getRandomFriendlyWith();
 
-        JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith);
+        JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith, mock(JpaCharacteristics.class));
 
         assertThat(jpaFriendlyWith.toFriendlyWith(), is(friendlyWith));
     }
 
     @Test
     public void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().verify();
+        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().withPrefabValues(
+                JpaCharacteristics.class,
+                mock(JpaCharacteristics.class),
+                mock(JpaCharacteristics.class)
+        ).verify();
     }
 }

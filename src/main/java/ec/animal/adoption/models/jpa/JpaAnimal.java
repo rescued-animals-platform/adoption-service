@@ -7,30 +7,30 @@ import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.State;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-@Entity
-@Table(name = "animal")
+@Entity(name = "animal")
 public class JpaAnimal {
 
     @Id
     @org.hibernate.annotations.Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
-    @Column(nullable = false)
+    @NotNull
     private String clinicalRecord;
 
-    @Column(nullable = false)
+    @NotNull
     private String name;
 
-    @Column(nullable = false)
+    @NotNull
     private String type;
 
-    @Column(nullable = false)
+    @NotNull
     private String estimatedAge;
 
-    @Column(nullable = false)
+    @NotNull
     private String sex;
 
     private Timestamp registrationDate;

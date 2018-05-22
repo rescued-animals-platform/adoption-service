@@ -7,20 +7,25 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class JpaTemperamentTest {
+public class JpaTemperamentsTest {
 
     @Test
     public void shouldCreateJpaTemperamentFromTemperament() {
         Temperament temperament = TestUtils.getRandomTemperament();
 
-        JpaTemperament jpaTemperament = new JpaTemperament(temperament);
+        JpaTemperaments jpaTemperaments = new JpaTemperaments(temperament, mock(JpaCharacteristics.class));
 
-        assertThat(jpaTemperament.toTemperament(), is(temperament));
+        assertThat(jpaTemperaments.toTemperament(), is(temperament));
     }
 
     @Test
     public void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaTemperament.class).usingGetClass().verify();
+        EqualsVerifier.forClass(JpaTemperaments.class).usingGetClass().withPrefabValues(
+                JpaCharacteristics.class,
+                mock(JpaCharacteristics.class),
+                mock(JpaCharacteristics.class)
+        ).verify();
     }
 }
