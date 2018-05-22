@@ -1,20 +1,20 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.IntegrationTest;
+import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
-import ec.animal.adoption.domain.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperament.Balance;
 import ec.animal.adoption.domain.characteristics.temperament.Docility;
 import ec.animal.adoption.domain.characteristics.temperament.Sociability;
 import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,15 +34,19 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends IntegrationTest
     @Autowired
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;
 
+    private JpaAnimal jpaAnimal;
     private JpaCharacteristics entity;
+
+    @Before
+    public void setUp() {
+        jpaAnimal = saveJpaAnimal();
+    }
 
     @Test
     public void shouldSaveCharacteristics() {
-        JpaAnimal jpaAnimal = saveJpaAnimal();
-
         Characteristics characteristics = new Characteristics(
-                Size.BIG,
-                PhysicalActivity.HIGH,
+                IntegrationTestUtils.getRandomSize(),
+                IntegrationTestUtils.getRandomPhysicalActivity(),
                 Arrays.asList(Sociability.EXTREMELY_SOCIABLE, Balance.BALANCED),
                 FriendlyWith.CHILDREN,
                 FriendlyWith.DOGS,
@@ -59,10 +63,9 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends IntegrationTest
 
     @Test
     public void shouldGetCharacteristicsByAnimalUuid() {
-        JpaAnimal jpaAnimal = saveJpaAnimal();
         Characteristics characteristics = new Characteristics(
-                Size.TINY,
-                PhysicalActivity.LOW,
+                IntegrationTestUtils.getRandomSize(),
+                IntegrationTestUtils.getRandomPhysicalActivity(),
                 Arrays.asList(Sociability.SHY, Balance.POSSESSIVE, Docility.NEITHER_DOCILE_NOR_DOMINANT),
                 FriendlyWith.OTHER_ANIMALS,
                 FriendlyWith.ADULTS

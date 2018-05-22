@@ -1,6 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.IntegrationTest;
+import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
@@ -18,9 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
@@ -29,9 +27,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class AnimalResourceIntegrationTest extends IntegrationTest {
 
-    private static final List<Type> types = Arrays.asList(Type.values());
-    private static final List<EstimatedAge> estimatedAges = Arrays.asList(EstimatedAge.values());
-    private static final List<Sex> sexes = Arrays.asList(Sex.values());
     private static final String ANIMALS_URL = "/adoption/animals";
 
     private String clinicalRecord;
@@ -50,16 +45,16 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        type = types.get(getRandomIndex(types));
-        estimatedAge = estimatedAges.get(getRandomIndex(estimatedAges));
-        sex = sexes.get(getRandomIndex(sexes));
+        type = IntegrationTestUtils.getRandomType();
+        estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
+        sex = IntegrationTestUtils.getRandomSex();
         lookingForHumanState = new LookingForHuman(registrationDate);
     }
 
     @Test
     public void shouldReturn201Created() {
         Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate,type, estimatedAge, sex, lookingForHumanState
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
         );
 
         ResponseEntity<Animal> response = testRestTemplate.postForEntity(
@@ -131,11 +126,6 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
         assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
         ApiError apiError = conflictResponse.getBody();
         assertNotNull(apiError);
-    }
-
-    private static int getRandomIndex(List items) {
-        Random random = new Random();
-        return random.nextInt(items.size());
     }
 
     private void assertCreated(ResponseEntity<Animal> response) {

@@ -23,71 +23,71 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class TestUtils {
 
-    private static final List<State> states = Arrays.asList(
+    private static final List<State> STATES = Arrays.asList(
             new LookingForHuman(LocalDateTime.now()),
             new Adopted(LocalDate.now(), randomAlphabetic(10)),
             new Unavailable(randomAlphabetic(10))
     );
-    private static final Type[] types = Type.values();
-    private static final EstimatedAge[] estimatedAges = EstimatedAge.values();
-    private static final Sex[] sexes = Sex.values();
-    private static final Size[] sizes = Size.values();
-    private static final PhysicalActivity[] physicalActivities = PhysicalActivity.values();
-    private static final FriendlyWith[] friendlyWith = FriendlyWith.values();
-    private static final Sociability[] sociability = Sociability.values();
-    private static final Docility[] docility = Docility.values();
-    private static final Balance[] balance = Balance.values();
+    private static final Type[] TYPES = Type.values();
+    private static final EstimatedAge[] ESTIMATED_AGES = EstimatedAge.values();
+    private static final Sex[] SEXES = Sex.values();
+    private static final Size[] SIZES = Size.values();
+    private static final PhysicalActivity[] PHYSICAL_ACTIVITIES = PhysicalActivity.values();
+    private static final FriendlyWith[] FRIENDLY_WITH = FriendlyWith.values();
+    private static final Sociability[] SOCIABILITY = Sociability.values();
+    private static final Docility[] DOCILITY = Docility.values();
+    private static final Balance[] BALANCE = Balance.values();
 
     public static State getRandomState() {
-        return states.get(getRandomIndex(states.size()));
+        return STATES.get(getRandomIndex(STATES.size()));
     }
 
     public static Type getRandomType() {
-        return types[getRandomIndex(types.length)];
+        return TYPES[getRandomIndex(TYPES.length)];
     }
 
     public static EstimatedAge getRandomEstimatedAge() {
-        return estimatedAges[getRandomIndex(estimatedAges.length)];
+        return ESTIMATED_AGES[getRandomIndex(ESTIMATED_AGES.length)];
     }
 
     public static Sex getRandomSex() {
-        return sexes[getRandomIndex(sexes.length)];
+        return SEXES[getRandomIndex(SEXES.length)];
     }
 
     public static Size getRandomSize() {
-        return sizes[getRandomIndex(sizes.length)];
+        return SIZES[getRandomIndex(SIZES.length)];
     }
 
     public static PhysicalActivity getRandomPhysicalActivity() {
-        return physicalActivities[getRandomIndex(physicalActivities.length)];
+        return PHYSICAL_ACTIVITIES[getRandomIndex(PHYSICAL_ACTIVITIES.length)];
     }
 
     public static Temperament getRandomTemperament() {
         List<Temperament> temperaments = new ArrayList<>();
-        Collections.addAll(temperaments, sociability);
-        Collections.addAll(temperaments, docility);
-        Collections.addAll(temperaments, balance);
+        Collections.addAll(temperaments, SOCIABILITY);
+        Collections.addAll(temperaments, DOCILITY);
+        Collections.addAll(temperaments, BALANCE);
         return temperaments.get(getRandomIndex(temperaments.size()));
     }
 
     public static Sociability getRandomSociability() {
-        return sociability[getRandomIndex(sociability.length)];
+        return SOCIABILITY[getRandomIndex(SOCIABILITY.length)];
     }
 
     public static Docility getRandomDocility() {
-        return docility[getRandomIndex(docility.length)];
+        return DOCILITY[getRandomIndex(DOCILITY.length)];
     }
 
     public static Balance getRandomBalance() {
-        return balance[getRandomIndex(balance.length)];
+        return BALANCE[getRandomIndex(BALANCE.length)];
     }
 
     public static FriendlyWith getRandomFriendlyWith() {
-        return friendlyWith[getRandomIndex(friendlyWith.length)];
+        return FRIENDLY_WITH[getRandomIndex(FRIENDLY_WITH.length)];
     }
 
-    private static int getRandomIndex(int size) {
+    private static int getRandomIndex(int bound) {
         Random random = new Random();
-        return random.nextInt(size);
+        return random.nextInt(bound);
     }
 }
