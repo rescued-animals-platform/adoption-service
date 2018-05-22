@@ -1,11 +1,11 @@
 package ec.animal.adoption.exceptions;
 
-public class EntityAlreadyExistsException extends Exception {
+public class EntityNotFoundException extends Exception {
 
     private final String message;
 
-    public EntityAlreadyExistsException() {
-        this.message = "The resource already exists";
+    public EntityNotFoundException() {
+        this.message = "Unable to find the resource";
     }
 
     @Override

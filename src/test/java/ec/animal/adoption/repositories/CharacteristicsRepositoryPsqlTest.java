@@ -2,6 +2,7 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class CharacteristicsRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetJpaCharacteristicsByAnimalUuid() {
+    public void shouldGetJpaCharacteristicsByAnimalUuid() throws EntityNotFoundException {
         UUID animalUuid = UUID.randomUUID();
         Characteristics characteristics = new Characteristics(
                 TestUtils.getRandomSize(),
@@ -52,5 +53,10 @@ public class CharacteristicsRepositoryPsqlTest {
 
         assertThat(characteristicsFound, is(characteristics));
         assertThat(characteristicsFound, is(expectedJpaCharacteristics.toCharacteristics()));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundException() throws EntityNotFoundException {
+        characteristicsRepositoryPsql.getBy(UUID.randomUUID());
     }
 }

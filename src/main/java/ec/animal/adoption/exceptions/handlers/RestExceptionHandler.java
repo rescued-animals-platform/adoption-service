@@ -1,6 +1,7 @@
 package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -30,9 +31,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(EntityAlreadyExistsException ex) {
+    protected ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
         HttpStatus conflict = HttpStatus.CONFLICT;
         return buildResponseEntity(new ApiError(conflict, ex.getMessage()), conflict);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
+        HttpStatus notFound = HttpStatus.NOT_FOUND;
+        return buildResponseEntity(new ApiError(notFound, ex.getMessage()), notFound);
     }
 
     @Override

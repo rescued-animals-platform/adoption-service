@@ -1,6 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.services.CharacteristicsService;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 public class CharacteristicsResourceTest {
 
     @Test
-    public void shouldGetCharacteristicsForAnimal() {
+    public void shouldGetCharacteristicsForAnimal() throws EntityNotFoundException {
         UUID animalUuid = UUID.randomUUID();
         CharacteristicsService characteristicsService = mock(CharacteristicsService.class);
         Characteristics expectedCharacteristics = mock(Characteristics.class);

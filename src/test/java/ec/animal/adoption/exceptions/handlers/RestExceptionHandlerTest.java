@@ -1,6 +1,7 @@
 package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -85,7 +86,7 @@ public class RestExceptionHandlerTest {
     public void shouldReturnAResponseEntityWithHttpStatusConflictForEntityAlreadyExistsException() {
         EntityAlreadyExistsException entityAlreadyExistsException = mock(EntityAlreadyExistsException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityAlreadyExistsException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExists(entityAlreadyExistsException);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.CONFLICT));
     }
@@ -95,7 +96,7 @@ public class RestExceptionHandlerTest {
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException();
         ApiError expectedApiError = new ApiError(HttpStatus.CONFLICT, "The resource already exists");
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityAlreadyExistsException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExists(entityAlreadyExistsException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();
@@ -134,6 +135,27 @@ public class RestExceptionHandlerTest {
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
                 methodArgumentNotValidException, headers, status, webRequest
         );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusNotFoundForEntityNotFoundException() {
+        EntityNotFoundException entityNoyFoundException = mock(EntityNotFoundException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityNoyFoundException);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForEntityNotFoundException() {
+        EntityNotFoundException entityNotFoundException = new EntityNotFoundException();
+        ApiError expectedApiError = new ApiError(HttpStatus.NOT_FOUND, "Unable to find the resource");
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityNotFoundException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

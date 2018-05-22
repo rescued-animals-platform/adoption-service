@@ -11,11 +11,8 @@ import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -24,10 +21,9 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.http.HttpStatus.*;
 
 public class AnimalResourceIntegrationTest extends IntegrationTest {
-
-    private static final String ANIMALS_URL = "/adoption/animals";
 
     private String clinicalRecord;
     private String name;
@@ -36,9 +32,6 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State lookingForHumanState;
-
-    @Autowired
-    private TestRestTemplate testRestTemplate;
 
     @Before
     public void setUp() {
@@ -92,7 +85,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
                 ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
         );
 
-        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+        assertThat(response.getStatusCode(), is(BAD_REQUEST));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
     }
@@ -107,7 +100,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
                 ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
         );
 
-        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+        assertThat(response.getStatusCode(), is(BAD_REQUEST));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
     }
@@ -123,13 +116,13 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
                 ANIMALS_URL, animal, ApiError.class, getHttpHeaders()
         );
 
-        assertThat(conflictResponse.getStatusCode(), is(HttpStatus.CONFLICT));
+        assertThat(conflictResponse.getStatusCode(), is(CONFLICT));
         ApiError apiError = conflictResponse.getBody();
         assertNotNull(apiError);
     }
 
     private void assertCreated(ResponseEntity<Animal> response) {
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        assertThat(response.getStatusCode(), is(CREATED));
         Animal animal = response.getBody();
         assertNotNull(animal);
         assertNotNull(animal.getUuid());
