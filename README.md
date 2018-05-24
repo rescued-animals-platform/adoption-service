@@ -10,7 +10,7 @@ Tech stack: Java 8, Gradle, Flyway, Spring Boot, Jetty, Docker, PostgresSQL 10.
     
 - Login to docker with your credentials. If you don't have an account, you can create one in the [Docker Hub site](https://hub.docker.com/)
 
-        `docker login`
+        docker login
 
 - Run: `make all-test` to run all tests and verify everything works as expected.
 
