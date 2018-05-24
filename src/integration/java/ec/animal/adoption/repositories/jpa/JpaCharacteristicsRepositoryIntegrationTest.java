@@ -47,7 +47,7 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends IntegrationTest
         Characteristics characteristics = new Characteristics(
                 IntegrationTestUtils.getRandomSize(),
                 IntegrationTestUtils.getRandomPhysicalActivity(),
-                Arrays.asList(Sociability.EXTREMELY_SOCIABLE, Balance.BALANCED),
+                Arrays.asList(Sociability.VERY_SOCIABLE, Balance.BALANCED),
                 FriendlyWith.CHILDREN,
                 FriendlyWith.DOGS,
                 FriendlyWith.ADULTS

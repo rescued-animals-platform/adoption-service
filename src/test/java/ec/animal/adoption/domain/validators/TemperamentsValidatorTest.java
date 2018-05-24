@@ -59,7 +59,7 @@ public class TemperamentsValidatorTest {
     @Test
     public void shouldBeInvalidIfTemperamentsHaveMoreThanOneSociabilityDefinition() {
         Set<Temperament> temperaments = new HashSet<>(Arrays.asList(
-                Sociability.SHY, Sociability.EXTREMELY_SOCIABLE, Docility.DOCILE
+                Sociability.SHY, Sociability.VERY_SOCIABLE, Docility.DOCILE
         ));
 
         boolean areTemperamentsValid = temperamentsValidator.isValid(temperaments, context);
