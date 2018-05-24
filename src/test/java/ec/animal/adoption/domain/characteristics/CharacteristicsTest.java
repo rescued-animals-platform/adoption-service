@@ -5,11 +5,16 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import javax.validation.ConstraintViolation;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,6 +22,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class CharacteristicsTest {
+
+    private static final String SIZE_IS_REQUIRED = "Size is required";
+    private static final String PHYSICAL_ACTIVITY_IS_REQUIRED = "Physical activity is required";
+    private static final String AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED = "At least one temperament is required";
 
     private Temperament temperament;
     private Size size;
@@ -77,5 +86,72 @@ public class CharacteristicsTest {
         );
 
         assertThat(deserializedCharacteristics, is(characteristics));
+    }
+
+    @Test
+    public void shouldValidateNonNullSize() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Characteristics characteristics = new Characteristics(
+                null, physicalActivity, temperaments, TestUtils.getRandomFriendlyWith()
+        );
+
+        Set<ConstraintViolation<Characteristics>> constraintViolations = localValidatorFactory.validate(characteristics);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Characteristics> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(SIZE_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("size"));
+    }
+
+    @Test
+    public void shouldValidateNonNullPhysicalActivity() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Characteristics characteristics = new Characteristics(
+                size, null, temperaments, TestUtils.getRandomFriendlyWith()
+        );
+
+        Set<ConstraintViolation<Characteristics>> constraintViolations = localValidatorFactory.validate(characteristics);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Characteristics> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(PHYSICAL_ACTIVITY_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("physicalActivity"));
+    }
+
+    @Test
+    public void shouldValidateNonNullTemperaments() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Characteristics characteristics = new Characteristics(
+                size, physicalActivity, null, TestUtils.getRandomFriendlyWith()
+        );
+
+        Set<ConstraintViolation<Characteristics>> constraintViolations = localValidatorFactory.validate(characteristics);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Characteristics> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("temperaments"));
+    }
+
+    @Test
+    public void shouldValidateNonEmptyTemperaments() {
+        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
+        Characteristics characteristics = new Characteristics(
+                size, physicalActivity, Collections.emptyList(), TestUtils.getRandomFriendlyWith()
+        );
+
+        Set<ConstraintViolation<Characteristics>> constraintViolations = localValidatorFactory.validate(characteristics);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Characteristics> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("temperaments"));
+    }
+
+    private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
+        LocalValidatorFactoryBean localValidatorFactory = new LocalValidatorFactoryBean();
+        localValidatorFactory.setProviderClass(HibernateValidator.class);
+        localValidatorFactory.afterPropertiesSet();
+        return localValidatorFactory;
     }
 }

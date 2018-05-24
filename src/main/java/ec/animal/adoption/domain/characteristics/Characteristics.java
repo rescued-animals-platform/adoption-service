@@ -5,18 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 public class Characteristics {
 
+    @NotNull(message = "Size is required")
     @JsonProperty("size")
     private final Size size;
 
+    @NotNull(message = "Physical activity is required")
     @JsonProperty("physicalActivity")
     private final PhysicalActivity physicalActivity;
 
+    @NotEmpty(message = "At least one temperament is required")
     @JsonProperty("temperaments")
-    private final Set<Temperament> temperaments;
+    private Set<Temperament> temperaments;
 
     @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;
@@ -34,7 +39,9 @@ public class Characteristics {
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
-        this.temperaments = new HashSet<>(temperaments);
+        if(temperaments != null) {
+            this.temperaments =  new HashSet<>(temperaments);
+        }
     }
 
     public Size getSize() {

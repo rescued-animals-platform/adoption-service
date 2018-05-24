@@ -79,7 +79,7 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate +
                 "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge +
                 "\",\"sex\":\"12345\"}";
-        HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithWrongData, getHttpHeaders());
+        HttpEntity<String> entity = new HttpEntity<>(animalForAdoptionWithWrongData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testRestTemplate.exchange(
                 ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
@@ -92,9 +92,9 @@ public class AnimalResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
-        String animalForAdoptionWithMissingOrInvalidData = "{\"clinicalRecord\":\"\",\"name\":\"" + name +
+        String animalForAdoptionWithMissingData = "{\"clinicalRecord\":\"\",\"name\":\"" + name +
                 "\",\"registrationDate\":\"" + registrationDate + "\",\"type\":\"" + type + "\"}";
-        HttpEntity<String> entity = new HttpEntity<String>(animalForAdoptionWithMissingOrInvalidData, getHttpHeaders());
+        HttpEntity<String> entity = new HttpEntity<>(animalForAdoptionWithMissingData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testRestTemplate.exchange(
                 ANIMALS_URL, HttpMethod.POST, entity, ApiError.class
