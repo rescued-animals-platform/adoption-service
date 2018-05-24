@@ -1,6 +1,6 @@
 # Animal adoption service
 
-Tech stack: Java 8, Gradle, Flyway, Spring Boot, Jetty, Docker, PostgresSQL 10.
+Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10.
 
 # Configuration for your development environment
 
