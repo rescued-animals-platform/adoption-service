@@ -1,6 +1,7 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
@@ -28,5 +29,17 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
         }
 
         return jpaCharacteristics.toCharacteristics();
+    }
+
+    @Override
+    public Characteristics save(Characteristics characteristics) throws EntityAlreadyExistsException {
+        try {
+            JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(
+                    new JpaCharacteristics(characteristics)
+            );
+            return jpaCharacteristics.toCharacteristics();
+        } catch(Exception ex) {
+            throw new EntityAlreadyExistsException();
+        }
     }
 }
