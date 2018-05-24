@@ -19,9 +19,9 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
@@ -97,6 +97,30 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
         assertThat(conflictResponse.getStatusCode(), is(CONFLICT));
         ApiError apiError = conflictResponse.getBody();
         assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn200OkWithCharacteristics() {
+        ResponseEntity<Animal> animalResponse = createAndSaveAnimal();
+        Animal animal = animalResponse.getBody();
+        assertNotNull(animal);
+        ResponseEntity<Characteristics> createdCharacteristicsResponse = testRestTemplate.postForEntity(
+                CHARACTERISTICS_URL, new Characteristics(
+                        Size.TINY,
+                        PhysicalActivity.LOW,
+                        Arrays.asList(Docility.DOCILE, Sociability.SHY),
+                        FriendlyWith.CATS
+                ), Characteristics.class, animal.getUuid(), getHttpHeaders()
+        );
+        Characteristics createdCharacteristics = createdCharacteristicsResponse.getBody();
+
+        ResponseEntity<Characteristics> response = testRestTemplate.getForEntity(
+                CHARACTERISTICS_URL, Characteristics.class, animal.getUuid(), getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(OK));
+        Characteristics foundCharacteristics = response.getBody();
+        assertThat(foundCharacteristics, is(createdCharacteristics));
     }
 
     @Test
