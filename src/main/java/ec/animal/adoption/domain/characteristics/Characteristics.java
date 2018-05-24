@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.characteristics.temperament.Temperament;
+import ec.animal.adoption.domain.validators.Temperaments;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ public class Characteristics {
     private final PhysicalActivity physicalActivity;
 
     @NotEmpty(message = "At least one temperament is required")
+    @Temperaments
     @JsonProperty("temperaments")
     private Set<Temperament> temperaments;
 
