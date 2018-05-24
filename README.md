@@ -8,7 +8,7 @@ Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v
     - Java 8
     - Docker
     
-- Login to docker with your credentials. If you don't have an account, you can create one in the [Docker Hub site](https://hub.docker.com/)
+- Login to docker with your credentials. If you don't have an account, create one in the [Docker Hub site](https://hub.docker.com/)
 
         docker login
 
