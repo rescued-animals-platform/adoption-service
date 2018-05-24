@@ -41,8 +41,8 @@ public class Characteristics {
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
-        if(temperaments != null) {
-            this.temperaments =  new HashSet<>(temperaments);
+        if (temperaments != null) {
+            this.temperaments = new HashSet<>(temperaments);
         }
     }
 

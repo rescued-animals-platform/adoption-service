@@ -163,7 +163,8 @@ public class CharacteristicsTest {
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Characteristics> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(TEMPERAMENTS_ARE_INVALID));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("temperaments"));    }
+        assertThat(constraintViolation.getPropertyPath().toString(), is("temperaments"));
+    }
 
     private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
         LocalValidatorFactoryBean localValidatorFactory = new LocalValidatorFactoryBean();
