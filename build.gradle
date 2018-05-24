@@ -12,8 +12,8 @@ plugins {
 apply plugin: 'java'
 apply from: 'gradle/dependencies.gradle'
 apply from: 'gradle/pitest.gradle'
-apply from: 'gradle/idea.gradle'
 apply from: 'gradle/sourceset.gradle'
+apply from: 'gradle/idea.gradle'
 
 group 'ec.animal.adoption'
 version '1.0-SNAPSHOT'
@@ -24,4 +24,7 @@ repositories {
 	mavenCentral()
 }
 
-
+configurations {
+	integrationTestCompile.extendsFrom(testCompile)
+	integrationTestRuntime.extendsFrom(testRuntime)
+}

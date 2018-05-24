@@ -2,12 +2,12 @@ apply plugin: 'idea'
 
 idea {
     module {
-        testSourceDirs += file('src/integration/java')
+        testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
 
         iml {
             withXml {
                 def testResourceFolders = it.asNode().component.content.sourceFolder
-                        .findAll { it.@url in ['file://$MODULE_DIR$/src/test/resources'] }
+                        .findAll { it.@url in ['file://$MODULE_DIR$/src/integration/resources', 'file://$MODULE_DIR$/src/test/resources'] }
                 testResourceFolders.each { resourceFolder ->
                     def atts = resourceFolder.attributes()
                     atts.remove('isTestSource')
