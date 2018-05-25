@@ -35,7 +35,7 @@ jobs:
       - run: make build-project
 
       - store_test_results:
-          path: build/reports/tests/test/*
+          path: build/reports/tests/test/index.html
 
       - store_artifacts:
           path: build/libs/adoption-service-1.0-SNAPSHOT.jar
