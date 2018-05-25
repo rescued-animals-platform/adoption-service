@@ -14,18 +14,29 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          - v1-dependencies-
+      - run:
+          command: |
+            pwd
+            ls
 
-      - run: ./gradlew dependencies
+#      - persist_to_workspace:
+#          root: ~/repo
+#          paths:
+#            - adoption-service
 
       - run:
           name: Install make
           command: |
             sudo apt-get update
             sudo apt-get install -y make
+          when: always
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
+
+      - run: ./gradlew dependencies
 
       - save_cache:
           paths:
@@ -49,3 +60,7 @@ jobs:
 
       - store_artifacts:
           path: build/libs/adoption-service-1.0-SNAPSHOT.jar
+
+  pitest:
+    docker:
+      - image: circleci/openjdk:8-jdk
