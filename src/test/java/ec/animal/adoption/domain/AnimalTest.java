@@ -2,7 +2,6 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -14,14 +13,13 @@ import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,7 +33,6 @@ public class AnimalTest {
     private static final String ANIMAL_REGISTRATION_DATE_IS_REQUIRED = "Animal registration date is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
-    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     private String clinicalRecord;
     private String name;
@@ -51,10 +48,10 @@ public class AnimalTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        type = TestUtils.getRandomType();
-        estimatedAge = TestUtils.getRandomEstimatedAge();
-        sex = TestUtils.getRandomSex();
-        state = TestUtils.getRandomState();
+        type = getRandomType();
+        estimatedAge = getRandomEstimatedAge();
+        sex = getRandomSex();
+        state = getRandomState();
         animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
     }
 
@@ -142,7 +139,7 @@ public class AnimalTest {
     public void shouldValidateNonNullClinicalRecord() {
         Animal animal = new Animal(null, name, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -154,7 +151,7 @@ public class AnimalTest {
     public void shouldValidateNonEmptyClinicalRecord() {
         Animal animal = new Animal("", name, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -166,7 +163,7 @@ public class AnimalTest {
     public void shouldValidateNonNullName() {
         Animal animal = new Animal(clinicalRecord, null, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -178,7 +175,7 @@ public class AnimalTest {
     public void shouldValidateNonEmptyName() {
         Animal animal = new Animal(clinicalRecord, "", registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -190,7 +187,7 @@ public class AnimalTest {
     public void shouldValidateNonNullType() {
         Animal animal = new Animal(clinicalRecord, name, registrationDate, null, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -202,7 +199,7 @@ public class AnimalTest {
     public void shouldValidateNonNullRegistrationDate() {
         Animal animal = new Animal(clinicalRecord, name, null, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -214,7 +211,7 @@ public class AnimalTest {
     public void shouldValidateNonNullEstimatedAge() {
         Animal animal = new Animal(clinicalRecord, name, registrationDate, type, null, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -226,7 +223,7 @@ public class AnimalTest {
     public void shouldValidateNonNullSex() {
         Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, null, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();

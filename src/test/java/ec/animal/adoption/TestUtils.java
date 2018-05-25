@@ -14,9 +14,13 @@ import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
@@ -75,6 +79,10 @@ public class TestUtils {
 
     public static FriendlyWith getRandomFriendlyWith() {
         return FRIENDLY_WITH[getRandomIndex(FRIENDLY_WITH.length)];
+    }
+
+    public static Validator getValidator() {
+        return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     private static int getRandomIndex(int bound) {
