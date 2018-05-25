@@ -14,14 +14,18 @@ jobs:
     steps:
       - checkout
 
-      - run: apt-get update && apt-get install -y make
-
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "build.gradle" }}
           - v1-dependencies-
 
       - run: gradle dependencies
+
+      - run:
+          name: Install make
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y make
 
       - save_cache:
           paths:
