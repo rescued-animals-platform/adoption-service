@@ -32,7 +32,7 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run: make build
+      - run: make build-project
 
       - store_test_results:
           path: build/reports/tests/test

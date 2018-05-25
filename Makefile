@@ -10,8 +10,8 @@ undeploy-postgres:
 unit-test:
 	./gradlew clean test
 
-build:
-    ./gradlew clean build
+build-project:
+	./gradlew clean build
 
 integration-test: deploy-postgres
 	./gradlew clean integrationTest
