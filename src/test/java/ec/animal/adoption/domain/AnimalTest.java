@@ -9,17 +9,18 @@ import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.*;
@@ -34,6 +35,7 @@ public class AnimalTest {
     private static final String ANIMAL_REGISTRATION_DATE_IS_REQUIRED = "Animal registration date is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
+    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     private String clinicalRecord;
     private String name;
@@ -138,10 +140,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullClinicalRecord() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(null, name, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -151,10 +152,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyClinicalRecord() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal("", name, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -164,10 +164,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullName() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, null, registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -177,10 +176,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyName() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, "", registrationDate, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -190,10 +188,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullType() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, name, registrationDate, null, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -203,10 +200,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullRegistrationDate() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, name, null, type, estimatedAge, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -216,10 +212,9 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullEstimatedAge() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, name, registrationDate, type, null, sex, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
@@ -229,21 +224,13 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullSex() {
-        LocalValidatorFactoryBean localValidatorFactory = getLocalValidatorFactoryBean();
         Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, null, state);
 
-        Set<ConstraintViolation<Animal>> constraintViolations = localValidatorFactory.validate(animal);
+        Set<ConstraintViolation<Animal>> constraintViolations = VALIDATOR.validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_SEX_IS_REQUIRED));
         assertThat(constraintViolation.getPropertyPath().toString(), is("sex"));
-    }
-
-    private static LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
-        LocalValidatorFactoryBean localValidatorFactory = new LocalValidatorFactoryBean();
-        localValidatorFactory.setProviderClass(HibernateValidator.class);
-        localValidatorFactory.afterPropertiesSet();
-        return localValidatorFactory;
     }
 }
