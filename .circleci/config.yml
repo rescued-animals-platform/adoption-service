@@ -14,15 +14,17 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          command: |
-            pwd
-            ls
-
-#      - persist_to_workspace:
-#          root: ~/repo
-#          paths:
-#            - adoption-service
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - src
+            - migrations
+            - Makefile
+            - gradle
+            - build.gradle
+            - settings.gradle
+            - gradlew
+            - gradlew.bat
 
       - run:
           name: Install make
@@ -61,6 +63,30 @@ jobs:
       - store_artifacts:
           path: build/libs/adoption-service-1.0-SNAPSHOT.jar
 
-#  pitest:
-#    docker:
-#      - image: circleci/openjdk:8-jdk
+  pitest:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - run: make pitest
+
+      - store_test_results:
+          path: build/reports/pitest
+
+workflows:
+  version: 2
+  adoption-service:
+    jobs:
+      - build
+      - pitest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
