@@ -75,6 +75,11 @@ jobs:
 
     steps:
       - run:
+          command: |
+            pwd
+            ls
+
+      - run:
           name: Install make
           command: |
             sudo apt-get update
