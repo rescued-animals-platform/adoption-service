@@ -86,11 +86,8 @@ jobs:
 
       - run: make pitest
 
-      - store_test_results:
-          path: build/reports/pitest/mutations.xml
-
       - store_artifacts:
-          path: build/reports/pitest/mutations.xml
+          path: build/reports/pitest
 
 workflows:
   version: 2
