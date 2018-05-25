@@ -32,4 +32,10 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run: make unit-test
+      - run: make build
+
+      - store_test_results:
+          path: build/reports/tests/test
+
+      - store_artifacts:
+          path: build/libs/adoption-service-1.0-SNAPSHOT.jar
