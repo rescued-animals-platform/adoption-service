@@ -89,6 +89,42 @@ jobs:
       - store_artifacts:
           path: build/reports/pitest
 
+  integration-test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - run:
+          name: Install make
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y make
+          when: always
+
+      - attach_workspace:
+          at: ~/repo
+
+      - run: make integration-test
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junitint/
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junitint/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/junitint
+
+      - store_artifacts:
+          path: ~/junitint
+
 workflows:
   version: 2
   adoption-service:
@@ -97,6 +133,13 @@ workflows:
       - pitest:
           requires:
             - build
+          filters:
+            branches:
+              only: master
+      - integration-test:
+          requires:
+            - build
+            - pitest
           filters:
             branches:
               only: master
