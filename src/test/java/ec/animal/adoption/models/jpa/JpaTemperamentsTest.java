@@ -1,31 +1,26 @@
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.characteristics.temperament.Temperament;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
+import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class JpaTemperamentsTest {
 
     @Test
     public void shouldCreateJpaTemperamentFromTemperament() {
-        Temperament temperament = TestUtils.getRandomTemperament();
+        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance());
 
-        JpaTemperaments jpaTemperaments = new JpaTemperaments(temperament, mock(JpaCharacteristics.class));
+        JpaTemperaments jpaTemperaments = new JpaTemperaments(temperaments);
 
-        assertThat(jpaTemperaments.toTemperament(), is(temperament));
+        assertThat(jpaTemperaments.toTemperaments(), is(temperaments));
     }
 
     @Test
     public void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaTemperaments.class).usingGetClass().withPrefabValues(
-                JpaCharacteristics.class,
-                mock(JpaCharacteristics.class),
-                mock(JpaCharacteristics.class)
-        ).verify();
+        EqualsVerifier.forClass(JpaTemperaments.class).usingGetClass().verify();
     }
 }

@@ -3,10 +3,9 @@ package ec.animal.adoption.domain.characteristics;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.characteristics.temperament.Temperament;
-import ec.animal.adoption.domain.validators.Temperaments;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.validators.ValidTemperaments;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -20,10 +19,9 @@ public class Characteristics {
     @JsonProperty("physicalActivity")
     private final PhysicalActivity physicalActivity;
 
-    @NotEmpty(message = "At least one temperament is required")
-    @Temperaments
+    @ValidTemperaments
     @JsonProperty("temperaments")
-    private Set<Temperament> temperaments;
+    private Temperaments temperaments;
 
     @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;
@@ -35,15 +33,13 @@ public class Characteristics {
     public Characteristics(
             @JsonProperty("size") Size size,
             @JsonProperty("physicalActivity") PhysicalActivity physicalActivity,
-            @JsonProperty("temperaments") List<Temperament> temperaments,
+            @JsonProperty("temperaments") Temperaments temperaments,
             @JsonProperty("friendlyWith") FriendlyWith... friendlyWith
     ) {
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
-        if (temperaments != null) {
-            this.temperaments = new HashSet<>(temperaments);
-        }
+        this.temperaments = temperaments;
     }
 
     public Size getSize() {
@@ -54,8 +50,8 @@ public class Characteristics {
         return physicalActivity;
     }
 
-    public List<Temperament> getTemperaments() {
-        return new ArrayList<>(temperaments);
+    public Temperaments getTemperaments() {
+        return temperaments;
     }
 
     public List<FriendlyWith> getFriendlyWith() {

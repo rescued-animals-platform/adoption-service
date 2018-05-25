@@ -2,6 +2,7 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
@@ -15,9 +16,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.postgresql.util.PSQLException;
 
-import java.util.Collections;
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.getRandomBalance;
+import static ec.animal.adoption.TestUtils.getRandomDocility;
+import static ec.animal.adoption.TestUtils.getRandomSociability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -40,7 +43,7 @@ public class CharacteristicsRepositoryPsqlTest {
         characteristics = new Characteristics(
                 TestUtils.getRandomSize(),
                 TestUtils.getRandomPhysicalActivity(),
-                Collections.singletonList(TestUtils.getRandomTemperament()),
+                new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance()),
                 TestUtils.getRandomFriendlyWith()
         );
         characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(jpaCharacteristicsRepository);

@@ -6,10 +6,9 @@ import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.domain.characteristics.temperament.Balance;
-import ec.animal.adoption.domain.characteristics.temperament.Docility;
-import ec.animal.adoption.domain.characteristics.temperament.Sociability;
-import ec.animal.adoption.domain.characteristics.temperament.Temperament;
+import ec.animal.adoption.domain.characteristics.temperaments.Balance;
+import ec.animal.adoption.domain.characteristics.temperaments.Docility;
+import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -60,14 +59,6 @@ public class TestUtils {
 
     public static PhysicalActivity getRandomPhysicalActivity() {
         return PHYSICAL_ACTIVITIES[getRandomIndex(PHYSICAL_ACTIVITIES.length)];
-    }
-
-    public static Temperament getRandomTemperament() {
-        List<Temperament> temperaments = new ArrayList<>();
-        Collections.addAll(temperaments, SOCIABILITY);
-        Collections.addAll(temperaments, DOCILITY);
-        Collections.addAll(temperaments, BALANCE);
-        return temperaments.get(getRandomIndex(temperaments.size()));
     }
 
     public static Sociability getRandomSociability() {

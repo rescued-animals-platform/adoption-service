@@ -4,7 +4,6 @@ import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.domain.characteristics.temperament.Temperament;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
@@ -36,9 +35,9 @@ public class JpaCharacteristics {
     @NotNull
     private String physicalActivity;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaTemperamentsId.jpaCharacteristics")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<JpaTemperaments> temperaments;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "temperaments_id")
+    private JpaTemperaments jpaTemperaments;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaFriendlyWithId.jpaCharacteristics")
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -50,24 +49,22 @@ public class JpaCharacteristics {
 
     public JpaCharacteristics(Characteristics characteristics) {
         this();
-        animalUuid = characteristics.getAnimalUuid();
-        creationDate = Timestamp.valueOf(LocalDateTime.now());
-        size = characteristics.getSize().name();
-        physicalActivity = characteristics.getPhysicalActivity().name();
-        temperaments = characteristics.getTemperaments().stream().map(temperament -> new JpaTemperaments(temperament, this)).collect(Collectors.toList());
-        friendlyWith = characteristics.getFriendlyWith().stream().map(friendlyWith -> new JpaFriendlyWith(friendlyWith, this)).collect(Collectors.toList());
+        this.animalUuid = characteristics.getAnimalUuid();
+        this.creationDate = Timestamp.valueOf(LocalDateTime.now());
+        this.size = characteristics.getSize().name();
+        this.physicalActivity = characteristics.getPhysicalActivity().name();
+        this.jpaTemperaments = new JpaTemperaments(characteristics.getTemperaments());
+        this.friendlyWith = characteristics.getFriendlyWith().stream()
+                .map(friendlyWith -> new JpaFriendlyWith(friendlyWith, this))
+                .collect(Collectors.toList());
     }
 
     public Characteristics toCharacteristics() {
-        List<Temperament> temperaments = this.temperaments.stream().map(JpaTemperaments::toTemperament)
-                .collect(Collectors.toList());
-        List<FriendlyWith> friendlyWith = this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith)
-                .collect(Collectors.toList());
         Characteristics characteristics = new Characteristics(
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
-                temperaments,
-                friendlyWith.toArray(new FriendlyWith[friendlyWith.size()])
+                this.jpaTemperaments.toTemperaments(),
+                this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith).toArray(FriendlyWith[]::new)
         );
         characteristics.setAnimalUuid(animalUuid);
         return characteristics;
@@ -86,7 +83,7 @@ public class JpaCharacteristics {
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
             return false;
-        if (temperaments != null ? !temperaments.equals(that.temperaments) : that.temperaments != null) return false;
+        if (jpaTemperaments != null ? !jpaTemperaments.equals(that.jpaTemperaments) : that.jpaTemperaments != null) return false;
         return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 
@@ -97,7 +94,7 @@ public class JpaCharacteristics {
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
         result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
-        result = 31 * result + (temperaments != null ? temperaments.hashCode() : 0);
+        result = 31 * result + (jpaTemperaments != null ? jpaTemperaments.hashCode() : 0);
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
         return result;
     }

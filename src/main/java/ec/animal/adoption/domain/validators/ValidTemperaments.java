@@ -8,9 +8,9 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface Temperaments {
+public @interface ValidTemperaments {
 
-    String message() default "Temperaments are invalid";
+    String message() default "At least one temperaments is required";
 
     Class<?>[] groups() default {};
 
