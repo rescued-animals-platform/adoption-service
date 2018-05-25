@@ -87,7 +87,7 @@ jobs:
       - run: make pitest
 
       - store_test_results:
-          path: build/reports/pitest
+          path: build/reports/pitest/mutations.xml
 
 workflows:
   version: 2
