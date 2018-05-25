@@ -74,6 +74,13 @@ jobs:
       TERM: dumb
 
     steps:
+      - run:
+          name: Install make
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y make
+          when: always
+
       - run: make pitest
 
       - store_test_results:
