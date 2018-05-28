@@ -11,5 +11,3 @@ ENV PATH "${PATH}:/usr/lib"
 RUN ./gradlew --version
 
 WORKDIR /usr/src/app
-
-ENTRYPOINT ["gradlew"]

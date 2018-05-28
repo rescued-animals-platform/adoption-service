@@ -42,12 +42,12 @@ jobs:
 
       - run: ./gradlew dependencies
 
+      - run: make build-project
+
       - save_cache:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
-
-      - run: make build-project
 
       - run:
           name: Save test results
@@ -86,7 +86,17 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
+
       - run: make pitest
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - store_artifacts:
           path: build/reports/pitest
@@ -123,7 +133,17 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
+
       - run: make integration-test
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
