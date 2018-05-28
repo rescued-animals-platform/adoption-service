@@ -14,8 +14,7 @@ unit-test:
 	./gradlew clean test
 
 integration-test:
-	@docker-compose run --rm gradlew-builder echo $(ls /usr/src/app)
-	make undeploy-compose
+	./gradlew clean integrationTest
 
 pitest:
 	./gradlew clean pitest
