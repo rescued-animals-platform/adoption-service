@@ -25,6 +25,8 @@ jobs:
             - settings.gradle
             - gradlew
             - gradlew.bat
+            - docker
+            - docker-compose.yml
 
       - run:
           name: Install make
