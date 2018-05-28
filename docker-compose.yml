@@ -6,7 +6,7 @@ services:
       dockerfile: docker/Dockerfile.gradlew
     volumes:
       - "~/.gradle/caches:/root/.gradle/caches:rw"
-      - "~/repo:/usr/src/app:rw"
+      - ".:/usr/src/app:rw"
     depends_on:
       - "adoption_service_postgres"
   adoption_service_postgres:
