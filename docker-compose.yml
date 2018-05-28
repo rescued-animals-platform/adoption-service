@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.gradlew
+    volumes:
+      - "~/.gradle/caches:/root/.gradle/caches:rw"
+      - ".:/usr/src/app:rw"
     depends_on:
       - "adoption_service_postgres"
   adoption_service_postgres:
