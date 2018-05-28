@@ -1,7 +1,11 @@
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.IntegrationTest;
+import ec.animal.adoption.AbstractIntegrationTest;
+import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -10,12 +14,15 @@ import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -25,13 +32,11 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
+public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {
-        ResponseEntity<Animal> animalResponse = createAndSaveAnimal();
-        Animal animal = animalResponse.getBody();
-        assertNotNull(animal);
+        Animal animal = createAndSaveAnimal();
         Characteristics characteristics = new Characteristics(
                 Size.TINY,
                 PhysicalActivity.LOW,
@@ -39,7 +44,7 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
                 FriendlyWith.ADULTS
         );
 
-        ResponseEntity<Characteristics> response = testRestTemplate.postForEntity(
+        ResponseEntity<Characteristics> response = testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, Characteristics.class, animal.getUuid(), getHttpHeaders()
         );
 
@@ -56,7 +61,7 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
         HttpEntity<String> entity = new HttpEntity<>(characteristicsWithWrongData, getHttpHeaders());
 
-        ResponseEntity<ApiError> response = testRestTemplate.exchange(
+        ResponseEntity<ApiError> response = testClient.exchange(
                 CHARACTERISTICS_URL, HttpMethod.POST, entity, ApiError.class, UUID.randomUUID()
         );
 
@@ -72,7 +77,7 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
         HttpEntity<String> entity = new HttpEntity<>(characteristicsWithMissingData, getHttpHeaders());
 
-        ResponseEntity<ApiError> response = testRestTemplate.exchange(
+        ResponseEntity<ApiError> response = testClient.exchange(
                 CHARACTERISTICS_URL, HttpMethod.POST, entity, ApiError.class, UUID.randomUUID()
         );
 
@@ -83,20 +88,18 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
-        ResponseEntity<Animal> animalResponse = createAndSaveAnimal();
-        Animal animal = animalResponse.getBody();
-        assertNotNull(animal);
+        Animal animal = createAndSaveAnimal();
         Characteristics characteristics = new Characteristics(
                 Size.TINY,
                 PhysicalActivity.LOW,
                 new Temperaments(Sociability.VERY_SOCIABLE, Docility.NEITHER_DOCILE_NOR_DOMINANT, Balance.BALANCED),
                 FriendlyWith.ADULTS
         );
-        testRestTemplate.postForEntity(
+        testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, Characteristics.class, animal.getUuid(), getHttpHeaders()
         );
 
-        ResponseEntity<ApiError> conflictResponse = testRestTemplate.postForEntity(
+        ResponseEntity<ApiError> conflictResponse = testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, ApiError.class, animal.getUuid(), getHttpHeaders()
         );
 
@@ -107,10 +110,8 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn200OkWithCharacteristics() {
-        ResponseEntity<Animal> animalResponse = createAndSaveAnimal();
-        Animal animal = animalResponse.getBody();
-        assertNotNull(animal);
-        ResponseEntity<Characteristics> createdCharacteristicsResponse = testRestTemplate.postForEntity(
+        Animal animal = createAndSaveAnimal();
+        ResponseEntity<Characteristics> createdCharacteristicsResponse = testClient.postForEntity(
                 CHARACTERISTICS_URL, new Characteristics(
                         Size.TINY,
                         PhysicalActivity.LOW,
@@ -120,7 +121,7 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
         );
         Characteristics createdCharacteristics = createdCharacteristicsResponse.getBody();
 
-        ResponseEntity<Characteristics> response = testRestTemplate.getForEntity(
+        ResponseEntity<Characteristics> response = testClient.getForEntity(
                 CHARACTERISTICS_URL, Characteristics.class, animal.getUuid(), getHttpHeaders()
         );
 
@@ -133,7 +134,7 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
         UUID randomUuid = UUID.randomUUID();
 
-        ResponseEntity<ApiError> response = testRestTemplate.getForEntity(
+        ResponseEntity<ApiError> response = testClient.getForEntity(
                 CHARACTERISTICS_URL, ApiError.class, randomUuid
         );
 
@@ -144,16 +145,36 @@ public class CharacteristicsResourceIntegrationTest extends IntegrationTest {
 
     @Test
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
-        ResponseEntity<Animal> animalResponse = createAndSaveAnimal();
-        Animal animal = animalResponse.getBody();
-        assertNotNull(animal);
+        Animal animal = createAndSaveAnimal();
 
-        ResponseEntity<ApiError> response = testRestTemplate.getForEntity(
+        ResponseEntity<ApiError> response = testClient.getForEntity(
                 CHARACTERISTICS_URL, ApiError.class, animal.getUuid()
         );
 
         assertThat(response.getStatusCode(), is(NOT_FOUND));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
+    }
+
+    private Animal createAndSaveAnimal() {
+        String clinicalRecord = randomAlphabetic(10);
+        String name = randomAlphabetic(10);
+        LocalDateTime registrationDate = LocalDateTime.now();
+        Type type = IntegrationTestUtils.getRandomType();
+        EstimatedAge estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
+        Sex sex = IntegrationTestUtils.getRandomSex();
+        State lookingForHumanState = new LookingForHuman(registrationDate);
+        Animal animalForAdoption = new Animal(
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
+        );
+
+        ResponseEntity<Animal> responseEntity = testClient.postForEntity(
+                ANIMALS_URL, animalForAdoption, Animal.class, getHttpHeaders()
+        );
+        assertThat(responseEntity.getStatusCode(), is(CREATED));
+        Animal animal = responseEntity.getBody();
+        assertNotNull(animal);
+
+        return animal;
     }
 }

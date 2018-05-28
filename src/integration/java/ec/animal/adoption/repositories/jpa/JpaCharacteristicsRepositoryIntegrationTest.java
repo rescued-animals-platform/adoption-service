@@ -1,6 +1,6 @@
 package ec.animal.adoption.repositories.jpa;
 
-import ec.animal.adoption.IntegrationTest;
+import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
@@ -26,7 +26,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.assertEquals;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaCharacteristicsRepositoryIntegrationTest extends IntegrationTest {
+public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private JpaAnimalRepository jpaAnimalRepository;

@@ -10,7 +10,7 @@ server:
 spring:
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/animal_adoption_db
+    url: jdbc:postgresql://adoption_service_postgres:5432/animal_adoption_db
     username: postgres
     password: postgres
   jpa:
@@ -24,5 +24,6 @@ spring:
   flyway:
     locations: classpath:db/migration
   jackson:
+    default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false

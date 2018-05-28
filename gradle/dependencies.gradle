@@ -1,15 +1,17 @@
+apply plugin: 'io.spring.dependency-management'
+
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
+    compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: 'spring-boot-starter-tomcat'
     }
-    compile("org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.5")
     compile("com.vladmihalcea:hibernate-types-52:2.2.0")
     compile("org.postgresql:postgresql:9.4-1206-jdbc42")
     compile("org.flywaydb:flyway-core:5.0.7")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.apache.commons:commons-lang3:3.7")
     testCompile("nl.jqno.equalsverifier:equalsverifier:2.4.6")
     testCompile("org.unitils:unitils-core:3.4.6")
