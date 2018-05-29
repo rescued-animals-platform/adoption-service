@@ -4,11 +4,6 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk
-      - image: postgres:10
-        environment:
-          POSTGRES_DB: animal_adoption_db
-        ports:
-          5432:5432
 
     working_directory: ~/repo
 
@@ -109,6 +104,11 @@ jobs:
   integration-test:
     docker:
       - image: circleci/openjdk:8-jdk
+      - image: postgres:10
+        environment:
+          POSTGRES_DB: animal_adoption_db
+        ports:
+          5432:5432
 
     working_directory: ~/repo
 
