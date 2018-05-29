@@ -1,11 +1,10 @@
-deploy-compose:
-	@docker-compose up --build -d
+postgres_db ?= animal_adoption_db
 
-undeploy-compose:
-	@docker-compose down
+deploy-postgres:
+	@if ! docker ps | grep postgres ; then echo "Deploying postgres"; docker run --rm --name postgres -d -p 5432:5432 -e POSTGRES_DB=$(postgres_db) postgres:10 ; sleep 2;fi
 
-build-compose:
-	@docker-compose build
+undeploy-postgres:
+	@docker kill postgres
 
 build-project:
 	./gradlew clean build
@@ -13,8 +12,9 @@ build-project:
 unit-test:
 	./gradlew clean test
 
-integration-test:
+integration-test: deploy-postgres
 	./gradlew clean integrationTest
+	make undeploy-postgres
 
 pitest:
 	./gradlew clean pitest

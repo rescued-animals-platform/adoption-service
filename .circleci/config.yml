@@ -19,21 +19,11 @@ jobs:
           paths:
             - src
             - migrations
-            - Makefile
             - gradle
             - build.gradle
             - settings.gradle
             - gradlew
             - gradlew.bat
-            - docker
-            - docker-compose.yml
-
-      - run:
-          name: Install make
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y make
-          when: always
 
       - restore_cache:
           keys:
@@ -42,7 +32,7 @@ jobs:
 
       - run: ./gradlew dependencies
 
-      - run: make build-project
+      - run: ./gradlew clean build
 
       - save_cache:
           paths:
@@ -53,14 +43,14 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/junit/
-            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit/ \;
+            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/test-results/test \;
           when: always
 
       - store_test_results:
-          path: ~/junit
+          path: ~/test-results/test
 
       - store_artifacts:
-          path: ~/junit
+          path: ~/test-results/test
 
       - store_artifacts:
           path: build/libs/adoption-service-1.0-SNAPSHOT.jar
@@ -76,13 +66,6 @@ jobs:
       TERM: dumb
 
     steps:
-      - run:
-          name: Install make
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y make
-          when: always
-
       - attach_workspace:
           at: ~/repo
 
@@ -91,7 +74,7 @@ jobs:
           - v1-dependencies-{{ checksum "build.gradle" }}
           - v1-dependencies-
 
-      - run: make pitest
+      - run: ./gradlew clean pitest
 
       - save_cache:
           paths:
@@ -117,24 +100,6 @@ jobs:
       TERM: dumb
 
     steps:
-      - run:
-          name: Install make
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y make
-          when: always
-
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-          when: always
-
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - attach_workspace:
           at: ~/repo
 
@@ -143,7 +108,7 @@ jobs:
           - v1-dependencies-{{ checksum "build.gradle" }}
           - v1-dependencies-
 
-      - run: make integration-test
+      - run: ./gradlew clean integrationTest
 
       - save_cache:
           paths:
@@ -154,14 +119,14 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/junitint/
-            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junitint/ \;
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/test-results/integrationTest \;
           when: always
 
       - store_test_results:
-          path: ~/junitint
+          path: ~/test-results/integrationTest
 
       - store_artifacts:
-          path: ~/junitint
+          path: ~/test-results/integrationTest
 
 workflows:
   version: 2
