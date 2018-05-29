@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/animals/{animalUuid}/characteristics")
 public class CharacteristicsResource {
 
     private final CharacteristicsService characteristicsService;
@@ -21,12 +22,12 @@ public class CharacteristicsResource {
         this.characteristicsService = characteristicsService;
     }
 
-    @RequestMapping(path = "/animals/{animalUuid}/characteristics", method = RequestMethod.GET)
+    @GetMapping
     public Characteristics get(@PathVariable("animalUuid") UUID animalUuid) throws EntityNotFoundException {
         return characteristicsService.get(animalUuid);
     }
 
-    @RequestMapping(path = "/animals/{animalUuid}/characteristics", method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Characteristics create(
             @PathVariable("animalUuid") UUID animalUuid, @RequestBody @Valid Characteristics characteristics

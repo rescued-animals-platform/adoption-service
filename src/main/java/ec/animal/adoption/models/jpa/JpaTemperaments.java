@@ -30,9 +30,9 @@ public class JpaTemperaments {
 
     public JpaTemperaments(Temperaments temperaments) {
         this();
-        this.sociability = temperaments.getSociability().name();
-        this.docility = temperaments.getDocility().name();
-        this.balance = temperaments.getBalance().name();
+        this.sociability = temperaments.getSociability() != null ? temperaments.getSociability().name() : null;
+        this.docility = temperaments.getDocility() != null ? temperaments.getDocility().name() : null;
+        this.balance = temperaments.getBalance() != null ? temperaments.getBalance().name() : null;
     }
 
     public Temperaments toTemperaments() {

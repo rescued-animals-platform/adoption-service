@@ -40,7 +40,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
         Characteristics characteristics = new Characteristics(
                 Size.TINY,
                 PhysicalActivity.LOW,
-                new Temperaments(Sociability.SHY, Docility.DOCILE, Balance.POSSESSIVE),
+                new Temperaments(Sociability.SHY, null, Balance.POSSESSIVE),
                 FriendlyWith.ADULTS
         );
 

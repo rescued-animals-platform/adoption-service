@@ -13,6 +13,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/animal_adoption_db
     username: postgres
     password: postgres
+    test-on-borrow: true
+    test-while-idle: true
+    validation-query: select 1;
+    maxActive: 50
   jpa:
     open-in-view: false
     show-sql: false
