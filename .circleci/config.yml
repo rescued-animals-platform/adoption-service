@@ -90,8 +90,6 @@ jobs:
       - image: postgres:10
         environment:
           POSTGRES_DB: animal_adoption_db
-        ports:
-          5432:5432
 
     working_directory: ~/repo
 
@@ -102,6 +100,17 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
+
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
 
       - restore_cache:
           keys:
