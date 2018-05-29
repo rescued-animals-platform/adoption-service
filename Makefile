@@ -19,4 +19,9 @@ integration-test: deploy-postgres
 pitest:
 	./gradlew clean pitest
 
-all-test: unit-test pitest integration-test
+all-test:
+	./gradlew clean build
+	./gradlew pitest
+	make deploy-postgres
+	./gradlew integrationTest
+	make undeploy-postgres
