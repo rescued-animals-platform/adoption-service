@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/animal_adoption_db
+    username: postgres
+    password: p0stgr3s
+    test-on-borrow: true
+    test-while-idle: true
+    validation-query: select 1;
+    maxActive: 50
+  jpa:
+    show-sql: false
+    generate-ddl: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        ddl-auto: save-drop

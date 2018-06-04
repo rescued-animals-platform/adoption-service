@@ -2,6 +2,8 @@ out
 build
 .idea
 .gradle
+.terraform
 *.iml
 *.ipr
 *.iws
+*.tfvars

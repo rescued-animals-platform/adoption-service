@@ -1,0 +1,29 @@
+runtime: java
+env: flex
+beta_settings:
+  java_quickstart: true
+
+runtime_config:
+  jdk: openjdk8
+  server: jetty9
+
+service: adoption-service-qa
+
+network:
+  instance_tag: qa
+  name: qa
+
+resources:
+  cpu: 1
+  memory_gb: 3.75
+  disk_size_gb: 10
+
+manual_scaling:
+  instances: 1
+
+env_variables:
+  CONNECTION_NAME: ${CONNECTION_NAME}
+  POSTGRES_PASSWORD: ${TF_VAR_postgres_password}
+  JAVA_OPTS: -Dspring.profiles.active=qa
+
+

@@ -23,4 +23,5 @@ task integrationTest(type: Test) {
         exceptionFormat "full"
         events "passed", "failed", "skipped"
     }
+    systemProperty 'spring.profiles.active', 'test'
 }

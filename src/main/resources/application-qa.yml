@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${CONNECTION_NAME}/animal_adoption_db
+    username: postgres
+    password: ${POSTGRES_PASSWORD}
