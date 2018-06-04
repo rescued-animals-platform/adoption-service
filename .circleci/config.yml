@@ -163,7 +163,7 @@ jobs:
         - run:
           name: Authenticate gcloud tool
           command: |
-            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
             sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
             sudo /opt/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT_ID
 
