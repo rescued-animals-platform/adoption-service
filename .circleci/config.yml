@@ -183,12 +183,13 @@ workflows:
               only: master
       - integration-test:
           requires:
-            - pitest
+            - build
           filters:
             branches:
               only: master
       - deploy-to-qa:
           requires:
+            - pitest
             - integration-test
           filters:
             branches:
