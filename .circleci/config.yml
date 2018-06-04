@@ -191,7 +191,10 @@ workflows:
   version: 2
   adoption-service:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: master
       - pitest:
           requires:
             - build
@@ -200,7 +203,6 @@ workflows:
               only: master
       - integration-test:
           requires:
-            - build
             - pitest
           filters:
             branches:
@@ -208,8 +210,6 @@ workflows:
       - deploy-to-qa:
           type: approval
           requires:
-            - build
-            - pitest
             - integration-test
           filters:
             branches:
