@@ -149,10 +149,6 @@ jobs:
         - attach_workspace:
             at: ~/repo
 
-        - run: ./scripts/install-terraform.sh
-
-        - run: ./scripts/authenticate-gcloud.sh
-
         - restore_cache:
             keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
@@ -161,8 +157,6 @@ jobs:
         - run:
             name: Deploy to QA
             command: ./scripts/deploy-to-qa.sh
-            environment:
-              GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-service-key.json
 
         - save_cache:
             paths:
