@@ -158,7 +158,11 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-        - run: ./scripts/deploy-to-qa.sh
+        - run:
+            name: Deploy to QA
+            command: ./scripts/deploy-to-qa.sh
+            environment:
+              GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-service-key.json
 
         - save_cache:
             paths:
