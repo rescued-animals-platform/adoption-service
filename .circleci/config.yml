@@ -55,8 +55,6 @@ jobs:
             - gradlew.bat
             - build/libs/*.jar
 
-
-
   pitest:
     docker:
       - image: circleci/openjdk:8-jdk
@@ -85,8 +83,6 @@ jobs:
 
       - store_artifacts:
           path: build/reports/pitest
-
-
 
   integration-test:
     docker:
@@ -140,8 +136,6 @@ jobs:
 
       - store_artifacts:
           path: ~/junit
-
-
 
   deploy-to-qa:
       docker:
@@ -208,7 +202,6 @@ workflows:
             branches:
               only: master
       - deploy-to-qa:
-          type: approval
           requires:
             - integration-test
           filters:
