@@ -31,8 +31,9 @@ terraform apply -auto-approve;
 export CONNECTION_NAME=$(terraform output db_connection_name)
 
 APP_YAML_DIR=~/repo/src/main/appengine
-sed "s/DB_CONNECTION_STRING/${CONNECTION_NAME}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml
-sed -i .backup "s/DB_PASSWORD/${TF_VAR_postgres_password}/g" ${APP_YAML_DIR}/app.yaml
+sed "s/DB_CONNECTION_STRING/${CONNECTION_NAME}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml.stashed
+sed "s/DB_PASSWORD/${TF_VAR_postgres_password}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml
+rm ${APP_YAML_DIR}/app.yaml.stashed
 
 echo "Deploying application"
 
