@@ -37,5 +37,6 @@ rm ${APP_YAML_DIR}/app.yaml.stashed
 
 echo "Deploying application"
 
+apt-get install -y openjdk-8-jdk
 cd ~/repo
 ./gradlew appengineDeploy
