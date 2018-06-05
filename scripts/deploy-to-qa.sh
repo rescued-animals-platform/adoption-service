@@ -19,7 +19,7 @@ echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
 
 gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 gcloud config set project $GCLOUD_PROJECT_ID;
-gcloud components install app-engine-java
+apt-get install -y google-cloud-sdk-app-engine-java
 
 export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
