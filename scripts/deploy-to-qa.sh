@@ -20,10 +20,14 @@ gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 gcloud config set project $GCLOUD_PROJECT_ID;
 export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
-echo "Deploying application"
+echo "Creating and configuring Cloud SQL Postgres database"
 
 cd terraform;
 terraform init;
 terraform apply -auto-approve;
 export CONNECTION_NAME=$(terraform output db_connection_name)
+
+echo "Deploying application"
+
+cd ~/repo
 ./gradlew appengineDeploy

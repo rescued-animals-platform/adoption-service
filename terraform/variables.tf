@@ -3,5 +3,5 @@ variable "project" {
   default = "rescued-animals-platform"
 }
 variable "region" {
-  default = "southamerica-east1"
+  default = "us-west1"
 }

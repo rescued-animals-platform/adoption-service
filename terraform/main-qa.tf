@@ -1,3 +1,10 @@
+terraform {
+  backend "gcs" {
+    bucket  = "adoption-service-terraform-state-qa"
+    prefix  = "terraform/state"
+  }
+}
+
 resource "google_sql_database_instance" "qa" {
   database_version = "POSTGRES_9_6"
   region = "${var.region}"
