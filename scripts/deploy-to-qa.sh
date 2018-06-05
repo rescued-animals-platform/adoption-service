@@ -13,6 +13,14 @@ cp ~/opt/terraform/terraform /usr/local/bin/;
 
 terraform --version
 
+echo "Installing Oracle JDK 8"
+
+apt-get install -y software-properties-common
+add-apt-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main"
+apt-get update
+apt-get install -y oracle-java8-installer
+java -version
+
 echo "Gcloud set up"
 
 echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
@@ -37,6 +45,5 @@ rm ${APP_YAML_DIR}/app.yaml.stashed
 
 echo "Deploying application"
 
-apt-get install -y openjdk-8-jdk
 cd ~/repo
 ./gradlew appengineDeploy
