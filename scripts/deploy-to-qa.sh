@@ -13,11 +13,14 @@ cp ~/opt/terraform/terraform /usr/local/bin/;
 
 terraform --version
 
-echo "Setting gcloud authentication"
+echo "Gcloud set up"
 
 echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
+
 gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 gcloud config set project $GCLOUD_PROJECT_ID;
+gcloud components install app-engine-java
+
 export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
 echo "Creating and configuring Cloud SQL Postgres database"
