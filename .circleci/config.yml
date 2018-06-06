@@ -137,7 +137,26 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  deploy-to-qa:
+  qa-database-deploy:
+      docker:
+        - image: google/cloud-sdk
+
+      working_directory: ~/repo
+
+      steps:
+        - attach_workspace:
+            at: ~/repo
+
+        - run:
+            name: Deploy QA database
+            command: ./scripts/ci/qa-database-deploy.sh
+
+        - persist_to_workspace:
+            root: ~/repo
+            paths:
+              - src/main/appengine/app.yaml
+
+  qa-service-deploy:
       docker:
         - image: google/cloud-sdk
           environment:
@@ -155,14 +174,13 @@ jobs:
             - v1-dependencies-
 
         - run:
-            name: Deploy to QA
-            command: ./scripts/deploy-to-qa.sh
+            name: Deploy service to QA
+            command: ./scripts/ci/qa-service-deploy.sh
 
         - save_cache:
             paths:
               - ~/.gradle
             key: v1-dependencies-{{ checksum "build.gradle" }}
-
 
 
 workflows:
@@ -185,10 +203,16 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy-to-qa:
+      - qa-database-deploy:
           requires:
             - pitest
             - integration-test
+          filters:
+            branches:
+              only: master
+      - qa-service-deploy:
+          requires:
+            - qa-database-deploy
           filters:
             branches:
               only: master
