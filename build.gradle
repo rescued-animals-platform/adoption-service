@@ -17,6 +17,7 @@ apply plugin: 'java'
 apply plugin: 'com.google.cloud.tools.appengine'
 apply from: 'gradle/dependencies.gradle'
 apply from: 'gradle/pitest.gradle'
+apply from: 'gradle/appengine.gradle'
 apply from: 'gradle/sourceset.gradle'
 apply from: 'gradle/idea.gradle'
 

@@ -1,7 +1,7 @@
 variable "postgres_password" {}
 variable "project" {
-  default = "rescued-animals-platform"
+  default = "adoption-service-qa"
 }
 variable "region" {
-  default = "us-west1"
+  default = "us-central1"
 }

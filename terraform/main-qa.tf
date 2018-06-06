@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = "adoption-service-terraform-state-qa"
+    bucket  = "adoption-service-qa-terraform-state"
     prefix  = "terraform/state"
   }
 }

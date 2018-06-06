@@ -159,7 +159,7 @@ jobs:
       docker:
         - image: google/cloud-sdk
           environment:
-            GCLOUD_PROJECT_ID: rescued-animals-platform
+            GCLOUD_PROJECT_ID: adoption-service-qa
 
       working_directory: ~/repo
 
