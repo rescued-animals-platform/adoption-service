@@ -26,7 +26,11 @@ public class PictureResource {
         }
 
         try {
-            return new Picture(multipartFile.getName(), new Image(multipartFile.getInputStream()));
+            return new Picture(
+                    multipartFile.getName(),
+                    multipartFile.getOriginalFilename(),
+                    new Image(multipartFile.getInputStream())
+            );
         } catch (IOException e) {
             throw new ImageProcessingException();
         }

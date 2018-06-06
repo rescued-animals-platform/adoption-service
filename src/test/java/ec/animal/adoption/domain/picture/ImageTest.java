@@ -20,6 +20,14 @@ public class ImageTest {
     }
 
     @Test
+    public void shouldSetImage() {
+        InputStream inputStream = mock(InputStream.class);
+        Image image = new Image(inputStream);
+
+        assertThat(image.getInputStream(), is(inputStream));
+    }
+
+    @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Image.class).usingGetClass().verify();
     }

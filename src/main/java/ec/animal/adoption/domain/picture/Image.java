@@ -10,6 +10,10 @@ public class Image implements PictureRepresentation {
         this.image = image;
     }
 
+    InputStream getInputStream() {
+        return image;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
