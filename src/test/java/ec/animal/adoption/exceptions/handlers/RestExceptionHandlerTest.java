@@ -2,6 +2,7 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -156,6 +157,33 @@ public class RestExceptionHandlerTest {
         ApiError expectedApiError = new ApiError(HttpStatus.NOT_FOUND, "Unable to find the resource");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFound(entityNotFoundException);
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusUnprocessableEntityForImageProcessingException() {
+        ImageProcessingException imageProcessingException = mock(ImageProcessingException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageProcessingError(
+                imageProcessingException
+        );
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForImageProcessingException() {
+        ImageProcessingException imageProcessingException = new ImageProcessingException();
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.UNPROCESSABLE_ENTITY, "The image could not be processed"
+        );
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageProcessingError(
+                imageProcessingException
+        );
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

@@ -7,7 +7,6 @@ import ec.animal.adoption.services.PictureService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class PictureResource {
 
@@ -18,12 +17,16 @@ public class PictureResource {
     }
 
     public Picture create(MultipartFile multipartFile) throws ImageProcessingException {
-        return pictureService.create(new Picture(multipartFile.getName(), new Image(getInputStream(multipartFile))));
+        return pictureService.create(createPictureFromMultipartFile(multipartFile));
     }
 
-    private InputStream getInputStream(MultipartFile multipartFile) throws ImageProcessingException {
+    private Picture createPictureFromMultipartFile(MultipartFile multipartFile) throws ImageProcessingException {
+        if(multipartFile.isEmpty()) {
+            throw new ImageProcessingException();
+        }
+
         try {
-            return multipartFile.getInputStream();
+            return new Picture(multipartFile.getName(), new Image(multipartFile.getInputStream()));
         } catch (IOException e) {
             throw new ImageProcessingException();
         }

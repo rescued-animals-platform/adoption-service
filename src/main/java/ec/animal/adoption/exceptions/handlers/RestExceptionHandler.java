@@ -2,6 +2,7 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -40,6 +41,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         return buildResponseEntity(new ApiError(notFound, ex.getMessage()), notFound);
+    }
+
+    @ExceptionHandler(ImageProcessingException.class)
+    public ResponseEntity<Object> handleImageProcessingError(ImageProcessingException ex) {
+        HttpStatus unprocessableEntity = HttpStatus.UNPROCESSABLE_ENTITY;
+        return buildResponseEntity(new ApiError(unprocessableEntity, ex.getMessage()), unprocessableEntity);
     }
 
     @Override

@@ -55,4 +55,12 @@ public class PictureResourceTest {
 
         pictureResource.create(multipartFile);
     }
+
+    @Test(expected = ImageProcessingException.class)
+    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmpty() throws ImageProcessingException {
+        when(multipartFile.isEmpty()).thenReturn(true);
+        PictureResource pictureResource = new PictureResource(pictureService);
+
+        pictureResource.create(multipartFile);
+    }
 }
