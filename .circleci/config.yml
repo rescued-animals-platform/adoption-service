@@ -202,10 +202,17 @@ workflows:
           filters:
             branches:
               only: master
-      - qa-database-deploy:
+      - deploy-to-qa:
+          type: approval
           requires:
             - pitest
             - integration-test
+          filters:
+            branches:
+              only: master
+      - qa-database-deploy:
+          requires:
+            - deploy-to-qa
           filters:
             branches:
               only: master
