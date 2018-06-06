@@ -21,9 +21,9 @@ import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 public class AnimalTest {
 
@@ -41,7 +41,6 @@ public class AnimalTest {
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
-    private Animal animal;
 
     @Before
     public void setUp() {
@@ -52,12 +51,11 @@ public class AnimalTest {
         estimatedAge = getRandomEstimatedAge();
         sex = getRandomSex();
         state = getRandomState();
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
     }
 
     @Test
     public void shouldCreateAnimalWithNullUuidWhenUuidIsNotSet() {
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
 
         assertNull(animal.getUuid());
     }
@@ -65,7 +63,7 @@ public class AnimalTest {
     @Test
     public void shouldSetUuid() {
         UUID uuid = UUID.randomUUID();
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, state);
         animal.setUuid(uuid);
 
         assertThat(animal.getUuid(), is(uuid));
@@ -73,7 +71,7 @@ public class AnimalTest {
 
     @Test
     public void shouldCreateAnimalWithDefaultLookingForHumanStateWhenStateIsNull() {
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, null);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, null);
         LookingForHuman expectedLookingForHumanState = new LookingForHuman(registrationDate);
 
         assertThat(animal.getState(), is(expectedLookingForHumanState));
@@ -87,7 +85,7 @@ public class AnimalTest {
 
     @Test
     public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, null);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, null);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -106,7 +104,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithAdoptedState() throws IOException {
         State adoptedState = new Adopted(LocalDate.now(), randomAlphabetic(10));
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, adoptedState);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, adoptedState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -122,7 +120,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithUnavailableState() throws IOException {
         Unavailable unavailableState = new Unavailable(randomAlphabetic(10));
-        animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, unavailableState);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, type, estimatedAge, sex, unavailableState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
