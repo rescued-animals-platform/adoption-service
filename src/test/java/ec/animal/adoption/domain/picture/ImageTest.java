@@ -14,7 +14,7 @@ public class ImageTest {
 
     @Test
     public void shouldBeAnInstanceOfPictureRepresentation() {
-        Image image = new Image(mock(InputStream.class));
+        Image image = new Image(mock(InputStream.class), new byte[]{});
 
         assertThat(image, is(instanceOf(PictureRepresentation.class)));
     }
@@ -22,9 +22,11 @@ public class ImageTest {
     @Test
     public void shouldSetImage() {
         InputStream inputStream = mock(InputStream.class);
-        Image image = new Image(inputStream);
+        byte[] bytes = {};
+        Image image = new Image(inputStream, bytes);
 
         assertThat(image.getInputStream(), is(inputStream));
+        assertThat(image.getBytes(), is(bytes));
     }
 
     @Test

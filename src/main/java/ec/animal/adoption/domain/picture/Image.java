@@ -1,17 +1,27 @@
 package ec.animal.adoption.domain.picture;
 
-import java.io.InputStream;
+import ec.animal.adoption.domain.validators.ValidImage;
 
+import java.io.InputStream;
+import java.util.Arrays;
+
+@ValidImage
 public class Image implements PictureRepresentation {
 
     private final InputStream image;
+    private final byte[] bytes;
 
-    public Image(InputStream image) {
+    public Image(InputStream image, byte[] bytes) {
         this.image = image;
+        this.bytes = bytes;
     }
 
     InputStream getInputStream() {
         return image;
+    }
+
+    public byte[] getBytes() {
+        return bytes;
     }
 
     @Override
@@ -19,13 +29,16 @@ public class Image implements PictureRepresentation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Image image1 = (Image) o;
+        Image image = (Image) o;
 
-        return image != null ? image.equals(image1.image) : image1.image == null;
+        if (this.image != null ? !this.image.equals(image.image) : image.image != null) return false;
+        return Arrays.equals(bytes, image.bytes);
     }
 
     @Override
     public int hashCode() {
-        return image != null ? image.hashCode() : 0;
+        int result = image != null ? image.hashCode() : 0;
+        result = 31 * result + Arrays.hashCode(bytes);
+        return result;
     }
 }

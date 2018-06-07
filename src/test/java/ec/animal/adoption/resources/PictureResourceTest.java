@@ -1,8 +1,8 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.picture.Image;
-import ec.animal.adoption.domain.picture.Picture;
 import ec.animal.adoption.domain.picture.MediaLink;
+import ec.animal.adoption.domain.picture.Picture;
 import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.PictureService;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
@@ -35,12 +36,17 @@ public class PictureResourceTest {
     public void shouldCreateAPicture() throws ImageProcessingException, IOException {
         String name = randomAlphabetic(10);
         String filename = randomAlphabetic(10);
+        long sizeInBytes = new Random().nextLong();
+        byte[] bytes = new byte[]{};
         when(multipartFile.getName()).thenReturn(name);
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
         when(multipartFile.getInputStream()).thenReturn(inputStream);
-        Picture expectedPicture = new Picture(name, filename, new MediaLink(randomAlphabetic(10)));
-        Picture picture = new Picture(name, filename, new Image(inputStream));
-        when(pictureService.create(picture)).thenReturn(expectedPicture);
+        when(multipartFile.getBytes()).thenReturn(bytes);
+        when(multipartFile.getSize()).thenReturn(sizeInBytes);
+        Picture expectedPicture = new Picture(name, filename, sizeInBytes, new MediaLink(randomAlphabetic(10)));
+        when(pictureService.create(
+                new Picture(name, filename, sizeInBytes, new Image(inputStream, bytes)))
+        ).thenReturn(expectedPicture);
         PictureResource pictureResource = new PictureResource(pictureService);
 
         Picture createdPicture = pictureResource.create(multipartFile);

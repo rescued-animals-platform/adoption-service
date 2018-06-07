@@ -39,16 +39,13 @@ public class TemperamentsValidatorTest {
         Temperaments temperaments = mock(Temperaments.class);
         when(temperaments.isEmpty()).thenReturn(false);
 
-        boolean areTemperamentsValid = temperamentsValidator.isValid(temperaments, context);
-
-        assertThat(areTemperamentsValid, is(true));
+        assertThat(temperamentsValidator.isValid(temperaments, context), is(true));
     }
 
     @Test
     public void shouldBeInvalidIfTemperamentsIsNull() {
-        boolean areTemperamentsValid = temperamentsValidator.isValid(null, context);
 
-        assertThat(areTemperamentsValid, is(false));
+        assertThat(temperamentsValidator.isValid(null, context), is(false));
     }
 
     @Test
@@ -56,8 +53,6 @@ public class TemperamentsValidatorTest {
         Temperaments temperaments = mock(Temperaments.class);
         when(temperaments.isEmpty()).thenReturn(true);
 
-        boolean areTemperamentsValid = temperamentsValidator.isValid(temperaments, context);
-
-        assertThat(areTemperamentsValid, is(false));
+        assertThat(temperamentsValidator.isValid(temperaments, context), is(false));
     }
 }
