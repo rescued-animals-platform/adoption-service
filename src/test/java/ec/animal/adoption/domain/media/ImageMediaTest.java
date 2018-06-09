@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
@@ -19,10 +20,10 @@ import static org.junit.Assert.assertThat;
 public class ImageMediaTest {
 
     private static final String IMAGE_MEDIA_SIZE_IN_BYTES_CAN_NOT_BE_ZERO = "Image media size in bytes can't be zero";
-    private static final String UNSUPPORTED_FILE_EXTENSION = "Unsupported file extension. Supported extensions are: ".
-            concat(Arrays.stream(SupportedImageExtension.values()).map(SupportedImageExtension::getExtension).
-                    collect(Collectors.joining(", "))
-            );
+    private static final String INVALID_IMAGE = String.format("The image provided doesn't meet one or more of the " +
+            "requirements. Supported extensions: %s. Maximum size: 1MB", Arrays.stream(SupportedImageExtension.values())
+            .map(SupportedImageExtension::getExtension)
+            .collect(Collectors.joining(", ")));
 
     private UUID animalUuid;
     private ImageMedia imageMedia;
@@ -33,9 +34,7 @@ public class ImageMediaTest {
     @Before
     public void setUp() {
         animalUuid = UUID.randomUUID();
-        SupportedImageExtension[] supportedImageExtensions = SupportedImageExtension.values();
-        int randomSupportedImageExtensionIndex = new Random().nextInt(supportedImageExtensions.length);
-        SupportedImageExtension supportedImageExtension = supportedImageExtensions[randomSupportedImageExtensionIndex];
+        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         extension = supportedImageExtension.getExtension();
         content = supportedImageExtension.getStartingBytes();
         sizeInBytes = new Random().nextInt(10000) + 1;
@@ -78,7 +77,7 @@ public class ImageMediaTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<ImageMedia> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(UNSUPPORTED_FILE_EXTENSION));
+        assertThat(constraintViolation.getMessage(), is(INVALID_IMAGE));
         assertThat(constraintViolation.getPropertyPath().toString(), is("image"));
     }
 
@@ -91,7 +90,7 @@ public class ImageMediaTest {
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<ImageMedia> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(UNSUPPORTED_FILE_EXTENSION));
+        assertThat(constraintViolation.getMessage(), is(INVALID_IMAGE));
         assertThat(constraintViolation.getPropertyPath().toString(), is("image"));
     }
 

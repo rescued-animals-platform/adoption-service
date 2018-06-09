@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface ValidImageMedia {
 
-    String message() default "Unsupported file extension";
+    String message() default "Invalid image";
 
     Class<?>[] groups() default {};
 

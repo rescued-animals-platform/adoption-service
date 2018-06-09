@@ -1,16 +1,19 @@
 # Animal adoption service
 
-Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10.
+Tech stack (local enviroment): Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10, Google Cloud Storage.
 
 # Configuration for your development environment
 
 - Make sure you have installed the following:
     - Java 8
     - Docker
+    - `gcloud` command line tool
     
 - Login to docker with your credentials. If you don't have an account, create one in the [Docker Hub site](https://hub.docker.com/)
 
         docker login
+        
+- Login 
  
 - Run: `make all-test` to run all tests and verify everything works as expected.
 

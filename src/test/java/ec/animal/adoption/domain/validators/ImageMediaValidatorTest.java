@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -27,6 +28,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ImageMediaValidatorTest {
 
+    private static final String INVALID_MESSAGE = "The image provided doesn't meet one or more of the requirements. " +
+            "Supported extensions: %s. Maximum size: 1MB";
+
     @Mock
     private ConstraintValidatorContext context;
 
@@ -37,15 +41,17 @@ public class ImageMediaValidatorTest {
     private NodeBuilderCustomizableContext nodeBuilderCustomizableContext;
 
     private UUID animalUuid;
+    private int oneMegaByteInBytes;
     private long size;
     private ImageMediaValidator imageMediaValidator;
 
     @Before
     public void setUp() {
+        oneMegaByteInBytes = 1048576;
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(constraintViolationBuilder);
         when(constraintViolationBuilder.addPropertyNode(anyString())).thenReturn(nodeBuilderCustomizableContext);
         animalUuid = UUID.randomUUID();
-        size = new Random().nextLong();
+        size = new Random().nextInt(oneMegaByteInBytes);
         imageMediaValidator = new ImageMediaValidator();
     }
 
@@ -55,7 +61,7 @@ public class ImageMediaValidatorTest {
     }
 
     @Test
-    public void shouldBeValidForJpeg() {
+    public void shouldBeValidForJpegAndSizeLessThanOneMb() {
         SupportedImageExtension jpeg = SupportedImageExtension.JPEG;
         ImageMedia imageMedia = new ImageMedia(animalUuid, jpeg.getExtension(), jpeg.getStartingBytes(), size);
 
@@ -63,7 +69,7 @@ public class ImageMediaValidatorTest {
     }
 
     @Test
-    public void shouldBeValidForJpg() {
+    public void shouldBeValidForJpgAndSizeLessThanOneMb() {
         SupportedImageExtension jpg = SupportedImageExtension.JPG;
         ImageMedia imageMedia = new ImageMedia(animalUuid, jpg.getExtension(), jpg.getStartingBytes(), size);
 
@@ -71,7 +77,7 @@ public class ImageMediaValidatorTest {
     }
 
     @Test
-    public void shouldBeValidForPng() {
+    public void shouldBeValidForPngAndSizeLessThanOneMb() {
         SupportedImageExtension png = SupportedImageExtension.PNG;
         ImageMedia imageMedia = new ImageMedia(animalUuid, png.getExtension(), png.getStartingBytes(), size);
 
@@ -79,11 +85,33 @@ public class ImageMediaValidatorTest {
     }
 
     @Test
+    public void shouldBeValidForSizeEqualToOneMb() {
+        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
+        ImageMedia imageMedia = new ImageMedia(
+                animalUuid,
+                supportedImageExtension.getExtension(),
+                supportedImageExtension.getStartingBytes(),
+                oneMegaByteInBytes
+        );
+
+        assertThat(imageMediaValidator.isValid(imageMedia, context), is(true));
+    }
+
+    @Test
+    public void shouldBeInvalidForSizeGreaterThanOneMb() {
+        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
+        size = oneMegaByteInBytes + new Random().nextInt(100);
+        ImageMedia imageMedia = new ImageMedia(
+                animalUuid, supportedImageExtension.getExtension(), supportedImageExtension.getStartingBytes(), size
+        );
+
+        assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
+    }
+
+    @Test
     public void shouldBeInvalidWithRightExtensionInFilenameButWrongImageTypeInContent() {
         byte[] invalidContent = {};
-        SupportedImageExtension[] supportedImageExtensions = SupportedImageExtension.values();
-        int randomSupportedImageExtensionIndex = new Random().nextInt(supportedImageExtensions.length);
-        String extension = supportedImageExtensions[randomSupportedImageExtensionIndex].getExtension();
+        String extension = getRandomSupportedImageExtension().getExtension();
         ImageMedia imageMedia = new ImageMedia(animalUuid, extension, invalidContent, size);
 
         assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
@@ -92,9 +120,7 @@ public class ImageMediaValidatorTest {
     @Test
     public void shouldBeInvalidWithRightImageTypeInContentButWrongExtensionInFilename() {
         String wrongExtension = randomAlphabetic(10);
-        SupportedImageExtension[] supportedImageExtensions = SupportedImageExtension.values();
-        int randomSupportedImageExtensionIndex = new Random().nextInt(supportedImageExtensions.length);
-        byte[] content = supportedImageExtensions[randomSupportedImageExtensionIndex].getStartingBytes();
+        byte[] content = getRandomSupportedImageExtension().getStartingBytes();
         ImageMedia imageMedia = new ImageMedia(animalUuid, wrongExtension, content, size);
 
         assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
@@ -103,10 +129,9 @@ public class ImageMediaValidatorTest {
     @Test
     public void shouldCustomizeContextWhenInvalid() {
         ImageMedia imageMedia = new ImageMedia(animalUuid, randomAlphabetic(10), new byte[]{}, size);
-        String expectedTemplate = "Unsupported file extension. Supported extensions are: ".concat(
-                Arrays.stream(SupportedImageExtension.values()).map(SupportedImageExtension::getExtension).
-                        collect(Collectors.joining(", "))
-        );
+        String expectedTemplate = String.format(INVALID_MESSAGE, Arrays.stream(SupportedImageExtension.values())
+                .map(SupportedImageExtension::getExtension)
+                .collect(Collectors.joining(", ")));
 
         imageMediaValidator.isValid(imageMedia, context);
 

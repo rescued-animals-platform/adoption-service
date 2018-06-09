@@ -9,6 +9,7 @@ import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -40,6 +41,7 @@ public class TestUtils {
     private static final Sociability[] SOCIABILITY = Sociability.values();
     private static final Docility[] DOCILITY = Docility.values();
     private static final Balance[] BALANCE = Balance.values();
+    private static final SupportedImageExtension[] SUPPORTED_IMAGE_EXTENSIONS = SupportedImageExtension.values();
 
     public static State getRandomState() {
         return STATES.get(getRandomIndex(STATES.size()));
@@ -65,6 +67,10 @@ public class TestUtils {
         return PHYSICAL_ACTIVITIES[getRandomIndex(PHYSICAL_ACTIVITIES.length)];
     }
 
+    public static FriendlyWith getRandomFriendlyWith() {
+        return FRIENDLY_WITH[getRandomIndex(FRIENDLY_WITH.length)];
+    }
+
     public static Sociability getRandomSociability() {
         return SOCIABILITY[getRandomIndex(SOCIABILITY.length)];
     }
@@ -77,8 +83,8 @@ public class TestUtils {
         return BALANCE[getRandomIndex(BALANCE.length)];
     }
 
-    public static FriendlyWith getRandomFriendlyWith() {
-        return FRIENDLY_WITH[getRandomIndex(FRIENDLY_WITH.length)];
+    public static SupportedImageExtension getRandomSupportedImageExtension() {
+        return SUPPORTED_IMAGE_EXTENSIONS[getRandomIndex(SUPPORTED_IMAGE_EXTENSIONS.length)];
     }
 
     public static Validator getValidator() {
