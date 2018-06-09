@@ -1,7 +1,7 @@
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.domain.picture.Picture;
+import ec.animal.adoption.domain.media.MediaLink;
 
 public interface PictureRepository {
-    Picture save(Picture picture);
+    MediaLink save(MediaLink media);
 }

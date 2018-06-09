@@ -2,7 +2,7 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.ImageProcessingException;
+import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -165,10 +165,10 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithHttpStatusUnprocessableEntityForImageProcessingException() {
-        ImageProcessingException imageProcessingException = mock(ImageProcessingException.class);
+        ImageMediaProcessingException imageMediaProcessingException = mock(ImageMediaProcessingException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageProcessingError(
-                imageProcessingException
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
+                imageMediaProcessingException
         );
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
@@ -176,13 +176,13 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForImageProcessingException() {
-        ImageProcessingException imageProcessingException = new ImageProcessingException();
+        ImageMediaProcessingException imageMediaProcessingException = new ImageMediaProcessingException();
         ApiError expectedApiError = new ApiError(
                 HttpStatus.UNPROCESSABLE_ENTITY, "The image could not be processed"
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageProcessingError(
-                imageProcessingException
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
+                imageMediaProcessingException
         );
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));

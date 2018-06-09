@@ -1,10 +1,10 @@
 package ec.animal.adoption.exceptions;
 
-public class ImageProcessingException extends Exception {
+public class ImageMediaProcessingException extends Exception {
 
     private final String message;
 
-    public ImageProcessingException() {
+    public ImageMediaProcessingException() {
         this.message = "The image could not be processed";
     }
 

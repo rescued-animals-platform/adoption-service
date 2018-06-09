@@ -10,10 +10,12 @@ dependencies {
     compile("com.vladmihalcea:hibernate-types-52:2.2.0")
     compile("org.postgresql:postgresql:42.2.2")
     compile("com.google.cloud.sql:postgres-socket-factory:1.0.8")
+    compile("com.google.cloud:google-cloud-storage:1.32.0")
     compile("org.flywaydb:flyway-core:5.0.7")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.apache.commons:commons-lang3:3.7")
     testCompile("nl.jqno.equalsverifier:equalsverifier:2.4.6")
     testCompile("org.unitils:unitils-core:3.4.6")
+    testCompile("commons-io:commons-io:2.6")
 }

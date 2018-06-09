@@ -1,6 +1,9 @@
 pitest {
     targetClasses = ['ec.animal.adoption.*']
-    excludedClasses = ['ec.animal.adoption.AnimalAdoptionApplication']
+    excludedClasses = [
+            'ec.animal.adoption.AnimalAdoptionApplication',
+            'ec.animal.adoption.clients.gcloud.*'
+    ]
     excludedMethods = ['equals', 'hashCode']
     threads = 4
     timestampedReports = false

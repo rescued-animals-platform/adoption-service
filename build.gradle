@@ -42,3 +42,7 @@ configurations {
 	integrationTestCompile.extendsFrom(testCompile)
 	integrationTestRuntime.extendsFrom(testRuntime)
 }
+
+bootRun {
+    systemProperty 'spring.profiles.active', 'test'
+}
