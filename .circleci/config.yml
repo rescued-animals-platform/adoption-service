@@ -2,229 +2,227 @@
 version: 2
 jobs:
   build:
-	docker:
-	  - image: circleci/openjdk:8-jdk
+    docker:
+      - image: circleci/openjdk:8-jdk
 
-	working_directory: ~/repo
+    working_directory: ~/repo
 
-	environment:
-	  JVM_OPTS: -Xmx3200m
-	  TERM: dumb
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
 
-	steps:
-	  - checkout
+    steps:
+      - checkout
 
-	  - restore_cache:
-		  keys:
-		  - v1-dependencies-{{ checksum "build.gradle" }}
-		  - v1-dependencies-
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
 
-	  - run: ./gradlew dependencies
+      - run: ./gradlew dependencies
 
-	  - run: ./gradlew clean build
+      - run: ./gradlew clean build
 
-	  - save_cache:
-		  paths:
-			- ~/.gradle
-		  key: v1-dependencies-{{ checksum "build.gradle" }}
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-	  - run:
-		  name: Save test results
-		  command: |
-			mkdir -p ~/junit
-			find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit \;
-		  when: always
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/test/.*xml" -exec cp {} ~/junit \;
+          when: always
 
-	  - store_test_results:
-		  path: ~/junit
+      - store_test_results:
+          path: ~/junit
 
-	  - store_artifacts:
-		  path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
-	  - persist_to_workspace:
-		  root: ~/repo
-		  paths:
-			- src
-			- migrations
-			- terraform
-			- scripts
-			- gradle
-			- build.gradle
-			- settings.gradle
-			- gradlew
-			- gradlew.bat
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - src
+            - migrations
+            - terraform
+            - scripts
+            - gradle
+            - build.gradle
+            - settings.gradle
+            - gradlew
+            - gradlew.bat
 
   pitest:
-	docker:
-	  - image: circleci/openjdk:8-jdk
+    docker:
+      - image: circleci/openjdk:8-jdk
 
-	working_directory: ~/repo
+    working_directory: ~/repo
 
-	environment:
-	  JVM_OPTS: -Xmx3200m
-	  TERM: dumb
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
 
-	steps:
-	  - attach_workspace:
-		  at: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo
 
-	  - restore_cache:
-		  keys:
-		  - v1-dependencies-{{ checksum "build.gradle" }}
-		  - v1-dependencies-
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
 
-	  - run: ./gradlew clean pitest
+      - run: ./gradlew clean pitest
 
-	  - save_cache:
-		  paths:
-			- ~/.gradle
-		  key: v1-dependencies-{{ checksum "build.gradle" }}
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-	  - store_artifacts:
-		  path: build/reports/pitest
+      - store_artifacts:
+          path: build/reports/pitest
 
   integration-test:
-	docker:
-	  - image: circleci/openjdk:8-jdk
-	  - image: postgres:10
-		environment:
-		  POSTGRES_DB: animal_adoption_db
+    docker:
+      - image: circleci/openjdk:8-jdk
+      - image: postgres:10
+        environment:
+          POSTGRES_DB: animal_adoption_db
 
-	working_directory: ~/repo
+    working_directory: ~/repo
 
-	environment:
-	  JVM_OPTS: -Xmx3200m
-	  TERM: dumb
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
 
-	steps:
-	  - attach_workspace:
-		  at: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo
 
-	  - run:
-		  name: Waiting for Postgres to be ready
-		  command: |
-			for i in `seq 1 10`;
-			do
-			  nc -z localhost 5432 && echo Success && exit 0
-			  echo -n .
-			  sleep 1
-			done
-			echo Failed waiting for Postgress && exit 1
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
 
-	  - restore_cache:
-		  keys:
-		  - v1-dependencies-{{ checksum "build.gradle" }}
-		  - v1-dependencies-
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
 
-	  - run:
-		  name: Integration test setup
-		  command: ./scripts/ci/integration-test-setup.sh
+      - run:
+          name: Integration test setup
+          command: ./scripts/ci/integration-test-setup.sh
 
-	  - run:
-		  name: Running integration tests:
-		  command: ./gradlew clean integrationTest
+      - run: ./gradlew clean integrationTest
 
-	  - save_cache:
-		  paths:
-			- ~/.gradle
-		  key: v1-dependencies-{{ checksum "build.gradle" }}
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-	  - run:
-		  name: Save test results
-		  command: |
-			mkdir -p ~/junit
-			find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
-		  when: always
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+          when: always
 
-	  - store_test_results:
-		  path: ~/junit
+      - store_test_results:
+          path: ~/junit
 
-	  - store_artifacts:
-		  path: ~/junit
+      - store_artifacts:
+          path: ~/junit
 
   qa-database-deploy:
-	  docker:
-		- image: google/cloud-sdk
+      docker:
+        - image: google/cloud-sdk
 
-	  working_directory: ~/repo
+      working_directory: ~/repo
 
-	  steps:
-		- attach_workspace:
-			at: ~/repo
+      steps:
+        - attach_workspace:
+            at: ~/repo
 
-		- run:
-			name: Deploy QA database
-			command: ./scripts/ci/qa-database-deploy.sh
+        - run:
+            name: Deploy QA database
+            command: ./scripts/ci/qa-database-deploy.sh
 
-		- persist_to_workspace:
-			root: ~/repo
-			paths:
-			  - src/main/appengine/app.yaml
+        - persist_to_workspace:
+            root: ~/repo
+            paths:
+              - src/main/appengine/app.yaml
 
   qa-service-deploy:
-	  docker:
-		- image: google/cloud-sdk
-		  environment:
-			GCLOUD_PROJECT_ID: adoption-service-qa
+      docker:
+        - image: google/cloud-sdk
+          environment:
+            GCLOUD_PROJECT_ID: adoption-service-qa
 
-	  working_directory: ~/repo
+      working_directory: ~/repo
 
-	  steps:
-		- attach_workspace:
-			at: ~/repo
+      steps:
+        - attach_workspace:
+            at: ~/repo
 
-		- restore_cache:
-			keys:
-			- v1-dependencies-{{ checksum "build.gradle" }}
-			- v1-dependencies-
+        - restore_cache:
+            keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
 
-		- run:
-			name: Deploy service to QA
-			command: ./scripts/ci/qa-service-deploy.sh
+        - run:
+            name: Deploy service to QA
+            command: ./scripts/ci/qa-service-deploy.sh
 
-		- save_cache:
-			paths:
-			  - ~/.gradle
-			key: v1-dependencies-{{ checksum "build.gradle" }}
+        - save_cache:
+            paths:
+              - ~/.gradle
+            key: v1-dependencies-{{ checksum "build.gradle" }}
 
 
 workflows:
   version: 2
   adoption-service:
-	jobs:
-	  - build:
-		  filters:
-			branches:
-			  only: master
-	  - pitest:
-		  requires:
-			- build
-		  filters:
-			branches:
-			  only: master
-	  - integration-test:
-		  requires:
-			- build
-		  filters:
-			branches:
-			  only: master
-	  - deploy-to-qa:
-		  type: approval
-		  requires:
-			- pitest
-			- integration-test
-		  filters:
-			branches:
-			  only: master
-	  - qa-database-deploy:
-		  requires:
-			- deploy-to-qa
-		  filters:
-			branches:
-			  only: master
-	  - qa-service-deploy:
-		  requires:
-			- qa-database-deploy
-		  filters:
-			branches:
-			  only: master
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - pitest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - integration-test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-to-qa:
+          type: approval
+          requires:
+            - pitest
+            - integration-test
+          filters:
+            branches:
+              only: master
+      - qa-database-deploy:
+          requires:
+            - deploy-to-qa
+          filters:
+            branches:
+              only: master
+      - qa-service-deploy:
+          requires:
+            - qa-database-deploy
+          filters:
+            branches:
+              only: master
