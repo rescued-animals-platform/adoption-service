@@ -4,7 +4,7 @@ set -xeuo pipefail
 echo "Installing gcloud"
 
 sudo wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-204.0.0-linux-x86_64.tar.gz
-sudo tar -zxvf google-cloud-sdk-204.0.0-linux-x86_64.tar.gz
+sudo tar -zxf google-cloud-sdk-204.0.0-linux-x86_64.tar.gz
 sudo ./google-cloud-sdk/install.sh -q
 
 echo "Gcloud set up"

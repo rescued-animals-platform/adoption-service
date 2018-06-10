@@ -21,21 +21,21 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MediaStorageClientGcsTest {
+public class ImageMediaStorageClientGcsTest {
 
     @Mock
     private GoogleCloudStorageClient googleCloudStorageClient;
 
-    private MediaStorageClientGcs mediaStorageClientGcs;
+    private ImageMediaStorageClientGcs mediaStorageClientGcs;
 
     @Before
     public void setUp() {
-        mediaStorageClientGcs = new MediaStorageClientGcs(googleCloudStorageClient);
+        mediaStorageClientGcs = new ImageMediaStorageClientGcs(googleCloudStorageClient);
     }
 
     @Test
     public void shouldBeAnInstanceOgMediaStorageClient() {
-        assertThat(mediaStorageClientGcs, is(instanceOf(MediaStorageClient.class)));
+        assertThat(mediaStorageClientGcs, is(instanceOf(ImageMediaStorageClient.class)));
     }
 
     @Test

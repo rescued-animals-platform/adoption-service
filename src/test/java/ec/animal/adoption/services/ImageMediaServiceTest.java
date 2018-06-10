@@ -1,10 +1,11 @@
 package ec.animal.adoption.services;
 
-import ec.animal.adoption.clients.MediaStorageClient;
+import ec.animal.adoption.clients.ImageMediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
-import ec.animal.adoption.repositories.PictureRepository;
+import ec.animal.adoption.repositories.MediaLinkRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,21 +23,21 @@ import static org.mockito.Mockito.when;
 public class ImageMediaServiceTest {
 
     @Mock
-    private PictureRepository pictureRepository;
+    private MediaLinkRepository mediaLinkRepository;
 
     @Mock
-    private MediaStorageClient mediaStorageClient;
+    private ImageMediaStorageClient imageMediaStorageClient;
 
     @Test
-    public void shouldCreateAnImageMedia() throws ImageMediaProcessingException {
+    public void shouldCreateAnImageMedia() throws ImageMediaProcessingException, EntityAlreadyExistsException {
         UUID animalUuid = UUID.randomUUID();
         ImageMedia imageMedia = new ImageMedia(
                 animalUuid, randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );
         MediaLink mediaLink = new MediaLink(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
-        when(mediaStorageClient.save(imageMedia)).thenReturn(mediaLink);
-        when(pictureRepository.save(mediaLink)).thenReturn(mediaLink);
-        ImageMediaService imageMediaService = new ImageMediaService(mediaStorageClient, pictureRepository);
+        when(imageMediaStorageClient.save(imageMedia)).thenReturn(mediaLink);
+        when(mediaLinkRepository.save(mediaLink)).thenReturn(mediaLink);
+        ImageMediaService imageMediaService = new ImageMediaService(imageMediaStorageClient, mediaLinkRepository);
 
         MediaLink createdMediaLink = imageMediaService.create(imageMedia);
 

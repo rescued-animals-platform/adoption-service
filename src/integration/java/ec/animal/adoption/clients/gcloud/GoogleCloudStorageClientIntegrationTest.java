@@ -1,7 +1,6 @@
-package clients.gcloud;
+package ec.animal.adoption.clients.gcloud;
 
 import ec.animal.adoption.AnimalAdoptionApplication;
-import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;

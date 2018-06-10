@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class JpaFriendlyWithTest {
 
     @Test
-    public void shouldCreateJpaTemperamentFromTemperament() {
+    public void shouldCreateJpaFriendlyWithFromFriendlyWithAndJpaCharacteristics() {
         FriendlyWith friendlyWith = TestUtils.getRandomFriendlyWith();
 
         JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith, mock(JpaCharacteristics.class));

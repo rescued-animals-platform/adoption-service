@@ -22,6 +22,18 @@ public class MediaLink {
         this.url = url;
     }
 
+    public UUID getAnimalUuid() {
+        return animalUuid;
+    }
+
+    public String getMediaName() {
+        return mediaName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

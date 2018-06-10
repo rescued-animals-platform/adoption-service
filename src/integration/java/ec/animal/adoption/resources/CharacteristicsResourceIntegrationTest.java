@@ -1,11 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.AbstractIntegrationTest;
-import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -14,15 +10,12 @@ import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.state.LookingForHuman;
-import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -154,27 +147,5 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
         assertThat(response.getStatusCode(), is(NOT_FOUND));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
-    }
-
-    private Animal createAndSaveAnimal() {
-        String clinicalRecord = randomAlphabetic(10);
-        String name = randomAlphabetic(10);
-        LocalDateTime registrationDate = LocalDateTime.now();
-        Type type = IntegrationTestUtils.getRandomType();
-        EstimatedAge estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
-        Sex sex = IntegrationTestUtils.getRandomSex();
-        State lookingForHumanState = new LookingForHuman(registrationDate);
-        Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
-        );
-
-        ResponseEntity<Animal> responseEntity = testClient.postForEntity(
-                ANIMALS_URL, animalForAdoption, Animal.class, getHttpHeaders()
-        );
-        assertThat(responseEntity.getStatusCode(), is(CREATED));
-        Animal animal = responseEntity.getBody();
-        assertNotNull(animal);
-
-        return animal;
     }
 }

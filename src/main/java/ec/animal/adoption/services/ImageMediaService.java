@@ -1,23 +1,28 @@
 package ec.animal.adoption.services;
 
-import ec.animal.adoption.clients.MediaStorageClient;
+import ec.animal.adoption.clients.ImageMediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
-import ec.animal.adoption.repositories.PictureRepository;
+import ec.animal.adoption.repositories.MediaLinkRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ImageMediaService {
 
-    private final MediaStorageClient mediaStorageClient;
-    private final PictureRepository pictureRepository;
+    private final ImageMediaStorageClient imageMediaStorageClient;
+    private final MediaLinkRepository mediaLinkRepository;
 
-    public ImageMediaService(MediaStorageClient mediaStorageClient, PictureRepository pictureRepository) {
-        this.pictureRepository = pictureRepository;
-        this.mediaStorageClient = mediaStorageClient;
+    @Autowired
+    public ImageMediaService(ImageMediaStorageClient imageMediaStorageClient, MediaLinkRepository mediaLinkRepository) {
+        this.mediaLinkRepository = mediaLinkRepository;
+        this.imageMediaStorageClient = imageMediaStorageClient;
     }
 
-    public MediaLink create(ImageMedia media) throws ImageMediaProcessingException {
-        MediaLink mediaLink = mediaStorageClient.save(media);
-        return pictureRepository.save(mediaLink);
+    public MediaLink create(ImageMedia media) throws ImageMediaProcessingException, EntityAlreadyExistsException {
+        MediaLink mediaLink = imageMediaStorageClient.save(media);
+        return mediaLinkRepository.save(mediaLink);
     }
 }
