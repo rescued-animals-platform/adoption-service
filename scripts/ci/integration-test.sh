@@ -16,3 +16,5 @@ export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 echo "Configuring postgres host"
 
 sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
+
+./gradlew clean integrationTest

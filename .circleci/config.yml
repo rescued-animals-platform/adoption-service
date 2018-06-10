@@ -117,10 +117,8 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: Integration test setup
-          command: ./scripts/ci/integration-test-setup.sh
-
-      - run: ./gradlew clean integrationTest
+          name: Runing integration tests
+          command: ./scripts/ci/integration-test.sh
 
       - save_cache:
           paths:
