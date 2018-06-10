@@ -18,8 +18,3 @@ spring:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
-
-google:
-  cloud:
-    storage:
-      bucket: adoption-service-qa.appspot.com

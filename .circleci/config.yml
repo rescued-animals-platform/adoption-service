@@ -116,7 +116,13 @@ jobs:
           - v1-dependencies-{{ checksum "build.gradle" }}
           - v1-dependencies-
 
-      - run: ./gradlew clean integrationTest
+      - run:
+          name: Integration test setup
+          command: ./scripts/ci/integration-test-setup.sh
+
+      - run:
+          name: Running integration tests:
+          command: ./gradlew clean integrationTest
 
       - save_cache:
           paths:

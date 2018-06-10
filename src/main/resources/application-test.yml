@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/animal_adoption_db
+    url: jdbc:postgresql://postgres:5432/animal_adoption_db
     username: postgres
     password: p0stgr3s
     test-on-borrow: true
@@ -14,3 +14,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         ddl-auto: save-drop
+
+google:
+  cloud:
+    storage:
+      bucket: adoption-service-testing
