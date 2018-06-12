@@ -1,9 +1,9 @@
 package ec.animal.adoption;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -64,9 +65,9 @@ public abstract class AbstractIntegrationTest {
         String clinicalRecord = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         LocalDateTime registrationDate = LocalDateTime.now();
-        AnimalSpecies animalSpecies = IntegrationTestUtils.getRandomAnimalSpecies();
-        EstimatedAge estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
-        Sex sex = IntegrationTestUtils.getRandomSex();
+        AnimalSpecies animalSpecies = getRandomAnimalSpecies();
+        EstimatedAge estimatedAge = getRandomEstimatedAge();
+        Sex sex = getRandomSex();
         State lookingForHumanState = new LookingForHuman(registrationDate);
         Animal animalForAdoption = new Animal(
                 clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, lookingForHumanState

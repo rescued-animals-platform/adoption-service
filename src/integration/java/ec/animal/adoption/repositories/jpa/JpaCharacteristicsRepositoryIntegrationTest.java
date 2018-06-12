@@ -1,7 +1,6 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.AbstractIntegrationTest;
-import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
@@ -16,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
 import static org.junit.Assert.assertEquals;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
@@ -35,8 +36,8 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
     @Test
     public void shouldSaveCharacteristics() {
         Characteristics characteristics = new Characteristics(
-                IntegrationTestUtils.getRandomSize(),
-                IntegrationTestUtils.getRandomPhysicalActivity(),
+                getRandomSize(),
+                getRandomPhysicalActivity(),
                 new Temperaments(Sociability.VERY_SOCIABLE, Docility.DOCILE, Balance.BALANCED),
                 FriendlyWith.CHILDREN,
                 FriendlyWith.DOGS,
@@ -54,8 +55,8 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
     @Test
     public void shouldGetCharacteristicsByAnimalUuid() {
         Characteristics characteristics = new Characteristics(
-                IntegrationTestUtils.getRandomSize(),
-                IntegrationTestUtils.getRandomPhysicalActivity(),
+                getRandomSize(),
+                getRandomPhysicalActivity(),
                 new Temperaments(Sociability.SHY, Docility.NEITHER_DOCILE_NOR_DOMINANT, Balance.POSSESSIVE),
                 FriendlyWith.OTHER_ANIMALS,
                 FriendlyWith.ADULTS

@@ -1,7 +1,6 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.AbstractIntegrationTest;
-import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
@@ -17,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
+import static ec.animal.adoption.TestUtils.getRandomAnimalSpecies;
+import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
+import static ec.animal.adoption.TestUtils.getRandomSex;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -38,9 +40,9 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        animalSpecies = IntegrationTestUtils.getRandomAnimalSpecies();
-        estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
-        sex = IntegrationTestUtils.getRandomSex();
+        animalSpecies = getRandomAnimalSpecies();
+        estimatedAge = getRandomEstimatedAge();
+        sex = getRandomSex();
         state = new LookingForHuman(registrationDate);
     }
 
