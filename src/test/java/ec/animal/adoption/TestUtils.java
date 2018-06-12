@@ -2,13 +2,14 @@ package ec.animal.adoption;
 
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.media.ImageType;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -32,7 +33,7 @@ public class TestUtils {
             new Adopted(LocalDate.now(), randomAlphabetic(10)),
             new Unavailable(randomAlphabetic(10))
     );
-    private static final Type[] TYPES = Type.values();
+    private static final AnimalSpecies[] ANIMAL_SPECIES = AnimalSpecies.values();
     private static final EstimatedAge[] ESTIMATED_AGES = EstimatedAge.values();
     private static final Sex[] SEXES = Sex.values();
     private static final Size[] SIZES = Size.values();
@@ -42,13 +43,14 @@ public class TestUtils {
     private static final Docility[] DOCILITY = Docility.values();
     private static final Balance[] BALANCE = Balance.values();
     private static final SupportedImageExtension[] SUPPORTED_IMAGE_EXTENSIONS = SupportedImageExtension.values();
+    private static final ImageType[] IMAGE_TYPES = ImageType.values();
 
     public static State getRandomState() {
         return STATES.get(getRandomIndex(STATES.size()));
     }
 
-    public static Type getRandomType() {
-        return TYPES[getRandomIndex(TYPES.length)];
+    public static AnimalSpecies getRandomAnimalSpecies() {
+        return ANIMAL_SPECIES[getRandomIndex(ANIMAL_SPECIES.length)];
     }
 
     public static EstimatedAge getRandomEstimatedAge() {
@@ -85,6 +87,10 @@ public class TestUtils {
 
     public static SupportedImageExtension getRandomSupportedImageExtension() {
         return SUPPORTED_IMAGE_EXTENSIONS[getRandomIndex(SUPPORTED_IMAGE_EXTENSIONS.length)];
+    }
+
+    public static ImageType getRandomImageType() {
+        return IMAGE_TYPES[getRandomIndex(IMAGE_TYPES.length)];
     }
 
     public static Validator getValidator() {

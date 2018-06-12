@@ -1,37 +1,43 @@
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.domain.media.Link;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Entity(name = "media_link")
-public class JpaMediaLink {
+@Entity(name = "small_image")
+public class JpaSmallImage extends JpaImage {
 
-    @EmbeddedId
-    private JpaMediaLinkId jpaMediaLinkId;
+    @NotNull
+    @Type(type="org.hibernate.type.PostgresUUIDType")
+    private UUID largeImageId;
 
     private Timestamp creationDate;
 
     @NotNull
     private String url;
 
-    public JpaMediaLink() {
+    public JpaSmallImage() {
         // Required by jpa
     }
 
-    public JpaMediaLink(Link link) {
+    public JpaSmallImage(UUID largeImageId, String url) {
         this();
-        this.jpaMediaLinkId = new JpaMediaLinkId(link.getAnimalUuid(), link.getMediaName());
+        this.id = UUID.randomUUID();
+        this.largeImageId = largeImageId;
         this.creationDate = Timestamp.valueOf(LocalDateTime.now());
-        this.url = link.getUrl();
+        this.url = url;
     }
 
-    public Link toMediaLink() {
-        return new Link(this.jpaMediaLinkId.getAnimalUuid(), this.jpaMediaLinkId.getMediaName(), this.url);
+    public UUID getLargeImageId() {
+        return this.largeImageId;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override
@@ -39,17 +45,16 @@ public class JpaMediaLink {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JpaMediaLink that = (JpaMediaLink) o;
+        JpaSmallImage that = (JpaSmallImage) o;
 
-        if (jpaMediaLinkId != null ? !jpaMediaLinkId.equals(that.jpaMediaLinkId) : that.jpaMediaLinkId != null)
-            return false;
+        if (largeImageId != null ? !largeImageId.equals(that.largeImageId) : that.largeImageId != null) return false;
         if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
         return url != null ? url.equals(that.url) : that.url == null;
     }
 
     @Override
     public int hashCode() {
-        int result = jpaMediaLinkId != null ? jpaMediaLinkId.hashCode() : 0;
+        int result = largeImageId != null ? largeImageId.hashCode() : 0;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;

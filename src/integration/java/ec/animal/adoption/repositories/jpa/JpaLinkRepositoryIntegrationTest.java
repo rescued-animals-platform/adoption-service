@@ -1,7 +1,7 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.AbstractIntegrationTest;
-import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.domain.media.Link;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaMediaLink;
 import org.junit.Before;
@@ -13,7 +13,7 @@ import java.util.UUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.assertEquals;
 
-public class JpaMediaLinkRepositoryIntegrationTest extends AbstractIntegrationTest {
+public class JpaLinkRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private JpaMediaLinkRepository jpaMediaLinkRepository;
@@ -22,14 +22,14 @@ public class JpaMediaLinkRepositoryIntegrationTest extends AbstractIntegrationTe
 
     @Before
     public void setUp() {
-        jpaAnimal = saveJpaAnimal();
+        jpaAnimal = createAndSaveJpaAnimal();
     }
 
     @Test
     public void shouldSaveMediaLink() {
         UUID animalUuid = jpaAnimal.toAnimal().getUuid();
-        MediaLink mediaLink = new MediaLink(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
-        JpaMediaLink entity = new JpaMediaLink(mediaLink);
+        Link link = new Link(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
+        JpaMediaLink entity = new JpaMediaLink(link);
 
         JpaMediaLink jpaMediaLink = jpaMediaLinkRepository.save(entity);
 

@@ -2,7 +2,7 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.clients.ImageMediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
-import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.domain.media.Link;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import ec.animal.adoption.repositories.MediaLinkRepository;
@@ -34,13 +34,13 @@ public class ImageMediaServiceTest {
         ImageMedia imageMedia = new ImageMedia(
                 animalUuid, randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );
-        MediaLink mediaLink = new MediaLink(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
-        when(imageMediaStorageClient.save(imageMedia)).thenReturn(mediaLink);
-        when(mediaLinkRepository.save(mediaLink)).thenReturn(mediaLink);
+        Link link = new Link(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
+        when(imageMediaStorageClient.save(imageMedia)).thenReturn(link);
+        when(mediaLinkRepository.save(link)).thenReturn(link);
         ImageMediaService imageMediaService = new ImageMediaService(imageMediaStorageClient, mediaLinkRepository);
 
-        MediaLink createdMediaLink = imageMediaService.create(imageMedia);
+        Link createdLink = imageMediaService.create(imageMedia);
 
-        assertThat(createdMediaLink, is(mediaLink));
+        assertThat(createdLink, is(link));
     }
 }

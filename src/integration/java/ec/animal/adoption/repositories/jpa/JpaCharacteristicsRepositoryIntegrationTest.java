@@ -29,7 +29,7 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
 
     @Before
     public void setUp() {
-        jpaAnimal = saveJpaAnimal();
+        jpaAnimal = createAndSaveJpaAnimal();
     }
 
     @Test

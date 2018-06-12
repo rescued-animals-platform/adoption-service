@@ -2,7 +2,7 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.clients.ImageMediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
-import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.domain.media.Link;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import ec.animal.adoption.repositories.MediaLinkRepository;
@@ -21,8 +21,8 @@ public class ImageMediaService {
         this.imageMediaStorageClient = imageMediaStorageClient;
     }
 
-    public MediaLink create(ImageMedia media) throws ImageMediaProcessingException, EntityAlreadyExistsException {
-        MediaLink mediaLink = imageMediaStorageClient.save(media);
-        return mediaLinkRepository.save(mediaLink);
+    public Link create(ImageMedia media) throws ImageMediaProcessingException, EntityAlreadyExistsException {
+        Link link = imageMediaStorageClient.save(media);
+        return mediaLinkRepository.save(link);
     }
 }
