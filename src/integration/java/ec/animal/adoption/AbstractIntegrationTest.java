@@ -65,9 +65,9 @@ public abstract class AbstractIntegrationTest {
         String clinicalRecord = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         LocalDateTime registrationDate = LocalDateTime.now();
-        Type type = IntegrationTestUtils.getRandomType();
-        EstimatedAge estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
-        Sex sex = IntegrationTestUtils.getRandomSex();
+        Type type = getRandomType();
+        EstimatedAge estimatedAge = getRandomEstimatedAge();
+        Sex sex = getRandomSex();
         State lookingForHumanState = new LookingForHuman(registrationDate);
         Animal animalForAdoption = new Animal(
                 clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
