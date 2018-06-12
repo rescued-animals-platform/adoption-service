@@ -2,7 +2,7 @@ package ec.animal.adoption;
 
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
@@ -32,7 +32,7 @@ public class TestUtils {
             new Adopted(LocalDate.now(), randomAlphabetic(10)),
             new Unavailable(randomAlphabetic(10))
     );
-    private static final Type[] TYPES = Type.values();
+    private static final AnimalSpecies[] ANIMAL_SPECIES = AnimalSpecies.values();
     private static final EstimatedAge[] ESTIMATED_AGES = EstimatedAge.values();
     private static final Sex[] SEXES = Sex.values();
     private static final Size[] SIZES = Size.values();
@@ -47,8 +47,8 @@ public class TestUtils {
         return STATES.get(getRandomIndex(STATES.size()));
     }
 
-    public static Type getRandomType() {
-        return TYPES[getRandomIndex(TYPES.length)];
+    public static AnimalSpecies getRandomType() {
+        return ANIMAL_SPECIES[getRandomIndex(ANIMAL_SPECIES.length)];
     }
 
     public static EstimatedAge getRandomEstimatedAge() {

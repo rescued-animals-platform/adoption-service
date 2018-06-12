@@ -3,7 +3,7 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.state.State;
 
 import javax.persistence.*;
@@ -25,7 +25,7 @@ public class JpaAnimal {
     private String name;
 
     @NotNull
-    private String type;
+    private String animalSpecies;
 
     @NotNull
     private String estimatedAge;
@@ -49,7 +49,7 @@ public class JpaAnimal {
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
         this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
-        this.type = animal.getType().name();
+        this.animalSpecies = animal.getAnimalSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
         this.jpaState = new JpaState(animal.getState());
@@ -60,7 +60,7 @@ public class JpaAnimal {
                 clinicalRecord,
                 name,
                 registrationDate.toLocalDateTime(),
-                Type.valueOf(type),
+                AnimalSpecies.valueOf(animalSpecies),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
                 jpaState.toState()
@@ -82,7 +82,8 @@ public class JpaAnimal {
         if (clinicalRecord != null ? !clinicalRecord.equals(jpaAnimal.clinicalRecord) : jpaAnimal.clinicalRecord != null)
             return false;
         if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
-        if (type != null ? !type.equals(jpaAnimal.type) : jpaAnimal.type != null) return false;
+        if (animalSpecies != null ? !animalSpecies.equals(jpaAnimal.animalSpecies) : jpaAnimal.animalSpecies != null)
+            return false;
         if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
             return false;
         if (sex != null ? !sex.equals(jpaAnimal.sex) : jpaAnimal.sex != null) return false;
@@ -96,7 +97,7 @@ public class JpaAnimal {
         int result = uuid != null ? uuid.hashCode() : 0;
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (animalSpecies != null ? animalSpecies.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);

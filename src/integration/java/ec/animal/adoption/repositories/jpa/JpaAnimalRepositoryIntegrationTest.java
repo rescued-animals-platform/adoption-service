@@ -4,7 +4,7 @@ import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Type;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -34,7 +34,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest 
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 registrationDate,
-                Type.CAT,
+                AnimalSpecies.CAT,
                 EstimatedAge.YOUNG,
                 Sex.MALE,
                 new LookingForHuman(registrationDate)
@@ -54,7 +54,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest 
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(),
-                Type.CAT,
+                AnimalSpecies.CAT,
                 EstimatedAge.YOUNG_ADULT,
                 Sex.FEMALE,
                 new Unavailable(randomAlphabetic(10))
