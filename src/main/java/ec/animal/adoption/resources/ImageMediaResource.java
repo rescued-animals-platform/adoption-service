@@ -2,7 +2,7 @@ package ec.animal.adoption.resources;
 
 import com.google.common.io.Files;
 import ec.animal.adoption.domain.media.ImageMedia;
-import ec.animal.adoption.domain.media.Link;
+import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
@@ -28,7 +28,7 @@ public class ImageMediaResource {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Link create(
+    public MediaLink create(
             @PathVariable("animalUuid") UUID animalUuid, @RequestPart("file") MultipartFile multipartFile
     ) throws ImageMediaProcessingException, EntityAlreadyExistsException {
         return imageMediaService.create(createImageMediaFromMultipartFile(animalUuid, multipartFile));

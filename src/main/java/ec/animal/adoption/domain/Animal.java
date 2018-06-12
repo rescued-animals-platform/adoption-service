@@ -27,9 +27,9 @@ public class Animal {
     @JsonProperty("registrationDate")
     private final LocalDateTime registrationDate;
 
-    @NotNull(message = "Animal species is required")
-    @JsonProperty("animalSpecies")
-    private final AnimalSpecies animalSpecies;
+    @NotNull(message = "Animal type is required")
+    @JsonProperty("type")
+    private final Type type;
 
     @NotNull(message = "Animal estimated age is required")
     @JsonProperty("estimatedAge")
@@ -47,7 +47,7 @@ public class Animal {
             @JsonProperty("clinicalRecord") String clinicalRecord,
             @JsonProperty("name") String name,
             @JsonProperty("registrationDate") LocalDateTime registrationDate,
-            @JsonProperty("type") AnimalSpecies animalSpecies,
+            @JsonProperty("type") Type type,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
             @JsonProperty("sex") Sex sex,
             @JsonProperty("state") State state
@@ -55,7 +55,7 @@ public class Animal {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.registrationDate = registrationDate;
-        this.animalSpecies = animalSpecies;
+        this.type = type;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
 
@@ -87,8 +87,8 @@ public class Animal {
         return registrationDate;
     }
 
-    public AnimalSpecies getAnimalSpecies() {
-        return animalSpecies;
+    public Type getType() {
+        return type;
     }
 
     public EstimatedAge getEstimatedAge() {
@@ -116,7 +116,7 @@ public class Animal {
         if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
         if (registrationDate != null ? !registrationDate.equals(animal.registrationDate) : animal.registrationDate != null)
             return false;
-        if (animalSpecies != animal.animalSpecies) return false;
+        if (type != animal.type) return false;
         if (estimatedAge != animal.estimatedAge) return false;
         if (sex != animal.sex) return false;
         return state != null ? state.equals(animal.state) : animal.state == null;
@@ -128,7 +128,7 @@ public class Animal {
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (animalSpecies != null ? animalSpecies.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);

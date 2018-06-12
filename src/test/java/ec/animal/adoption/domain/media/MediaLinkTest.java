@@ -11,11 +11,11 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class LinkTest {
+public class MediaLinkTest {
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Link.class).usingGetClass().verify();
+        EqualsVerifier.forClass(MediaLink.class).usingGetClass().verify();
     }
 
     @Test
@@ -24,12 +24,12 @@ public class LinkTest {
         UUID animalUuid = UUID.randomUUID();
         String mediaName = randomAlphabetic(10);
         String url = randomAlphabetic(10);
-        String serializedLink = "{\"animalUuid\":\"" + animalUuid + "\",\"mediaName\":\"" + mediaName +
+        String serializedMediaLink = "{\"animalUuid\":\"" + animalUuid + "\",\"mediaName\":\"" + mediaName +
                 "\",\"url\":\"" + url + "\"}";
-        Link expectedLink = new Link(animalUuid, mediaName, url);
+        MediaLink expectedMediaLink = new MediaLink(animalUuid, mediaName, url);
 
-        Link link = objectMapper.readValue(serializedLink, Link.class);
+        MediaLink mediaLink = objectMapper.readValue(serializedMediaLink, MediaLink.class);
 
-        assertThat(link, is(expectedLink));
+        assertThat(mediaLink, is(expectedMediaLink));
     }
 }

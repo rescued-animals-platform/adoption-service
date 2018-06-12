@@ -1,5 +1,5 @@
 package ec.animal.adoption.domain;
 
-public enum AnimalSpecies {
+public enum Type {
     DOG, CAT;
 }

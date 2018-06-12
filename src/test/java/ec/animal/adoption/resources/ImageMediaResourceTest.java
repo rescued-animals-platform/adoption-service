@@ -1,7 +1,7 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.media.ImageMedia;
-import ec.animal.adoption.domain.media.Link;
+import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
@@ -47,16 +47,16 @@ public class ImageMediaResourceTest {
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
         when(multipartFile.getBytes()).thenReturn(content);
         when(multipartFile.getSize()).thenReturn(sizeInBytes);
-        Link expectedLink = new Link(
+        MediaLink expectedMediaLink = new MediaLink(
                 animalUuid, randomAlphabetic(10), randomAlphabetic(10)
         );
         when(imageMediaService.create(new ImageMedia(animalUuid, extension, content, sizeInBytes))).
-                thenReturn(expectedLink);
+                thenReturn(expectedMediaLink);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
 
-        Link createdLink = imageMediaResource.create(animalUuid, multipartFile);
+        MediaLink createdMediaLink = imageMediaResource.create(animalUuid, multipartFile);
 
-        assertThat(createdLink, is(expectedLink));
+        assertThat(createdMediaLink, is(expectedMediaLink));
     }
 
     @Test(expected = ImageMediaProcessingException.class)

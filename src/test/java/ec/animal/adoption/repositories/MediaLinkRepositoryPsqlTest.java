@@ -1,6 +1,6 @@
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.domain.media.Link;
+import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.jpa.JpaMediaLink;
 import ec.animal.adoption.repositories.jpa.JpaMediaLinkRepository;
@@ -23,18 +23,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LinkRepositoryPsqlTest {
+public class MediaLinkRepositoryPsqlTest {
 
     @Mock
     private JpaMediaLinkRepository jpaMediaLinkRepository;
 
-    private Link link;
+    private MediaLink mediaLink;
     private MediaLinkLinkRepositoryPsql mediaLinkRepositoryPsql;
 
 
     @Before
     public void setUp() {
-        link = new Link(UUID.randomUUID(), randomAlphabetic(10), randomAlphabetic(10));
+        mediaLink = new MediaLink(UUID.randomUUID(), randomAlphabetic(10), randomAlphabetic(10));
         mediaLinkRepositoryPsql = new MediaLinkLinkRepositoryPsql(jpaMediaLinkRepository);
     }
 
@@ -46,17 +46,17 @@ public class LinkRepositoryPsqlTest {
     @Test
     public void shouldSaveJpaMediaLink() throws EntityAlreadyExistsException {
         ArgumentCaptor<JpaMediaLink> jpaImageMediaArgumentCaptor = ArgumentCaptor.forClass(JpaMediaLink.class);
-        JpaMediaLink expectedJpaMediaLink = new JpaMediaLink(this.link);
+        JpaMediaLink expectedJpaMediaLink = new JpaMediaLink(this.mediaLink);
         when(jpaMediaLinkRepository.save(any(JpaMediaLink.class))).thenReturn(expectedJpaMediaLink);
 
-        Link savedLink = mediaLinkRepositoryPsql.save(this.link);
+        MediaLink savedMediaLink = mediaLinkRepositoryPsql.save(mediaLink);
 
         verify(jpaMediaLinkRepository).save(jpaImageMediaArgumentCaptor.capture());
         JpaMediaLink jpaMediaLink = jpaImageMediaArgumentCaptor.getValue();
-        Link link = jpaMediaLink.toMediaLink();
+        MediaLink mediaLink = jpaMediaLink.toMediaLink();
 
-        assertThat(link, is(this.link));
-        assertThat(expectedJpaMediaLink.toMediaLink(), is(savedLink));
+        assertThat(mediaLink, is(this.mediaLink));
+        assertThat(expectedJpaMediaLink.toMediaLink(), is(savedMediaLink));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
@@ -65,6 +65,6 @@ public class LinkRepositoryPsqlTest {
             throw mock(PSQLException.class);
         }).when(jpaMediaLinkRepository).save(any(JpaMediaLink.class));
 
-        mediaLinkRepositoryPsql.save(this.link);
+        mediaLinkRepositoryPsql.save(this.mediaLink);
     }
 }

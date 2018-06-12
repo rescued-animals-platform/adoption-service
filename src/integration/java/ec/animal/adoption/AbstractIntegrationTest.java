@@ -1,9 +1,9 @@
 package ec.animal.adoption;
 
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
@@ -49,12 +49,12 @@ public abstract class AbstractIntegrationTest {
         return headers;
     }
 
-    protected JpaAnimal createAndSaveJpaAnimal() {
+    protected JpaAnimal saveJpaAnimal() {
         return jpaAnimalRepository.save(new JpaAnimal(new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(),
-                AnimalSpecies.CAT,
+                Type.CAT,
                 EstimatedAge.YOUNG_ADULT,
                 Sex.MALE,
                 new Unavailable(randomAlphabetic(10))
@@ -65,12 +65,12 @@ public abstract class AbstractIntegrationTest {
         String clinicalRecord = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         LocalDateTime registrationDate = LocalDateTime.now();
-        AnimalSpecies animalSpecies = getRandomAnimalSpecies();
-        EstimatedAge estimatedAge = getRandomEstimatedAge();
-        Sex sex = getRandomSex();
+        Type type = IntegrationTestUtils.getRandomType();
+        EstimatedAge estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
+        Sex sex = IntegrationTestUtils.getRandomSex();
         State lookingForHumanState = new LookingForHuman(registrationDate);
         Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, lookingForHumanState
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, lookingForHumanState
         );
 
         ResponseEntity<Animal> responseEntity = testClient.postForEntity(

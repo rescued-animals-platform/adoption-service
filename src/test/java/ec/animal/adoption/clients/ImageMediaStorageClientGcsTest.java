@@ -3,7 +3,7 @@ package ec.animal.adoption.clients;
 import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
-import ec.animal.adoption.domain.media.Link;
+import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.ImageMediaProcessingException;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,11 +45,11 @@ public class ImageMediaStorageClientGcsTest {
         );
         String url = randomAlphabetic(10);
         when(googleCloudStorageClient.storeMedia(imageMedia.getPath(), imageMedia.getContent())).thenReturn(url);
-        Link expectedLink = new Link(imageMedia.getAnimalUuid(), imageMedia.getName(), url);
+        MediaLink expectedMediaLink = new MediaLink(imageMedia.getAnimalUuid(), imageMedia.getName(), url);
 
-        Link link = mediaStorageClientGcs.save(imageMedia);
+        MediaLink mediaLink = mediaStorageClientGcs.save(imageMedia);
 
-        assertThat(link, is(expectedLink));
+        assertThat(mediaLink, is(expectedMediaLink));
     }
 
     @Test(expected = ImageMediaProcessingException.class)

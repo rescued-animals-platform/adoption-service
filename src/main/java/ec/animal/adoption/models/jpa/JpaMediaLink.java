@@ -1,6 +1,6 @@
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.domain.media.Link;
+import ec.animal.adoption.domain.media.MediaLink;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -23,15 +23,15 @@ public class JpaMediaLink {
         // Required by jpa
     }
 
-    public JpaMediaLink(Link link) {
+    public JpaMediaLink(MediaLink mediaLink) {
         this();
-        this.jpaMediaLinkId = new JpaMediaLinkId(link.getAnimalUuid(), link.getMediaName());
+        this.jpaMediaLinkId = new JpaMediaLinkId(mediaLink.getAnimalUuid(), mediaLink.getMediaName());
         this.creationDate = Timestamp.valueOf(LocalDateTime.now());
-        this.url = link.getUrl();
+        this.url = mediaLink.getUrl();
     }
 
-    public Link toMediaLink() {
-        return new Link(this.jpaMediaLinkId.getAnimalUuid(), this.jpaMediaLinkId.getMediaName(), this.url);
+    public MediaLink toMediaLink() {
+        return new MediaLink(this.jpaMediaLinkId.getAnimalUuid(), this.jpaMediaLinkId.getMediaName(), this.url);
     }
 
     @Override

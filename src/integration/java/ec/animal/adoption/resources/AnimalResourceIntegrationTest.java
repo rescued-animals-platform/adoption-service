@@ -1,10 +1,11 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.AbstractIntegrationTest;
+import ec.animal.adoption.IntegrationTestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.AnimalSpecies;
+import ec.animal.adoption.domain.Type;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.models.rest.ApiError;
@@ -16,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
-import static ec.animal.adoption.TestUtils.getRandomAnimalSpecies;
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomSex;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -30,7 +28,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
     private String clinicalRecord;
     private String name;
     private LocalDateTime registrationDate;
-    private AnimalSpecies animalSpecies;
+    private Type type;
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
@@ -40,16 +38,16 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        animalSpecies = getRandomAnimalSpecies();
-        estimatedAge = getRandomEstimatedAge();
-        sex = getRandomSex();
+        type = IntegrationTestUtils.getRandomType();
+        estimatedAge = IntegrationTestUtils.getRandomEstimatedAge();
+        sex = IntegrationTestUtils.getRandomSex();
         state = new LookingForHuman(registrationDate);
     }
 
     @Test
     public void shouldReturn201Created() {
         Animal animal = new Animal(
-                clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, state
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, state
         );
 
         ResponseEntity<Animal> response = testClient.postForEntity(
@@ -63,7 +61,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
     public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSend() {
         String animal = "{\"clinicalRecord\":\"" + clinicalRecord +
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + registrationDate +
-                "\",\"type\":\"" + animalSpecies + "\",\"estimatedAge\":\"" + estimatedAge +
+                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge +
                 "\",\"sex\":\"" + sex + "\"}";
         HttpEntity<String> entity = new HttpEntity<>(animal, getHttpHeaders());
 
@@ -79,7 +77,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
         String wrongRegistrationDate = randomAlphabetic(10);
         String animalWithWrongData = "{\"clinicalRecord\":\"" + clinicalRecord +
                 "\",\"name\":\"" + name + "\",\"registrationDate\":\"" + wrongRegistrationDate +
-                "\",\"type\":\"" + animalSpecies + "\",\"estimatedAge\":\"" + estimatedAge +
+                "\",\"type\":\"" + type + "\",\"estimatedAge\":\"" + estimatedAge +
                 "\",\"sex\":\"12345\"}";
         HttpEntity<String> entity = new HttpEntity<>(animalWithWrongData, getHttpHeaders());
 
@@ -95,7 +93,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
         String animalWithMissingData = "{\"clinicalRecord\":\"\",\"name\":\"" + name +
-                "\",\"registrationDate\":\"" + registrationDate + "\",\"type\":\"" + animalSpecies + "\"}";
+                "\",\"registrationDate\":\"" + registrationDate + "\",\"type\":\"" + type + "\"}";
         HttpEntity<String> entity = new HttpEntity<>(animalWithMissingData, getHttpHeaders());
 
         ResponseEntity<ApiError> response = testClient.exchange(
@@ -110,7 +108,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         Animal animal = new Animal(
-                clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, state
+                clinicalRecord, name, registrationDate, type, estimatedAge, sex, state
         );
         testClient.postForEntity(ANIMALS_URL, animal, Animal.class, getHttpHeaders());
 
@@ -131,7 +129,7 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
         assertThat(animal.getClinicalRecord(), is(clinicalRecord));
         assertThat(animal.getName(), is(name));
         assertThat(animal.getRegistrationDate(), is(registrationDate));
-        assertThat(animal.getAnimalSpecies(), is(animalSpecies));
+        assertThat(animal.getType(), is(type));
         assertThat(animal.getEstimatedAge(), is(estimatedAge));
         assertThat(animal.getState(), is(state));
     }

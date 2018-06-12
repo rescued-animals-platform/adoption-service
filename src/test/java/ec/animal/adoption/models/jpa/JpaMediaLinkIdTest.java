@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class JpaLinkIdTest {
+public class JpaMediaLinkIdTest {
 
     private JpaMediaLinkId jpaMediaLinkId;
 
