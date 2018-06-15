@@ -59,7 +59,7 @@ public class PictureResourceTest {
     public void shouldCreateAPicture() {
         String name = randomAlphabetic(10);
         LinkPicture expectedLinkPicture = new LinkPicture(
-                animalUuid, name, mock(MediaLink.class), mock(MediaLink.class)
+                animalUuid, name, pictureType, mock(MediaLink.class), mock(MediaLink.class)
         );
         ImagePicture imagePicture = new ImagePicture(
                 animalUuid,

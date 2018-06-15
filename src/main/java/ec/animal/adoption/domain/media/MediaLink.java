@@ -7,18 +7,20 @@ import java.util.UUID;
 
 public class MediaLink {
 
-    private final UUID animalUuid;
-    private final String mediaName;
+    private UUID animalUuid;
+    private String mediaName;
     private final String url;
+
+    public MediaLink(UUID animalUuid, String mediaName, String url) {
+        this.animalUuid = animalUuid;
+        this.mediaName = mediaName;
+        this.url = url;
+    }
 
     @JsonCreator
     public MediaLink(
-            @JsonProperty("animalUuid") UUID animalUuid,
-            @JsonProperty("mediaName") String mediaName,
             @JsonProperty("url") String url
     ) {
-        this.animalUuid = animalUuid;
-        this.mediaName = mediaName;
         this.url = url;
     }
 

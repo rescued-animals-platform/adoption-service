@@ -1,6 +1,6 @@
 package ec.animal.adoption.services;
 
-import ec.animal.adoption.clients.ImageMediaStorageClient;
+import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
@@ -26,7 +26,7 @@ public class ImageMediaServiceTest {
     private MediaLinkRepository mediaLinkRepository;
 
     @Mock
-    private ImageMediaStorageClient imageMediaStorageClient;
+    private MediaStorageClient mediaStorageClient;
 
     @Test
     public void shouldCreateAnImageMedia() throws ImageProcessingException, EntityAlreadyExistsException {
@@ -35,9 +35,9 @@ public class ImageMediaServiceTest {
                 animalUuid, randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );
         MediaLink mediaLink = new MediaLink(animalUuid, randomAlphabetic(10), randomAlphabetic(10));
-        when(imageMediaStorageClient.save(imageMedia)).thenReturn(mediaLink);
+        when(mediaStorageClient.save(imageMedia)).thenReturn(mediaLink);
         when(mediaLinkRepository.save(mediaLink)).thenReturn(mediaLink);
-        ImageMediaService imageMediaService = new ImageMediaService(imageMediaStorageClient, mediaLinkRepository);
+        ImageMediaService imageMediaService = new ImageMediaService(mediaStorageClient, mediaLinkRepository);
 
         MediaLink createdMediaLink = imageMediaService.create(imageMedia);
 

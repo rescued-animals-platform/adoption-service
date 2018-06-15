@@ -54,12 +54,28 @@ public class ImagePictureTest {
     }
 
     @Test
+    public void shouldReturnLargeImageContent() {
+        byte[] content = {};
+        when(largeImage.getContent()).thenReturn(content);
+
+        assertThat(imagePicture.getLargeImageContent(), is(content));
+    }
+
+    @Test
     public void shouldReturnSmallImagePath() {
         String extension = randomAlphabetic(3);
         when(smallImage.getExtension()).thenReturn(extension);
         String expectedSmallImagePath = animalUuid + "/" + name + "_SMALL." + extension;
 
         assertThat(imagePicture.getSmallImagePath(), is(expectedSmallImagePath));
+    }
+
+    @Test
+    public void shouldReturnSmallImageContent() {
+        byte[] content = {};
+        when(smallImage.getContent()).thenReturn(content);
+
+        assertThat(imagePicture.getSmallImageContent(), is(content));
     }
 
     @Test

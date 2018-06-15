@@ -38,12 +38,20 @@ public class ImagePicture implements Picture {
         return this.animalUuid + "/" + this.getLargeImageName();
     }
 
+    public byte[] getLargeImageContent() {
+        return this.largeImage.getContent();
+    }
+
     private String getSmallImageName() {
         return this.name + "_SMALL." + smallImage.getExtension();
     }
 
     public String getSmallImagePath() {
         return this.animalUuid + "/" + this.getSmallImageName();
+    }
+
+    public byte[] getSmallImageContent() {
+        return this.smallImage.getContent();
     }
 
     @Override

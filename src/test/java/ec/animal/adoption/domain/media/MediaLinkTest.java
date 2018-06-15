@@ -2,6 +2,7 @@ package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class MediaLinkTest {
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(MediaLink.class).usingGetClass().verify();
+        EqualsVerifier.forClass(MediaLink.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
     @Test
