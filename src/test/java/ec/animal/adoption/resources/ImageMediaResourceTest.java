@@ -3,7 +3,7 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.ImageMediaProcessingException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class ImageMediaResourceTest {
     }
 
     @Test
-    public void shouldCreateAnImageMedia() throws ImageMediaProcessingException, IOException,
+    public void shouldCreateAnImageMedia() throws ImageProcessingException, IOException,
             EntityAlreadyExistsException {
         String extension = "ext";
         String filename = randomAlphabetic(10) + "." + extension;
@@ -59,9 +59,9 @@ public class ImageMediaResourceTest {
         assertThat(createdMediaLink, is(expectedMediaLink));
     }
 
-    @Test(expected = ImageMediaProcessingException.class)
+    @Test(expected = ImageProcessingException.class)
     public void shouldThrowImageProcessingExceptionWhenInputStreamCanNotBeAccessed() throws IOException,
-            ImageMediaProcessingException, EntityAlreadyExistsException {
+            ImageProcessingException, EntityAlreadyExistsException {
         when(multipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(multipartFile.getBytes()).thenThrow(IOException.class);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
@@ -69,8 +69,8 @@ public class ImageMediaResourceTest {
         imageMediaResource.create(animalUuid, multipartFile);
     }
 
-    @Test(expected = ImageMediaProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmpty() throws ImageMediaProcessingException,
+    @Test(expected = ImageProcessingException.class)
+    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmpty() throws ImageProcessingException,
             EntityAlreadyExistsException {
         when(multipartFile.isEmpty()).thenReturn(true);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
@@ -78,8 +78,8 @@ public class ImageMediaResourceTest {
         imageMediaResource.create(animalUuid, multipartFile);
     }
 
-    @Test(expected = ImageMediaProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNull() throws ImageMediaProcessingException,
+    @Test(expected = ImageProcessingException.class)
+    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNull() throws ImageProcessingException,
             EntityAlreadyExistsException {
         when(multipartFile.getOriginalFilename()).thenReturn(null);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);

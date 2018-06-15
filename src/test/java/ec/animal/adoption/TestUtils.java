@@ -9,6 +9,7 @@ import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -42,12 +43,13 @@ public class TestUtils {
     private static final Docility[] DOCILITY = Docility.values();
     private static final Balance[] BALANCE = Balance.values();
     private static final SupportedImageExtension[] SUPPORTED_IMAGE_EXTENSIONS = SupportedImageExtension.values();
+    private static final PictureType[] PICTURE_TYPES = PictureType.values();
 
     public static State getRandomState() {
         return STATES.get(getRandomIndex(STATES.size()));
     }
 
-    public static AnimalSpecies getRandomType() {
+    public static AnimalSpecies getRandomAnimalSpecies() {
         return ANIMAL_SPECIES[getRandomIndex(ANIMAL_SPECIES.length)];
     }
 
@@ -85,6 +87,10 @@ public class TestUtils {
 
     public static SupportedImageExtension getRandomSupportedImageExtension() {
         return SUPPORTED_IMAGE_EXTENSIONS[getRandomIndex(SUPPORTED_IMAGE_EXTENSIONS.length)];
+    }
+
+    public static PictureType getRandomPictureType() {
+        return PICTURE_TYPES[getRandomIndex(PICTURE_TYPES.length)];
     }
 
     public static Validator getValidator() {

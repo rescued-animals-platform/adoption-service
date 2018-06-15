@@ -4,7 +4,7 @@ import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.ImageMediaProcessingException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +19,12 @@ public class ImageMediaStorageClientGcs implements ImageMediaStorageClient {
     }
 
     @Override
-    public MediaLink save(ImageMedia imageMedia) throws ImageMediaProcessingException {
+    public MediaLink save(ImageMedia imageMedia) throws ImageProcessingException {
         try {
             String url = googleCloudStorageClient.storeMedia(imageMedia.getPath(), imageMedia.getContent());
             return new MediaLink(imageMedia.getAnimalUuid(), imageMedia.getName(), url);
         } catch (StorageException ex) {
-            throw new ImageMediaProcessingException();
+            throw new ImageProcessingException();
         }
     }
 }

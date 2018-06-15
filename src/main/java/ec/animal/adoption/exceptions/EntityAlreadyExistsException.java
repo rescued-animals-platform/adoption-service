@@ -1,6 +1,6 @@
 package ec.animal.adoption.exceptions;
 
-public class EntityAlreadyExistsException extends Exception {
+public class EntityAlreadyExistsException extends RuntimeException {
 
     private final String message;
 

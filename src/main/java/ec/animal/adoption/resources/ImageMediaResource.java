@@ -4,7 +4,7 @@ import com.google.common.io.Files;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.ImageMediaProcessingException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,14 +30,14 @@ public class ImageMediaResource {
     @ResponseStatus(HttpStatus.CREATED)
     public MediaLink create(
             @PathVariable("animalUuid") UUID animalUuid, @RequestPart("file") MultipartFile multipartFile
-    ) throws ImageMediaProcessingException, EntityAlreadyExistsException {
+    ) throws ImageProcessingException, EntityAlreadyExistsException {
         return imageMediaService.create(createImageMediaFromMultipartFile(animalUuid, multipartFile));
     }
 
     private ImageMedia createImageMediaFromMultipartFile(UUID animalUuid, MultipartFile multipartFile) throws
-            ImageMediaProcessingException {
+            ImageProcessingException {
         if (multipartFile.isEmpty() || multipartFile.getOriginalFilename() == null) {
-            throw new ImageMediaProcessingException();
+            throw new ImageProcessingException();
         }
 
         try {
@@ -48,7 +48,7 @@ public class ImageMediaResource {
                     multipartFile.getSize()
             );
         } catch (IOException e) {
-            throw new ImageMediaProcessingException();
+            throw new ImageProcessingException();
         }
     }
 }

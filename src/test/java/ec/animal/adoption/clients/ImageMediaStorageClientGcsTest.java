@@ -4,7 +4,7 @@ import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.ImageMediaProcessingException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class ImageMediaStorageClientGcsTest {
     }
 
     @Test
-    public void shouldStoreMedia() throws ImageMediaProcessingException {
+    public void shouldStoreMedia() throws ImageProcessingException {
         ImageMedia imageMedia = new ImageMedia(
                 UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );
@@ -52,8 +52,8 @@ public class ImageMediaStorageClientGcsTest {
         assertThat(mediaLink, is(expectedMediaLink));
     }
 
-    @Test(expected = ImageMediaProcessingException.class)
-    public void shouldThrowImageMediaProcessingException() throws ImageMediaProcessingException {
+    @Test(expected = ImageProcessingException.class)
+    public void shouldThrowImageMediaProcessingException() throws ImageProcessingException {
         ImageMedia imageMedia = new ImageMedia(
                 UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );

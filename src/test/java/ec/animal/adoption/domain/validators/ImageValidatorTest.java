@@ -1,6 +1,6 @@
 package ec.animal.adoption.domain.validators;
 
-import ec.animal.adoption.domain.media.ImageMedia;
+import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
@@ -26,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ImageMediaValidatorTest {
+public class ImageValidatorTest {
 
     private static final String INVALID_MESSAGE = "The image provided doesn't meet one or more of the requirements. " +
             "Supported extensions: %s. Maximum size: 1MB";
@@ -40,100 +39,97 @@ public class ImageMediaValidatorTest {
     @Mock
     private NodeBuilderCustomizableContext nodeBuilderCustomizableContext;
 
-    private UUID animalUuid;
     private int oneMegaByteInBytes;
     private long size;
-    private ImageMediaValidator imageMediaValidator;
+    private ImageValidator imageValidator;
 
     @Before
     public void setUp() {
         oneMegaByteInBytes = 1048576;
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(constraintViolationBuilder);
         when(constraintViolationBuilder.addPropertyNode(anyString())).thenReturn(nodeBuilderCustomizableContext);
-        animalUuid = UUID.randomUUID();
         size = new Random().nextInt(oneMegaByteInBytes);
-        imageMediaValidator = new ImageMediaValidator();
+        imageValidator = new ImageValidator();
     }
 
     @Test
     public void shouldBeAnInstanceOfConstraintValidator() {
-        assertThat(imageMediaValidator, is(instanceOf(ConstraintValidator.class)));
+        assertThat(imageValidator, is(instanceOf(ConstraintValidator.class)));
     }
 
     @Test
     public void shouldBeValidForJpegAndSizeLessThanOneMb() {
         SupportedImageExtension jpeg = SupportedImageExtension.JPEG;
-        ImageMedia imageMedia = new ImageMedia(animalUuid, jpeg.getExtension(), jpeg.getStartingBytes(), size);
+        Image image = new Image(jpeg.getExtension(), jpeg.getStartingBytes(), size);
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(true));
+        assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeValidForJpgAndSizeLessThanOneMb() {
         SupportedImageExtension jpg = SupportedImageExtension.JPG;
-        ImageMedia imageMedia = new ImageMedia(animalUuid, jpg.getExtension(), jpg.getStartingBytes(), size);
+        Image image = new Image(jpg.getExtension(), jpg.getStartingBytes(), size);
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(true));
+        assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeValidForPngAndSizeLessThanOneMb() {
         SupportedImageExtension png = SupportedImageExtension.PNG;
-        ImageMedia imageMedia = new ImageMedia(animalUuid, png.getExtension(), png.getStartingBytes(), size);
+        Image image = new Image(png.getExtension(), png.getStartingBytes(), size);
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(true));
+        assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeValidForSizeEqualToOneMb() {
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
-        ImageMedia imageMedia = new ImageMedia(
-                animalUuid,
+        Image image = new Image(
                 supportedImageExtension.getExtension(),
                 supportedImageExtension.getStartingBytes(),
                 oneMegaByteInBytes
         );
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(true));
+        assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeInvalidForSizeGreaterThanOneMb() {
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         size = oneMegaByteInBytes + new Random().nextInt(100);
-        ImageMedia imageMedia = new ImageMedia(
-                animalUuid, supportedImageExtension.getExtension(), supportedImageExtension.getStartingBytes(), size
+        Image image = new Image(
+                supportedImageExtension.getExtension(), supportedImageExtension.getStartingBytes(), size
         );
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
+        assertThat(imageValidator.isValid(image, context), is(false));
     }
 
     @Test
     public void shouldBeInvalidWithRightExtensionInFilenameButWrongImageTypeInContent() {
         byte[] invalidContent = {};
         String extension = getRandomSupportedImageExtension().getExtension();
-        ImageMedia imageMedia = new ImageMedia(animalUuid, extension, invalidContent, size);
+        Image image = new Image(extension, invalidContent, size);
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
+        assertThat(imageValidator.isValid(image, context), is(false));
     }
 
     @Test
     public void shouldBeInvalidWithRightImageTypeInContentButWrongExtensionInFilename() {
         String wrongExtension = randomAlphabetic(10);
         byte[] content = getRandomSupportedImageExtension().getStartingBytes();
-        ImageMedia imageMedia = new ImageMedia(animalUuid, wrongExtension, content, size);
+        Image image = new Image(wrongExtension, content, size);
 
-        assertThat(imageMediaValidator.isValid(imageMedia, context), is(false));
+        assertThat(imageValidator.isValid(image, context), is(false));
     }
 
     @Test
     public void shouldCustomizeContextWhenInvalid() {
-        ImageMedia imageMedia = new ImageMedia(animalUuid, randomAlphabetic(10), new byte[]{}, size);
+        Image image = new Image(randomAlphabetic(10), new byte[]{}, size);
         String expectedTemplate = String.format(INVALID_MESSAGE, Arrays.stream(SupportedImageExtension.values())
                 .map(SupportedImageExtension::getExtension)
                 .collect(Collectors.joining(", ")));
 
-        imageMediaValidator.isValid(imageMedia, context);
+        imageValidator.isValid(image, context);
 
         verify(context, times(1)).disableDefaultConstraintViolation();
         verify(context, times(1)).buildConstraintViolationWithTemplate(expectedTemplate);

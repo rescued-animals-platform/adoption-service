@@ -4,11 +4,11 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = {ImageMediaValidator.class})
+@Constraint(validatedBy = {ImageValidator.class})
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface ValidImageMedia {
+public @interface ValidImage {
 
     String message() default "Invalid image";
 

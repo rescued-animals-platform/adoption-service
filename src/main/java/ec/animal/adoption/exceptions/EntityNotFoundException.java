@@ -1,6 +1,6 @@
 package ec.animal.adoption.exceptions;
 
-public class EntityNotFoundException extends Exception {
+public class EntityNotFoundException extends RuntimeException {
 
     private final String message;
 

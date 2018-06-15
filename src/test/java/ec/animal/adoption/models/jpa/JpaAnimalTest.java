@@ -35,7 +35,7 @@ public class JpaAnimalTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        animalSpecies = TestUtils.getRandomType();
+        animalSpecies = TestUtils.getRandomAnimalSpecies();
         estimatedAge = TestUtils.getRandomEstimatedAge();
         sex = TestUtils.getRandomSex();
         State state = TestUtils.getRandomState();

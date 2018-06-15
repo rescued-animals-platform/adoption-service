@@ -65,7 +65,7 @@ public abstract class AbstractIntegrationTest {
         String clinicalRecord = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         LocalDateTime registrationDate = LocalDateTime.now();
-        AnimalSpecies animalSpecies = getRandomType();
+        AnimalSpecies animalSpecies = getRandomAnimalSpecies();
         EstimatedAge estimatedAge = getRandomEstimatedAge();
         Sex sex = getRandomSex();
         State lookingForHumanState = new LookingForHuman(registrationDate);

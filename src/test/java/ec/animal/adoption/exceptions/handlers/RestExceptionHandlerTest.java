@@ -2,7 +2,7 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.ImageMediaProcessingException;
+import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -165,10 +165,10 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithHttpStatusUnprocessableEntityForImageProcessingException() {
-        ImageMediaProcessingException imageMediaProcessingException = mock(ImageMediaProcessingException.class);
+        ImageProcessingException imageProcessingException = mock(ImageProcessingException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
-                imageMediaProcessingException
+                imageProcessingException
         );
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
@@ -176,13 +176,13 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForImageProcessingException() {
-        ImageMediaProcessingException imageMediaProcessingException = new ImageMediaProcessingException();
+        ImageProcessingException imageProcessingException = new ImageProcessingException();
         ApiError expectedApiError = new ApiError(
                 HttpStatus.UNPROCESSABLE_ENTITY, "The image could not be processed"
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
-                imageMediaProcessingException
+                imageProcessingException
         );
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));

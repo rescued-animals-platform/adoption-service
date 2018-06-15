@@ -1,12 +1,9 @@
 package ec.animal.adoption.domain.media;
 
-import ec.animal.adoption.domain.validators.ValidImageMedia;
-
 import javax.validation.constraints.Min;
 import java.util.Arrays;
 import java.util.UUID;
 
-@ValidImageMedia
 public class ImageMedia {
 
     private final UUID animalUuid;

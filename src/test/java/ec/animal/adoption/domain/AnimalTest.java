@@ -47,7 +47,7 @@ public class AnimalTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        animalSpecies = getRandomType();
+        animalSpecies = getRandomAnimalSpecies();
         estimatedAge = getRandomEstimatedAge();
         sex = getRandomSex();
         state = getRandomState();
