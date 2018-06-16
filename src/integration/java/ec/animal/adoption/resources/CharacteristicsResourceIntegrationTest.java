@@ -80,6 +80,24 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
     }
 
     @Test
+    public void shouldReturn404NotFoundWhenCreatingCharacteristicsForNonExistentAnimal() {
+        Characteristics characteristics = new Characteristics(
+                Size.TINY,
+                PhysicalActivity.LOW,
+                new Temperaments(Sociability.VERY_SOCIABLE, Docility.NEITHER_DOCILE_NOR_DOMINANT, Balance.BALANCED),
+                FriendlyWith.ADULTS
+        );
+
+        ResponseEntity<ApiError> response = testClient.postForEntity(
+                CHARACTERISTICS_URL, characteristics, ApiError.class, UUID.randomUUID(), getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
         Animal animal = createAndSaveAnimal();
         Characteristics characteristics = new Characteristics(

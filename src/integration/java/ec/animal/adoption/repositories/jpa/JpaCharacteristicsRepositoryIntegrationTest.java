@@ -13,11 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegrationTest {
@@ -66,8 +69,9 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
         entity = new JpaCharacteristics(characteristics);
         JpaCharacteristics jpaCharacteristicsSaved = jpaCharacteristicsRepository.save(entity);
 
-        JpaCharacteristics jpaCharacteristicsFound = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
+        Optional<JpaCharacteristics> jpaCharacteristicsFound = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
 
-        assertReflectionEquals(jpaCharacteristicsSaved, jpaCharacteristicsFound);
+        assertThat(jpaCharacteristicsFound.isPresent(), is(true));
+        assertReflectionEquals(jpaCharacteristicsSaved, jpaCharacteristicsFound.get());
     }
 }

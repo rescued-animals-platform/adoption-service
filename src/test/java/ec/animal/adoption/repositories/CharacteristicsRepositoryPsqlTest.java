@@ -5,7 +5,9 @@ import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
+import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
@@ -27,6 +30,12 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CharacteristicsRepositoryPsqlTest {
+
+    @Mock
+    private JpaAnimalRepository jpaAnimalRepository;
+
+    @Mock
+    private JpaAnimal jpaAnimal;
 
     @Mock
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;
@@ -44,7 +53,10 @@ public class CharacteristicsRepositoryPsqlTest {
                 new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance()),
                 TestUtils.getRandomFriendlyWith()
         );
-        characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(jpaCharacteristicsRepository);
+        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.of(jpaAnimal));
+        characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(
+                jpaCharacteristicsRepository, jpaAnimalRepository
+        );
     }
 
     @Test
@@ -76,6 +88,7 @@ public class CharacteristicsRepositoryPsqlTest {
 
     @Test(expected = EntityAlreadyExistsException.class)
     public void shouldThrowEntityAlreadyExistException() {
+        characteristics.setAnimalUuid(animalUuid);
         doAnswer((Answer<Object>) invocation -> {
             throw mock(DataIntegrityViolationException.class);
         }).when(jpaCharacteristicsRepository).save(any(JpaCharacteristics.class));
@@ -83,10 +96,19 @@ public class CharacteristicsRepositoryPsqlTest {
         characteristicsRepositoryPsql.save(characteristics);
     }
 
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundExceptionWhenSavingCharacteristicsForNonExistentAnimal() {
+        characteristics.setAnimalUuid(UUID.randomUUID());
+
+        characteristicsRepositoryPsql.save(characteristics);
+    }
+
     @Test
     public void shouldGetJpaCharacteristicsByAnimalUuid() {
         JpaCharacteristics expectedJpaCharacteristics = new JpaCharacteristics(characteristics);
-        when(jpaCharacteristicsRepository.findByAnimalUuid(animalUuid)).thenReturn(expectedJpaCharacteristics);
+        when(jpaCharacteristicsRepository.findByAnimalUuid(animalUuid)).thenReturn(
+                Optional.of(expectedJpaCharacteristics)
+        );
 
         Characteristics characteristicsFound = characteristicsRepositoryPsql.getBy(animalUuid);
 
