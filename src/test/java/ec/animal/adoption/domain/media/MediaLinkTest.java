@@ -6,7 +6,6 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
@@ -20,17 +19,14 @@ public class MediaLinkTest {
     }
 
     @Test
-    public void shouldBeJsonDeserializableWithAnimalUuidMediaNameAndUrl() throws IOException {
+    public void shouldBeJsonSerializableWithUrl() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        UUID animalUuid = UUID.randomUUID();
-        String mediaName = randomAlphabetic(10);
         String url = randomAlphabetic(10);
-        String serializedMediaLink = "{\"animalUuid\":\"" + animalUuid + "\",\"mediaName\":\"" + mediaName +
-                "\",\"url\":\"" + url + "\"}";
-        MediaLink expectedMediaLink = new MediaLink(animalUuid, mediaName, url);
+        String expectedSerializedMediaLink = "{\"url\":\"" + url + "\"}";
+        MediaLink mediaLink = new MediaLink(url);
 
-        MediaLink mediaLink = objectMapper.readValue(serializedMediaLink, MediaLink.class);
+        String serializedMediaLink = objectMapper.writeValueAsString(mediaLink);
 
-        assertThat(mediaLink, is(expectedMediaLink));
+        assertThat(serializedMediaLink, is(expectedSerializedMediaLink));
     }
 }

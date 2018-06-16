@@ -1,14 +1,19 @@
 package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
 public class MediaLink {
 
+    @JsonIgnore
     private UUID animalUuid;
+
+    @JsonIgnore
     private String mediaName;
+
     private final String url;
 
     public MediaLink(UUID animalUuid, String mediaName, String url) {
@@ -18,9 +23,7 @@ public class MediaLink {
     }
 
     @JsonCreator
-    public MediaLink(
-            @JsonProperty("url") String url
-    ) {
+    public MediaLink(@JsonProperty("url") String url) {
         this.url = url;
     }
 

@@ -31,22 +31,29 @@ public class MediaStorageClientGcs implements MediaStorageClient {
     @Override
     public Picture save(Picture picture) {
         try {
-            ImagePicture imagePicture = (ImagePicture) picture;
-            String largeImageUrl = googleCloudStorageClient.storeMedia(
-                    imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
-            );
-            String smallImageUrl = googleCloudStorageClient.storeMedia(
-                    imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
-            );
-            return new LinkPicture(
-                    imagePicture.getAnimalUuid(),
-                    imagePicture.getName(),
-                    imagePicture.getPictureType(),
-                    new MediaLink(largeImageUrl),
-                    new MediaLink(smallImageUrl)
-            );
+            return getPicture(picture);
         } catch (StorageException ex) {
             throw new ImageStorageException();
         }
+    }
+
+    private Picture getPicture(Picture picture) {
+        if(picture.hasImages()) {
+            String largeImageUrl = googleCloudStorageClient.storeMedia(
+                    picture.getLargeImagePath(), picture.getLargeImageContent()
+            );
+            String smallImageUrl = googleCloudStorageClient.storeMedia(
+                    picture.getSmallImagePath(), picture.getSmallImageContent()
+            );
+            return new LinkPicture(
+                    picture.getAnimalUuid(),
+                    picture.getName(),
+                    picture.getPictureType(),
+                    new MediaLink(largeImageUrl),
+                    new MediaLink(smallImageUrl)
+            );
+        }
+
+        throw new IllegalArgumentException();
     }
 }

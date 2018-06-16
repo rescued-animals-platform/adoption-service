@@ -45,8 +45,6 @@ public class ImageMediaResourceIntegrationTest extends AbstractIntegrationTest {
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
         MediaLink mediaLink = response.getBody();
         assertNotNull(mediaLink);
-        assertThat(mediaLink.getAnimalUuid(), is(animalUuid));
-        assertThat(mediaLink.getMediaName(), is(expectedMediaName));
         assertThat(mediaLink.getUrl().contains(expectedMediaName), is(true));
         deleteMedia(mediaLink);
     }

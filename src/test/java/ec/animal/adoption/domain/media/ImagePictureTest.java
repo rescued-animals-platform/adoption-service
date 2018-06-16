@@ -1,6 +1,7 @@
 package ec.animal.adoption.domain.media;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -79,7 +81,23 @@ public class ImagePictureTest {
     }
 
     @Test
+    public void shouldReturnTrue() {
+        assertThat(imagePicture.hasImages(), is(true));
+    }
+
+    @Test
+    public void shouldReturnFalse() {
+        assertThat(imagePicture.hasUrls(), is(false));
+    }
+
+    @Test
+    public void shouldBeNull() {
+        assertNull(imagePicture.getLargeImageUrl());
+        assertNull(imagePicture.getSmallImageUrl());
+    }
+
+    @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(ImagePicture.class).usingGetClass().verify();
+        EqualsVerifier.forClass(ImagePicture.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
     }
 }

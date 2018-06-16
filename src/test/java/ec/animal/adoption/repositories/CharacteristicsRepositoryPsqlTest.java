@@ -14,13 +14,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomBalance;
-import static ec.animal.adoption.TestUtils.getRandomDocility;
-import static ec.animal.adoption.TestUtils.getRandomSociability;
+import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -68,19 +66,18 @@ public class CharacteristicsRepositoryPsqlTest {
         verify(jpaCharacteristicsRepository).save(jpaCharacteristicsArgumentCaptor.capture());
         JpaCharacteristics jpaCharacteristics = jpaCharacteristicsArgumentCaptor.getValue();
         Characteristics characteristics = jpaCharacteristics.toCharacteristics();
-
         assertThat(characteristics.getAnimalUuid(), is(this.characteristics.getAnimalUuid()));
         assertThat(characteristics.getSize(), is(this.characteristics.getSize()));
         assertThat(characteristics.getPhysicalActivity(), is(this.characteristics.getPhysicalActivity()));
         assertThat(characteristics.getTemperaments(), is(this.characteristics.getTemperaments()));
         assertThat(characteristics.getFriendlyWith(), is(this.characteristics.getFriendlyWith()));
-        assertThat(expectedJpaCharacteristics.toCharacteristics(), is(savedCharacteristics));
+        assertThat(savedCharacteristics, is(expectedJpaCharacteristics.toCharacteristics()));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
     public void shouldThrowEntityAlreadyExistException() throws EntityAlreadyExistsException {
         doAnswer((Answer<Object>) invocation -> {
-            throw mock(PSQLException.class);
+            throw mock(DataIntegrityViolationException.class);
         }).when(jpaCharacteristicsRepository).save(any(JpaCharacteristics.class));
 
         characteristicsRepositoryPsql.save(characteristics);

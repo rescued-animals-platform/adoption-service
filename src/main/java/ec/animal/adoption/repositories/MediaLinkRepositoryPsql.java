@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MediaLinkLinkRepositoryPsql implements MediaLinkRepository {
+public class MediaLinkRepositoryPsql implements MediaLinkRepository {
 
     private final JpaMediaLinkRepository jpaMediaLinkRepository;
 
     @Autowired
-    public MediaLinkLinkRepositoryPsql(JpaMediaLinkRepository jpaMediaLinkRepository) {
+    public MediaLinkRepositoryPsql(JpaMediaLinkRepository jpaMediaLinkRepository) {
         this.jpaMediaLinkRepository = jpaMediaLinkRepository;
     }
 

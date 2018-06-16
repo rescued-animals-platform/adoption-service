@@ -1,21 +1,22 @@
 package ec.animal.adoption.resources;
 
 import com.google.common.io.Files;
-import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.domain.media.Picture;
+import ec.animal.adoption.domain.media.*;
 import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.PictureService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
 
+@RestController
 public class PictureResource {
 
     private final PictureService pictureService;
 
+    @Autowired
     public PictureResource(PictureService pictureService) {
         this.pictureService = pictureService;
     }

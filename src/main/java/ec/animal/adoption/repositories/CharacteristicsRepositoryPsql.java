@@ -6,6 +6,7 @@ import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
                     new JpaCharacteristics(characteristics)
             );
             return jpaCharacteristics.toCharacteristics();
-        } catch(Exception ex) {
+        } catch(DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();
         }
     }

@@ -29,13 +29,13 @@ public class MediaLinkRepositoryPsqlTest {
     private JpaMediaLinkRepository jpaMediaLinkRepository;
 
     private MediaLink mediaLink;
-    private MediaLinkLinkRepositoryPsql mediaLinkRepositoryPsql;
+    private MediaLinkRepositoryPsql mediaLinkRepositoryPsql;
 
 
     @Before
     public void setUp() {
         mediaLink = new MediaLink(UUID.randomUUID(), randomAlphabetic(10), randomAlphabetic(10));
-        mediaLinkRepositoryPsql = new MediaLinkLinkRepositoryPsql(jpaMediaLinkRepository);
+        mediaLinkRepositoryPsql = new MediaLinkRepositoryPsql(jpaMediaLinkRepository);
     }
 
     @Test
