@@ -22,7 +22,7 @@ public class JpaMediaLinkRepositoryIntegrationTest extends AbstractIntegrationTe
 
     @Before
     public void setUp() {
-        jpaAnimal = saveJpaAnimal();
+        jpaAnimal = createAndSaveJpaAnimal();
     }
 
     @Test
@@ -33,6 +33,6 @@ public class JpaMediaLinkRepositoryIntegrationTest extends AbstractIntegrationTe
 
         JpaMediaLink jpaMediaLink = jpaMediaLinkRepository.save(entity);
 
-        assertEquals(jpaMediaLink, entity);
+        assertEquals(entity, jpaMediaLink);
     }
 }

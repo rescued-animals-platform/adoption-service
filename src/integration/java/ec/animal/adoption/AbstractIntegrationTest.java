@@ -49,7 +49,7 @@ public abstract class AbstractIntegrationTest {
         return headers;
     }
 
-    protected JpaAnimal saveJpaAnimal() {
+    protected JpaAnimal createAndSaveJpaAnimal() {
         return jpaAnimalRepository.save(new JpaAnimal(new Animal(
                 randomAlphabetic(10),
                 randomAlphabetic(10),

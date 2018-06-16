@@ -4,7 +4,10 @@ import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.Picture;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaLinkPicture;
+import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaLinkPictureRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
@@ -31,6 +35,12 @@ public class PictureRepositoryPsqlTest {
     @Mock
     private JpaLinkPictureRepository jpaLinkPictureRepository;
 
+    @Mock
+    private JpaAnimalRepository jpaAnimalRepository;
+
+    @Mock
+    private JpaAnimal jpaAnimal;
+
     private PictureRepositoryPsql pictureRepositoryPsql;
     private Picture picture;
 
@@ -43,7 +53,8 @@ public class PictureRepositoryPsqlTest {
                 new MediaLink(randomAlphabetic(10)),
                 new MediaLink(randomAlphabetic(10))
         );
-        pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository);
+        when(jpaAnimalRepository.findById(picture.getAnimalUuid())).thenReturn(Optional.of(jpaAnimal));
+        pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository, jpaAnimalRepository);
     }
 
     @Test
@@ -75,6 +86,13 @@ public class PictureRepositoryPsqlTest {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(DataIntegrityViolationException.class);
         }).when(jpaLinkPictureRepository).save(any(JpaLinkPicture.class));
+
+        pictureRepositoryPsql.save(picture);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundExceptionWhenCreatingPictureForNonExistentAnimal() {
+        when(jpaAnimalRepository.findById(picture.getAnimalUuid())).thenReturn(Optional.empty());
 
         pictureRepositoryPsql.save(picture);
     }
