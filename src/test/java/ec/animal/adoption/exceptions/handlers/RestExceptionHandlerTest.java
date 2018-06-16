@@ -3,6 +3,7 @@ package ec.animal.adoption.exceptions.handlers;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.exceptions.ImageProcessingException;
+import ec.animal.adoption.exceptions.ImageStorageException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -184,6 +185,29 @@ public class RestExceptionHandlerTest {
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
                 imageProcessingException
         );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusInternalServerErrorForImageStorageException() {
+        ImageStorageException imageStorageException = mock(ImageStorageException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForImageStorageException() {
+        ImageStorageException imageStorageException = new ImageStorageException();
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR, "The image could not be stored"
+        );
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

@@ -121,7 +121,7 @@ public class MediaStorageClientGcsTest {
     public void shouldThrowIllegalArgumentExceptionWhenSavingAPictureWithoutImages() {
         Picture picture = mock(Picture.class);
         when(picture.hasImages()).thenReturn(false);
-        
+
         mediaStorageClientGcs.save(picture);
     }
 }
