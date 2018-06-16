@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -31,12 +30,12 @@ public class GoogleCloudStorageClientIntegrationTest {
 
     @Before
     public void setUp() {
-        mediaPath = UUID.randomUUID() + "/PrimaryImageLarge.jpg";
+        mediaPath = "test/PrimaryImageLarge.jpeg";
     }
 
     @Test
     public void shouldSaveALargeFile() throws IOException {
-        InputStream inputStream = new ClassPathResource("test-image-large.jpg").getInputStream();
+        InputStream inputStream = new ClassPathResource("test-image-large.jpeg").getInputStream();
         byte[] fileContent = IOUtils.toByteArray(inputStream);
 
         String mediaLink = googleCloudStorageClient.storeMedia(mediaPath, fileContent);

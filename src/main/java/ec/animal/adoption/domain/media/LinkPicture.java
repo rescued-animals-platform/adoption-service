@@ -1,20 +1,26 @@
 package ec.animal.adoption.domain.media;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
 public class LinkPicture extends Picture {
 
+    @JsonProperty("largeImageMediaLink")
     private final MediaLink largeImageMediaLink;
+
+    @JsonProperty("smallImageMediaLink")
     private final MediaLink smallImageMediaLink;
 
+    @JsonCreator
     public LinkPicture(
-            UUID animalUuid,
-            String name,
-            PictureType pictureType,
-            MediaLink largeImageMediaLink,
-            MediaLink smallImageMediaLink
+            @JsonProperty("animalUuid") UUID animalUuid,
+            @JsonProperty("name") String name,
+            @JsonProperty("pictureType") PictureType pictureType,
+            @JsonProperty("largeImageMediaLink") MediaLink largeImageMediaLink,
+            @JsonProperty("smallImageMediaLink") MediaLink smallImageMediaLink
     ) {
         this.animalUuid = animalUuid;
         this.name = name;
@@ -25,7 +31,7 @@ public class LinkPicture extends Picture {
 
     @JsonIgnore
     public boolean hasUrls() {
-        return true;
+        return largeImageMediaLink != null && smallImageMediaLink != null;
     }
 
     public String getLargeImageUrl() {

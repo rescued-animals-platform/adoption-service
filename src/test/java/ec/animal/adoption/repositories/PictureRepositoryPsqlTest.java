@@ -3,6 +3,7 @@ package ec.animal.adoption.repositories;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.Picture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -54,6 +55,9 @@ public class PictureRepositoryPsqlTest {
                 new MediaLink(randomAlphabetic(10))
         );
         when(jpaAnimalRepository.findById(picture.getAnimalUuid())).thenReturn(Optional.of(jpaAnimal));
+        when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
+                PictureType.PRIMARY.name(), picture.getAnimalUuid())
+        ).thenReturn(Optional.empty());
         pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository, jpaAnimalRepository);
     }
 
@@ -82,7 +86,16 @@ public class PictureRepositoryPsqlTest {
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
-    public void shouldThrowEntityAlreadyExistException() {
+    public void shouldThrowEntityAlreadyExistExceptionWhenThereIsAlreadyAPrimaryImageForTheAnimal() {
+        when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
+                PictureType.PRIMARY.name(), picture.getAnimalUuid())
+        ).thenReturn(Optional.of(mock(JpaLinkPicture.class)));
+
+        pictureRepositoryPsql.save(picture);
+    }
+
+    @Test(expected = EntityAlreadyExistsException.class)
+    public void shouldThrowEntityAlreadyExistExceptionWhenThereIsADataIntegrityViolation() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(DataIntegrityViolationException.class);
         }).when(jpaLinkPictureRepository).save(any(JpaLinkPicture.class));

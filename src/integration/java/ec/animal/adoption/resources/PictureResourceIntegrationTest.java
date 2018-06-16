@@ -1,0 +1,102 @@
+package ec.animal.adoption.resources;
+
+import ec.animal.adoption.AbstractIntegrationTest;
+import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.models.rest.ApiError;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+
+import java.util.UUID;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
+
+    private UUID animalUuid;
+    private HttpHeaders headers;
+    private String name;
+    private PictureType pictureType;
+
+    @Before
+    public void setUp() {
+        Animal animal = createAndSaveAnimal();
+        animalUuid = animal.getUuid();
+        name = randomAlphabetic(10);
+        pictureType = PictureType.PRIMARY;
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    }
+
+    @Test
+    public void shouldReturn201CreatedWithLinkPicture() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", pictureType.name());
+        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+
+        ResponseEntity<LinkPicture> response = testClient.postForEntity(
+                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
+        );
+
+        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        LinkPicture linkPicture = response.getBody();
+        assertNotNull(linkPicture);
+        assertThat(linkPicture.hasUrls(), is(true));
+        assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
+        assertThat(linkPicture.getName(), is(name));
+        assertThat(linkPicture.getPictureType(), is(pictureType));
+        assertNotNull(linkPicture.getLargeImageUrl());
+        assertNotNull(linkPicture.getSmallImageUrl());
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenCreatingPictureForNonExistentAnimal() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", pictureType.name());
+        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+
+        ResponseEntity<ApiError> response = testClient.postForEntity(
+                PICTURES_URL, parameters, ApiError.class, UUID.randomUUID(), headers
+        );
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn409ConflictWhenCreatingPrimaryPictureThatAlreadyExist() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", PictureType.PRIMARY.name());
+        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+        testClient.postForEntity(
+                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
+        );
+
+        ResponseEntity<ApiError> response = testClient.postForEntity(
+                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
+        );
+
+        assertThat(response.getStatusCode(), is(CONFLICT));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+}

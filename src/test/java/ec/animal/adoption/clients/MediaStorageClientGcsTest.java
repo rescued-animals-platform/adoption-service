@@ -3,7 +3,6 @@ package ec.animal.adoption.clients;
 import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
 import ec.animal.adoption.domain.media.*;
-import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.exceptions.ImageStorageException;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Random;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
@@ -44,31 +42,6 @@ public class MediaStorageClientGcsTest {
     @Test
     public void shouldBeAnInstanceOgMediaStorageClient() {
         assertThat(mediaStorageClientGcs, is(instanceOf(MediaStorageClient.class)));
-    }
-
-    @Test
-    public void shouldStoreMedia() {
-        ImageMedia imageMedia = new ImageMedia(
-                UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
-        );
-        String url = randomAlphabetic(10);
-        when(googleCloudStorageClient.storeMedia(imageMedia.getPath(), imageMedia.getContent())).thenReturn(url);
-        MediaLink expectedMediaLink = new MediaLink(imageMedia.getAnimalUuid(), imageMedia.getName(), url);
-
-        MediaLink mediaLink = mediaStorageClientGcs.save(imageMedia);
-
-        assertThat(mediaLink, is(expectedMediaLink));
-    }
-
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageMediaProcessingException() {
-        ImageMedia imageMedia = new ImageMedia(
-                UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
-        );
-        when(googleCloudStorageClient.storeMedia(imageMedia.getPath(), imageMedia.getContent())).
-                thenThrow(StorageException.class);
-
-        mediaStorageClientGcs.save(imageMedia);
     }
 
     @Test

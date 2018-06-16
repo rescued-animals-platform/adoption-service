@@ -1,5 +1,7 @@
 package ec.animal.adoption.domain.media;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.UUID;
 
 public abstract class Picture {
@@ -20,34 +22,42 @@ public abstract class Picture {
         return pictureType;
     }
 
+    @JsonIgnore
     public boolean hasUrls() {
         return false;
     }
 
+    @JsonIgnore
     public String getLargeImageUrl() {
         return null;
     };
 
+    @JsonIgnore
     public String getSmallImageUrl() {
         return null;
     }
 
+    @JsonIgnore
     public boolean hasImages() {
         return false;
     }
 
+    @JsonIgnore
     public String getLargeImagePath() {
         return null;
     }
 
+    @JsonIgnore
     public byte[] getLargeImageContent() {
         return null;
     }
 
+    @JsonIgnore
     public String getSmallImagePath() {
         return null;
     }
 
+    @JsonIgnore
     public byte[] getSmallImageContent() {
         return null;
     }

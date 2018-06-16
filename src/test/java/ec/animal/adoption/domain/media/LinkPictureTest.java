@@ -1,10 +1,12 @@
 package ec.animal.adoption.domain.media;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
@@ -14,7 +16,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class LinkPictureTest {
-
 
     private UUID animalUuid;
     private String name;
@@ -65,5 +66,14 @@ public class LinkPictureTest {
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(LinkPicture.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+    }
+
+    @Test
+    public void shouldBeSerializableAndDeserializable() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
+        LinkPicture deserializedLinkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
+
+        assertThat(deserializedLinkPicture, is(linkPicture));
     }
 }
