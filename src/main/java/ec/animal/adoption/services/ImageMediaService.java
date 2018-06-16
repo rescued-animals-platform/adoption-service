@@ -3,8 +3,6 @@ package ec.animal.adoption.services;
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.repositories.MediaLinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ public class ImageMediaService {
         this.mediaStorageClient = mediaStorageClient;
     }
 
-    public MediaLink create(ImageMedia media) throws ImageProcessingException, EntityAlreadyExistsException {
+    public MediaLink create(ImageMedia media) {
         MediaLink mediaLink = mediaStorageClient.save(media);
         return mediaLinkRepository.save(mediaLink);
     }

@@ -1,9 +1,9 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -57,7 +57,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldSaveJpaAnimal() throws EntityAlreadyExistsException {
+    public void shouldSaveJpaAnimal() {
         ArgumentCaptor<JpaAnimal> jpaAnimalArgumentCaptor = ArgumentCaptor.forClass(JpaAnimal.class);
         JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
@@ -79,7 +79,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
-    public void shouldThrowEntityAlreadyExistException() throws EntityAlreadyExistsException {
+    public void shouldThrowEntityAlreadyExistException() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));

@@ -18,7 +18,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public Animal save(Animal animal) throws EntityAlreadyExistsException {
+    public Animal save(Animal animal) {
         try {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(
                     new JpaAnimal(animal)

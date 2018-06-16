@@ -3,8 +3,6 @@ package ec.animal.adoption.services;
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.repositories.MediaLinkRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +27,7 @@ public class ImageMediaServiceTest {
     private MediaStorageClient mediaStorageClient;
 
     @Test
-    public void shouldCreateAnImageMedia() throws ImageProcessingException, EntityAlreadyExistsException {
+    public void shouldCreateAnImageMedia() {
         UUID animalUuid = UUID.randomUUID();
         ImageMedia imageMedia = new ImageMedia(
                 animalUuid, randomAlphabetic(3), new byte[]{}, new Random().nextLong()

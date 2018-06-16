@@ -30,7 +30,7 @@ public class CharacteristicsRepositoryPsqlTest {
 
     @Mock
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;
-    
+
     private CharacteristicsRepositoryPsql characteristicsRepositoryPsql;
     private Characteristics characteristics;
     private UUID animalUuid;
@@ -53,7 +53,7 @@ public class CharacteristicsRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldSaveJpaCharacteristics() throws EntityAlreadyExistsException {
+    public void shouldSaveJpaCharacteristics() {
         ArgumentCaptor<JpaCharacteristics> jpaCharacteristicsArgumentCaptor = ArgumentCaptor.forClass(
                 JpaCharacteristics.class
         );
@@ -75,7 +75,7 @@ public class CharacteristicsRepositoryPsqlTest {
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
-    public void shouldThrowEntityAlreadyExistException() throws EntityAlreadyExistsException {
+    public void shouldThrowEntityAlreadyExistException() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(DataIntegrityViolationException.class);
         }).when(jpaCharacteristicsRepository).save(any(JpaCharacteristics.class));
@@ -84,7 +84,7 @@ public class CharacteristicsRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetJpaCharacteristicsByAnimalUuid() throws EntityNotFoundException {
+    public void shouldGetJpaCharacteristicsByAnimalUuid() {
         JpaCharacteristics expectedJpaCharacteristics = new JpaCharacteristics(characteristics);
         when(jpaCharacteristicsRepository.findByAnimalUuid(animalUuid)).thenReturn(expectedJpaCharacteristics);
 
@@ -95,7 +95,7 @@ public class CharacteristicsRepositoryPsqlTest {
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void shouldThrowEntityNotFoundException() throws EntityNotFoundException {
+    public void shouldThrowEntityNotFoundException() {
         characteristicsRepositoryPsql.getBy(UUID.randomUUID());
     }
 }

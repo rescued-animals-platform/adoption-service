@@ -47,7 +47,7 @@ public class MediaStorageClientGcsTest {
     }
 
     @Test
-    public void shouldStoreMedia() throws ImageProcessingException {
+    public void shouldStoreMedia() {
         ImageMedia imageMedia = new ImageMedia(
                 UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );
@@ -61,7 +61,7 @@ public class MediaStorageClientGcsTest {
     }
 
     @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageMediaProcessingException() throws ImageProcessingException {
+    public void shouldThrowImageMediaProcessingException() {
         ImageMedia imageMedia = new ImageMedia(
                 UUID.randomUUID(), randomAlphabetic(3), new byte[]{}, new Random().nextLong()
         );

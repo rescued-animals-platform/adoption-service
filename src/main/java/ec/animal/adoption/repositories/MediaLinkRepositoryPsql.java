@@ -18,7 +18,7 @@ public class MediaLinkRepositoryPsql implements MediaLinkRepository {
     }
 
     @Override
-    public MediaLink save(MediaLink mediaLink) throws EntityAlreadyExistsException {
+    public MediaLink save(MediaLink mediaLink) {
         try {
             JpaMediaLink jpaMediaLink = jpaMediaLinkRepository.save(new JpaMediaLink(mediaLink));
             return jpaMediaLink.toMediaLink();

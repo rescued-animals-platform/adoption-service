@@ -22,10 +22,10 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
     }
 
     @Override
-    public Characteristics getBy(UUID animalUuid) throws EntityNotFoundException {
+    public Characteristics getBy(UUID animalUuid) {
         JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
 
-        if(jpaCharacteristics == null) {
+        if (jpaCharacteristics == null) {
             throw new EntityNotFoundException();
         }
 
@@ -33,13 +33,13 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
     }
 
     @Override
-    public Characteristics save(Characteristics characteristics) throws EntityAlreadyExistsException {
+    public Characteristics save(Characteristics characteristics) {
         try {
             JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(
                     new JpaCharacteristics(characteristics)
             );
             return jpaCharacteristics.toCharacteristics();
-        } catch(DataIntegrityViolationException ex) {
+        } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();
         }
     }

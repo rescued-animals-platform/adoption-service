@@ -2,7 +2,6 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
 import org.junit.Before;
@@ -38,8 +37,7 @@ public class ImageMediaResourceTest {
     }
 
     @Test
-    public void shouldCreateAnImageMedia() throws ImageProcessingException, IOException,
-            EntityAlreadyExistsException {
+    public void shouldCreateAnImageMedia() throws IOException {
         String extension = "ext";
         String filename = randomAlphabetic(10) + "." + extension;
         long sizeInBytes = new Random().nextLong();
@@ -60,8 +58,7 @@ public class ImageMediaResourceTest {
     }
 
     @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenInputStreamCanNotBeAccessed() throws IOException,
-            ImageProcessingException, EntityAlreadyExistsException {
+    public void shouldThrowImageProcessingExceptionWhenInputStreamCanNotBeAccessed() throws IOException {
         when(multipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(multipartFile.getBytes()).thenThrow(IOException.class);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
@@ -70,8 +67,7 @@ public class ImageMediaResourceTest {
     }
 
     @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmpty() throws ImageProcessingException,
-            EntityAlreadyExistsException {
+    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmpty() {
         when(multipartFile.isEmpty()).thenReturn(true);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
 
@@ -79,8 +75,7 @@ public class ImageMediaResourceTest {
     }
 
     @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNull() throws ImageProcessingException,
-            EntityAlreadyExistsException {
+    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNull() {
         when(multipartFile.getOriginalFilename()).thenReturn(null);
         ImageMediaResource imageMediaResource = new ImageMediaResource(imageMediaService);
 

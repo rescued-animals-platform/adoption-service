@@ -44,7 +44,7 @@ public class MediaLinkRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldSaveJpaMediaLink() throws EntityAlreadyExistsException {
+    public void shouldSaveJpaMediaLink() {
         ArgumentCaptor<JpaMediaLink> jpaImageMediaArgumentCaptor = ArgumentCaptor.forClass(JpaMediaLink.class);
         JpaMediaLink expectedJpaMediaLink = new JpaMediaLink(this.mediaLink);
         when(jpaMediaLinkRepository.save(any(JpaMediaLink.class))).thenReturn(expectedJpaMediaLink);
@@ -60,7 +60,7 @@ public class MediaLinkRepositoryPsqlTest {
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
-    public void shouldThrowEntityAlreadyExistException() throws EntityAlreadyExistsException {
+    public void shouldThrowEntityAlreadyExistException() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaMediaLinkRepository).save(any(JpaMediaLink.class));

@@ -3,7 +3,6 @@ package ec.animal.adoption.resources;
 import com.google.common.io.Files;
 import ec.animal.adoption.domain.media.ImageMedia;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.ImageProcessingException;
 import ec.animal.adoption.services.ImageMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,11 @@ public class ImageMediaResource {
     @ResponseStatus(HttpStatus.CREATED)
     public MediaLink create(
             @PathVariable("animalUuid") UUID animalUuid, @RequestPart("file") MultipartFile multipartFile
-    ) throws ImageProcessingException, EntityAlreadyExistsException {
+    ) {
         return imageMediaService.create(createImageMediaFromMultipartFile(animalUuid, multipartFile));
     }
 
-    private ImageMedia createImageMediaFromMultipartFile(UUID animalUuid, MultipartFile multipartFile) throws
-            ImageProcessingException {
+    private ImageMedia createImageMediaFromMultipartFile(UUID animalUuid, MultipartFile multipartFile) {
         if (multipartFile.isEmpty() || multipartFile.getOriginalFilename() == null) {
             throw new ImageProcessingException();
         }

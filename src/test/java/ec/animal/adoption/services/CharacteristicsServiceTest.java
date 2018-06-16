@@ -1,8 +1,6 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.repositories.CharacteristicsRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +12,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CharacteristicsServiceTest {
@@ -37,7 +33,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsForAnimal() throws EntityAlreadyExistsException {
+    public void shouldCreateCharacteristicsForAnimal() {
         Characteristics characteristics = mock(Characteristics.class);
         when(characteristicsRepository.save(characteristics)).thenReturn(expectedCharacteristics);
 
@@ -48,7 +44,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldGetCharacteristicsByAnimalUuid() throws EntityNotFoundException {
+    public void shouldGetCharacteristicsByAnimalUuid() {
         when(characteristicsRepository.getBy(animalUuid)).thenReturn(expectedCharacteristics);
 
         Characteristics characteristics = characteristicsService.get(animalUuid);

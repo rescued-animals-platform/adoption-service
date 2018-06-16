@@ -1,8 +1,6 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.repositories.CharacteristicsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +17,12 @@ public class CharacteristicsService {
         this.characteristicsRepository = characteristicsRepository;
     }
 
-    public Characteristics create(UUID animalUuid, Characteristics characteristics) throws EntityAlreadyExistsException {
+    public Characteristics create(UUID animalUuid, Characteristics characteristics) {
         characteristics.setAnimalUuid(animalUuid);
         return characteristicsRepository.save(characteristics);
     }
 
-    public Characteristics get(UUID animalUuid) throws EntityNotFoundException {
+    public Characteristics get(UUID animalUuid) {
         return characteristicsRepository.getBy(animalUuid);
     }
 }

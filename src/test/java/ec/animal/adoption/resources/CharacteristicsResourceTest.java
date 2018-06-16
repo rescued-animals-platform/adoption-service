@@ -1,8 +1,6 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.services.CharacteristicsService;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +34,7 @@ public class CharacteristicsResourceTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsForAnimal() throws EntityAlreadyExistsException {
+    public void shouldCreateCharacteristicsForAnimal() {
         Characteristics characteristics = mock(Characteristics.class);
         when(characteristicsService.create(animalUuid, characteristics)).thenReturn(expectedCharacteristics);
 
@@ -46,7 +44,7 @@ public class CharacteristicsResourceTest {
     }
 
     @Test
-    public void shouldGetCharacteristicsForAnimal() throws EntityNotFoundException {
+    public void shouldGetCharacteristicsForAnimal() {
         when(characteristicsService.get(animalUuid)).thenReturn(expectedCharacteristics);
 
         Characteristics characteristics = characteristicsResource.get(animalUuid);
