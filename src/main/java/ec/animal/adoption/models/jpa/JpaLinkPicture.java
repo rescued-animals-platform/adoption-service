@@ -40,7 +40,7 @@ public class JpaLinkPicture {
     @NotNull
     private String smallImageUrl;
 
-    public JpaLinkPicture() {
+    private JpaLinkPicture() {
         // Required by jpa
     }
 

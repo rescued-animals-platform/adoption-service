@@ -47,7 +47,6 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
                 FriendlyWith.ADULTS
         );
         characteristics.setAnimalUuid(jpaAnimal.toAnimal().getUuid());
-
         entity = new JpaCharacteristics(characteristics);
 
         JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(entity);

@@ -23,28 +23,26 @@ public class CharacteristicsServiceTest {
     @Mock
     private Characteristics expectedCharacteristics;
 
-    private UUID animalUuid;
     private CharacteristicsService characteristicsService;
 
     @Before
     public void setUp() {
-        animalUuid = UUID.randomUUID();
         characteristicsService = new CharacteristicsService(characteristicsRepository);
     }
 
     @Test
-    public void shouldCreateCharacteristicsForAnimal() {
+    public void shouldCreateCharacteristics() {
         Characteristics characteristics = mock(Characteristics.class);
         when(characteristicsRepository.save(characteristics)).thenReturn(expectedCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsService.create(animalUuid, characteristics);
+        Characteristics createdCharacteristics = characteristicsService.create(characteristics);
 
-        verify(characteristics).setAnimalUuid(animalUuid);
         assertThat(createdCharacteristics, is(expectedCharacteristics));
     }
 
     @Test
     public void shouldGetCharacteristicsByAnimalUuid() {
+        UUID animalUuid = UUID.randomUUID();
         when(characteristicsRepository.getBy(animalUuid)).thenReturn(expectedCharacteristics);
 
         Characteristics characteristics = characteristicsService.get(animalUuid);

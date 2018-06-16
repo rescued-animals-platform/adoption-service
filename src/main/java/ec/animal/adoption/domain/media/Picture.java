@@ -6,7 +6,9 @@ import java.util.UUID;
 
 public abstract class Picture {
 
+    @JsonIgnore
     protected UUID animalUuid;
+
     protected String name;
     protected PictureType pictureType;
 

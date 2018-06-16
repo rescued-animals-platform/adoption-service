@@ -36,6 +36,7 @@ public abstract class AbstractIntegrationTest {
     protected static final String ANIMALS_URL = "/adoption/animals";
     protected static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
     protected static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
+    protected static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
     @Autowired
     protected TestRestTemplate testClient;

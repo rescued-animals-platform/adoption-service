@@ -17,8 +17,7 @@ public class CharacteristicsService {
         this.characteristicsRepository = characteristicsRepository;
     }
 
-    public Characteristics create(UUID animalUuid, Characteristics characteristics) {
-        characteristics.setAnimalUuid(animalUuid);
+    public Characteristics create(Characteristics characteristics) {
         return characteristicsRepository.save(characteristics);
     }
 

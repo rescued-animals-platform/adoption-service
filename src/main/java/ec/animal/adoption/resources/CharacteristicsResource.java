@@ -30,6 +30,7 @@ public class CharacteristicsResource {
     public Characteristics create(
             @PathVariable("animalUuid") UUID animalUuid, @RequestBody @Valid Characteristics characteristics
     ) {
-        return characteristicsService.create(animalUuid, characteristics);
+        characteristics.setAnimalUuid(animalUuid);
+        return characteristicsService.create(characteristics);
     }
 }
