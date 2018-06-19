@@ -1,7 +1,7 @@
 pitest {
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [
-            'ec.animal.adoption.AnimalAdoptionApplication',
+            'ec.animal.adoption.AdoptionServiceApplication',
             'ec.animal.adoption.clients.gcloud.*'
     ]
     excludedMethods = ['equals', 'hashCode']

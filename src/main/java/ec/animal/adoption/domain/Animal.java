@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -29,7 +48,7 @@ public class Animal {
 
     @NotNull(message = "Animal species is required")
     @JsonProperty("animalSpecies")
-    private final AnimalSpecies animalSpecies;
+    private final Species species;
 
     @NotNull(message = "Animal estimated age is required")
     @JsonProperty("estimatedAge")
@@ -47,7 +66,7 @@ public class Animal {
             @JsonProperty("clinicalRecord") String clinicalRecord,
             @JsonProperty("name") String name,
             @JsonProperty("registrationDate") LocalDateTime registrationDate,
-            @JsonProperty("animalSpecies") AnimalSpecies animalSpecies,
+            @JsonProperty("animalSpecies") Species species,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
             @JsonProperty("sex") Sex sex,
             @JsonProperty("state") State state
@@ -55,7 +74,7 @@ public class Animal {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.registrationDate = registrationDate;
-        this.animalSpecies = animalSpecies;
+        this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
 
@@ -87,8 +106,8 @@ public class Animal {
         return registrationDate;
     }
 
-    public AnimalSpecies getAnimalSpecies() {
-        return animalSpecies;
+    public Species getSpecies() {
+        return species;
     }
 
     public EstimatedAge getEstimatedAge() {
@@ -116,7 +135,7 @@ public class Animal {
         if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
         if (registrationDate != null ? !registrationDate.equals(animal.registrationDate) : animal.registrationDate != null)
             return false;
-        if (animalSpecies != animal.animalSpecies) return false;
+        if (species != animal.species) return false;
         if (estimatedAge != animal.estimatedAge) return false;
         if (sex != animal.sex) return false;
         return state != null ? state.equals(animal.state) : animal.state == null;
@@ -128,7 +147,7 @@ public class Animal {
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (animalSpecies != null ? animalSpecies.hashCode() : 0);
+        result = 31 * result + (species != null ? species.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);

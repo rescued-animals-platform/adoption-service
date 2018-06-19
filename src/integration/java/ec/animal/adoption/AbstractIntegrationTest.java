@@ -1,9 +1,28 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.AnimalSpecies;
+import ec.animal.adoption.domain.Species;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
@@ -55,7 +74,7 @@ public abstract class AbstractIntegrationTest {
                 randomAlphabetic(10),
                 randomAlphabetic(10),
                 LocalDateTime.now(),
-                AnimalSpecies.CAT,
+                Species.CAT,
                 EstimatedAge.YOUNG_ADULT,
                 Sex.MALE,
                 new Unavailable(randomAlphabetic(10))
@@ -66,12 +85,12 @@ public abstract class AbstractIntegrationTest {
         String clinicalRecord = randomAlphabetic(10);
         String name = randomAlphabetic(10);
         LocalDateTime registrationDate = LocalDateTime.now();
-        AnimalSpecies animalSpecies = getRandomAnimalSpecies();
+        Species species = getRandomSpecies();
         EstimatedAge estimatedAge = getRandomEstimatedAge();
         Sex sex = getRandomSex();
         State lookingForHumanState = new LookingForHuman(registrationDate);
         Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, lookingForHumanState
+                clinicalRecord, name, registrationDate, species, estimatedAge, sex, lookingForHumanState
         );
 
         ResponseEntity<Animal> responseEntity = testClient.postForEntity(

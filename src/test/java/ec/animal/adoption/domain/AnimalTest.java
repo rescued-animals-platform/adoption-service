@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +56,7 @@ public class AnimalTest {
     private String clinicalRecord;
     private String name;
     private LocalDateTime registrationDate;
-    private AnimalSpecies animalSpecies;
+    private Species species;
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
@@ -47,7 +66,7 @@ public class AnimalTest {
         clinicalRecord = randomAlphabetic(10);
         name = randomAlphabetic(10);
         registrationDate = LocalDateTime.now();
-        animalSpecies = getRandomAnimalSpecies();
+        species = getRandomSpecies();
         estimatedAge = getRandomEstimatedAge();
         sex = getRandomSex();
         state = getRandomState();
@@ -55,7 +74,7 @@ public class AnimalTest {
 
     @Test
     public void shouldCreateAnimalWithNullUuidWhenUuidIsNotSet() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, state);
 
         assertNull(animal.getUuid());
     }
@@ -63,7 +82,7 @@ public class AnimalTest {
     @Test
     public void shouldSetUuid() {
         UUID uuid = UUID.randomUUID();
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, state);
         animal.setUuid(uuid);
 
         assertThat(animal.getUuid(), is(uuid));
@@ -71,7 +90,7 @@ public class AnimalTest {
 
     @Test
     public void shouldCreateAnimalWithDefaultLookingForHumanStateWhenStateIsNull() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, null);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, null);
         LookingForHuman expectedLookingForHumanState = new LookingForHuman(registrationDate);
 
         assertThat(animal.getState(), is(expectedLookingForHumanState));
@@ -85,7 +104,7 @@ public class AnimalTest {
 
     @Test
     public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, null);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, null);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -104,7 +123,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithAdoptedState() throws IOException {
         State adoptedState = new Adopted(LocalDate.now(), randomAlphabetic(10));
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, adoptedState);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, adoptedState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -120,7 +139,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithUnavailableState() throws IOException {
         Unavailable unavailableState = new Unavailable(randomAlphabetic(10));
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, sex, unavailableState);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, unavailableState);
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -135,7 +154,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullClinicalRecord() {
-        Animal animal = new Animal(null, name, registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(null, name, registrationDate, species, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -147,7 +166,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyClinicalRecord() {
-        Animal animal = new Animal("", name, registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal("", name, registrationDate, species, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -159,7 +178,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullName() {
-        Animal animal = new Animal(clinicalRecord, null, registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, null, registrationDate, species, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -171,7 +190,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyName() {
-        Animal animal = new Animal(clinicalRecord, "", registrationDate, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, "", registrationDate, species, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -195,7 +214,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullRegistrationDate() {
-        Animal animal = new Animal(clinicalRecord, name, null, animalSpecies, estimatedAge, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, null, species, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -207,7 +226,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullEstimatedAge() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, null, sex, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, null, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -219,7 +238,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullSex() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, animalSpecies, estimatedAge, null, state);
+        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, null, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 

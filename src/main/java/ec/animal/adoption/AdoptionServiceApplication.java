@@ -17,30 +17,18 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.resources;
+package ec.animal.adoption;
 
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.services.AnimalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.validation.Valid;
+@SpringBootApplication
+public class AdoptionServiceApplication {
 
-@RestController
-@RequestMapping("/animals")
-public class AnimalResource {
-
-    private final AnimalService animalService;
-
-    @Autowired
-    public AnimalResource(AnimalService animalService) {
-        this.animalService = animalService;
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Animal create(@RequestBody @Valid Animal animal) {
-        return animalService.create(animal);
+    public static void main(String[] args) {
+        SpringApplication app = new SpringApplication(AdoptionServiceApplication.class);
+        app.setBannerMode(Banner.Mode.OFF);
+        app.run(args);
     }
 }
