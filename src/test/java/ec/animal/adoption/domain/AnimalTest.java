@@ -201,7 +201,7 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldValidateNonNullType() {
+    public void shouldValidateNonNullSpecies() {
         Animal animal = new Animal(clinicalRecord, name, registrationDate, null, estimatedAge, sex, state);
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
@@ -209,7 +209,7 @@ public class AnimalTest {
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(ANIMAL_SPECIES_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("animalSpecies"));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("species"));
     }
 
     @Test
