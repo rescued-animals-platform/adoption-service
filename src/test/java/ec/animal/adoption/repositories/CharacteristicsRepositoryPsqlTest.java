@@ -5,9 +5,7 @@ import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,13 +30,10 @@ import static org.mockito.Mockito.*;
 public class CharacteristicsRepositoryPsqlTest {
 
     @Mock
-    private JpaAnimalRepository jpaAnimalRepository;
-
-    @Mock
-    private JpaAnimal jpaAnimal;
-
-    @Mock
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;
+
+    @Mock
+    private AnimalRepositoryPsql animalRepositoryPsql;
 
     private CharacteristicsRepositoryPsql characteristicsRepositoryPsql;
     private Characteristics characteristics;
@@ -53,9 +48,9 @@ public class CharacteristicsRepositoryPsqlTest {
                 new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance()),
                 TestUtils.getRandomFriendlyWith()
         );
-        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.of(jpaAnimal));
+        when(animalRepositoryPsql.animalExists(animalUuid)).thenReturn(true);
         characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(
-                jpaCharacteristicsRepository, jpaAnimalRepository
+                jpaCharacteristicsRepository, animalRepositoryPsql
         );
     }
 
@@ -98,8 +93,6 @@ public class CharacteristicsRepositoryPsqlTest {
 
     @Test(expected = EntityNotFoundException.class)
     public void shouldThrowEntityNotFoundExceptionWhenSavingCharacteristicsForNonExistentAnimal() {
-        characteristics.setAnimalUuid(UUID.randomUUID());
-
         characteristicsRepositoryPsql.save(characteristics);
     }
 

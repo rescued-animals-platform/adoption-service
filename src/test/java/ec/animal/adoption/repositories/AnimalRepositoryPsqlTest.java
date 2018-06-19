@@ -18,6 +18,8 @@ import org.mockito.stubbing.Answer;
 import org.postgresql.util.PSQLException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -85,5 +87,21 @@ public class AnimalRepositoryPsqlTest {
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
         animalRepositoryPsql.save(animal);
+    }
+
+    @Test
+    public void shouldReturnTrueIfThereIsAnAnimalWithCorrespondingUuid() {
+        UUID animalUuid = UUID.randomUUID();
+        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.of(mock(JpaAnimal.class)));
+
+        assertThat(animalRepositoryPsql.animalExists(animalUuid), is(true));
+    }
+
+    @Test
+    public void shouldFalseIfThereIsNoAnimalWithUuid() {
+        UUID animalUuid = UUID.randomUUID();
+        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.empty());
+
+        assertThat(animalRepositoryPsql.animalExists(animalUuid), is(false));
     }
 }

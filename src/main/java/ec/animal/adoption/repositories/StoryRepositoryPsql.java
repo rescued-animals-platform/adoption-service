@@ -3,32 +3,27 @@ package ec.animal.adoption.repositories;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaStory;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 public class StoryRepositoryPsql implements StoryRepository {
 
     private final JpaStoryRepository jpaStoryRepository;
-    private final JpaAnimalRepository jpaAnimalRepository;
+    private final AnimalRepositoryPsql animalRepositoryPsql;
 
     @Autowired
-    public StoryRepositoryPsql(JpaStoryRepository jpaStoryRepository, JpaAnimalRepository jpaAnimalRepository) {
+    public StoryRepositoryPsql(JpaStoryRepository jpaStoryRepository, AnimalRepositoryPsql animalRepositoryPsql) {
         this.jpaStoryRepository = jpaStoryRepository;
-        this.jpaAnimalRepository = jpaAnimalRepository;
+        this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
     public Story save(Story story) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(story.getAnimalUuid());
-        if(!jpaAnimal.isPresent()) {
+        if(!animalRepositoryPsql.animalExists(story.getAnimalUuid())) {
             throw new EntityNotFoundException();
         }
 

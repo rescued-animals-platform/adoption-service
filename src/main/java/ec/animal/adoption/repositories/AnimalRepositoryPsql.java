@@ -7,6 +7,8 @@ import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public class AnimalRepositoryPsql implements AnimalRepository {
 
@@ -20,13 +22,14 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @Override
     public Animal save(Animal animal) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(
-                    new JpaAnimal(animal)
-            );
-
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
             return savedJpaAnimal.toAnimal();
         } catch (Exception ex) {
             throw new EntityAlreadyExistsException();
         }
+    }
+
+    public boolean animalExists(UUID animalUuid) {
+        return jpaAnimalRepository.findById(animalUuid).isPresent();
     }
 }

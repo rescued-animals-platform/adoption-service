@@ -3,9 +3,7 @@ package ec.animal.adoption.repositories;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,14 +16,14 @@ import java.util.UUID;
 public class CharacteristicsRepositoryPsql implements CharacteristicsRepository {
 
     private final JpaCharacteristicsRepository jpaCharacteristicsRepository;
-    private final JpaAnimalRepository jpaAnimalRepository;
+    private final AnimalRepositoryPsql animalRepositoryPsql;
 
     @Autowired
     public CharacteristicsRepositoryPsql(
-            JpaCharacteristicsRepository jpaCharacteristicsRepository, JpaAnimalRepository jpaAnimalRepository
+            JpaCharacteristicsRepository jpaCharacteristicsRepository, AnimalRepositoryPsql animalRepositoryPsql
     ) {
         this.jpaCharacteristicsRepository = jpaCharacteristicsRepository;
-        this.jpaAnimalRepository = jpaAnimalRepository;
+        this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
@@ -41,15 +39,13 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
 
     @Override
     public Characteristics save(Characteristics characteristics) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(characteristics.getAnimalUuid());
-        if(!jpaAnimal.isPresent()) {
+        if(!animalRepositoryPsql.animalExists(characteristics.getAnimalUuid())) {
             throw new EntityNotFoundException();
         }
 
         try {
-            JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(
-                    new JpaCharacteristics(characteristics)
-            );
+            JpaCharacteristics entity = new JpaCharacteristics(characteristics);
+            JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(entity);
             return jpaCharacteristics.toCharacteristics();
         } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();

@@ -6,9 +6,7 @@ import ec.animal.adoption.domain.media.Picture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaLinkPicture;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaLinkPictureRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +35,7 @@ public class PictureRepositoryPsqlTest {
     private JpaLinkPictureRepository jpaLinkPictureRepository;
 
     @Mock
-    private JpaAnimalRepository jpaAnimalRepository;
-
-    @Mock
-    private JpaAnimal jpaAnimal;
+    private AnimalRepositoryPsql animalRepositoryPsql;
 
     private PictureRepositoryPsql pictureRepositoryPsql;
     private Picture picture;
@@ -54,11 +49,11 @@ public class PictureRepositoryPsqlTest {
                 new MediaLink(randomAlphabetic(10)),
                 new MediaLink(randomAlphabetic(10))
         );
-        when(jpaAnimalRepository.findById(picture.getAnimalUuid())).thenReturn(Optional.of(jpaAnimal));
+        when(animalRepositoryPsql.animalExists(picture.getAnimalUuid())).thenReturn(true);
         when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
                 PictureType.PRIMARY.name(), picture.getAnimalUuid())
         ).thenReturn(Optional.empty());
-        pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository, jpaAnimalRepository);
+        pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository, animalRepositoryPsql);
     }
 
     @Test
@@ -105,7 +100,7 @@ public class PictureRepositoryPsqlTest {
 
     @Test(expected = EntityNotFoundException.class)
     public void shouldThrowEntityNotFoundExceptionWhenCreatingPictureForNonExistentAnimal() {
-        when(jpaAnimalRepository.findById(picture.getAnimalUuid())).thenReturn(Optional.empty());
+        when(animalRepositoryPsql.animalExists(picture.getAnimalUuid())).thenReturn(false);
 
         pictureRepositoryPsql.save(picture);
     }

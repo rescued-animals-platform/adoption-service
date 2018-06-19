@@ -2,9 +2,9 @@ package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.AnimalSpecies;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -16,9 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest {
 
@@ -74,5 +78,16 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest 
         JpaAnimal adoptedJpaAnimal = jpaAnimalRepository.save(jpaAnimal);
 
         assertEquals(adoptedJpaAnimal.toAnimal().getState(), updatedState);
+    }
+
+    @Test
+    public void shouldFindAnimalByAnimalUuid() {
+        JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
+        UUID animalUuid = jpaAnimal.toAnimal().getUuid();
+
+        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findById(animalUuid);
+
+        assertThat(optionalJpaAnimal.isPresent(), is(true));
+        assertThat(optionalJpaAnimal.get(), is(jpaAnimal));
     }
 }

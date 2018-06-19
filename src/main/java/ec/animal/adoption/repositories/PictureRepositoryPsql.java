@@ -4,9 +4,7 @@ import ec.animal.adoption.domain.media.Picture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaLinkPicture;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaLinkPictureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,42 +17,42 @@ import java.util.UUID;
 public class PictureRepositoryPsql implements PictureRepository {
 
     private final JpaLinkPictureRepository jpaLinkPictureRepository;
-    private final JpaAnimalRepository jpaAnimalRepository;
+    private final AnimalRepositoryPsql animalRepositoryPsql;
 
     @Autowired
     public PictureRepositoryPsql(
-            JpaLinkPictureRepository jpaLinkPictureRepository, JpaAnimalRepository jpaAnimalRepository
+            JpaLinkPictureRepository jpaLinkPictureRepository, AnimalRepositoryPsql animalRepositoryPsql
     ) {
         this.jpaLinkPictureRepository = jpaLinkPictureRepository;
-        this.jpaAnimalRepository = jpaAnimalRepository;
+        this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
     public Picture save(Picture picture) {
         UUID animalUuid = picture.getAnimalUuid();
-        animalShouldExist(animalUuid);
-        jpaPrimaryLinkPictureShouldNotExist(animalUuid);
 
-        try {
-            JpaLinkPicture jpaLinkPicture = jpaLinkPictureRepository.save(new JpaLinkPicture(picture));
-            return jpaLinkPicture.toPicture();
-        } catch (DataIntegrityViolationException ex) {
-            throw new EntityAlreadyExistsException();
-        }
-    }
-
-    private void animalShouldExist(UUID animalUuid) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalUuid);
-        if(!jpaAnimal.isPresent()) {
+        if(!animalRepositoryPsql.animalExists(animalUuid)) {
             throw new EntityNotFoundException();
         }
+
+        if(primaryLinkPictureExists(animalUuid)) {
+            throw new EntityAlreadyExistsException();
+        }
+
+        return saveJpaLinkPicture(new JpaLinkPicture(picture)).toPicture();
     }
 
-    private void jpaPrimaryLinkPictureShouldNotExist(UUID animalUuid) {
+    private boolean primaryLinkPictureExists(UUID animalUuid) {
         Optional<JpaLinkPicture> jpaPrimaryLinkPicture = jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
                 PictureType.PRIMARY.name(), animalUuid
         );
-        if(jpaPrimaryLinkPicture.isPresent()) {
+        return jpaPrimaryLinkPicture.isPresent();
+    }
+
+    private JpaLinkPicture saveJpaLinkPicture(JpaLinkPicture jpaLinkPicture) {
+        try {
+            return jpaLinkPictureRepository.save(jpaLinkPicture);
+        } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();
         }
     }

@@ -3,9 +3,7 @@ package ec.animal.adoption.repositories;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.models.jpa.JpaStory;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repositories.jpa.JpaStoryRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -33,10 +30,7 @@ public class StoryRepositoryPsqlTest {
     private JpaStoryRepository jpaStoryRepository;
 
     @Mock
-    private JpaAnimalRepository jpaAnimalRepository;
-
-    @Mock
-    private JpaAnimal jpaAnimal;
+    private AnimalRepositoryPsql animalRepositoryPsql;
 
     private UUID animalUuid;
     private Story story;
@@ -46,8 +40,8 @@ public class StoryRepositoryPsqlTest {
     public void setUp() {
         animalUuid = UUID.randomUUID();
         story = new Story(randomAlphabetic(100));
-        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.of(jpaAnimal));
-        storyRepositoryPsql = new StoryRepositoryPsql(jpaStoryRepository, jpaAnimalRepository);
+        when(animalRepositoryPsql.animalExists(animalUuid)).thenReturn(true);
+        storyRepositoryPsql = new StoryRepositoryPsql(jpaStoryRepository, animalRepositoryPsql);
     }
 
     @Test
