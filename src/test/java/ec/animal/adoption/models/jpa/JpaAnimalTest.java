@@ -19,16 +19,11 @@
 
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Species;
 import ec.animal.adoption.domain.state.Adopted;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Timestamp;
@@ -41,45 +36,24 @@ import static org.junit.Assert.assertThat;
 
 public class JpaAnimalTest {
 
-    private String clinicalRecord;
-    private String name;
-    private LocalDateTime registrationDate;
-    private Species species;
-    private EstimatedAge estimatedAge;
-    private Sex sex;
-    private Animal animal;
-
-    @Before
-    public void setUp() {
-        clinicalRecord = randomAlphabetic(10);
-        name = randomAlphabetic(10);
-        registrationDate = LocalDateTime.now();
-        species = TestUtils.getRandomSpecies();
-        estimatedAge = TestUtils.getRandomEstimatedAge();
-        sex = TestUtils.getRandomSex();
-        State state = TestUtils.getRandomState();
-        animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, state);
-    }
-
     @Test
     public void shouldCreateAJpaAnimalFromAnAnimal() {
+        Animal animal = AnimalBuilder.random().build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
-        Animal animal = jpaAnimal.toAnimal();
-        assertThat(animal.getClinicalRecord(), is(this.animal.getClinicalRecord()));
-        assertThat(animal.getName(), is(this.animal.getName()));
-        assertThat(animal.getRegistrationDate(), is(this.animal.getRegistrationDate()));
-        assertThat(animal.getSpecies(), is(this.animal.getSpecies()));
-        assertThat(animal.getEstimatedAge(), is(this.animal.getEstimatedAge()));
-        assertThat(animal.getSex(), is(this.animal.getSex()));
-        assertThat(animal.getState(), is(this.animal.getState()));
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+        assertThat(jpaAnimalToAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
+        assertThat(jpaAnimalToAnimal.getName(), is(animal.getName()));
+        assertThat(jpaAnimalToAnimal.getRegistrationDate(), is(animal.getRegistrationDate()));
+        assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
+        assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
+        assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
+        assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
     }
 
     @Test
     public void shouldUpdateState() {
-        animal = new Animal(
-                clinicalRecord, name, registrationDate, species, estimatedAge, sex, new LookingForHuman(registrationDate)
-        );
+        Animal animal = AnimalBuilder.random().build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
         State newState = new Adopted(LocalDate.now(), randomAlphabetic(10));
         jpaAnimal.setState(newState);

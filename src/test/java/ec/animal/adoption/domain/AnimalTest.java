@@ -21,24 +21,23 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNull;
@@ -53,36 +52,17 @@ public class AnimalTest {
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
 
-    private String clinicalRecord;
-    private String name;
-    private LocalDateTime registrationDate;
-    private Species species;
-    private EstimatedAge estimatedAge;
-    private Sex sex;
-    private State state;
-
-    @Before
-    public void setUp() {
-        clinicalRecord = randomAlphabetic(10);
-        name = randomAlphabetic(10);
-        registrationDate = LocalDateTime.now();
-        species = getRandomSpecies();
-        estimatedAge = getRandomEstimatedAge();
-        sex = getRandomSex();
-        state = getRandomState();
-    }
-
     @Test
     public void shouldCreateAnimalWithNullUuidWhenUuidIsNotSet() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().build();
 
         assertNull(animal.getUuid());
     }
 
     @Test
     public void shouldSetUuid() {
+        Animal animal = AnimalBuilder.random().build();
         UUID uuid = UUID.randomUUID();
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, state);
         animal.setUuid(uuid);
 
         assertThat(animal.getUuid(), is(uuid));
@@ -90,8 +70,8 @@ public class AnimalTest {
 
     @Test
     public void shouldCreateAnimalWithDefaultLookingForHumanStateWhenStateIsNull() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, null);
-        LookingForHuman expectedLookingForHumanState = new LookingForHuman(registrationDate);
+        Animal animal = AnimalBuilder.random().withState(null).build();
+        LookingForHuman expectedLookingForHumanState = new LookingForHuman(animal.getRegistrationDate());
 
         assertThat(animal.getState(), is(expectedLookingForHumanState));
     }
@@ -104,7 +84,7 @@ public class AnimalTest {
 
     @Test
     public void shouldBeSerializableAndDeserializableWithDefaultLookingForHumanState() throws IOException {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, null);
+        Animal animal = AnimalBuilder.random().withState(null).build();
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -123,7 +103,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithAdoptedState() throws IOException {
         State adoptedState = new Adopted(LocalDate.now(), randomAlphabetic(10));
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, adoptedState);
+        Animal animal = AnimalBuilder.random().withState(adoptedState).build();
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -139,7 +119,7 @@ public class AnimalTest {
     @Test
     public void shouldBeSerializableAndDeserializableWithUnavailableState() throws IOException {
         Unavailable unavailableState = new Unavailable(randomAlphabetic(10));
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, sex, unavailableState);
+        Animal animal = AnimalBuilder.random().withState(unavailableState).build();
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
@@ -154,7 +134,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullClinicalRecord() {
-        Animal animal = new Animal(null, name, registrationDate, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().withClinicalRecord(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -166,7 +146,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyClinicalRecord() {
-        Animal animal = new Animal("", name, registrationDate, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().withClinicalRecord("").build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -178,7 +158,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullName() {
-        Animal animal = new Animal(clinicalRecord, null, registrationDate, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().withName(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -190,7 +170,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonEmptyName() {
-        Animal animal = new Animal(clinicalRecord, "", registrationDate, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().withName("").build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -201,20 +181,8 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldValidateNonNullSpecies() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, null, estimatedAge, sex, state);
-
-        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
-
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(ANIMAL_SPECIES_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("species"));
-    }
-
-    @Test
     public void shouldValidateNonNullRegistrationDate() {
-        Animal animal = new Animal(clinicalRecord, name, null, species, estimatedAge, sex, state);
+        Animal animal = AnimalBuilder.random().withRegistrationDate(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -225,8 +193,20 @@ public class AnimalTest {
     }
 
     @Test
+    public void shouldValidateNonNullSpecies() {
+        Animal animal = AnimalBuilder.random().withSpecies(null).build();
+
+        Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_SPECIES_IS_REQUIRED));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("species"));
+    }
+
+    @Test
     public void shouldValidateNonNullEstimatedAge() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, null, sex, state);
+        Animal animal = AnimalBuilder.random().withEstimatedAge(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
@@ -238,7 +218,7 @@ public class AnimalTest {
 
     @Test
     public void shouldValidateNonNullSex() {
-        Animal animal = new Animal(clinicalRecord, name, registrationDate, species, estimatedAge, null, state);
+        Animal animal = AnimalBuilder.random().withSex(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
