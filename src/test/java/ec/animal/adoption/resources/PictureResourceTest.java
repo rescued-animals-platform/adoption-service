@@ -90,11 +90,11 @@ public class PictureResourceTest {
         when(pictureService.create(imagePicture)).thenReturn(expectedLinkPicture);
         PictureResource pictureResource = new PictureResource(pictureService);
 
-        Picture picture = pictureResource.create(
+        LinkPicture linkPicture = pictureResource.create(
                 animalUuid, name, pictureType, largeImageMultipartFile, smallImageMultipartFile
         );
 
-        assertThat(picture, is(expectedLinkPicture));
+        assertThat(linkPicture, is(expectedLinkPicture));
     }
 
     @Test(expected = ImageProcessingException.class)

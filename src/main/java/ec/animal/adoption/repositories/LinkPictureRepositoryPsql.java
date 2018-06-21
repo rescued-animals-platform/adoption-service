@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.domain.media.Picture;
+import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
@@ -33,13 +33,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class PictureRepositoryPsql implements PictureRepository {
+public class LinkPictureRepositoryPsql implements LinkPictureRepository {
 
     private final JpaLinkPictureRepository jpaLinkPictureRepository;
     private final AnimalRepositoryPsql animalRepositoryPsql;
 
     @Autowired
-    public PictureRepositoryPsql(
+    public LinkPictureRepositoryPsql(
             JpaLinkPictureRepository jpaLinkPictureRepository, AnimalRepositoryPsql animalRepositoryPsql
     ) {
         this.jpaLinkPictureRepository = jpaLinkPictureRepository;
@@ -47,8 +47,8 @@ public class PictureRepositoryPsql implements PictureRepository {
     }
 
     @Override
-    public Picture save(Picture picture) {
-        UUID animalUuid = picture.getAnimalUuid();
+    public LinkPicture save(LinkPicture linkPicture) {
+        UUID animalUuid = linkPicture.getAnimalUuid();
 
         if(!animalRepositoryPsql.animalExists(animalUuid)) {
             throw new EntityNotFoundException();
@@ -58,7 +58,7 @@ public class PictureRepositoryPsql implements PictureRepository {
             throw new EntityAlreadyExistsException();
         }
 
-        return saveJpaLinkPicture(new JpaLinkPicture(picture)).toPicture();
+        return saveJpaLinkPicture(new JpaLinkPicture(linkPicture)).toPicture();
     }
 
     private boolean primaryLinkPictureExists(UUID animalUuid) {

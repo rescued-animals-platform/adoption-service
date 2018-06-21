@@ -13,7 +13,6 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -78,22 +77,6 @@ public class ImagePictureTest {
         when(smallImage.getContent()).thenReturn(content);
 
         assertThat(imagePicture.getSmallImageContent(), is(content));
-    }
-
-    @Test
-    public void shouldReturnTrue() {
-        assertThat(imagePicture.hasImages(), is(true));
-    }
-
-    @Test
-    public void shouldReturnFalse() {
-        assertThat(imagePicture.hasUrls(), is(false));
-    }
-
-    @Test
-    public void shouldBeNull() {
-        assertNull(imagePicture.getLargeImageUrl());
-        assertNull(imagePicture.getSmallImageUrl());
     }
 
     @Test

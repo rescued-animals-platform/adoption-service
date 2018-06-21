@@ -2,7 +2,6 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.Picture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
@@ -11,7 +10,6 @@ import ec.animal.adoption.repositories.jpa.JpaLinkPictureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -29,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PictureRepositoryPsqlTest {
+public class LinkPictureRepositoryPsqlTest {
 
     @Mock
     private JpaLinkPictureRepository jpaLinkPictureRepository;
@@ -37,56 +35,52 @@ public class PictureRepositoryPsqlTest {
     @Mock
     private AnimalRepositoryPsql animalRepositoryPsql;
 
-    private PictureRepositoryPsql pictureRepositoryPsql;
-    private Picture picture;
+    private LinkPictureRepositoryPsql linkPictureRepositoryPsql;
+    private LinkPicture linkPicture;
 
     @Before
     public void setUp() {
-        picture = new LinkPicture(
+        linkPicture = new LinkPicture(
                 UUID.randomUUID(),
                 randomAlphabetic(10),
                 getRandomPictureType(),
                 new MediaLink(randomAlphabetic(10)),
                 new MediaLink(randomAlphabetic(10))
         );
-        when(animalRepositoryPsql.animalExists(picture.getAnimalUuid())).thenReturn(true);
+        when(animalRepositoryPsql.animalExists(linkPicture.getAnimalUuid())).thenReturn(true);
         when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
-                PictureType.PRIMARY.name(), picture.getAnimalUuid())
+                PictureType.PRIMARY.name(), linkPicture.getAnimalUuid())
         ).thenReturn(Optional.empty());
-        pictureRepositoryPsql = new PictureRepositoryPsql(jpaLinkPictureRepository, animalRepositoryPsql);
+        linkPictureRepositoryPsql = new LinkPictureRepositoryPsql(jpaLinkPictureRepository, animalRepositoryPsql);
     }
 
     @Test
     public void shouldBeAnInstanceOfPictureRepository() {
-        assertThat(pictureRepositoryPsql, is(instanceOf(PictureRepository.class)));
+        assertThat(linkPictureRepositoryPsql, is(instanceOf(LinkPictureRepository.class)));
     }
 
     @Test
     public void shouldSaveAJpaLinkPicture() {
-        ArgumentCaptor<JpaLinkPicture> argumentCaptor = ArgumentCaptor.forClass(JpaLinkPicture.class);
-        JpaLinkPicture expectedJpaLinkPicture = new JpaLinkPicture(picture);
+        JpaLinkPicture expectedJpaLinkPicture = new JpaLinkPicture(linkPicture);
         when(jpaLinkPictureRepository.save(any(JpaLinkPicture.class))).thenReturn(expectedJpaLinkPicture);
 
-        Picture savedPicture = pictureRepositoryPsql.save(this.picture);
+        LinkPicture savedLinkPicture = linkPictureRepositoryPsql.save(linkPicture);
 
-        verify(jpaLinkPictureRepository).save(argumentCaptor.capture());
-        JpaLinkPicture jpaLinkPicture = argumentCaptor.getValue();
-        Picture picture = jpaLinkPicture.toPicture();
-        assertThat(picture.getAnimalUuid(), is(this.picture.getAnimalUuid()));
-        assertThat(picture.getName(), is(this.picture.getName()));
-        assertThat(picture.getPictureType(), is(this.picture.getPictureType()));
-        assertThat(picture.getLargeImageUrl(), is(this.picture.getLargeImageUrl()));
-        assertThat(picture.getSmallImageUrl(), is(this.picture.getSmallImageUrl()));
-        assertThat(savedPicture, is(expectedJpaLinkPicture.toPicture()));
+        assertThat(savedLinkPicture.getAnimalUuid(), is(linkPicture.getAnimalUuid()));
+        assertThat(savedLinkPicture.getName(), is(linkPicture.getName()));
+        assertThat(savedLinkPicture.getPictureType(), is(linkPicture.getPictureType()));
+        assertThat(savedLinkPicture.getLargeImageUrl(), is(linkPicture.getLargeImageUrl()));
+        assertThat(savedLinkPicture.getSmallImageUrl(), is(linkPicture.getSmallImageUrl()));
+        assertThat(savedLinkPicture, is(expectedJpaLinkPicture.toPicture()));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
     public void shouldThrowEntityAlreadyExistExceptionWhenThereIsAlreadyAPrimaryImageForTheAnimal() {
         when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
-                PictureType.PRIMARY.name(), picture.getAnimalUuid())
+                PictureType.PRIMARY.name(), linkPicture.getAnimalUuid())
         ).thenReturn(Optional.of(mock(JpaLinkPicture.class)));
 
-        pictureRepositoryPsql.save(picture);
+        linkPictureRepositoryPsql.save(linkPicture);
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
@@ -95,13 +89,13 @@ public class PictureRepositoryPsqlTest {
             throw mock(DataIntegrityViolationException.class);
         }).when(jpaLinkPictureRepository).save(any(JpaLinkPicture.class));
 
-        pictureRepositoryPsql.save(picture);
+        linkPictureRepositoryPsql.save(linkPicture);
     }
 
     @Test(expected = EntityNotFoundException.class)
     public void shouldThrowEntityNotFoundExceptionWhenCreatingPictureForNonExistentAnimal() {
-        when(animalRepositoryPsql.animalExists(picture.getAnimalUuid())).thenReturn(false);
+        when(animalRepositoryPsql.animalExists(linkPicture.getAnimalUuid())).thenReturn(false);
 
-        pictureRepositoryPsql.save(picture);
+        linkPictureRepositoryPsql.save(linkPicture);
     }
 }

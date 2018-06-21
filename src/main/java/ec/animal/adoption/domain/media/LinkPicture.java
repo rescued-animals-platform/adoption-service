@@ -25,7 +25,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
-public class LinkPicture extends Picture {
+public class LinkPicture {
+
+    @JsonIgnore
+    private UUID animalUuid;
+
+    @JsonProperty("name")
+    private final String name;
+
+    @JsonProperty("pictureType")
+    private final PictureType pictureType;
 
     @JsonProperty("largeImageMediaLink")
     private final MediaLink largeImageMediaLink;
@@ -48,15 +57,24 @@ public class LinkPicture extends Picture {
         this.smallImageMediaLink = smallImageMediaLink;
     }
 
-    @JsonIgnore
-    public boolean hasUrls() {
-        return largeImageMediaLink != null && smallImageMediaLink != null;
+    public UUID getAnimalUuid() {
+        return animalUuid;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public PictureType getPictureType() {
+        return pictureType;
+    }
+
+    @JsonIgnore
     public String getLargeImageUrl() {
         return largeImageMediaLink.getUrl();
     }
 
+    @JsonIgnore
     public String getSmallImageUrl() {
         return smallImageMediaLink.getUrl();
     }
@@ -65,10 +83,12 @@ public class LinkPicture extends Picture {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
 
         LinkPicture that = (LinkPicture) o;
 
+        if (animalUuid != null ? !animalUuid.equals(that.animalUuid) : that.animalUuid != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (pictureType != that.pictureType) return false;
         if (largeImageMediaLink != null ? !largeImageMediaLink.equals(that.largeImageMediaLink) : that.largeImageMediaLink != null)
             return false;
         return smallImageMediaLink != null ? smallImageMediaLink.equals(that.smallImageMediaLink) : that.smallImageMediaLink == null;
@@ -76,7 +96,9 @@ public class LinkPicture extends Picture {
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
+        int result = animalUuid != null ? animalUuid.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);
         result = 31 * result + (largeImageMediaLink != null ? largeImageMediaLink.hashCode() : 0);
         result = 31 * result + (smallImageMediaLink != null ? smallImageMediaLink.hashCode() : 0);
         return result;

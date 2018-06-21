@@ -21,7 +21,6 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.Picture;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -34,8 +33,6 @@ import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JpaLinkPictureTest {
 
@@ -51,14 +48,6 @@ public class JpaLinkPictureTest {
         JpaLinkPicture jpaLinkPicture = new JpaLinkPicture(linkPicture);
 
         assertThat(jpaLinkPicture.toPicture(), is(linkPicture));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionIfNotCreatedWithLinkPicture() {
-        Picture picture = mock(Picture.class);
-        when(picture.hasUrls()).thenReturn(false);
-
-        new JpaLinkPicture(picture);
     }
 
     @Test

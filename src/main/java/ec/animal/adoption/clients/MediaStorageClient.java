@@ -19,9 +19,10 @@
 
 package ec.animal.adoption.clients;
 
-import ec.animal.adoption.domain.media.Picture;
+import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.LinkPicture;
 
 public interface MediaStorageClient {
 
-    Picture save(Picture picture);
+    LinkPicture save(ImagePicture picture);
 }

@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.domain.media.Picture;
+import ec.animal.adoption.domain.media.LinkPicture;
 
-public interface PictureRepository {
-    Picture save(Picture picture);
+public interface LinkPictureRepository {
+    LinkPicture save(LinkPicture linkPicture);
 }

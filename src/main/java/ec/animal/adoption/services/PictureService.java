@@ -20,8 +20,9 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.clients.MediaStorageClient;
-import ec.animal.adoption.domain.media.Picture;
-import ec.animal.adoption.repositories.PictureRepository;
+import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.repositories.LinkPictureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +30,16 @@ import org.springframework.stereotype.Service;
 public class PictureService {
 
     private final MediaStorageClient mediaStorageClient;
-    private final PictureRepository pictureRepository;
+    private final LinkPictureRepository linkPictureRepository;
 
     @Autowired
-    public PictureService(MediaStorageClient mediaStorageClient, PictureRepository pictureRepository) {
+    public PictureService(MediaStorageClient mediaStorageClient, LinkPictureRepository linkPictureRepository) {
         this.mediaStorageClient = mediaStorageClient;
-        this.pictureRepository = pictureRepository;
+        this.linkPictureRepository = linkPictureRepository;
     }
 
-    public Picture create(Picture picture) {
-        Picture savedPicture = mediaStorageClient.save(picture);
-        return pictureRepository.save(savedPicture);
+    public LinkPicture create(ImagePicture imagePicture) {
+        LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
+        return linkPictureRepository.save(linkPicture);
     }
 }

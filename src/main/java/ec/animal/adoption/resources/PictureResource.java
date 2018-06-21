@@ -45,7 +45,7 @@ public class PictureResource {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Picture create(
+    public LinkPicture create(
             @PathVariable("animalUuid") UUID animalUuid,
             @RequestParam("name") String name,
             @RequestParam("pictureType") PictureType pictureType,

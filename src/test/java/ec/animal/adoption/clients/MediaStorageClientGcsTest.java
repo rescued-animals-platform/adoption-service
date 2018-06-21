@@ -80,7 +80,7 @@ public class MediaStorageClientGcsTest {
                 animalUuid, name, pictureType, new MediaLink(largeImageUrl), new MediaLink(smallImageUrl)
         );
 
-        Picture storedPicture = mediaStorageClientGcs.save(imagePicture);
+        LinkPicture storedPicture = mediaStorageClientGcs.save(imagePicture);
 
         assertThat(storedPicture, is(expectedPicture));
     }
@@ -107,13 +107,5 @@ public class MediaStorageClientGcsTest {
         )).thenThrow(StorageException.class);
 
         mediaStorageClientGcs.save(imagePicture);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenSavingAPictureWithoutImages() {
-        Picture picture = mock(Picture.class);
-        when(picture.hasImages()).thenReturn(false);
-
-        mediaStorageClientGcs.save(picture);
     }
 }

@@ -21,7 +21,6 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.Picture;
 import ec.animal.adoption.domain.media.PictureType;
 import org.hibernate.annotations.Type;
 
@@ -63,20 +62,17 @@ public class JpaLinkPicture {
         // Required by jpa
     }
 
-    public JpaLinkPicture(Picture picture) {
+    public JpaLinkPicture(LinkPicture linkPicture) {
         this();
-        if(!picture.hasUrls()) {
-            throw new IllegalArgumentException();
-        }
         this.creationDate = Timestamp.valueOf(LocalDateTime.now());
-        this.animalUuid = picture.getAnimalUuid();
-        this.name = picture.getName();
-        this.pictureType = picture.getPictureType().name();
-        this.largeImageUrl = picture.getLargeImageUrl();
-        this.smallImageUrl = picture.getSmallImageUrl();
+        this.animalUuid = linkPicture.getAnimalUuid();
+        this.name = linkPicture.getName();
+        this.pictureType = linkPicture.getPictureType().name();
+        this.largeImageUrl = linkPicture.getLargeImageUrl();
+        this.smallImageUrl = linkPicture.getSmallImageUrl();
     }
 
-    public Picture toPicture() {
+    public LinkPicture toPicture() {
         return new LinkPicture(
                 this.animalUuid,
                 this.name,

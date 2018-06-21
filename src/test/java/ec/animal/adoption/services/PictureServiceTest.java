@@ -21,7 +21,7 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.*;
-import ec.animal.adoption.repositories.PictureRepository;
+import ec.animal.adoption.repositories.LinkPictureRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 public class PictureServiceTest {
 
     @Mock
-    private PictureRepository pictureRepository;
+    private LinkPictureRepository linkPictureRepository;
 
     @Mock
     private MediaStorageClient mediaStorageClient;
@@ -57,10 +57,10 @@ public class PictureServiceTest {
                 animalUuid, name, pictureType, mock(MediaLink.class), mock(MediaLink.class)
         );
         when(mediaStorageClient.save(imagePicture)).thenReturn(linkPicture);
-        when(pictureRepository.save(linkPicture)).thenReturn(linkPicture);
-        PictureService pictureService = new PictureService(mediaStorageClient, pictureRepository);
+        when(linkPictureRepository.save(linkPicture)).thenReturn(linkPicture);
+        PictureService pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
 
-        Picture createdPicture = pictureService.create(imagePicture);
+        LinkPicture createdPicture = pictureService.create(imagePicture);
 
         assertThat(createdPicture, is(linkPicture));
     }

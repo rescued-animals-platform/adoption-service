@@ -31,7 +31,6 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class LinkPictureTest {
@@ -62,24 +61,6 @@ public class LinkPictureTest {
         assertThat(linkPicture.getPictureType(), is(pictureType));
         assertThat(linkPicture.getLargeImageUrl(), is(largeImageUrl));
         assertThat(linkPicture.getSmallImageUrl(), is(smallImageUrl));
-    }
-
-    @Test
-    public void shouldReturnTrue() {
-        assertThat(linkPicture.hasUrls(), is(true));
-    }
-
-    @Test
-    public void shouldReturnFalse() {
-        assertThat(linkPicture.hasImages(), is(false));
-    }
-
-    @Test
-    public void shouldBeNull() {
-        assertNull(linkPicture.getLargeImagePath());
-        assertNull(linkPicture.getLargeImageContent());
-        assertNull(linkPicture.getSmallImagePath());
-        assertNull(linkPicture.getSmallImageContent());
     }
 
     @Test
