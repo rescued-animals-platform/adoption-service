@@ -1,6 +1,7 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.builders.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class TemperamentsTest {
     @Test
     public void shouldSetSociability() {
         Sociability sociability = getRandomSociability();
-        Temperaments temperaments = new Temperaments(sociability, getRandomDocility(), getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withSociability(sociability).build();
 
         assertThat(temperaments.getSociability(), is(sociability));
     }
@@ -24,7 +25,7 @@ public class TemperamentsTest {
     @Test
     public void shouldSetDocility() {
         Docility docility = getRandomDocility();
-        Temperaments temperaments = new Temperaments(getRandomSociability(), docility, getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withDocility(docility).build();
 
         assertThat(temperaments.getDocility(), is(docility));
     }
@@ -32,56 +33,56 @@ public class TemperamentsTest {
     @Test
     public void shouldSetBalance() {
         Balance balance = getRandomBalance();
-        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), balance);
+        Temperaments temperaments = TemperamentsBuilder.random().withBalance(balance).build();
 
         assertThat(temperaments.getBalance(), is(balance));
     }
 
     @Test
     public void shouldReturnTrueIfTemperamentsIsEmpty() {
-        Temperaments temperaments = new Temperaments(null, null, null);
+        Temperaments temperaments = TemperamentsBuilder.empty().build();
 
         assertThat(temperaments.isEmpty(), is(true));
     }
 
     @Test
     public void shouldReturnFalseIfOnlySociabilityIsSet() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), null, null);
+        Temperaments temperaments = TemperamentsBuilder.empty().withSociability(getRandomSociability()).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
 
     @Test
     public void shouldReturnFalseIfOnlyDocilityIsSet() {
-        Temperaments temperaments = new Temperaments(null, getRandomDocility(), null);
+        Temperaments temperaments = TemperamentsBuilder.empty().withDocility(getRandomDocility()).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
 
     @Test
     public void shouldReturnFalseIfOnlyBalanceIsSet() {
-        Temperaments temperaments = new Temperaments(null, null, getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.empty().withBalance(getRandomBalance()).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
 
     @Test
     public void shouldReturnFalseIfSociabilityAndDocilityAreSet() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), null);
+        Temperaments temperaments = TemperamentsBuilder.random().withBalance(null).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
 
     @Test
     public void shouldReturnFalseIfSociabilityAndBalanceAreSet() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), null, getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withDocility(null).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
 
     @Test
     public void shouldReturnFalseIfDocilityAndBalanceAreSet() {
-        Temperaments temperaments = new Temperaments(null, getRandomDocility(), getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withSociability(null).build();
 
         assertThat(temperaments.isEmpty(), is(false));
     }
@@ -93,7 +94,7 @@ public class TemperamentsTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().build();
         ObjectMapper objectMapper = new ObjectMapper();
 
         String serializedTemperaments = objectMapper.writeValueAsString(temperaments);

@@ -2,7 +2,7 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.builders.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -90,9 +90,8 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldValidateNonEmptyTemperaments() {
-        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(
-                new Temperaments(null, null, null)
-        ).build();
+        Characteristics characteristics = CharacteristicsBuilder.random().
+                withTemperaments(TemperamentsBuilder.empty().build()).build();
 
         Set<ConstraintViolation<Characteristics>> constraintViolations = getValidator().validate(characteristics);
 

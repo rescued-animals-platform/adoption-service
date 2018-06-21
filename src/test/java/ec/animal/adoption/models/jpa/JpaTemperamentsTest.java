@@ -19,11 +19,11 @@
 
 package ec.animal.adoption.models.jpa;
 
+import ec.animal.adoption.builders.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
-import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
@@ -32,7 +32,7 @@ public class JpaTemperamentsTest {
 
     @Test
     public void shouldCreateJpaTemperamentFromTemperament() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().build();
 
         JpaTemperaments jpaTemperaments = new JpaTemperaments(temperaments);
 
@@ -41,7 +41,7 @@ public class JpaTemperamentsTest {
 
     @Test
     public void shouldAcceptNullSociability() {
-        Temperaments temperaments = new Temperaments(null, getRandomDocility(), getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withSociability(null).build();
 
         JpaTemperaments jpaTemperaments = new JpaTemperaments(temperaments);
 
@@ -50,7 +50,7 @@ public class JpaTemperamentsTest {
 
     @Test
     public void shouldAcceptNullDocility() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), null, getRandomBalance());
+        Temperaments temperaments = TemperamentsBuilder.random().withDocility(null).build();
 
         JpaTemperaments jpaTemperaments = new JpaTemperaments(temperaments);
 
@@ -59,7 +59,7 @@ public class JpaTemperamentsTest {
 
     @Test
     public void shouldAcceptNullBalance() {
-        Temperaments temperaments = new Temperaments(getRandomSociability(), getRandomDocility(), null);
+        Temperaments temperaments = TemperamentsBuilder.random().withBalance(null).build();
 
         JpaTemperaments jpaTemperaments = new JpaTemperaments(temperaments);
 

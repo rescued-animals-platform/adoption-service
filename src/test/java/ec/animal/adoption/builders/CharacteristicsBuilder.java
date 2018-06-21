@@ -23,9 +23,6 @@ import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
 import static ec.animal.adoption.TestUtils.*;
@@ -34,20 +31,14 @@ public class CharacteristicsBuilder {
 
     private Size size;
     private PhysicalActivity physicalActivity;
-    private boolean isTemperamentsSet = false;
     private Temperaments temperaments;
-    private Sociability sociability;
-    private Docility docility;
-    private Balance balance;
     private FriendlyWith[] friendlyWith;
 
     public static CharacteristicsBuilder random() {
         CharacteristicsBuilder characteristicsBuilder = new CharacteristicsBuilder();
         characteristicsBuilder.size = getRandomSize();
         characteristicsBuilder.physicalActivity = getRandomPhysicalActivity();
-        characteristicsBuilder.sociability = getRandomSociability();
-        characteristicsBuilder.docility = getRandomDocility();
-        characteristicsBuilder.balance = getRandomBalance();
+        characteristicsBuilder.temperaments = TemperamentsBuilder.random().build();
         characteristicsBuilder.friendlyWith = new FriendlyWith[]{getRandomFriendlyWith()};
         return characteristicsBuilder;
     }
@@ -62,23 +53,7 @@ public class CharacteristicsBuilder {
         return this;
     }
 
-    public CharacteristicsBuilder withSociability(Sociability sociability) {
-        this.sociability = sociability;
-        return this;
-    }
-
-    public CharacteristicsBuilder withDocility(Docility docility) {
-        this.docility = docility;
-        return this;
-    }
-
-    public CharacteristicsBuilder withBalance(Balance balance) {
-        this.balance = balance;
-        return this;
-    }
-
     public CharacteristicsBuilder withTemperaments(Temperaments temperaments) {
-        this.isTemperamentsSet = true;
         this.temperaments = temperaments;
         return this;
     }
@@ -89,11 +64,6 @@ public class CharacteristicsBuilder {
     }
 
     public Characteristics build() {
-        return new Characteristics(
-                this.size,
-                this.physicalActivity,
-                isTemperamentsSet ? temperaments : new Temperaments(this.sociability, this.docility, this.balance),
-                this.friendlyWith
-        );
+        return new Characteristics(this.size, this.physicalActivity, this.temperaments, this.friendlyWith);
     }
 }

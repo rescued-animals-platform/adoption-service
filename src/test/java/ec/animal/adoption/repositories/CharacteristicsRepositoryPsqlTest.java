@@ -38,8 +38,8 @@ public class CharacteristicsRepositoryPsqlTest {
 
     @Before
     public void setUp() {
-        animalUuid = UUID.randomUUID();
         characteristics = CharacteristicsBuilder.random().build();
+        animalUuid = UUID.randomUUID();
         when(animalRepositoryPsql.animalExists(animalUuid)).thenReturn(true);
         characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(
                 jpaCharacteristicsRepository, animalRepositoryPsql
