@@ -19,18 +19,15 @@
 
 package ec.animal.adoption.models.jpa;
 
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.MediaLink;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomPictureType;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -38,13 +35,7 @@ public class JpaLinkPictureTest {
 
     @Test
     public void shouldCreateJpaLinkPictureFromLinkPicture() {
-        LinkPicture linkPicture = new LinkPicture(
-                UUID.randomUUID(),
-                randomAlphabetic(10),
-                getRandomPictureType(),
-                new MediaLink(randomAlphabetic(10)),
-                new MediaLink(randomAlphabetic(10))
-        );
+        LinkPicture linkPicture = LinkPictureBuilder.random().build();
         JpaLinkPicture jpaLinkPicture = new JpaLinkPicture(linkPicture);
 
         assertThat(jpaLinkPicture.toPicture(), is(linkPicture));

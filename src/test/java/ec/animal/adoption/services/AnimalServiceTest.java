@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.services;
 
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class AnimalServiceTest {
     @Test
     public void shouldCreateAnAnimal() {
         Animal expectedAnimal = mock(Animal.class);
-        Animal animal = mock(Animal.class);
+        Animal animal = AnimalBuilder.random().build();
         AnimalRepository animalRepository = mock(AnimalRepository.class);
         when(animalRepository.save(animal)).thenReturn(expectedAnimal);
         AnimalService animalService = new AnimalService(animalRepository);

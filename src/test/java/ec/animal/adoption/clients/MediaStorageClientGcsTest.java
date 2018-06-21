@@ -20,8 +20,12 @@
 package ec.animal.adoption.clients;
 
 import com.google.cloud.storage.StorageException;
+import ec.animal.adoption.builders.ImagePictureBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
-import ec.animal.adoption.domain.media.*;
+import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.ImageStorageException;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,14 +33,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.UUID;
-
-import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,16 +45,10 @@ public class MediaStorageClientGcsTest {
     @Mock
     private GoogleCloudStorageClient googleCloudStorageClient;
 
-    private UUID animalUuid;
-    private String name;
-    private PictureType pictureType;
     private MediaStorageClientGcs mediaStorageClientGcs;
 
     @Before
     public void setUp() {
-        animalUuid = UUID.randomUUID();
-        name = randomAlphabetic(10);
-        pictureType = getRandomPictureType();
         mediaStorageClientGcs = new MediaStorageClientGcs(googleCloudStorageClient);
     }
 
@@ -65,9 +59,7 @@ public class MediaStorageClientGcsTest {
 
     @Test
     public void shouldStorePicture() {
-        ImagePicture imagePicture = new ImagePicture(
-                animalUuid, name, pictureType, mock(Image.class), mock(Image.class)
-        );
+        ImagePicture imagePicture = ImagePictureBuilder.random().build();
         String largeImageUrl = randomAlphabetic(10);
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
@@ -76,9 +68,10 @@ public class MediaStorageClientGcsTest {
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
         )).thenReturn(smallImageUrl);
-        LinkPicture expectedPicture = new LinkPicture(
-                animalUuid, name, pictureType, new MediaLink(largeImageUrl), new MediaLink(smallImageUrl)
-        );
+        LinkPicture expectedPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
+                withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).
+                withLargeImageMediaLink(new MediaLink(largeImageUrl)).
+                withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
         LinkPicture storedPicture = mediaStorageClientGcs.save(imagePicture);
 
@@ -87,9 +80,7 @@ public class MediaStorageClientGcsTest {
 
     @Test(expected = ImageStorageException.class)
     public void shouldThrowImageStorageExceptionWhenStoringLargeImage() {
-        ImagePicture imagePicture = new ImagePicture(
-                animalUuid, name, pictureType, mock(Image.class), mock(Image.class)
-        );
+        ImagePicture imagePicture = ImagePictureBuilder.random().build();
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
         )).thenThrow(StorageException.class);
@@ -99,9 +90,7 @@ public class MediaStorageClientGcsTest {
 
     @Test(expected = ImageStorageException.class)
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() {
-        ImagePicture imagePicture = new ImagePicture(
-                animalUuid, name, pictureType, mock(Image.class), mock(Image.class)
-        );
+        ImagePicture imagePicture = ImagePictureBuilder.random().build();
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
         )).thenThrow(StorageException.class);

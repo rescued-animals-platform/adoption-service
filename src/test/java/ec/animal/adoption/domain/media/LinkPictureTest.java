@@ -20,42 +20,32 @@
 package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class LinkPictureTest {
 
-    private UUID animalUuid;
-    private String name;
-    private PictureType pictureType;
-    private String largeImageUrl;
-    private String smallImageUrl;
-    private LinkPicture linkPicture;
-
-    @Before
-    public void setUp() {
-        animalUuid = UUID.randomUUID();
-        name = randomAlphabetic(10);
-        pictureType = getRandomPictureType();
-        largeImageUrl = randomAlphabetic(10);
-        smallImageUrl = randomAlphabetic(10);
-        linkPicture = new LinkPicture(
-                animalUuid, name, pictureType, new MediaLink(largeImageUrl), new MediaLink(smallImageUrl)
-        );
-    }
-
     @Test
     public void shouldCreateALinkPicture() {
+        UUID animalUuid = UUID.randomUUID();
+        String name = randomAlphabetic(10);
+        PictureType pictureType = TestUtils.getRandomPictureType();
+        String largeImageUrl = randomAlphabetic(30);
+        String smallImageUrl = randomAlphabetic(30);
+        LinkPicture linkPicture = LinkPictureBuilder.random().withAnimalUuid(animalUuid).withName(name).
+        withPictureType(pictureType). withLargeImageMediaLink(new MediaLink(largeImageUrl)).
+                withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+
         assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
         assertThat(linkPicture.getName(), is(name));
         assertThat(linkPicture.getPictureType(), is(pictureType));
@@ -70,6 +60,7 @@ public class LinkPictureTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
+        LinkPicture linkPicture = LinkPictureBuilder.random().build();
         ObjectMapper objectMapper = new ObjectMapper();
         String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
         LinkPicture deserializedLinkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);

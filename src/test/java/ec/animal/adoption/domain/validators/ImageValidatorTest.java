@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.validators;
 
+import ec.animal.adoption.builders.ImageBuilder;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import org.junit.Before;
@@ -33,7 +34,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -58,16 +58,12 @@ public class ImageValidatorTest {
     @Mock
     private NodeBuilderCustomizableContext nodeBuilderCustomizableContext;
 
-    private int oneMegaByteInBytes;
-    private long size;
     private ImageValidator imageValidator;
 
     @Before
     public void setUp() {
-        oneMegaByteInBytes = 1048576;
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(constraintViolationBuilder);
         when(constraintViolationBuilder.addPropertyNode(anyString())).thenReturn(nodeBuilderCustomizableContext);
-        size = new Random().nextInt(oneMegaByteInBytes);
         imageValidator = new ImageValidator();
     }
 
@@ -79,7 +75,7 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeValidForJpegAndSizeLessThanOneMb() {
         SupportedImageExtension jpeg = SupportedImageExtension.JPEG;
-        Image image = new Image(jpeg.getExtension(), jpeg.getStartingBytes(), size);
+        Image image = ImageBuilder.random().withSupportedImageExtension(jpeg).build();
 
         assertThat(imageValidator.isValid(image, context), is(true));
     }
@@ -87,7 +83,7 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeValidForJpgAndSizeLessThanOneMb() {
         SupportedImageExtension jpg = SupportedImageExtension.JPG;
-        Image image = new Image(jpg.getExtension(), jpg.getStartingBytes(), size);
+        Image image = ImageBuilder.random().withSupportedImageExtension(jpg).build();
 
         assertThat(imageValidator.isValid(image, context), is(true));
     }
@@ -95,30 +91,24 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeValidForPngAndSizeLessThanOneMb() {
         SupportedImageExtension png = SupportedImageExtension.PNG;
-        Image image = new Image(png.getExtension(), png.getStartingBytes(), size);
+        Image image = ImageBuilder.random().withSupportedImageExtension(png).build();
 
         assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeValidForSizeEqualToOneMb() {
-        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
-        Image image = new Image(
-                supportedImageExtension.getExtension(),
-                supportedImageExtension.getStartingBytes(),
-                oneMegaByteInBytes
-        );
+        int oneMegaByteInBytes = 1048576;
+        Image image = ImageBuilder.random().withSizeInBytes(oneMegaByteInBytes).build();
 
         assertThat(imageValidator.isValid(image, context), is(true));
     }
 
     @Test
     public void shouldBeInvalidForSizeGreaterThanOneMb() {
-        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
-        size = oneMegaByteInBytes + new Random().nextInt(100);
-        Image image = new Image(
-                supportedImageExtension.getExtension(), supportedImageExtension.getStartingBytes(), size
-        );
+        int oneMegaByteInBytes = 1048576;
+        int size = oneMegaByteInBytes + new Random().nextInt(100);
+        Image image = ImageBuilder.random().withSizeInBytes(size).build();
 
         assertThat(imageValidator.isValid(image, context), is(false));
     }
@@ -126,8 +116,7 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeInvalidWithRightExtensionInFilenameButWrongImageTypeInContent() {
         byte[] invalidContent = {};
-        String extension = getRandomSupportedImageExtension().getExtension();
-        Image image = new Image(extension, invalidContent, size);
+        Image image = ImageBuilder.random().withContent(invalidContent).build();
 
         assertThat(imageValidator.isValid(image, context), is(false));
     }
@@ -135,15 +124,15 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeInvalidWithRightImageTypeInContentButWrongExtensionInFilename() {
         String wrongExtension = randomAlphabetic(10);
-        byte[] content = getRandomSupportedImageExtension().getStartingBytes();
-        Image image = new Image(wrongExtension, content, size);
+        Image image = ImageBuilder.random().withExtension(wrongExtension).build();
 
         assertThat(imageValidator.isValid(image, context), is(false));
     }
 
     @Test
     public void shouldCustomizeContextWhenInvalid() {
-        Image image = new Image(randomAlphabetic(10), new byte[]{}, size);
+        Image image = ImageBuilder.random().withExtension(randomAlphabetic(10)).withContent(new byte[]{}).
+                withSizeInBytes(0).build();
         String expectedTemplate = String.format(INVALID_MESSAGE, Arrays.stream(SupportedImageExtension.values())
                 .map(SupportedImageExtension::getExtension)
                 .collect(Collectors.joining(", ")));

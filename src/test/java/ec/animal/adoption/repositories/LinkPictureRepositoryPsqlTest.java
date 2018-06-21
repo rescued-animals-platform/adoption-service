@@ -1,7 +1,7 @@
 package ec.animal.adoption.repositories;
 
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
@@ -16,10 +16,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
-import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomPictureType;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -40,13 +37,7 @@ public class LinkPictureRepositoryPsqlTest {
 
     @Before
     public void setUp() {
-        linkPicture = new LinkPicture(
-                UUID.randomUUID(),
-                randomAlphabetic(10),
-                getRandomPictureType(),
-                new MediaLink(randomAlphabetic(10)),
-                new MediaLink(randomAlphabetic(10))
-        );
+        linkPicture = LinkPictureBuilder.random().build();
         when(animalRepositoryPsql.animalExists(linkPicture.getAnimalUuid())).thenReturn(true);
         when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
                 PictureType.PRIMARY.name(), linkPicture.getAnimalUuid())

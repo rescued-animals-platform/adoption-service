@@ -1,7 +1,7 @@
 package ec.animal.adoption.domain.media;
 
+import ec.animal.adoption.builders.ImageBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
@@ -24,24 +24,15 @@ public class ImageTest {
             .map(SupportedImageExtension::getExtension)
             .collect(Collectors.joining(", ")));
 
-    private Image image;
-    private String extension;
-    private byte[] content;
-    private long sizeInBytes;
-
-    @Before
-    public void setUp() {
-        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
-        extension = supportedImageExtension.getExtension();
-        content = supportedImageExtension.getStartingBytes();
-        sizeInBytes = new Random().nextInt(10000) + 1;
-        image = new Image(extension, content, sizeInBytes);
-    }
-
     @Test
     public void shouldCreateAnImageMedia() {
-        assertThat(image.getExtension(), is(extension));
-        assertThat(image.getContent(), is(content));
+        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
+        long sizeInBytes = new Random().nextInt(100) + 1;
+        Image image = ImageBuilder.random(). withSupportedImageExtension(supportedImageExtension).
+                withSizeInBytes(sizeInBytes).build();
+
+        assertThat(image.getExtension(), is(supportedImageExtension.getExtension()));
+        assertThat(image.getContent(), is(supportedImageExtension.getStartingBytes()));
         assertThat(image.getSizeInBytes(), is(sizeInBytes));
     }
 
@@ -52,8 +43,7 @@ public class ImageTest {
 
     @Test
     public void shouldValidateWrongImageExtensionOnFilename() {
-        String extension = randomAlphabetic(6);
-        image = new Image(extension, content, sizeInBytes);
+        Image image = ImageBuilder.random().withExtension(randomAlphabetic(6)).build();
 
         Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
 
@@ -65,8 +55,7 @@ public class ImageTest {
 
     @Test
     public void shouldValidateWrongImageExtensionInContent() {
-        byte[] content = {};
-        image = new Image(extension, content, sizeInBytes);
+        Image image = ImageBuilder.random().withContent(new byte[]{}).build();
 
         Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
 
@@ -78,7 +67,7 @@ public class ImageTest {
 
     @Test
     public void shouldValidateSizeIsBytesIsNotZero() {
-        image = new Image(extension, content, 0);
+        Image image = ImageBuilder.random().withSizeInBytes(0).build();
 
         Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
 
