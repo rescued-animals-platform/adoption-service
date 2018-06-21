@@ -1,8 +1,7 @@
 package ec.animal.adoption.repositories;
 
-import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaCharacteristics;
@@ -10,7 +9,6 @@ import ec.animal.adoption.repositories.jpa.JpaCharacteristicsRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -19,7 +17,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -42,12 +39,7 @@ public class CharacteristicsRepositoryPsqlTest {
     @Before
     public void setUp() {
         animalUuid = UUID.randomUUID();
-        characteristics = new Characteristics(
-                TestUtils.getRandomSize(),
-                TestUtils.getRandomPhysicalActivity(),
-                new Temperaments(getRandomSociability(), getRandomDocility(), getRandomBalance()),
-                TestUtils.getRandomFriendlyWith()
-        );
+        characteristics = CharacteristicsBuilder.random().build();
         when(animalRepositoryPsql.animalExists(animalUuid)).thenReturn(true);
         characteristicsRepositoryPsql = new CharacteristicsRepositoryPsql(
                 jpaCharacteristicsRepository, animalRepositoryPsql
@@ -61,24 +53,18 @@ public class CharacteristicsRepositoryPsqlTest {
 
     @Test
     public void shouldSaveJpaCharacteristics() {
-        ArgumentCaptor<JpaCharacteristics> jpaCharacteristicsArgumentCaptor = ArgumentCaptor.forClass(
-                JpaCharacteristics.class
-        );
         characteristics.setAnimalUuid(animalUuid);
         JpaCharacteristics expectedJpaCharacteristics = new JpaCharacteristics(characteristics);
         when(jpaCharacteristicsRepository.save(any(JpaCharacteristics.class))).thenReturn(expectedJpaCharacteristics);
 
         Characteristics savedCharacteristics = characteristicsRepositoryPsql.save(this.characteristics);
 
-        verify(jpaCharacteristicsRepository).save(jpaCharacteristicsArgumentCaptor.capture());
-        JpaCharacteristics jpaCharacteristics = jpaCharacteristicsArgumentCaptor.getValue();
-        Characteristics characteristics = jpaCharacteristics.toCharacteristics();
-        assertThat(characteristics.getAnimalUuid(), is(this.characteristics.getAnimalUuid()));
-        assertThat(characteristics.getSize(), is(this.characteristics.getSize()));
-        assertThat(characteristics.getPhysicalActivity(), is(this.characteristics.getPhysicalActivity()));
-        assertThat(characteristics.getTemperaments(), is(this.characteristics.getTemperaments()));
-        assertThat(characteristics.getFriendlyWith(), is(this.characteristics.getFriendlyWith()));
         assertThat(savedCharacteristics, is(expectedJpaCharacteristics.toCharacteristics()));
+        assertThat(savedCharacteristics.getAnimalUuid(), is(characteristics.getAnimalUuid()));
+        assertThat(savedCharacteristics.getSize(), is(characteristics.getSize()));
+        assertThat(savedCharacteristics.getPhysicalActivity(), is(characteristics.getPhysicalActivity()));
+        assertThat(savedCharacteristics.getTemperaments(), is(characteristics.getTemperaments()));
+        assertThat(savedCharacteristics.getFriendlyWith(), is(characteristics.getFriendlyWith()));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)

@@ -1,20 +1,17 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.util.Set;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getValidator;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -24,26 +21,16 @@ public class CharacteristicsTest {
     private static final String PHYSICAL_ACTIVITY_IS_REQUIRED = "Physical activity is required";
     private static final String AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED = "At least one temperaments is required";
 
-    private Size size;
-    private PhysicalActivity physicalActivity;
-    private Temperaments temperaments;
-
-    @Before
-    public void setUp() {
-        size = getRandomSize();
-        physicalActivity = getRandomPhysicalActivity();
-        temperaments = new Temperaments(Sociability.SHY, Docility.DOCILE, Balance.VERY_POSSESSIVE);
-    }
-
     @Test
     public void shouldEliminateDuplicatesOnFriendlyWith() {
-        Characteristics expectedCharacteristics = new Characteristics(
-                size, physicalActivity, temperaments, FriendlyWith.CATS, FriendlyWith.CHILDREN
-        );
+        CharacteristicsBuilder characteristicsBuilder = CharacteristicsBuilder.random();
+        Characteristics expectedCharacteristics = characteristicsBuilder.withFriendlyWith(
+                FriendlyWith.CATS, FriendlyWith.CHILDREN
+        ).build();
 
-        Characteristics characteristics = new Characteristics(
-                size, physicalActivity, temperaments, FriendlyWith.CATS, FriendlyWith.CATS, FriendlyWith.CHILDREN
-        );
+        Characteristics characteristics = characteristicsBuilder.withFriendlyWith(
+                FriendlyWith.CATS, FriendlyWith.CATS, FriendlyWith.CHILDREN
+        ).build();
 
         assertThat(characteristics, is(expectedCharacteristics));
     }
@@ -55,9 +42,7 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        Characteristics characteristics = new Characteristics(
-                size, physicalActivity, temperaments, FriendlyWith.CATS, FriendlyWith.CHILDREN
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
         ObjectMapper objectMapper = new ObjectMapper();
 
         String serializedCharacteristics = objectMapper.writeValueAsString(characteristics);
@@ -70,9 +55,7 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldValidateNonNullSize() {
-        Characteristics characteristics = new Characteristics(
-                null, physicalActivity, temperaments, getRandomFriendlyWith()
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().withSize(null).build();
 
         Set<ConstraintViolation<Characteristics>> constraintViolations = getValidator().validate(characteristics);
 
@@ -84,9 +67,7 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldValidateNonNullPhysicalActivity() {
-        Characteristics characteristics = new Characteristics(
-                size, null, temperaments, getRandomFriendlyWith()
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().withPhysicalActivity(null).build();
 
         Set<ConstraintViolation<Characteristics>> constraintViolations = getValidator().validate(characteristics);
 
@@ -98,10 +79,7 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldValidateNonNullTemperaments() {
-        Characteristics characteristics = new Characteristics(
-                size, physicalActivity, null, getRandomFriendlyWith()
-        );
-
+        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(null).build();
         Set<ConstraintViolation<Characteristics>> constraintViolations = getValidator().validate(characteristics);
 
         assertThat(constraintViolations.size(), is(1));
@@ -112,12 +90,9 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldValidateNonEmptyTemperaments() {
-        Characteristics characteristics = new Characteristics(
-                size,
-                physicalActivity,
-                new Temperaments(null, null, null),
-                getRandomFriendlyWith()
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(
+                new Temperaments(null, null, null)
+        ).build();
 
         Set<ConstraintViolation<Characteristics>> constraintViolations = getValidator().validate(characteristics);
 
