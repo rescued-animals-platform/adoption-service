@@ -95,10 +95,10 @@ public class AnimalTest {
                 serializedAnimalForAdoption, Animal.class
         );
 
-        assertReflectionEquals(deserializedAnimalForAdoption, animal);
+        assertReflectionEquals(animal, deserializedAnimalForAdoption);
         assertThat(deserializedAnimalForAdoption.getState(), is(notNullValue()));
         assertThat(deserializedAnimalForAdoption.getState(), is(instanceOf(LookingForHuman.class)));
-        assertReflectionEquals(deserializedAnimalForAdoption.getState(), animal.getState());
+        assertReflectionEquals(animal.getState(), deserializedAnimalForAdoption.getState());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class AnimalTest {
                 serializedUnavailableAnimal, Animal.class
         );
 
-        assertThat(deserializedUnavailableAnimal, is(animal));
+        assertReflectionEquals(animal, deserializedUnavailableAnimal);
     }
 
     @Test

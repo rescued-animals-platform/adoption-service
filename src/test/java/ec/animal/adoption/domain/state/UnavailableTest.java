@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -29,8 +28,10 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class UnavailableTest {
 
@@ -43,8 +44,8 @@ public class UnavailableTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Unavailable.class).usingGetClass().verify();
+    public void shouldBeAnInstanceOfState() {
+        assertThat(unavailableState, is(instanceOf(State.class)));
     }
 
     @Test
@@ -56,6 +57,6 @@ public class UnavailableTest {
         String serializedUnavailableState = objectMapper.writeValueAsString(unavailableState);
         Unavailable deserializedUnavailableState = objectMapper.readValue(serializedUnavailableState, Unavailable.class);
 
-        assertThat(deserializedUnavailableState, is(unavailableState));
+        assertReflectionEquals(unavailableState, deserializedUnavailableState);
     }
 }
