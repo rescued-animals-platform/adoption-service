@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -33,6 +32,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AdoptedTest {
 
@@ -51,11 +51,6 @@ public class AdoptedTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Adopted.class).usingGetClass().verify();
-    }
-
-    @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -64,6 +59,6 @@ public class AdoptedTest {
         String serializedAdoptedState = objectMapper.writeValueAsString(adoptedState);
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
-        assertThat(deserializedAdoptedState, is(adoptedState));
+        assertReflectionEquals(adoptedState, deserializedAdoptedState);
     }
 }

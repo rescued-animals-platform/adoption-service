@@ -107,7 +107,7 @@ public class ImageValidatorTest {
     @Test
     public void shouldBeInvalidForSizeGreaterThanOneMb() {
         int oneMegaByteInBytes = 1048576;
-        int size = oneMegaByteInBytes + new Random().nextInt(100);
+        int size = oneMegaByteInBytes + 1 + new Random().nextInt(100);
         Image image = ImageBuilder.random().withSizeInBytes(size).build();
 
         assertThat(imageValidator.isValid(image, context), is(false));

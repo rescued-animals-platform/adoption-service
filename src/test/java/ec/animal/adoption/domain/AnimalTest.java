@@ -114,7 +114,7 @@ public class AnimalTest {
                 serializedAdoptedAnimal, Animal.class
         );
 
-        assertThat(deserializedAdoptedAnimal, is(animal));
+        assertReflectionEquals(animal, deserializedAdoptedAnimal);
     }
 
     @Test
