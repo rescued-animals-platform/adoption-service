@@ -20,15 +20,13 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.AbstractIntegrationTest;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
@@ -49,12 +47,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {
         Animal animal = createAndSaveAnimal();
-        Characteristics characteristics = new Characteristics(
-                Size.TINY,
-                PhysicalActivity.LOW,
-                new Temperaments(Sociability.SHY, null, Balance.POSSESSIVE),
-                FriendlyWith.ADULTS
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         ResponseEntity<Characteristics> response = testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, Characteristics.class, animal.getUuid(), getHttpHeaders()
@@ -100,12 +93,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingCharacteristicsForNonExistentAnimal() {
-        Characteristics characteristics = new Characteristics(
-                Size.TINY,
-                PhysicalActivity.LOW,
-                new Temperaments(Sociability.VERY_SOCIABLE, Docility.NEITHER_DOCILE_NOR_DOMINANT, Balance.BALANCED),
-                FriendlyWith.ADULTS
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         ResponseEntity<ApiError> response = testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, ApiError.class, UUID.randomUUID(), getHttpHeaders()
@@ -119,12 +107,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
     @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
         Animal animal = createAndSaveAnimal();
-        Characteristics characteristics = new Characteristics(
-                Size.TINY,
-                PhysicalActivity.LOW,
-                new Temperaments(Sociability.VERY_SOCIABLE, Docility.NEITHER_DOCILE_NOR_DOMINANT, Balance.BALANCED),
-                FriendlyWith.ADULTS
-        );
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
         testClient.postForEntity(
                 CHARACTERISTICS_URL, characteristics, Characteristics.class, animal.getUuid(), getHttpHeaders()
         );
@@ -142,12 +125,11 @@ public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationT
     public void shouldReturn200OkWithCharacteristics() {
         Animal animal = createAndSaveAnimal();
         ResponseEntity<Characteristics> createdCharacteristicsResponse = testClient.postForEntity(
-                CHARACTERISTICS_URL, new Characteristics(
-                        Size.TINY,
-                        PhysicalActivity.LOW,
-                        new Temperaments(Sociability.SHY, Docility.DOCILE, Balance.BALANCED),
-                        FriendlyWith.CATS
-                ), Characteristics.class, animal.getUuid(), getHttpHeaders()
+                CHARACTERISTICS_URL,
+                CharacteristicsBuilder.random().build(),
+                Characteristics.class,
+                animal.getUuid(),
+                getHttpHeaders()
         );
         Characteristics createdCharacteristics = createdCharacteristicsResponse.getBody();
 
