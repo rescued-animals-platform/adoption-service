@@ -20,16 +20,12 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.AbstractIntegrationTest;
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Species;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.models.jpa.JpaAnimal;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,73 +36,57 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private JpaAnimalRepository jpaAnimalRepository;
 
-    private JpaAnimal entity;
-
-    @Before
-    public void setUp() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        entity = new JpaAnimal(new Animal(
-                randomAlphabetic(10),
-                randomAlphabetic(10),
-                registrationDate,
-                Species.CAT,
-                EstimatedAge.YOUNG,
-                Sex.MALE,
-                new LookingForHuman(registrationDate)
-        ));
-    }
-
     @Test
     public void shouldSaveAnAnimalLookingForHuman() {
+        JpaAnimal entity = new JpaAnimal(
+                AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build()
+        );
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
-        assertEquals(jpaAnimal, entity);
+        assertReflectionEquals(jpaAnimal, entity);
     }
 
     @Test
     public void shouldSaveAnAnimalWithDifferentState() {
-        JpaAnimal entity = new JpaAnimal(new Animal(
-                randomAlphabetic(10),
-                randomAlphabetic(10),
-                LocalDateTime.now(),
-                Species.CAT,
-                EstimatedAge.YOUNG_ADULT,
-                Sex.FEMALE,
-                new Unavailable(randomAlphabetic(10))
-        ));
+        Unavailable unavailable = new Unavailable(randomAlphabetic(10));
+        JpaAnimal entity = new JpaAnimal(AnimalBuilder.random().withState(unavailable).build());
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
-        assertEquals(jpaAnimal, entity);
+        assertReflectionEquals(jpaAnimal, entity);
     }
 
     @Test
     public void shouldUpdateAnimalState() {
+        JpaAnimal entity = new JpaAnimal(
+                AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build()
+        );
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         State updatedState = new Adopted(LocalDate.now(), randomAlphabetic(10));
         jpaAnimal.setState(updatedState);
 
         JpaAnimal adoptedJpaAnimal = jpaAnimalRepository.save(jpaAnimal);
 
-        assertEquals(adoptedJpaAnimal.toAnimal().getState(), updatedState);
+        assertReflectionEquals(adoptedJpaAnimal.toAnimal().getState(), updatedState);
     }
 
     @Test
     public void shouldFindAnimalByAnimalUuid() {
+        JpaAnimal entity = new JpaAnimal(AnimalBuilder.random().build());
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         UUID animalUuid = jpaAnimal.toAnimal().getUuid();
 
         Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findById(animalUuid);
 
         assertThat(optionalJpaAnimal.isPresent(), is(true));
-        assertThat(optionalJpaAnimal.get(), is(jpaAnimal));
+        assertReflectionEquals(optionalJpaAnimal.get(), jpaAnimal);
     }
 }

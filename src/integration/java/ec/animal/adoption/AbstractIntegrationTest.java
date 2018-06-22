@@ -19,13 +19,8 @@
 
 package ec.animal.adoption;
 
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Species;
-import ec.animal.adoption.domain.state.LookingForHuman;
-import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.junit.runner.RunWith;
@@ -38,10 +33,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
-
-import static ec.animal.adoption.TestUtils.*;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -70,29 +61,11 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected JpaAnimal createAndSaveJpaAnimal() {
-        return jpaAnimalRepository.save(new JpaAnimal(new Animal(
-                randomAlphabetic(10),
-                randomAlphabetic(10),
-                LocalDateTime.now(),
-                Species.CAT,
-                EstimatedAge.YOUNG_ADULT,
-                Sex.MALE,
-                new Unavailable(randomAlphabetic(10))
-        )));
+        return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build()));
     }
 
     protected Animal createAndSaveAnimal() {
-        String clinicalRecord = randomAlphabetic(10);
-        String name = randomAlphabetic(10);
-        LocalDateTime registrationDate = LocalDateTime.now();
-        Species species = getRandomSpecies();
-        EstimatedAge estimatedAge = getRandomEstimatedAge();
-        Sex sex = getRandomSex();
-        State lookingForHumanState = new LookingForHuman(registrationDate);
-        Animal animalForAdoption = new Animal(
-                clinicalRecord, name, registrationDate, species, estimatedAge, sex, lookingForHumanState
-        );
-
+        Animal animalForAdoption = AnimalBuilder.random().withState(null).build();
         ResponseEntity<Animal> responseEntity = testClient.postForEntity(
                 ANIMALS_URL, animalForAdoption, Animal.class, getHttpHeaders()
         );

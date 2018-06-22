@@ -47,7 +47,7 @@ public class Animal {
     private final LocalDateTime registrationDate;
 
     @NotNull(message = "Animal species is required")
-    @JsonProperty("animalSpecies")
+    @JsonProperty("species")
     private final Species species;
 
     @NotNull(message = "Animal estimated age is required")
@@ -66,7 +66,7 @@ public class Animal {
             @JsonProperty("clinicalRecord") String clinicalRecord,
             @JsonProperty("name") String name,
             @JsonProperty("registrationDate") LocalDateTime registrationDate,
-            @JsonProperty("animalSpecies") Species species,
+            @JsonProperty("species") Species species,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
             @JsonProperty("sex") Sex sex,
             @JsonProperty("state") State state
