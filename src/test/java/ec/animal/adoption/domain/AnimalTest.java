@@ -42,6 +42,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AnimalTest {
 
@@ -73,7 +74,7 @@ public class AnimalTest {
         Animal animal = AnimalBuilder.random().withState(null).build();
         LookingForHuman expectedLookingForHumanState = new LookingForHuman(animal.getRegistrationDate());
 
-        assertThat(animal.getState(), is(expectedLookingForHumanState));
+        assertReflectionEquals(animal.getState(), expectedLookingForHumanState);
     }
 
     @Test
@@ -94,10 +95,10 @@ public class AnimalTest {
                 serializedAnimalForAdoption, Animal.class
         );
 
-        assertThat(deserializedAnimalForAdoption, is(animal));
+        assertReflectionEquals(deserializedAnimalForAdoption, animal);
         assertThat(deserializedAnimalForAdoption.getState(), is(notNullValue()));
         assertThat(deserializedAnimalForAdoption.getState(), is(instanceOf(LookingForHuman.class)));
-        assertThat(deserializedAnimalForAdoption.getState(), is(animal.getState()));
+        assertReflectionEquals(deserializedAnimalForAdoption.getState(), animal.getState());
     }
 
     @Test
