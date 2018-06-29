@@ -17,36 +17,21 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.models.jpa;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ec.animal.adoption.domain.state.State;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = JpaLookingForHuman.class, name = "lookingForHuman"),
+        @JsonSubTypes.Type(value = JpaAdopted.class, name = "adopted"),
+        @JsonSubTypes.Type(value = JpaUnavailable.class, name = "unavailable")
+})
+public interface JpaStateable {
 
-public class LookingForHuman implements State {
-
-    private final LocalDateTime date;
-
-    @JsonCreator
-    private LookingForHuman() {
-        this.date = LocalDateTime.now();
-    }
-
-    public LookingForHuman(LocalDateTime date) {
-        this.date = date;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
-    }
+    State toState();
 }

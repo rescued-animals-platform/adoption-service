@@ -19,46 +19,64 @@
 
 package ec.animal.adoption.domain.state;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.junit.Before;
+import ec.animal.adoption.helpers.DateTimeHelper;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AdoptedTest {
 
-    private Adopted adoptedState;
-
-    @Before
-    public void setUp() {
-        LocalDate adoptionDate = LocalDate.now();
-        String adoptionFormId = randomAlphabetic(10);
-        adoptedState = new Adopted(adoptionDate, adoptionFormId);
-    }
-
     @Test
     public void shouldBeAnInstanceOfState() {
+        Adopted adoptedState = new Adopted(LocalDateTime.now(), randomAlphabetic(10));
+
         assertThat(adoptedState, is(instanceOf(State.class)));
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    public void shouldBeSerializable() throws JsonProcessingException {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
+        String adoptionFormId = randomAlphabetic(10);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
+        String expectedSerializedAdoptedState = "{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId +
+                "\",\"date\":" + expectedZonedDateTime + "}}";
+        Adopted adoptedState = new Adopted(localDateTime, adoptionFormId);
 
         String serializedAdoptedState = objectMapper.writeValueAsString(adoptedState);
+
+        assertThat(serializedAdoptedState, is(expectedSerializedAdoptedState));
+    }
+
+    @Test
+    public void shouldBeDeserializable() throws IOException {
+        String adoptionFormId = randomAlphabetic(10);
+        String serializedAdoptedState = "{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId + "\"}}";
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
+                )
+                .build();
+
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
-        assertReflectionEquals(adoptedState, deserializedAdoptedState);
+        assertNotNull(deserializedAdoptedState);
+        assertNotNull(deserializedAdoptedState.getDate());
+        assertThat(deserializedAdoptedState.getAdoptionFormId(), is(adoptionFormId));
     }
 }

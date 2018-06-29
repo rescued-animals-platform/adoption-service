@@ -23,18 +23,19 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
-import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.helpers.DateTimeHelper;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "animal")
 public class JpaAnimal {
 
     @Id
-    @org.hibernate.annotations.Type(type="org.hibernate.type.PostgresUUIDType")
+    @org.hibernate.annotations.Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
     @NotNull
@@ -54,8 +55,7 @@ public class JpaAnimal {
 
     private Timestamp registrationDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "state_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaState jpaState;
 
     private JpaAnimal() {
@@ -67,27 +67,24 @@ public class JpaAnimal {
         this.uuid = UUID.randomUUID();
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
-        this.registrationDate = Timestamp.valueOf(animal.getRegistrationDate());
+        this.registrationDate = Timestamp.valueOf(LocalDateTime.now());
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
-        this.jpaState = new JpaState(animal.getState());
+        this.jpaState = JpaState.getFor(animal.getState(), this);
     }
 
     public Animal toAnimal() {
         return new Animal(
+                uuid,
+                DateTimeHelper.getZonedDateTime(registrationDate.toLocalDateTime()),
                 clinicalRecord,
                 name,
-                registrationDate.toLocalDateTime(),
                 Species.valueOf(animalSpecies),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
                 jpaState.toState()
-        ).setUuid(uuid);
-    }
-
-    public void setState(State state) {
-        this.jpaState.setState(state);
+        );
     }
 
     @Override

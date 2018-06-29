@@ -37,7 +37,6 @@ import ec.animal.adoption.domain.state.Unavailable;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -49,8 +48,8 @@ public class TestUtils {
 
     private static final List<State> STATES = Arrays.asList(
             new LookingForHuman(LocalDateTime.now()),
-            new Adopted(LocalDate.now(), randomAlphabetic(10)),
-            new Unavailable(randomAlphabetic(10))
+            new Adopted(LocalDateTime.now(), randomAlphabetic(10)),
+            new Unavailable(LocalDateTime.now(), randomAlphabetic(10))
     );
     private static final Species[] SPECIES = Species.values();
     private static final EstimatedAge[] ESTIMATED_AGES = EstimatedAge.values();

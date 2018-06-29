@@ -17,36 +17,22 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.exceptions;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import org.junit.Test;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-public class LookingForHuman implements State {
+public class UnexpectedExceptionTest {
 
-    private final LocalDateTime date;
+    @Test
+    public void shouldReturnMessage() {
+        String expectedMessage = "An unexpected error occurred";
 
-    @JsonCreator
-    private LookingForHuman() {
-        this.date = LocalDateTime.now();
-    }
+        UnexpectedException unexpectedException = new UnexpectedException(mock(Throwable.class));
 
-    public LookingForHuman(LocalDateTime date) {
-        this.date = date;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
+        assertThat(unexpectedException.getMessage(), is(expectedMessage));
     }
 }

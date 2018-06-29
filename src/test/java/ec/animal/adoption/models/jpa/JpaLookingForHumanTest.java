@@ -17,36 +17,22 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.models.jpa;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
-public class LookingForHuman implements State {
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-    private final LocalDateTime date;
+public class JpaLookingForHumanTest {
 
-    @JsonCreator
-    private LookingForHuman() {
-        this.date = LocalDateTime.now();
-    }
+    @Test
+    public void shouldCreateAJpaLookingForHumanFromALookingForHumanState() {
+        LookingForHuman lookingForHuman = new LookingForHuman(LocalDateTime.now());
+        JpaLookingForHuman jpaLookingForHuman = new JpaLookingForHuman(lookingForHuman);
 
-    public LookingForHuman(LocalDateTime date) {
-        this.date = date;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
+        assertReflectionEquals(lookingForHuman, jpaLookingForHuman.toState());
     }
 }

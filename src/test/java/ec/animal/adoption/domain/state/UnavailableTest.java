@@ -19,44 +19,66 @@
 
 package ec.animal.adoption.domain.state;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.junit.Before;
+import ec.animal.adoption.helpers.DateTimeHelper;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class UnavailableTest {
 
-    private Unavailable unavailableState;
-
-    @Before
-    public void setUp() {
-        String notes = randomAlphabetic(20);
-        unavailableState = new Unavailable(notes);
-    }
-
     @Test
     public void shouldBeAnInstanceOfState() {
+        Unavailable unavailableState = new Unavailable(LocalDateTime.now(), randomAlphabetic(20));
+
         assertThat(unavailableState, is(instanceOf(State.class)));
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    public void shouldBeSerializable() throws JsonProcessingException {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
+        String notes = randomAlphabetic(20);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
+        String expectedSerializedUnavailableState = "{\"unavailable\":{\"notes\":\"" + notes +
+                "\",\"date\":" + expectedZonedDateTime + "}}";
+        Unavailable unavailableState = new Unavailable(localDateTime, notes);
 
         String serializedUnavailableState = objectMapper.writeValueAsString(unavailableState);
-        Unavailable deserializedUnavailableState = objectMapper.readValue(serializedUnavailableState, Unavailable.class);
 
-        assertReflectionEquals(unavailableState, deserializedUnavailableState);
+        assertThat(serializedUnavailableState, is(expectedSerializedUnavailableState));
+    }
+
+    @Test
+    public void shouldBeDeserializable() throws IOException {
+        String notes = randomAlphabetic(20);
+        String serializedUnavailableState = "{\"unavailable\":{\"notes\":\"" + notes + "\"}}";
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
+                )
+                .build();
+
+        Unavailable deserializedUnavailableState = objectMapper.readValue(
+                serializedUnavailableState, Unavailable.class
+        );
+
+        assertNotNull(deserializedUnavailableState);
+        assertNotNull(deserializedUnavailableState.getDate());
+        assertThat(deserializedUnavailableState.getNotes(), is(notes));
     }
 }

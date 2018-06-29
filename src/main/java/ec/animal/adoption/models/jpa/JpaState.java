@@ -19,53 +19,77 @@
 
 package ec.animal.adoption.models.jpa;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.domain.state.Adopted;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.Unavailable;
+import ec.animal.adoption.exceptions.UnexpectedException;
+import ec.animal.adoption.helpers.JsonHelper;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.UUID;
 
-@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
-@Entity
-@Table(name = "state")
+@Entity(name = "state")
 public class JpaState {
 
+    private static ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+
     @Id
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID id;
 
-    @Column(nullable = false)
+    @OneToOne
+    @JoinColumn(name = "animal_uuid")
+    private JpaAnimal jpaAnimal;
+
+    @NotNull
     private String stateName;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb", nullable = false)
-    private State state;
+    @Column(name = "state")
+    private String stateAsJson;
 
-
-    private JpaState() {
-        // required by jpa
+    protected JpaState() {
+        // Required by Jpa
     }
 
-    public JpaState(State state) {
-        this();
-        this.id = UUID.randomUUID();
-        this.stateName = state.getClass().getSimpleName();
-        this.state = state;
+    public static JpaState getFor(State state, JpaAnimal jpaAnimal) {
+        JpaState jpaState = new JpaState();
+        jpaState.id = UUID.randomUUID();
+        jpaState.jpaAnimal = jpaAnimal;
+        jpaState.stateName = state.getClass().getSimpleName();
+        JpaStateable jpaStateable = getJpaStateable(state);
+        try {
+            jpaState.stateAsJson = objectMapper.writeValueAsString(jpaStateable);
+        } catch (JsonProcessingException e) {
+            throw new UnexpectedException(e);
+        }
+        return jpaState;
+    }
+
+    private static JpaStateable getJpaStateable(State state) {
+        if(state instanceof LookingForHuman) {
+            return new JpaLookingForHuman((LookingForHuman) state);
+        } else if(state instanceof Adopted) {
+            return new JpaAdopted((Adopted) state);
+        } else if(state instanceof Unavailable) {
+            return new JpaUnavailable((Unavailable) state);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public State toState() {
-        return this.state;
-    }
-
-    public void setState(State state) {
-        this.stateName = state.getClass().getSimpleName();
-        this.state = state;
+        try {
+            JpaStateable jpaStateable = objectMapper.readValue(this.stateAsJson, JpaStateable.class);
+            return jpaStateable.toState();
+        } catch (IOException e) {
+            throw new UnexpectedException(e);
+        }
     }
 
     @Override
@@ -76,15 +100,17 @@ public class JpaState {
         JpaState jpaState = (JpaState) o;
 
         if (id != null ? !id.equals(jpaState.id) : jpaState.id != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(jpaState.jpaAnimal) : jpaState.jpaAnimal != null) return false;
         if (stateName != null ? !stateName.equals(jpaState.stateName) : jpaState.stateName != null) return false;
-        return state != null ? state.equals(jpaState.state) : jpaState.state == null;
+        return stateAsJson != null ? stateAsJson.equals(jpaState.stateAsJson) : jpaState.stateAsJson == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (stateName != null ? stateName.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (stateAsJson != null ? stateAsJson.hashCode() : 0);
         return result;
     }
 }

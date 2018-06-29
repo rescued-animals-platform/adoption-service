@@ -17,46 +17,34 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.models.jpa;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.Unavailable;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
-public class Unavailable implements State {
-
-    private final LocalDateTime date;
-
-    @JsonProperty("notes")
-    private final String notes;
-
-    @JsonCreator
-    private Unavailable(@JsonProperty("notes") String notes) {
-        this.date = LocalDateTime.now();
-        this.notes = notes;
-    }
-
-    public Unavailable(LocalDateTime date, String notes) {
-        this.date = date;
-        this.notes = notes;
-    }
+public class JpaUnavailable implements JpaStateable {
 
     @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
+    private LocalDateTime date;
+
+    @JsonProperty("notes")
+    private String notes;
+
+    private JpaUnavailable() {
+        // Required for json serialization and deserialization
     }
 
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
+    public JpaUnavailable(Unavailable unavailable) {
+        this();
+        this.date = unavailable.getDate();
+        this.notes = unavailable.getNotes();
     }
 
-    @JsonIgnore
-    public String getNotes() {
-        return notes;
+    @Override
+    public State toState() {
+        return new Unavailable(this.date, this.notes);
     }
 }

@@ -17,36 +17,25 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.helpers;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class LookingForHuman implements State {
+public class DateTimeHelper {
 
-    private final LocalDateTime date;
+    private static final String DEFAULT_UTC_TIMEZONE = "-05:00";
 
-    @JsonCreator
-    private LookingForHuman() {
-        this.date = LocalDateTime.now();
-    }
+    @Value("${application.configurations.datetime.utc.timezone}")
+    private static String timezone;
 
-    public LookingForHuman(LocalDateTime date) {
-        this.date = date;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
+    public static ZonedDateTime getZonedDateTime(LocalDateTime dateTime) {
+        if(timezone == null) {
+            timezone = DEFAULT_UTC_TIMEZONE;
+        }
+        return dateTime.atZone(ZoneId.of(timezone));
     }
 }

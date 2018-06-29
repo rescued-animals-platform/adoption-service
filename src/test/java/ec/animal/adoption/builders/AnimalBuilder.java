@@ -25,31 +25,39 @@ import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
 import ec.animal.adoption.domain.state.State;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class AnimalBuilder {
 
+    private UUID uuid;
     private String clinicalRecord;
     private String name;
-    private LocalDateTime registrationDate;
     private Species species;
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
+    private ZonedDateTime registrationDate;
 
     public static AnimalBuilder random() {
         AnimalBuilder animalBuilder = new AnimalBuilder();
+        animalBuilder.uuid = null;
+        animalBuilder.registrationDate = null;
         animalBuilder.clinicalRecord = randomAlphabetic(10);
         animalBuilder.name = randomAlphabetic(10);
-        animalBuilder.registrationDate = LocalDateTime.now();
         animalBuilder.species = getRandomSpecies();
         animalBuilder.estimatedAge = getRandomEstimatedAge();
         animalBuilder.sex = getRandomSex();
         animalBuilder.state = getRandomState();
         return animalBuilder;
+    }
+
+    public AnimalBuilder withUuid(UUID uuid) {
+        this.uuid = uuid;
+        return this;
     }
 
     public AnimalBuilder withClinicalRecord(String clinicalRecord) {
@@ -62,7 +70,7 @@ public class AnimalBuilder {
         return this;
     }
 
-    public AnimalBuilder withRegistrationDate(LocalDateTime registrationDate) {
+    public AnimalBuilder withRegistrationDate(ZonedDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
@@ -89,9 +97,10 @@ public class AnimalBuilder {
 
     public Animal build() {
         return new Animal(
+                this.uuid,
+                this.registrationDate,
                 this.clinicalRecord,
                 this.name,
-                this.registrationDate,
                 this.species,
                 this.estimatedAge,
                 this.sex,

@@ -17,36 +17,23 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.state;
+package ec.animal.adoption.models.jpa;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
+import ec.animal.adoption.domain.state.Unavailable;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
-public class LookingForHuman implements State {
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-    private final LocalDateTime date;
+public class JpaUnavailableTest {
 
-    @JsonCreator
-    private LookingForHuman() {
-        this.date = LocalDateTime.now();
-    }
+    @Test
+    public void shouldCreateAJpaUnavailableFromAnUnavailableState() {
+        Unavailable unavailable = new Unavailable(LocalDateTime.now(), randomAlphabetic(20));
+        JpaUnavailable jpaUnavailable = new JpaUnavailable(unavailable);
 
-    public LookingForHuman(LocalDateTime date) {
-        this.date = date;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
+        assertReflectionEquals(unavailable, jpaUnavailable.toState());
     }
 }

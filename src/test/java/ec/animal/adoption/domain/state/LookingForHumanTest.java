@@ -19,9 +19,11 @@
 
 package ec.animal.adoption.domain.state;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.junit.Before;
+import ec.animal.adoption.helpers.DateTimeHelper;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -30,33 +32,49 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class LookingForHumanTest {
 
-    private LookingForHuman lookingForHumanState;
-
-    @Before
-    public void setUp() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        lookingForHumanState = new LookingForHuman(registrationDate);
-    }
-
     @Test
     public void shouldBeAnInstanceOfState() {
+        LookingForHuman lookingForHumanState = new LookingForHuman(LocalDateTime.now());
+
         assertThat(lookingForHumanState, is(instanceOf(State.class)));
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    public void shouldBeSerializable() throws JsonProcessingException {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
+        String expectedSerializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" +
+                expectedZonedDateTime + "}}";
+        LookingForHuman lookingForHumanState = new LookingForHuman(localDateTime);
 
         String serializedLookingForHumanState = objectMapper.writeValueAsString(lookingForHumanState);
-        LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(serializedLookingForHumanState, LookingForHuman.class);
 
-        assertReflectionEquals(lookingForHumanState, deserializedLookingForHumanState);
+        assertThat(serializedLookingForHumanState, is(expectedSerializedLookingForHumanState));
+    }
+
+    @Test
+    public void shouldBeDeserializable() throws IOException {
+        String serializedLookingForHumanState = "{\"lookingForHuman\":{}}";
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
+                )
+                .build();
+
+        LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
+                serializedLookingForHumanState, LookingForHuman.class
+        );
+
+        assertNotNull(deserializedLookingForHumanState);
+        assertNotNull(deserializedLookingForHumanState.getDate());
     }
 }

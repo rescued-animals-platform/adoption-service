@@ -20,24 +20,44 @@
 package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.helpers.DateTimeHelper;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class Adopted implements State {
 
-    @JsonProperty("adoptionDate")
-    private final LocalDate adoptionDate;
+    private final LocalDateTime date;
 
     @JsonProperty("adoptionFormId")
     private final String adoptionFormId;
 
+
     @JsonCreator
-    public Adopted(
-            @JsonProperty("adoptionDate") LocalDate adoptionDate,
-            @JsonProperty("adoptionFormId") String adoptionFormId
-    ) {
-        this.adoptionDate = adoptionDate;
+    private Adopted(@JsonProperty("adoptionFormId") String adoptionFormId) {
+        this.date = LocalDateTime.now();
         this.adoptionFormId = adoptionFormId;
+    }
+
+    public Adopted(LocalDateTime date, String adoptionFormId) {
+        this.date = date;
+        this.adoptionFormId = adoptionFormId;
+    }
+
+    @JsonProperty("date")
+    private ZonedDateTime getDateInZonedDateTime() {
+        return DateTimeHelper.getZonedDateTime(date);
+    }
+
+    @JsonProperty("adoptionFormId")
+    public String getAdoptionFormId() {
+        return adoptionFormId;
+    }
+
+    @JsonIgnore
+    public LocalDateTime getDate() {
+        return date;
     }
 }

@@ -19,48 +19,96 @@
 
 package ec.animal.adoption.models.jpa;
 
-import ec.animal.adoption.TestUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
+import ec.animal.adoption.exceptions.UnexpectedException;
+import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class JpaStateTest {
 
-    private State state;
-
     @Before
     public void setUp() {
-        state = TestUtils.getRandomState();
+        ReflectionTestUtils.setField(JpaState.class, "objectMapper", JsonHelper.getObjectMapper());
     }
 
     @Test
-    public void shouldCreateAJpaStateFromAState() {
-        JpaState jpaState = new JpaState(state);
+    public void shouldCreateAJpaStateFromALookingForHumanState() {
+        LookingForHuman lookingForHuman = new LookingForHuman(LocalDateTime.now());
+        JpaState jpaState = JpaState.getFor(lookingForHuman, mock(JpaAnimal.class));
 
-        assertThat(jpaState.toState(), is(state));
+        assertReflectionEquals(lookingForHuman, jpaState.toState());
     }
 
     @Test
-    public void shouldChangeState() {
-        JpaState jpaState = new JpaState(new LookingForHuman(LocalDateTime.now()));
-        Unavailable newState = new Unavailable(randomAlphabetic(10));
+    public void shouldCreateAJpaStateFromAnAdoptedState() {
+        Adopted adopted = new Adopted(LocalDateTime.now(), randomAlphabetic(10));
+        JpaState jpaState = JpaState.getFor(adopted, mock(JpaAnimal.class));
 
-        jpaState.setState(newState);
+        assertReflectionEquals(adopted, jpaState.toState());
+    }
 
-        assertThat(jpaState.toState(), is(newState));
+    @Test
+    public void shouldCreateAJpaStateFromAnUnavailableState() {
+        Unavailable unavailable = new Unavailable(LocalDateTime.now(), randomAlphabetic(20));
+        JpaState jpaState = JpaState.getFor(unavailable, mock(JpaAnimal.class));
+
+        assertReflectionEquals(unavailable, jpaState.toState());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionForAnyOtherState() {
+        JpaState.getFor(mock(State.class), mock(JpaAnimal.class));
+    }
+
+    @Test(expected = UnexpectedException.class)
+    public void shouldThrowUnexpectedExceptionIfJpaStateableCouldNotBeWrittenAsJson() throws JsonProcessingException {
+        ObjectMapper objectMapper = mock(ObjectMapper.class);
+        when(objectMapper.writeValueAsString(any(JpaStateable.class))).thenThrow(JsonProcessingException.class);
+        ReflectionTestUtils.setField(JpaState.class, "objectMapper", objectMapper);
+
+        JpaState.getFor(new LookingForHuman(LocalDateTime.now()), mock(JpaAnimal.class));
+    }
+
+    @Test(expected = UnexpectedException.class)
+    public void shouldThrowUnexpectedExceptionIfJsonCanNotBeRead() throws IOException {
+        ObjectMapper objectMapper = mock(ObjectMapper.class);
+        when(objectMapper.writeValueAsString(any(JpaStateable.class))).thenReturn(randomAlphabetic(10));
+        when(objectMapper.readValue(anyString(), eq(JpaStateable.class))).thenThrow(new IOException());
+        ReflectionTestUtils.setField(JpaState.class, "objectMapper", objectMapper);
+        JpaState jpaState = JpaState.getFor(new LookingForHuman(LocalDateTime.now()), mock(JpaAnimal.class));
+
+        jpaState.toState();
     }
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaState.class).usingGetClass().verify();
+        EqualsVerifier.forClass(JpaState.class).usingGetClass().withPrefabValues(
+                Timestamp.class,
+                Timestamp.valueOf(LocalDateTime.now()),
+                Timestamp.valueOf(LocalDateTime.now().minusDays(2))
+        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class)).suppress(
+                Warning.REFERENCE_EQUALITY
+        ).withPrefabValues(ObjectMapper.class, mock(ObjectMapper.class), mock(ObjectMapper.class)).verify();
     }
 }

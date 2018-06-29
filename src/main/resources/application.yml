@@ -12,9 +12,20 @@ spring:
     platform: postgres
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
   flyway:
     locations: classpath:db/migration
   jackson:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
+    deserialization:
+      adjust_dates_to_context_time_zone: false
+
+application:
+  configurations:
+    datetime:
+      utc:
+        timezone: "-05:00"

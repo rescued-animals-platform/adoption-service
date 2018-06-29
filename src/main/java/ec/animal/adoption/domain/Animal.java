@@ -27,12 +27,10 @@ import ec.animal.adoption.domain.state.State;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class Animal {
-
-    @JsonProperty("uuid")
-    private UUID uuid;
+public class Animal extends Entity {
 
     @NotEmpty(message = "Animal clinical record is required")
     @JsonProperty("clinicalRecord")
@@ -41,10 +39,6 @@ public class Animal {
     @NotEmpty(message = "Animal name is required")
     @JsonProperty("name")
     private final String name;
-
-    @NotNull(message = "Animal registration date is required")
-    @JsonProperty("registrationDate")
-    private final LocalDateTime registrationDate;
 
     @NotNull(message = "Animal species is required")
     @JsonProperty("species")
@@ -62,36 +56,44 @@ public class Animal {
     private final State state;
 
     @JsonCreator
-    public Animal(
+    private Animal(
             @JsonProperty("clinicalRecord") String clinicalRecord,
             @JsonProperty("name") String name,
-            @JsonProperty("registrationDate") LocalDateTime registrationDate,
             @JsonProperty("species") Species species,
             @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
             @JsonProperty("sex") Sex sex,
             @JsonProperty("state") State state
     ) {
+        super();
         this.clinicalRecord = clinicalRecord;
         this.name = name;
-        this.registrationDate = registrationDate;
         this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
 
-        if(state == null) {
-            this.state = new LookingForHuman(registrationDate);
+        if (state == null) {
+            this.state = new LookingForHuman(LocalDateTime.now());
         } else {
             this.state = state;
         }
     }
 
-    public Animal setUuid(UUID uuid) {
-        this.uuid = uuid;
-        return this;
-    }
-
-    public UUID getUuid() {
-        return uuid;
+    public Animal(
+            UUID uuid,
+            ZonedDateTime registrationDate, String clinicalRecord,
+            String name,
+            Species species,
+            EstimatedAge estimatedAge,
+            Sex sex,
+            State state
+    ) {
+        super(uuid, registrationDate);
+        this.clinicalRecord = clinicalRecord;
+        this.name = name;
+        this.species = species;
+        this.estimatedAge = estimatedAge;
+        this.sex = sex;
+        this.state = state;
     }
 
     public String getClinicalRecord() {
@@ -100,10 +102,6 @@ public class Animal {
 
     public String getName() {
         return name;
-    }
-
-    public LocalDateTime getRegistrationDate() {
-        return registrationDate;
     }
 
     public Species getSpecies() {
@@ -126,15 +124,13 @@ public class Animal {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Animal animal = (Animal) o;
 
-        if (uuid != null ? !uuid.equals(animal.uuid) : animal.uuid != null) return false;
         if (clinicalRecord != null ? !clinicalRecord.equals(animal.clinicalRecord) : animal.clinicalRecord != null)
             return false;
         if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(animal.registrationDate) : animal.registrationDate != null)
-            return false;
         if (species != animal.species) return false;
         if (estimatedAge != animal.estimatedAge) return false;
         if (sex != animal.sex) return false;
@@ -143,10 +139,9 @@ public class Animal {
 
     @Override
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
+        int result = super.hashCode();
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (species != null ? species.hashCode() : 0);
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);

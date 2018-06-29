@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnimalRepositoryPsqlTest {
@@ -45,18 +46,12 @@ public class AnimalRepositoryPsqlTest {
     @Test
     public void shouldSaveJpaAnimal() {
         JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
+        Animal expectedAnimal = expectedJpaAnimal.toAnimal();
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
 
         Animal savedAnimal = animalRepositoryPsql.save(animal);
 
-        assertThat(expectedJpaAnimal.toAnimal(), is(savedAnimal));
-        assertThat(savedAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-        assertThat(savedAnimal.getName(), is(animal.getName()));
-        assertThat(savedAnimal.getRegistrationDate(), is(animal.getRegistrationDate()));
-        assertThat(savedAnimal.getSpecies(), is(animal.getSpecies()));
-        assertThat(savedAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-        assertThat(savedAnimal.getSex(), is(animal.getSex()));
-        assertThat(savedAnimal.getState(), is(animal.getState()));
+        assertReflectionEquals(expectedAnimal, savedAnimal);
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
