@@ -20,12 +20,10 @@
 package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import ec.animal.adoption.helpers.DateTimeHelper;
+import ec.animal.adoption.helpers.JsonHelper;
 import org.junit.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -37,6 +35,8 @@ import static org.junit.Assert.assertThat;
 
 public class LookingForHumanTest {
 
+    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+
     @Test
     public void shouldBeAnInstanceOfState() {
         LookingForHuman lookingForHumanState = new LookingForHuman(LocalDateTime.now());
@@ -46,9 +46,6 @@ public class LookingForHumanTest {
 
     @Test
     public void shouldBeSerializable() throws JsonProcessingException {
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
         LocalDateTime localDateTime = LocalDateTime.now();
         String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
         String expectedSerializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" +
@@ -63,12 +60,6 @@ public class LookingForHumanTest {
     @Test
     public void shouldBeDeserializable() throws IOException {
         String serializedLookingForHumanState = "{\"lookingForHuman\":{}}";
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
-                )
-                .build();
 
         LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
                 serializedLookingForHumanState, LookingForHuman.class

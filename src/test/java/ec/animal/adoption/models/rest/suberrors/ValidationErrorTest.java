@@ -20,6 +20,7 @@
 package ec.animal.adoption.models.rest.suberrors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class ValidationErrorTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
         ValidationError validationError = new ValidationError(randomAlphabetic(10), randomAlphabetic(10));
 
         String serializedValidationError = objectMapper.writeValueAsString(validationError);

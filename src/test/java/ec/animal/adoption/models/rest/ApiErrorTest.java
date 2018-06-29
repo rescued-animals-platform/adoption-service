@@ -20,7 +20,7 @@
 package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import ec.animal.adoption.helpers.JsonHelper;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -28,7 +28,6 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,9 +64,7 @@ public class ApiErrorTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
+        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
         String serializedApiError = objectMapper.writeValueAsString(apiError);
 
         ApiError deserializedApiError = objectMapper.readValue(

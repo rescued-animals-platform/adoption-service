@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
@@ -68,7 +69,7 @@ public class StoryTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
 
         String serializedStory = objectMapper.writeValueAsString(story);
         Story deserializedStory = objectMapper.readValue(serializedStory, Story.class);

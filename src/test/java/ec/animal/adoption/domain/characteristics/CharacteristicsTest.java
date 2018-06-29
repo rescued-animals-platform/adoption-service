@@ -3,6 +3,7 @@ package ec.animal.adoption.domain.characteristics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.TemperamentsBuilder;
+import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -42,8 +43,8 @@ public class CharacteristicsTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
+        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         String serializedCharacteristics = objectMapper.writeValueAsString(characteristics);
         Characteristics deserializedCharacteristics = objectMapper.readValue(

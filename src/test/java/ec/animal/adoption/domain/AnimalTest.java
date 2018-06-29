@@ -20,16 +20,14 @@
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.Unavailable;
+import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -50,6 +48,8 @@ public class AnimalTest {
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
 
+    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
@@ -58,9 +58,6 @@ public class AnimalTest {
     @Test
     public void shouldSerializeAnimal() throws JsonProcessingException {
         Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).build();
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
 
@@ -83,7 +80,6 @@ public class AnimalTest {
                 "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
                 "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" +
                 animal.getSex().name() + "\"}";
-        ObjectMapper objectMapper = new ObjectMapper();
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithoutState, Animal.class);
 
@@ -97,11 +93,6 @@ public class AnimalTest {
 
     @Test
     public void shouldDeserializeAnimalWithUnavailableState() throws IOException {
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
-                ).build();
         Animal animal = AnimalBuilder.random().build();
         String notes = randomAlphabetic(20);
         String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
@@ -124,11 +115,6 @@ public class AnimalTest {
 
     @Test
     public void shouldDeserializeAnimalWithAdoptedState() throws IOException {
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
-                ).build();
         Animal animal = AnimalBuilder.random().build();
         String adoptionFormId = randomAlphabetic(10);
         String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
