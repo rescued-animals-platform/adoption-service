@@ -27,6 +27,7 @@ import ec.animal.adoption.models.jpa.JpaCharacteristics;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -58,6 +59,16 @@ public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegra
         JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(entity);
 
         assertEquals(jpaCharacteristics, entity);
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void shouldThrowDataIntegrityViolationExceptionWhenCreatingCharacteristicsForSameAnimal() {
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        characteristics.setAnimalUuid(jpaAnimal.toAnimal().getUuid());
+        entity = new JpaCharacteristics(characteristics);
+        jpaCharacteristicsRepository.save(entity);
+
+        jpaCharacteristicsRepository.save(new JpaCharacteristics(characteristics));
     }
 
     @Test

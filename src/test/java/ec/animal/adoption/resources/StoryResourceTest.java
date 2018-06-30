@@ -21,6 +21,7 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.services.StoryService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,9 +31,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StoryResourceTest {
@@ -41,18 +40,35 @@ public class StoryResourceTest {
     private StoryService storyService;
 
     @Mock
-    private Story story;
+    private Story expectedStory;
+
+    private UUID animalUuid;
+    private StoryResource storyResource;
+
+    @Before
+    public void setUp() {
+        animalUuid = UUID.randomUUID();
+        storyResource = new StoryResource(storyService);
+
+    }
 
     @Test
     public void shouldCreateAStoryForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
-        Story expectedStory = mock(Story.class);
+        Story story = mock(Story.class);
         when(storyService.create(story)).thenReturn(expectedStory);
-        StoryResource storyResource = new StoryResource(storyService);
 
         Story createdStory = storyResource.create(animalUuid, story);
 
         verify(story).setAnimalUuid(animalUuid);
         assertThat(createdStory, is(expectedStory));
+    }
+
+    @Test
+    public void shouldGetStoryForAnimal() {
+        when(storyService.getBy(animalUuid)).thenReturn(expectedStory);
+
+        Story story = storyResource.get(animalUuid);
+
+        assertThat(story, is(expectedStory));
     }
 }

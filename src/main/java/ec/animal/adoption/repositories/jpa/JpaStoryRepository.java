@@ -22,5 +22,10 @@ package ec.animal.adoption.repositories.jpa;
 import ec.animal.adoption.models.jpa.JpaStory;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public interface JpaStoryRepository extends CrudRepository<JpaStory, Long> {
+
+    Optional<JpaStory> findByAnimalUuid(UUID animalUuid);
 }

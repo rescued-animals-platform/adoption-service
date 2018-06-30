@@ -64,7 +64,7 @@ public class CharacteristicsServiceTest {
         UUID animalUuid = UUID.randomUUID();
         when(characteristicsRepository.getBy(animalUuid)).thenReturn(expectedCharacteristics);
 
-        Characteristics characteristics = characteristicsService.get(animalUuid);
+        Characteristics characteristics = characteristicsService.getBy(animalUuid);
 
         assertThat(characteristics, is(expectedCharacteristics));
     }

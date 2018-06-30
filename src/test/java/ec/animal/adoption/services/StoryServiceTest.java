@@ -21,13 +21,16 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.repositories.StoryRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,14 +43,30 @@ public class StoryServiceTest {
     @Mock
     private Story expectedStory;
 
+    private StoryService storyService;
+
+    @Before
+    public void setUp() {
+        storyService = new StoryService(storyRepository);
+    }
+
     @Test
     public void shouldCreateStory() {
         Story story = mock(Story.class);
         when(storyRepository.save(story)).thenReturn(expectedStory);
-        StoryService storyService = new StoryService(storyRepository);
 
         Story createdStory = storyService.create(story);
 
         assertThat(createdStory, is(expectedStory));
+    }
+
+    @Test
+    public void shouldGetStoryByAnimalUuid() {
+        UUID animalUuid = UUID.randomUUID();
+        when(storyRepository.getBy(animalUuid)).thenReturn(expectedStory);
+
+        Story story = storyService.getBy(animalUuid);
+
+        assertThat(story, is(expectedStory));
     }
 }

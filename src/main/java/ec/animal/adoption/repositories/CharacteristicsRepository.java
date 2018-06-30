@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public interface CharacteristicsRepository {
 
-    Characteristics getBy(UUID animalUuid);
-
     Characteristics save(Characteristics characteristics);
+
+    Characteristics getBy(UUID animalUuid);
 }

@@ -66,7 +66,7 @@ public class CharacteristicsResourceTest {
 
     @Test
     public void shouldGetCharacteristicsForAnimal() {
-        when(characteristicsService.get(animalUuid)).thenReturn(expectedCharacteristics);
+        when(characteristicsService.getBy(animalUuid)).thenReturn(expectedCharacteristics);
 
         Characteristics characteristics = characteristicsResource.get(animalUuid);
 

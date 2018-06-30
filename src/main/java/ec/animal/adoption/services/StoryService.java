@@ -24,6 +24,8 @@ import ec.animal.adoption.repositories.StoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class StoryService {
 
@@ -36,5 +38,9 @@ public class StoryService {
 
     public Story create(Story story) {
         return storyRepository.save(story);
+    }
+
+    public Story getBy(UUID animalUuid) {
+        return storyRepository.getBy(animalUuid);
     }
 }

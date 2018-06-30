@@ -33,6 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -99,5 +100,21 @@ public class StoryRepositoryPsqlTest {
         story.setAnimalUuid(UUID.randomUUID());
 
         storyRepositoryPsql.save(story);
+    }
+
+    @Test
+    public void shouldGetJpaStoryByAnimalUuid() {
+        JpaStory expectedJpaStory = new JpaStory(story);
+        when(jpaStoryRepository.findByAnimalUuid(animalUuid)).thenReturn(Optional.of(expectedJpaStory));
+
+        Story storyFound = storyRepositoryPsql.getBy(animalUuid);
+
+        assertThat(storyFound, is(story));
+        assertThat(storyFound, is(expectedJpaStory.toStory()));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundException() {
+        storyRepositoryPsql.getBy(UUID.randomUUID());
     }
 }

@@ -40,7 +40,7 @@ public class CharacteristicsService {
         return characteristicsRepository.save(characteristics);
     }
 
-    public Characteristics get(UUID animalUuid) {
+    public Characteristics getBy(UUID animalUuid) {
         return characteristicsRepository.getBy(animalUuid);
     }
 }

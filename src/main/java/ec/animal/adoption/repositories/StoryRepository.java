@@ -21,7 +21,11 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Story;
 
+import java.util.UUID;
+
 public interface StoryRepository {
 
     Story save(Story story);
+
+    Story getBy(UUID animalUuid);
 }

@@ -45,4 +45,9 @@ public class StoryResource {
         story.setAnimalUuid(animalUuid);
         return storyService.create(story);
     }
+
+    @GetMapping
+    public Story get(@PathVariable("animalUuid") UUID animalUuid) {
+        return storyService.getBy(animalUuid);
+    }
 }

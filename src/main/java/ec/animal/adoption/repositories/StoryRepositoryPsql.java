@@ -28,6 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 public class StoryRepositoryPsql implements StoryRepository {
 
@@ -52,5 +55,16 @@ public class StoryRepositoryPsql implements StoryRepository {
         } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();
         }
+    }
+
+    @Override
+    public Story getBy(UUID animalUuid) {
+        Optional<JpaStory> jpaStory = jpaStoryRepository.findByAnimalUuid(animalUuid);
+
+        if(!jpaStory.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        return jpaStory.get().toStory();
     }
 }

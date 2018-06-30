@@ -39,11 +39,6 @@ public class CharacteristicsResource {
         this.characteristicsService = characteristicsService;
     }
 
-    @GetMapping
-    public Characteristics get(@PathVariable("animalUuid") UUID animalUuid) {
-        return characteristicsService.get(animalUuid);
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Characteristics create(
@@ -51,5 +46,10 @@ public class CharacteristicsResource {
     ) {
         characteristics.setAnimalUuid(animalUuid);
         return characteristicsService.create(characteristics);
+    }
+
+    @GetMapping
+    public Characteristics get(@PathVariable("animalUuid") UUID animalUuid) {
+        return characteristicsService.getBy(animalUuid);
     }
 }

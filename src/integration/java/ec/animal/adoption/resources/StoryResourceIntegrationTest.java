@@ -108,4 +108,43 @@ public class StoryResourceIntegrationTest extends AbstractIntegrationTest {
         ApiError apiError = conflictResponse.getBody();
         assertNotNull(apiError);
     }
+
+    @Test
+    public void shouldReturn200OkWithStory() {
+        Animal animal = createAndSaveAnimal();
+        ResponseEntity<Story> createdStoryResponse = testClient.postForEntity(
+                STORY_URL, new Story(randomAlphabetic(100)), Story.class, animal.getUuid(), getHttpHeaders()
+        );
+        Story createdStory = createdStoryResponse.getBody();
+
+        ResponseEntity<Story> response = testClient.getForEntity(
+                STORY_URL, Story.class, animal.getUuid(), getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(OK));
+        Story foundStory = response.getBody();
+        assertThat(foundStory, is(createdStory));
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+        UUID randomUuid = UUID.randomUUID();
+
+        ResponseEntity<ApiError> response = testClient.getForEntity(STORY_URL, ApiError.class, randomUuid);
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
+        Animal animal = createAndSaveAnimal();
+
+        ResponseEntity<ApiError> response = testClient.getForEntity(STORY_URL, ApiError.class, animal.getUuid());
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
 }

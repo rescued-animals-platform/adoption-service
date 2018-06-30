@@ -28,8 +28,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class JpaStoryRepositoryIntegrationTest extends AbstractIntegrationTest {
 
@@ -56,12 +62,26 @@ public class JpaStoryRepositoryIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void shouldThrowDataIntegrityViolationExceptionWhenCreationStoryForSameAnimal() {
+    public void shouldThrowDataIntegrityViolationExceptionWhenCreatingStoryForSameAnimal() {
         Story story = new Story(randomAlphabetic(100));
         story.setAnimalUuid(jpaAnimal.toAnimal().getUuid());
         entity = new JpaStory(story);
         jpaStoryRepository.save(entity);
 
         jpaStoryRepository.save(new JpaStory(story));
+    }
+
+    @Test
+    public void shouldGetStoryByAnimalUuid() {
+        Story story = new Story(randomAlphabetic(100));
+        UUID animalUuid = jpaAnimal.toAnimal().getUuid();
+        story.setAnimalUuid(animalUuid);
+        entity = new JpaStory(story);
+        JpaStory jpaStorySaved = jpaStoryRepository.save(entity);
+
+        Optional<JpaStory> jpaStoryFound = jpaStoryRepository.findByAnimalUuid(animalUuid);
+
+        assertThat(jpaStoryFound.isPresent(), is(true));
+        assertReflectionEquals(jpaStorySaved, jpaStoryFound.get());
     }
 }
