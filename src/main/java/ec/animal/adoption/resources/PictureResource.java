@@ -20,8 +20,11 @@
 package ec.animal.adoption.resources;
 
 import com.google.common.io.Files;
-import ec.animal.adoption.domain.media.*;
-import ec.animal.adoption.exceptions.ImageProcessingException;
+import ec.animal.adoption.domain.media.Image;
+import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.services.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,20 +55,18 @@ public class PictureResource {
             @RequestPart("largeImage") MultipartFile largeImageMultipartFile,
             @RequestPart("smallImage") MultipartFile smallImageMultipartFile
     ) {
-        return pictureService.create(
-                new ImagePicture(
-                        animalUuid,
-                        name,
-                        pictureType,
-                        createImageFromMultipartFile(largeImageMultipartFile),
-                        createImageFromMultipartFile(smallImageMultipartFile)
-                )
-        );
+        return pictureService.create(new ImagePicture(
+                animalUuid,
+                name,
+                pictureType,
+                createImageFromMultipartFile(largeImageMultipartFile),
+                createImageFromMultipartFile(smallImageMultipartFile)
+        ));
     }
 
     private Image createImageFromMultipartFile(MultipartFile multipartFile) {
         if (multipartFile.isEmpty() || multipartFile.getOriginalFilename() == null) {
-            throw new ImageProcessingException();
+            throw new InvalidPictureException();
         }
 
         try {
@@ -75,7 +76,7 @@ public class PictureResource {
                     multipartFile.getSize()
             );
         } catch (IOException e) {
-            throw new ImageProcessingException();
+            throw new InvalidPictureException();
         }
     }
 }

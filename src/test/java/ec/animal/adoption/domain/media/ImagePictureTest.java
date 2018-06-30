@@ -84,4 +84,39 @@ public class ImagePictureTest {
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ImagePicture.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
     }
+
+    @Test
+    public void shouldReturnTrueForValidImagePicture() {
+        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+
+        assertThat(imagePicture.isValid(), is(true));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenPictureImageHasAnInvalidLargeImage() {
+        Image invalidLargeImage = mock(Image.class);
+        when(invalidLargeImage.isValid()).thenReturn(false);
+        ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(invalidLargeImage).build();
+
+        assertThat(imagePicture.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenPictureImageHasAnInvalidSmallImage() {
+        Image invalidSmallImage = mock(Image.class);
+        when(invalidSmallImage.isValid()).thenReturn(false);
+        ImagePicture imagePicture = ImagePictureBuilder.random().withSmallImage(invalidSmallImage).build();
+
+        assertThat(imagePicture.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenBothLargeAndSmallImageInsidePictureImageAreInvalid() {
+        Image invalidImage = mock(Image.class);
+        when(invalidImage.isValid()).thenReturn(false);
+        ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(invalidImage).
+                withSmallImage(invalidImage).build();
+
+        assertThat(imagePicture.isValid(), is(false));
+    }
 }

@@ -1,8 +1,9 @@
 package ec.animal.adoption.exceptions.handlers;
 
+import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.ImageProcessingException;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.exceptions.ImageStorageException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -22,6 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -165,25 +167,30 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusUnprocessableEntityForImageProcessingException() {
-        ImageProcessingException imageProcessingException = mock(ImageProcessingException.class);
+    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidPictureException() {
+        InvalidPictureException invalidPictureException = mock(InvalidPictureException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
-                imageProcessingException
+                invalidPictureException
         );
 
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForImageProcessingException() {
-        ImageProcessingException imageProcessingException = new ImageProcessingException();
+    public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
+        String invalidMessage = "The image(s) could not be processed. Check they meet the " +
+                "minimum requirements: Supported extensions: %s. Maximum size: 1MB";
+        InvalidPictureException invalidPictureException = new InvalidPictureException();
         ApiError expectedApiError = new ApiError(
-                HttpStatus.UNPROCESSABLE_ENTITY, "The image could not be processed"
+                HttpStatus.BAD_REQUEST,
+                String.format(invalidMessage, Arrays.stream(SupportedImageExtension.values()).
+                map(SupportedImageExtension::getExtension).
+                collect(Collectors.joining(", ")))
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
-                imageProcessingException
+                invalidPictureException
         );
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));

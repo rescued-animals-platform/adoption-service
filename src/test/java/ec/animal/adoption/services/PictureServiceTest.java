@@ -24,6 +24,7 @@ import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.repositories.LinkPictureRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,5 +56,14 @@ public class PictureServiceTest {
         LinkPicture createdPicture = pictureService.create(imagePicture);
 
         assertThat(createdPicture, is(linkPicture));
+    }
+
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalid() {
+        ImagePicture imagePicture = mock(ImagePicture.class);
+        when(imagePicture.isValid()).thenReturn(false);
+        PictureService pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
+
+        pictureService.create(imagePicture);
     }
 }

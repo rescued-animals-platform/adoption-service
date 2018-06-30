@@ -4,14 +4,11 @@ import ec.animal.adoption.builders.ImageBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolation;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
-import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -25,7 +22,7 @@ public class ImageTest {
             .collect(Collectors.joining(", ")));
 
     @Test
-    public void shouldCreateAnImageMedia() {
+    public void shouldCreateAnImage() {
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         long sizeInBytes = new Random().nextInt(100) + 1;
         Image image = ImageBuilder.random(). withSupportedImageExtension(supportedImageExtension).
@@ -42,38 +39,68 @@ public class ImageTest {
     }
 
     @Test
-    public void shouldValidateWrongImageExtensionOnFilename() {
-        Image image = ImageBuilder.random().withExtension(randomAlphabetic(6)).build();
+    public void shouldBeValidForJpegAndSizeLessThanOneMb() {
+        SupportedImageExtension jpeg = SupportedImageExtension.JPEG;
+        Image image = ImageBuilder.random().withSupportedImageExtension(jpeg).build();
 
-        Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
-
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Image> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(INVALID_IMAGE));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("image"));
+        assertThat(image.isValid(), is(true));
     }
 
     @Test
-    public void shouldValidateWrongImageExtensionInContent() {
-        Image image = ImageBuilder.random().withContent(new byte[]{}).build();
+    public void shouldBeValidForJpgAndSizeLessThanOneMb() {
+        SupportedImageExtension jpg = SupportedImageExtension.JPG;
+        Image image = ImageBuilder.random().withSupportedImageExtension(jpg).build();
 
-        Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
-
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Image> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(INVALID_IMAGE));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("image"));
+        assertThat(image.isValid(), is(true));
     }
 
     @Test
-    public void shouldValidateSizeIsBytesIsNotZero() {
-        Image image = ImageBuilder.random().withSizeInBytes(0).build();
+    public void shouldBeValidForPngAndSizeLessThanOneMb() {
+        SupportedImageExtension png = SupportedImageExtension.PNG;
+        Image image = ImageBuilder.random().withSupportedImageExtension(png).build();
 
-        Set<ConstraintViolation<Image>> constraintViolations = getValidator().validate(image);
+        assertThat(image.isValid(), is(true));
+    }
 
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Image> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(IMAGE_SIZE_IN_BYTES_CAN_NOT_BE_ZERO));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("sizeInBytes"));
+    @Test
+    public void shouldBeValidForSizeEqualToOneMb() {
+        int oneMegaByteInBytes = 1048576;
+        Image image = ImageBuilder.random().withSizeInBytes(oneMegaByteInBytes).build();
+
+        assertThat(image.isValid(), is(true));
+    }
+
+    @Test
+    public void shouldBeInvalidForSizeGreaterThanOneMb() {
+        int oneMegaByteInBytes = 1048576;
+        int size = oneMegaByteInBytes + 1 + new Random().nextInt(100);
+        Image image = ImageBuilder.random().withSizeInBytes(size).build();
+
+        assertThat(image.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldBeInvalidForSizeEqualsToZero() {
+        int oneMegaByteInBytes = 1048576;
+        int size = oneMegaByteInBytes + 1 + new Random().nextInt(100);
+        Image image = ImageBuilder.random().withSizeInBytes(size).build();
+
+        assertThat(image.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldBeInvalidWithRightExtensionInFilenameButWrongImageTypeInContent() {
+        byte[] invalidContent = {};
+        Image image = ImageBuilder.random().withContent(invalidContent).build();
+
+        assertThat(image.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldBeInvalidWithRightImageTypeInContentButWrongExtensionInFilename() {
+        String wrongExtension = randomAlphabetic(10);
+        Image image = ImageBuilder.random().withExtension(wrongExtension).build();
+
+        assertThat(image.isValid(), is(false));
     }
 }

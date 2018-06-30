@@ -17,21 +17,28 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.validators;
+package ec.animal.adoption.exceptions;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.*;
+import ec.animal.adoption.domain.media.SupportedImageExtension;
 
-@Constraint(validatedBy = {ImageValidator.class})
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
-@Retention(value = RetentionPolicy.RUNTIME)
-@Documented
-public @interface ValidImage {
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-    String message() default "Invalid image";
+public class InvalidPictureException extends RuntimeException {
 
-    Class<?>[] groups() default {};
+    private static final String MESSAGE = "The image(s) could not be processed. Check they meet the minimum " +
+            "requirements: Supported extensions: %s. Maximum size: 1MB";
 
-    Class<? extends Payload>[] payload() default {};
+    private final String message;
+
+    public InvalidPictureException() {
+        this.message = String.format(MESSAGE, Arrays.stream(SupportedImageExtension.values()).
+                map(SupportedImageExtension::getExtension).
+                collect(Collectors.joining(", ")));
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
 }

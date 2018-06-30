@@ -39,8 +39,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
 
@@ -114,6 +113,40 @@ public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
         );
 
         assertThat(response.getStatusCode(), is(CONFLICT));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestForInvalidLargeImageFile() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", PictureType.PRIMARY.name());
+        parameters.add("largeImage", new ClassPathResource("invalid-image-file.txt"));
+        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+
+        ResponseEntity<ApiError> response = testClient.postForEntity(
+                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
+        );
+
+        assertThat(response.getStatusCode(), is(BAD_REQUEST));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestForInvalidSmallImageFile() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", PictureType.PRIMARY.name());
+        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        parameters.add("smallImage", new ClassPathResource("invalid-image-file.txt"));
+
+        ResponseEntity<ApiError> response = testClient.postForEntity(
+                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
+        );
+
+        assertThat(response.getStatusCode(), is(BAD_REQUEST));
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
     }

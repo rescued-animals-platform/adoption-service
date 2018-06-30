@@ -34,6 +34,10 @@ public class ImageBuilder {
     private byte[] content;
     private long sizeInBytes;
 
+    public static ImageBuilder empty() {
+        return new ImageBuilder();
+    }
+
     public static ImageBuilder random() {
         ImageBuilder imageBuilder = new ImageBuilder();
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();

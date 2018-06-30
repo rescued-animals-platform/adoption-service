@@ -73,6 +73,10 @@ public class ImagePicture {
         return this.smallImage.getContent();
     }
 
+    public boolean isValid() {
+        return largeImage.isValid() && smallImage.isValid();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

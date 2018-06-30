@@ -22,6 +22,7 @@ package ec.animal.adoption.services;
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.repositories.LinkPictureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,10 @@ public class PictureService {
     }
 
     public LinkPicture create(ImagePicture imagePicture) {
+        if(!imagePicture.isValid()) {
+            throw new InvalidPictureException();
+        }
+
         LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
         return linkPictureRepository.save(linkPicture);
     }

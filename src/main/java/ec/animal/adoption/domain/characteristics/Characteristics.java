@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.validators.ValidTemperaments;
+import ec.animal.adoption.validators.ValidTemperaments;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -40,7 +40,7 @@ public class Characteristics {
 
     @ValidTemperaments
     @JsonProperty("temperaments")
-    private Temperaments temperaments;
+    private final Temperaments temperaments;
 
     @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;

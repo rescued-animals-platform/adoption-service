@@ -19,21 +19,17 @@
 
 package ec.animal.adoption.domain.media;
 
-import ec.animal.adoption.domain.validators.ValidImage;
-
-import javax.validation.constraints.Min;
 import java.util.Arrays;
 
-@ValidImage
 public class Image {
+
+    private static final int ONE_MEGA_BYTE = 1048576;
+
     private final String extension;
     private final byte[] content;
-
-    @Min(value = 1, message = "Image size in bytes can't be zero")
     private final long sizeInBytes;
 
     public Image(String extension, byte[] content, long sizeInBytes) {
-
         this.extension = extension;
         this.content = content;
         this.sizeInBytes = sizeInBytes;
@@ -69,5 +65,10 @@ public class Image {
         result = 31 * result + Arrays.hashCode(content);
         result = 31 * result + (int) (sizeInBytes ^ (sizeInBytes >>> 32));
         return result;
+    }
+
+    public boolean isValid() {
+        return SupportedImageExtension.getMatchFor(extension, content).isPresent() &&
+                sizeInBytes > 0 && sizeInBytes <= ONE_MEGA_BYTE;
     }
 }

@@ -25,7 +25,7 @@ import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.exceptions.ImageProcessingException;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.services.PictureService;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,8 +90,8 @@ public class PictureResourceTest {
         assertThat(linkPicture, is(expectedLinkPicture));
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenInputStreamCanNotBeAccessedInLargeImage() throws IOException {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInLargeImage() throws IOException {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(largeImageMultipartFile.getBytes()).thenThrow(IOException.class);
         PictureResource pictureResource = new PictureResource(pictureService);
@@ -105,8 +105,8 @@ public class PictureResourceTest {
         );
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenInputStreamCanNotBeAccessedInSmallImage() throws IOException {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInSmallImage() throws IOException {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(smallImageMultipartFile.getBytes()).thenThrow(IOException.class);
         PictureResource pictureResource = new PictureResource(pictureService);
@@ -120,8 +120,8 @@ public class PictureResourceTest {
         );
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmptyInLargeImage() {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInLargeImage() {
         when(largeImageMultipartFile.isEmpty()).thenReturn(true);
         PictureResource pictureResource = new PictureResource(pictureService);
 
@@ -134,8 +134,8 @@ public class PictureResourceTest {
         );
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenMultipartFileIsEmptyInSmallImage() {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInSmallImage() {
         when(smallImageMultipartFile.isEmpty()).thenReturn(true);
         PictureResource pictureResource = new PictureResource(pictureService);
 
@@ -148,8 +148,8 @@ public class PictureResourceTest {
         );
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNullInLargeImage() {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInLargeImage() {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(null);
         PictureResource pictureResource = new PictureResource(pictureService);
 
@@ -162,8 +162,8 @@ public class PictureResourceTest {
         );
     }
 
-    @Test(expected = ImageProcessingException.class)
-    public void shouldThrowImageProcessingExceptionWhenOriginalFilenameIsNullInSmallImage() {
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInSmallImage() {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(null);
         PictureResource pictureResource = new PictureResource(pictureService);
 

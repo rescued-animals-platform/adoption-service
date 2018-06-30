@@ -17,18 +17,17 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.exceptions;
+package ec.animal.adoption.validators;
 
-public class ImageProcessingException extends RuntimeException {
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
-    private final String message;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-    public ImageProcessingException() {
-        this.message = "The image could not be processed";
-    }
+public class TemperamentsValidator implements ConstraintValidator<ValidTemperaments, Temperaments> {
 
     @Override
-    public String getMessage() {
-        return this.message;
+    public boolean isValid(Temperaments temperaments, ConstraintValidatorContext context) {
+        return temperaments != null && !temperaments.isEmpty();
     }
 }

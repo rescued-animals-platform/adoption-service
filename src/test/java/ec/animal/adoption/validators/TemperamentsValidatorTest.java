@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.validators;
+package ec.animal.adoption.validators;
 
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import org.junit.Before;
