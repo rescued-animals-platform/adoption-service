@@ -20,8 +20,11 @@
 package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
@@ -30,5 +33,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
         @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
 })
-public interface State {
+public abstract class State {
+
+    @JsonProperty("date")
+    private final LocalDateTime date;
+
+    protected State() {
+        this.date = null;
+    }
+
+    protected State(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
 }

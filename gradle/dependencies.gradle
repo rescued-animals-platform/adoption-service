@@ -7,6 +7,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-jetty")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.5")
+    compile("com.vladmihalcea:hibernate-types-52:2.2.0")
     compile("org.postgresql:postgresql:42.2.2")
     compile("com.google.cloud.sql:postgres-socket-factory:1.0.8")
     compile("com.google.cloud:google-cloud-storage:1.32.0")

@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/animals")
@@ -42,5 +43,10 @@ public class AnimalResource {
     @ResponseStatus(HttpStatus.CREATED)
     public Animal create(@RequestBody @Valid Animal animal) {
         return animalService.create(animal);
+    }
+
+    @GetMapping("/{uuid}")
+    public Animal get(@PathVariable("uuid") UUID uuid) {
+        return animalService.getBy(uuid);
     }
 }

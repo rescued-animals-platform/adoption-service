@@ -23,9 +23,11 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
-import ec.animal.adoption.helpers.DateTimeHelper;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -71,13 +73,13 @@ public class JpaAnimal {
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
-        this.jpaState = JpaState.getFor(animal.getState(), this);
+        this.jpaState = new JpaState(animal.getState(), this);
     }
 
     public Animal toAnimal() {
         return new Animal(
                 uuid,
-                DateTimeHelper.getZonedDateTime(registrationDate.toLocalDateTime()),
+                registrationDate.toLocalDateTime(),
                 clinicalRecord,
                 name,
                 Species.valueOf(animalSpecies),

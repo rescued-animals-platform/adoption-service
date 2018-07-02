@@ -29,12 +29,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
 
@@ -129,6 +132,31 @@ public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
 
         assertThat(conflictResponse.getStatusCode(), is(CONFLICT));
         ApiError apiError = conflictResponse.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn200OkWithAnimal() {
+        Animal animal = testClient.postForObject(
+                ANIMALS_URL, AnimalBuilder.random().build(), Animal.class, getHttpHeaders()
+        );
+
+        ResponseEntity<Animal> response = testClient.getForEntity(
+                ANIMALS_URL + "/{uuid}", Animal.class, animal.getUuid(), getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(OK));
+        assertReflectionEquals(animal, response.getBody());
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+        ResponseEntity<ApiError> response = testClient.getForEntity(
+                ANIMALS_URL + "/{uuid}", ApiError.class, UUID.randomUUID()
+        );
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
         assertNotNull(apiError);
     }
 }

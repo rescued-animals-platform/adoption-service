@@ -31,14 +31,15 @@ import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AnimalTest {
 
@@ -57,7 +58,8 @@ public class AnimalTest {
 
     @Test
     public void shouldSerializeAnimal() throws JsonProcessingException {
-        Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).build();
+        Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).
+                withRegistrationDate(LocalDateTime.now()).build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
 
@@ -92,47 +94,52 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldDeserializeAnimalWithUnavailableState() throws IOException {
-        Animal animal = AnimalBuilder.random().build();
-        String notes = randomAlphabetic(20);
+    public void shouldDeserializeAnimalWithLookingForHumanState() throws IOException {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        Animal animal = AnimalBuilder.random().withState(new LookingForHuman(localDateTime)).build();
         String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
                 "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
                 "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
-                "\",\"state\":{\"unavailable\":{\"notes\":\"" + notes + "\"}}}";
+                "\",\"state\":{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
-        assertThat(deserializedAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-        assertThat(deserializedAnimal.getName(), is(animal.getName()));
-        assertThat(deserializedAnimal.getSpecies(), is(animal.getSpecies()));
-        assertThat(deserializedAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-        assertThat(deserializedAnimal.getSex(), is(animal.getSex()));
-        assertThat(deserializedAnimal.getState(), is(instanceOf(Unavailable.class)));
-        Unavailable unavailable = (Unavailable) deserializedAnimal.getState();
-        assertThat(unavailable.getNotes(), is(notes));
-        assertNotNull(unavailable.getDate());
+        assertReflectionEquals(animal, deserializedAnimal);
+    }
+
+    @Test
+    public void shouldDeserializeAnimalWithUnavailableState() throws IOException {
+        String notes = randomAlphabetic(20);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        Animal animal = AnimalBuilder.random().withState(new Unavailable(localDateTime, notes)).build();
+        String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
+                "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
+                "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
+                "\",\"state\":{\"unavailable\":{\"notes\":\"" + notes +
+                "\",\"date\":" + serializedLocalDateTime + "}}}";
+
+        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
+
+        assertReflectionEquals(animal, deserializedAnimal);
     }
 
     @Test
     public void shouldDeserializeAnimalWithAdoptedState() throws IOException {
-        Animal animal = AnimalBuilder.random().build();
         String adoptionFormId = randomAlphabetic(10);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        Animal animal = AnimalBuilder.random().withState(new Adopted(localDateTime, adoptionFormId)).build();
         String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
                 "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
                 "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
-                "\",\"state\":{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId + "\"}}}";
+                "\",\"state\":{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId +
+                "\",\"date\":" + serializedLocalDateTime + "}}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
-        assertThat(deserializedAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-        assertThat(deserializedAnimal.getName(), is(animal.getName()));
-        assertThat(deserializedAnimal.getSpecies(), is(animal.getSpecies()));
-        assertThat(deserializedAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-        assertThat(deserializedAnimal.getSex(), is(animal.getSex()));
-        assertThat(deserializedAnimal.getState(), is(instanceOf(Adopted.class)));
-        Adopted adopted = (Adopted) deserializedAnimal.getState();
-        assertThat(adopted.getAdoptionFormId(), is(adoptionFormId));
-        assertNotNull(adopted.getDate());
+        assertReflectionEquals(animal, deserializedAnimal);
     }
 
     @Test

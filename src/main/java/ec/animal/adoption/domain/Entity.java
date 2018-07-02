@@ -21,7 +21,7 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public abstract class Entity {
@@ -30,14 +30,14 @@ public abstract class Entity {
     private final UUID uuid;
 
     @JsonProperty("registrationDate")
-    private final ZonedDateTime registrationDate;
+    private final LocalDateTime registrationDate;
 
     protected Entity() {
         this.uuid = null;
         this.registrationDate = null;
     }
 
-    protected Entity(UUID uuid, ZonedDateTime registrationDate) {
+    protected Entity(UUID uuid, LocalDateTime registrationDate) {
         this.uuid = uuid;
         this.registrationDate = registrationDate;
     }
@@ -46,7 +46,7 @@ public abstract class Entity {
         return uuid;
     }
 
-    public ZonedDateTime getRegistrationDate() {
+    public LocalDateTime getRegistrationDate() {
         return registrationDate;
     }
 

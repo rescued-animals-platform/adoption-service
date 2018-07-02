@@ -21,11 +21,13 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -48,6 +50,18 @@ public class AnimalRepositoryPsql implements AnimalRepository {
         }
     }
 
+    @Override
+    public Animal getBy(UUID uuid) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
+
+        if(!jpaAnimal.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        return jpaAnimal.get().toAnimal();
+    }
+
+    @Override
     public boolean animalExists(UUID animalUuid) {
         return jpaAnimalRepository.findById(animalUuid).isPresent();
     }

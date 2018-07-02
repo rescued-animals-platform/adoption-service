@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.DateTimeHelper;
 import ec.animal.adoption.helpers.JsonHelper;
 import org.junit.Test;
 
@@ -30,8 +29,7 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class LookingForHumanTest {
 
@@ -47,9 +45,9 @@ public class LookingForHumanTest {
     @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         LocalDateTime localDateTime = LocalDateTime.now();
-        String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String expectedSerializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" +
-                expectedZonedDateTime + "}}";
+                serializedLocalDateTime + "}}";
         LookingForHuman lookingForHumanState = new LookingForHuman(localDateTime);
 
         String serializedLookingForHumanState = objectMapper.writeValueAsString(lookingForHumanState);
@@ -58,7 +56,7 @@ public class LookingForHumanTest {
     }
 
     @Test
-    public void shouldBeDeserializable() throws IOException {
+    public void shouldBeDeserializableWithoutDate() throws IOException {
         String serializedLookingForHumanState = "{\"lookingForHuman\":{}}";
 
         LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
@@ -66,6 +64,20 @@ public class LookingForHumanTest {
         );
 
         assertNotNull(deserializedLookingForHumanState);
-        assertNotNull(deserializedLookingForHumanState.getDate());
+        assertNull(deserializedLookingForHumanState.getDate());
+    }
+
+    @Test
+    public void shouldNotDeserializeWithDate() throws IOException {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        String serializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}";
+
+        LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
+                serializedLookingForHumanState, LookingForHuman.class
+        );
+
+        assertNotNull(deserializedLookingForHumanState);
+        assertThat(deserializedLookingForHumanState.getDate(), is(localDateTime));
     }
 }

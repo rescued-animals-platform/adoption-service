@@ -21,20 +21,23 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.DateTimeHelper;
 import ec.animal.adoption.helpers.JsonHelper;
 import org.junit.Test;
 
+import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Set;
 
+import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 public class UnavailableTest {
+
+    private static final String NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE = "Notes are required for unavailable state";
 
     private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
 
@@ -49,9 +52,9 @@ public class UnavailableTest {
     public void shouldBeSerializable() throws JsonProcessingException {
         String notes = randomAlphabetic(20);
         LocalDateTime localDateTime = LocalDateTime.now();
-        String expectedZonedDateTime = objectMapper.writeValueAsString(DateTimeHelper.getZonedDateTime(localDateTime));
-        String expectedSerializedUnavailableState = "{\"unavailable\":{\"notes\":\"" + notes +
-                "\",\"date\":" + expectedZonedDateTime + "}}";
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        String expectedSerializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
+                ",\"notes\":\"" + notes + "\"}}";
         Unavailable unavailableState = new Unavailable(localDateTime, notes);
 
         String serializedUnavailableState = objectMapper.writeValueAsString(unavailableState);
@@ -60,7 +63,24 @@ public class UnavailableTest {
     }
 
     @Test
-    public void shouldBeDeserializable() throws IOException {
+    public void shouldBeDeserializableWithDateAndNotes() throws IOException {
+        String notes = randomAlphabetic(20);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
+        String serializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
+                ",\"notes\":\"" + notes + "\"}}";
+
+        Unavailable deserializedUnavailableState = objectMapper.readValue(
+                serializedUnavailableState, Unavailable.class
+        );
+
+        assertNotNull(deserializedUnavailableState);
+        assertThat(deserializedUnavailableState.getDate(), is(localDateTime));
+        assertThat(deserializedUnavailableState.getNotes(), is(notes));
+    }
+
+    @Test
+    public void shouldBeDeserializableWithNotesOnly() throws IOException {
         String notes = randomAlphabetic(20);
         String serializedUnavailableState = "{\"unavailable\":{\"notes\":\"" + notes + "\"}}";
 
@@ -69,7 +89,31 @@ public class UnavailableTest {
         );
 
         assertNotNull(deserializedUnavailableState);
-        assertNotNull(deserializedUnavailableState.getDate());
+        assertNull(deserializedUnavailableState.getDate());
         assertThat(deserializedUnavailableState.getNotes(), is(notes));
+    }
+
+    @Test
+    public void shouldValidateNonNullNotes() {
+        Unavailable unavailable = new Unavailable(LocalDateTime.now(), null);
+
+        Set<ConstraintViolation<Unavailable>> constraintViolations = getValidator().validate(unavailable);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Unavailable> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("notes"));
+    }
+
+    @Test
+    public void shouldValidateNonEmptyNotes() {
+        Unavailable unavailable = new Unavailable(LocalDateTime.now(), "");
+
+        Set<ConstraintViolation<Unavailable>> constraintViolations = getValidator().validate(unavailable);
+
+        assertThat(constraintViolations.size(), is(1));
+        ConstraintViolation<Unavailable> constraintViolation = constraintViolations.iterator().next();
+        assertThat(constraintViolation.getMessage(), is(NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("notes"));
     }
 }

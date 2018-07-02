@@ -25,7 +25,7 @@ import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
 import ec.animal.adoption.domain.state.State;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
@@ -40,7 +40,7 @@ public class AnimalBuilder {
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
-    private ZonedDateTime registrationDate;
+    private LocalDateTime registrationDate;
 
     public static AnimalBuilder random() {
         AnimalBuilder animalBuilder = new AnimalBuilder();
@@ -70,7 +70,7 @@ public class AnimalBuilder {
         return this;
     }
 
-    public AnimalBuilder withRegistrationDate(ZonedDateTime registrationDate) {
+    public AnimalBuilder withRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }

@@ -20,42 +20,23 @@
 package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.helpers.DateTimeHelper;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
-public class Unavailable implements State {
+public class Unavailable extends State {
 
-    private final LocalDateTime date;
-
+    @NotEmpty(message = "Notes are required for unavailable state")
     @JsonProperty("notes")
     private final String notes;
 
     @JsonCreator
-    private Unavailable(@JsonProperty("notes") String notes) {
-        this.date = LocalDateTime.now();
+    public Unavailable(@JsonProperty("date") LocalDateTime date, @NotEmpty @JsonProperty("notes") String notes) {
+        super(date);
         this.notes = notes;
     }
 
-    public Unavailable(LocalDateTime date, String notes) {
-        this.date = date;
-        this.notes = notes;
-    }
-
-    @JsonProperty("date")
-    private ZonedDateTime getDateInZonedDateTime() {
-        return DateTimeHelper.getZonedDateTime(date);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    @JsonIgnore
     public String getNotes() {
         return notes;
     }

@@ -24,6 +24,8 @@ import ec.animal.adoption.repositories.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class AnimalService {
 
@@ -36,5 +38,9 @@ public class AnimalService {
 
     public Animal create(Animal animal) {
         return animalRepository.save(animal);
+    }
+
+    public Animal getBy(UUID uuid) {
+        return animalRepository.getBy(uuid);
     }
 }

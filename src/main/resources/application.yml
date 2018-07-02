@@ -21,11 +21,3 @@ spring:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
-    deserialization:
-      adjust_dates_to_context_time_zone: false
-
-application:
-  configurations:
-    datetime:
-      utc:
-        timezone: "-05:00"

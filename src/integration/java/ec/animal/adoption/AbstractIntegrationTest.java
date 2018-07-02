@@ -21,8 +21,10 @@ package ec.animal.adoption;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.helpers.JsonHelper;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,8 +32,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -53,6 +57,18 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired
     private JpaAnimalRepository jpaAnimalRepository;
+
+    @Before
+    public void runFirst() {
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        messageConverter.setObjectMapper(JsonHelper.getObjectMapper());
+        RestTemplate restTemplate = testClient.getRestTemplate();
+
+        restTemplate.getMessageConverters().removeIf(
+                m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName())
+        );
+        restTemplate.getMessageConverters().add(messageConverter);
+    }
 
     protected static HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();

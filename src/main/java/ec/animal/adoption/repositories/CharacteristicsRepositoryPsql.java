@@ -46,17 +46,6 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
     }
 
     @Override
-    public Characteristics getBy(UUID animalUuid) {
-        Optional<JpaCharacteristics> jpaCharacteristics = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
-
-        if (!jpaCharacteristics.isPresent()) {
-            throw new EntityNotFoundException();
-        }
-
-        return jpaCharacteristics.get().toCharacteristics();
-    }
-
-    @Override
     public Characteristics save(Characteristics characteristics) {
         if(!animalRepositoryPsql.animalExists(characteristics.getAnimalUuid())) {
             throw new EntityNotFoundException();
@@ -69,5 +58,16 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
         } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistsException();
         }
+    }
+
+    @Override
+    public Characteristics getBy(UUID animalUuid) {
+        Optional<JpaCharacteristics> jpaCharacteristics = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
+
+        if (!jpaCharacteristics.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        return jpaCharacteristics.get().toCharacteristics();
     }
 }

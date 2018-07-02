@@ -27,7 +27,6 @@ import ec.animal.adoption.domain.state.State;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class Animal extends Entity {
@@ -80,7 +79,8 @@ public class Animal extends Entity {
 
     public Animal(
             UUID uuid,
-            ZonedDateTime registrationDate, String clinicalRecord,
+            LocalDateTime registrationDate,
+            String clinicalRecord,
             String name,
             Species species,
             EstimatedAge estimatedAge,

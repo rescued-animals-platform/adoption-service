@@ -24,7 +24,10 @@ import ec.animal.adoption.domain.Animal;
 import java.util.UUID;
 
 public interface AnimalRepository {
+
     Animal save(Animal animal);
+
+    Animal getBy(UUID uuid);
 
     boolean animalExists(UUID animalUuid);
 }
