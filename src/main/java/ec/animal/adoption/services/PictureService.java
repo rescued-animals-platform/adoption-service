@@ -27,6 +27,8 @@ import ec.animal.adoption.repositories.LinkPictureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class PictureService {
 
@@ -46,5 +48,9 @@ public class PictureService {
 
         LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
         return linkPictureRepository.save(linkPicture);
+    }
+
+    public LinkPicture getBy(UUID animalUuid) {
+        return linkPictureRepository.getBy(animalUuid);
     }
 }

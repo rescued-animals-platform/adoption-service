@@ -54,18 +54,26 @@ public class LinkPictureRepositoryPsql implements LinkPictureRepository {
             throw new EntityNotFoundException();
         }
 
-        if(primaryLinkPictureExists(animalUuid)) {
+        if(getPrimaryLinkPicture(animalUuid).isPresent()) {
             throw new EntityAlreadyExistsException();
         }
 
-        return saveJpaLinkPicture(new JpaLinkPicture(linkPicture)).toPicture();
+        return saveJpaLinkPicture(new JpaLinkPicture(linkPicture)).toLinkPicture();
     }
 
-    private boolean primaryLinkPictureExists(UUID animalUuid) {
-        Optional<JpaLinkPicture> jpaPrimaryLinkPicture = jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(
-                PictureType.PRIMARY.name(), animalUuid
-        );
-        return jpaPrimaryLinkPicture.isPresent();
+    @Override
+    public LinkPicture getBy(UUID animalUuid) {
+        Optional<JpaLinkPicture> primaryLinkPicture = getPrimaryLinkPicture(animalUuid);
+
+        if(primaryLinkPicture.isPresent()) {
+            return primaryLinkPicture.get().toLinkPicture();
+        }
+
+        throw new EntityNotFoundException();
+    }
+
+    private Optional<JpaLinkPicture> getPrimaryLinkPicture(UUID animalUuid) {
+        return jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(PictureType.PRIMARY.name(), animalUuid);
     }
 
     private JpaLinkPicture saveJpaLinkPicture(JpaLinkPicture jpaLinkPicture) {

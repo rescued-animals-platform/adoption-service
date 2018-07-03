@@ -16,6 +16,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -62,7 +63,7 @@ public class LinkPictureRepositoryPsqlTest {
         assertThat(savedLinkPicture.getPictureType(), is(linkPicture.getPictureType()));
         assertThat(savedLinkPicture.getLargeImageUrl(), is(linkPicture.getLargeImageUrl()));
         assertThat(savedLinkPicture.getSmallImageUrl(), is(linkPicture.getSmallImageUrl()));
-        assertThat(savedLinkPicture, is(expectedJpaLinkPicture.toPicture()));
+        assertThat(savedLinkPicture, is(expectedJpaLinkPicture.toLinkPicture()));
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
@@ -88,5 +89,23 @@ public class LinkPictureRepositoryPsqlTest {
         when(animalRepositoryPsql.animalExists(linkPicture.getAnimalUuid())).thenReturn(false);
 
         linkPictureRepositoryPsql.save(linkPicture);
+    }
+
+    @Test
+    public void shouldGetPrimaryJpaLinkPictureByAnimalUuid() {
+        JpaLinkPicture expectedJpaLinkPicture = new JpaLinkPicture(linkPicture);
+        UUID animalUuid = UUID.randomUUID();
+        when(jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(PictureType.PRIMARY.name(), animalUuid)).
+                thenReturn(Optional.of(expectedJpaLinkPicture));
+
+        LinkPicture linkPictureFound = linkPictureRepositoryPsql.getBy(animalUuid);
+
+        assertThat(linkPictureFound, is(linkPicture));
+        assertThat(linkPictureFound, is(expectedJpaLinkPicture.toLinkPicture()));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundException() {
+        linkPictureRepositoryPsql.getBy(UUID.randomUUID());
     }
 }

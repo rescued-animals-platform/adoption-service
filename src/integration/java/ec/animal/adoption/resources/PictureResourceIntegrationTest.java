@@ -150,4 +150,47 @@ public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
         ApiError apiError = response.getBody();
         assertNotNull(apiError);
     }
+
+    @Test
+    public void shouldReturn200OkWithPrimaryPicture() {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("name", name);
+        parameters.add("pictureType", pictureType.name());
+        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+        ResponseEntity<LinkPicture> createdPictureResponse = testClient.postForEntity(
+                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
+        );
+        LinkPicture createdPicture = createdPictureResponse.getBody();
+
+        ResponseEntity<LinkPicture> response = testClient.getForEntity(
+                PICTURES_URL, LinkPicture.class, animalUuid, getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(OK));
+        LinkPicture foundPicture = response.getBody();
+        assertThat(foundPicture, is(createdPicture));
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+        UUID randomUuid = UUID.randomUUID();
+
+        ResponseEntity<ApiError> response = testClient.getForEntity(
+                PICTURES_URL, ApiError.class, randomUuid, getHttpHeaders()
+        );
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenPrimaryPictureCannotBeFoundForValidAnimal() {
+        ResponseEntity<ApiError> response = testClient.getForEntity(PICTURES_URL, ApiError.class, animalUuid);
+
+        assertThat(response.getStatusCode(), is(NOT_FOUND));
+        ApiError apiError = response.getBody();
+        assertNotNull(apiError);
+    }
 }

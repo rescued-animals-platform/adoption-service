@@ -49,7 +49,6 @@ public class StoryResourceTest {
     public void setUp() {
         animalUuid = UUID.randomUUID();
         storyResource = new StoryResource(storyService);
-
     }
 
     @Test

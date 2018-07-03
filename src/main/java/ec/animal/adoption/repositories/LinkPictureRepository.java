@@ -21,6 +21,11 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.media.LinkPicture;
 
+import java.util.UUID;
+
 public interface LinkPictureRepository {
+
     LinkPicture save(LinkPicture linkPicture);
+
+    LinkPicture getBy(UUID animalUuid);
 }

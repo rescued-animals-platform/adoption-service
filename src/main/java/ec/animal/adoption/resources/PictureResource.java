@@ -79,4 +79,9 @@ public class PictureResource {
             throw new InvalidPictureException();
         }
     }
+
+    @GetMapping
+    public LinkPicture get(@PathVariable("animalUuid") UUID animalUuid) {
+        return pictureService.getBy(animalUuid);
+    }
 }

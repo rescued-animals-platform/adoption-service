@@ -38,7 +38,7 @@ public class JpaLinkPictureTest {
         LinkPicture linkPicture = LinkPictureBuilder.random().build();
         JpaLinkPicture jpaLinkPicture = new JpaLinkPicture(linkPicture);
 
-        assertThat(jpaLinkPicture.toPicture(), is(linkPicture));
+        assertThat(jpaLinkPicture.toLinkPicture(), is(linkPicture));
     }
 
     @Test

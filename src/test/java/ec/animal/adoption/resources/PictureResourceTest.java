@@ -35,10 +35,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,6 +56,7 @@ public class PictureResourceTest {
     private PictureService pictureService;
 
     private ImagePicture imagePicture;
+    private PictureResource pictureResource;
 
     @Before
     public void setUp() throws IOException {
@@ -70,6 +73,8 @@ public class PictureResourceTest {
         );
         when(smallImageMultipartFile.getBytes()).thenReturn(smallImage.getContent());
         when(smallImageMultipartFile.getSize()).thenReturn(smallImage.getSizeInBytes());
+
+        pictureResource = new PictureResource(pictureService);
     }
 
     @Test
@@ -77,7 +82,6 @@ public class PictureResourceTest {
         LinkPicture expectedLinkPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
                 withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).build();
         when(pictureService.create(imagePicture)).thenReturn(expectedLinkPicture);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         LinkPicture linkPicture = pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -94,7 +98,6 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInLargeImage() throws IOException {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(largeImageMultipartFile.getBytes()).thenThrow(IOException.class);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -109,7 +112,6 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInSmallImage() throws IOException {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(smallImageMultipartFile.getBytes()).thenThrow(IOException.class);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -123,7 +125,6 @@ public class PictureResourceTest {
     @Test(expected = InvalidPictureException.class)
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInLargeImage() {
         when(largeImageMultipartFile.isEmpty()).thenReturn(true);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -137,7 +138,6 @@ public class PictureResourceTest {
     @Test(expected = InvalidPictureException.class)
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInSmallImage() {
         when(smallImageMultipartFile.isEmpty()).thenReturn(true);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -151,7 +151,6 @@ public class PictureResourceTest {
     @Test(expected = InvalidPictureException.class)
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInLargeImage() {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(null);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -165,7 +164,6 @@ public class PictureResourceTest {
     @Test(expected = InvalidPictureException.class)
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInSmallImage() {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(null);
-        PictureResource pictureResource = new PictureResource(pictureService);
 
         pictureResource.create(
                 imagePicture.getAnimalUuid(),
@@ -174,5 +172,16 @@ public class PictureResourceTest {
                 largeImageMultipartFile,
                 smallImageMultipartFile
         );
+    }
+
+    @Test
+    public void shouldGetPrimaryPictureForAnimal() {
+        UUID animalUuid = UUID.randomUUID();
+        LinkPicture expectedLinkPicture = mock(LinkPicture.class);
+        when(pictureService.getBy(animalUuid)).thenReturn(expectedLinkPicture);
+
+        LinkPicture linkPicture = pictureResource.get(animalUuid);
+
+        assertThat(linkPicture, is(expectedLinkPicture));
     }
 }

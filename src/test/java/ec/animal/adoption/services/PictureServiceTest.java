@@ -26,10 +26,13 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.repositories.LinkPictureRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -45,13 +48,20 @@ public class PictureServiceTest {
     @Mock
     private MediaStorageClient mediaStorageClient;
 
+    private PictureService pictureService;
+
+
+    @Before
+    public void setUp() {
+        pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
+    }
+
     @Test
     public void shouldCreateAPicture() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
         LinkPicture linkPicture = LinkPictureBuilder.random().build();
         when(mediaStorageClient.save(imagePicture)).thenReturn(linkPicture);
         when(linkPictureRepository.save(linkPicture)).thenReturn(linkPicture);
-        PictureService pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
 
         LinkPicture createdPicture = pictureService.create(imagePicture);
 
@@ -62,8 +72,18 @@ public class PictureServiceTest {
     public void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalid() {
         ImagePicture imagePicture = mock(ImagePicture.class);
         when(imagePicture.isValid()).thenReturn(false);
-        PictureService pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
 
         pictureService.create(imagePicture);
+    }
+
+    @Test
+    public void shouldGetPrimaryPictureByAnimalUuid() {
+        LinkPicture expectedLinkPicture = mock(LinkPicture.class);
+        UUID animalUuid = UUID.randomUUID();
+        when(linkPictureRepository.getBy(animalUuid)).thenReturn(expectedLinkPicture);
+
+        LinkPicture linkPicture = pictureService.getBy(animalUuid);
+
+        assertThat(linkPicture, is(expectedLinkPicture));
     }
 }

@@ -72,7 +72,7 @@ public class JpaLinkPicture {
         this.smallImageUrl = linkPicture.getSmallImageUrl();
     }
 
-    public LinkPicture toPicture() {
+    public LinkPicture toLinkPicture() {
         return new LinkPicture(
                 this.animalUuid,
                 this.name,
