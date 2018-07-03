@@ -20,7 +20,7 @@
 package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.JsonHelper;
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -64,7 +64,7 @@ public class ApiErrorTest {
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
-        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
         String serializedApiError = objectMapper.writeValueAsString(apiError);
 
         ApiError deserializedApiError = objectMapper.readValue(

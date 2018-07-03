@@ -20,7 +20,7 @@
 package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.JsonHelper;
+import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class MediaLinkTest {
 
     @Test
     public void shouldBeJsonSerializableWithUrl() throws IOException {
-        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
         String url = randomAlphabetic(10);
         String expectedSerializedMediaLink = "{\"url\":\"" + url + "\"}";
         MediaLink mediaLink = new MediaLink(url);

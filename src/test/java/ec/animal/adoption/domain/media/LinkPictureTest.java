@@ -22,7 +22,6 @@ package ec.animal.adoption.domain.media;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class LinkPictureTest {
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
         LinkPicture linkPicture = LinkPictureBuilder.random().build();
-        ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
         String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
         LinkPicture deserializedLinkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
 

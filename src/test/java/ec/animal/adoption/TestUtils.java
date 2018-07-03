@@ -19,6 +19,8 @@
 
 package ec.animal.adoption;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
@@ -34,6 +36,7 @@ import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -113,6 +116,13 @@ public class TestUtils {
 
     public static Validator getValidator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        return Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+                ).build();
     }
 
     private static int getRandomIndex(int bound) {

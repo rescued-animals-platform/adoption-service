@@ -21,11 +21,11 @@ package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.Unavailable;
-import ec.animal.adoption.helpers.JsonHelper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class AnimalTest {
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
 
-    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+    private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {

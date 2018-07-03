@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.JsonHelper;
+import ec.animal.adoption.TestUtils;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
@@ -39,7 +39,7 @@ public class UnavailableTest {
 
     private static final String NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE = "Notes are required for unavailable state";
 
-    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+    private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
     public void shouldBeAnInstanceOfState() {

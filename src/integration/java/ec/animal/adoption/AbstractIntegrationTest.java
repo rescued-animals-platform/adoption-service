@@ -21,7 +21,6 @@ package ec.animal.adoption;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.helpers.JsonHelper;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.junit.Before;
@@ -61,7 +60,7 @@ public abstract class AbstractIntegrationTest {
     @Before
     public void runFirst() {
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        messageConverter.setObjectMapper(JsonHelper.getObjectMapper());
+        messageConverter.setObjectMapper(TestUtils.getObjectMapper());
         RestTemplate restTemplate = testClient.getRestTemplate();
 
         restTemplate.getMessageConverters().removeIf(

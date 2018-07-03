@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.JsonHelper;
+import ec.animal.adoption.TestUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,13 +30,11 @@ import java.time.LocalDateTime;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class AdoptedTest {
 
-    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+    private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
     public void shouldBeAnInstanceOfState() {

@@ -68,7 +68,7 @@ public class Image {
     }
 
     public boolean isValid() {
-        return SupportedImageExtension.getMatchFor(extension, content).isPresent() &&
-                sizeInBytes > 0 && sizeInBytes <= ONE_MEGA_BYTE;
+        boolean isValidImage = SupportedImageExtension.getMatchFor(extension, content).isPresent();
+        return isValidImage && sizeInBytes > 0 && sizeInBytes <= ONE_MEGA_BYTE;
     }
 }

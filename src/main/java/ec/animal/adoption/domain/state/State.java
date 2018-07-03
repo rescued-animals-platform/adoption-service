@@ -38,10 +38,6 @@ public abstract class State {
     @JsonProperty("date")
     private final LocalDateTime date;
 
-    protected State() {
-        this.date = null;
-    }
-
     protected State(LocalDateTime date) {
         this.date = date;
     }

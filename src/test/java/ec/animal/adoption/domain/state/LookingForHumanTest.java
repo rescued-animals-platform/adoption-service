@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.helpers.JsonHelper;
+import ec.animal.adoption.TestUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 public class LookingForHumanTest {
 
-    private final ObjectMapper objectMapper = JsonHelper.getObjectMapper();
+    private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
     public void shouldBeAnInstanceOfState() {
