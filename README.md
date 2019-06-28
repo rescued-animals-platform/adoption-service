@@ -33,7 +33,8 @@ _**(Only for the first time)**_
 - Run:
         
         sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
-
+        
+- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `SPRING_PROFILE=dev` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
 
 _**(Always, before running the integration tests)**_
 
