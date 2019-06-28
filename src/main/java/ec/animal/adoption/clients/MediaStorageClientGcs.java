@@ -50,10 +50,10 @@ public class MediaStorageClientGcs implements MediaStorageClient {
     private LinkPicture storeImagePicture(ImagePicture picture) {
         String largeImageUrl = googleCloudStorageClient.storeMedia(
                 picture.getLargeImagePath(), picture.getLargeImageContent()
-        );
+        ).getMediaLink();
         String smallImageUrl = googleCloudStorageClient.storeMedia(
                 picture.getSmallImagePath(), picture.getSmallImageContent()
-        );
+        ).getMediaLink();
         return new LinkPicture(
                 picture.getAnimalUuid(),
                 picture.getName(),

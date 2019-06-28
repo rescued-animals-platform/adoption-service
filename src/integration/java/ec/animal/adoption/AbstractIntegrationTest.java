@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
+@ActiveProfiles({"dev"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public abstract class AbstractIntegrationTest {
 

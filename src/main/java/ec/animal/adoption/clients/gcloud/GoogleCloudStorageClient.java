@@ -39,24 +39,25 @@ public class GoogleCloudStorageClient {
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    private final Storage storage;
+    @Value("${google.cloud.storage.environment}")
+    private String environment;
 
     @Autowired
-    public GoogleCloudStorageClient(GoogleCloudStorageFactory googleCloudStorageFactory) {
-        this.storage = googleCloudStorageFactory.get();
-    }
+    private GoogleCloudStorageFactory googleCloudStorageFactory;
 
-    public String storeMedia(String mediaPath, byte[] content) {
+    public Blob storeMedia(String mediaPath, byte[] content) {
+        Storage storage = googleCloudStorageFactory.get(environment);
         BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
                 setAcl(new ArrayList<>(Collections.singletonList(of(User.ofAllUsers(), Role.READER)))).
                 build();
-        Blob blob = storage.create(blobInfo, content);
 
-        return blob.getMediaLink();
+        return storage.create(blobInfo, content);
     }
 
     public boolean deleteMedia(String mediaPath) {
+        Storage storage = googleCloudStorageFactory.get(environment);
         BlobId blobId = BlobId.of(bucketName, mediaPath);
-         return storage.delete(blobId);
+
+        return storage.delete(blobId);
     }
 }

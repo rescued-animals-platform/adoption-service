@@ -26,6 +26,10 @@ integration-test: deploy-postgres
 	docker run --rm --name adoption-service-toolset --link postgres:postgres -v ~/.gradle/caches:/root/.gradle/caches:rw -v $(workspace):/usr/src/app:rw -p 8080:8080 $(toolset-image) integrationTest
 	make undeploy-postgres
 
+integration-test-dev: deploy-postgres
+	./gradlew integrationTest -PspringProfiles=dev
+	make undeploy-postgres
+
 all-test:
 	./gradlew clean build
-	make pitest integration-test
+	make pitest integration-test-dev

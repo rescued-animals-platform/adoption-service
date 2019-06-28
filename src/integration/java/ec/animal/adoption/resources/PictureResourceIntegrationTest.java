@@ -76,8 +76,6 @@ public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
         assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
         assertThat(linkPicture.getName(), is(name));
         assertThat(linkPicture.getPictureType(), is(pictureType));
-        assertNotNull(linkPicture.getLargeImageUrl());
-        assertNotNull(linkPicture.getSmallImageUrl());
     }
 
     @Test

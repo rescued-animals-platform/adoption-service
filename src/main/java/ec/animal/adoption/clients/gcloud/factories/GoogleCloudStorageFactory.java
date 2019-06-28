@@ -21,12 +21,19 @@ package ec.animal.adoption.clients.gcloud.factories;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.contrib.nio.testing.LocalStorageHelper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleCloudStorageFactory {
 
-    public Storage get() {
+    private static final String DEV_ENVIRONMENT = "dev";
+
+    public Storage get(String environment) {
+        if (DEV_ENVIRONMENT.equals(environment)) {
+            return LocalStorageHelper.getOptions().getService();
+        }
+
         return StorageOptions.getDefaultInstance().getService();
     }
 }

@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.clients.gcloud;
 
-import ec.animal.adoption.AdoptionServiceApplication;
+import com.google.cloud.storage.Blob;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -28,18 +28,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest(classes = AdoptionServiceApplication.class)
+@SpringBootTest
 public class GoogleCloudStorageClientIntegrationTest {
 
     @Autowired
@@ -57,14 +54,13 @@ public class GoogleCloudStorageClientIntegrationTest {
         InputStream inputStream = new ClassPathResource("test-image-large.jpeg").getInputStream();
         byte[] fileContent = IOUtils.toByteArray(inputStream);
 
-        String mediaLink = googleCloudStorageClient.storeMedia(mediaPath, fileContent);
+        Blob media = googleCloudStorageClient.storeMedia(mediaPath, fileContent);
 
-        assertNotNull(mediaLink);
+        assertNotNull(media);
     }
 
     @After
     public void tearDown() {
-        boolean mediaDeleted = googleCloudStorageClient.deleteMedia(mediaPath);
-        assertTrue(mediaDeleted);
+        googleCloudStorageClient.deleteMedia(mediaPath);
     }
 }

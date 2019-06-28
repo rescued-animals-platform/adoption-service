@@ -52,10 +52,8 @@ public class JpaLinkPicture {
     @NotNull
     private String pictureType;
 
-    @NotNull
     private String largeImageUrl;
 
-    @NotNull
     private String smallImageUrl;
 
     private JpaLinkPicture() {

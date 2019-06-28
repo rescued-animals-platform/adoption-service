@@ -6,22 +6,12 @@ sourceSets {
     }
     integrationTest {
         java {
-            srcDir 'src/integration/java'
+            srcDir file('src/integration/java')
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
         }
         resources {
-            srcDir 'src/integration/resources'
+            srcDir file('src/integration/resources')
         }
     }
-}
-
-task integrationTest(type: Test) {
-    setTestClassesDirs(sourceSets.integrationTest.output)
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    testLogging {
-        exceptionFormat "full"
-        events "passed", "failed", "skipped"
-    }
-    systemProperty 'spring.profiles.active', 'test'
 }

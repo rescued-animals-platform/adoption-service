@@ -9,8 +9,8 @@ buildscript {
 }
 
 plugins {
-	id "org.springframework.boot" version "2.0.2.RELEASE"
-	id "info.solidsoft.pitest" version "1.3.0"
+    id "org.springframework.boot" version "2.0.2.RELEASE"
+    id "info.solidsoft.pitest" version "1.3.0"
 }
 
 apply plugin: 'java'
@@ -39,10 +39,12 @@ repositories {
 }
 
 configurations {
-	integrationTestCompile.extendsFrom(testCompile)
-	integrationTestRuntime.extendsFrom(testRuntime)
+    integrationTestCompile.extendsFrom(testCompile)
+    integrationTestRuntime.extendsFrom(testRuntime)
 }
 
-bootRun {
-    systemProperty 'spring.profiles.active', 'test'
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    systemProperty("spring.profiles.active", project.properties.get("springProfiles"))
 }

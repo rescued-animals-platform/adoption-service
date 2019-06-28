@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.clients;
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
@@ -37,6 +38,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,13 +63,17 @@ public class MediaStorageClientGcsTest {
     public void shouldStorePicture() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
         String largeImageUrl = randomAlphabetic(10);
+        Blob largeImageBlob = mock(Blob.class);
+        when(largeImageBlob.getMediaLink()).thenReturn(largeImageUrl);
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
-        )).thenReturn(largeImageUrl);
+        )).thenReturn(largeImageBlob);
         String smallImageUrl = randomAlphabetic(10);
+        Blob smallImageBlob = mock(Blob.class);
+        when(smallImageBlob.getMediaLink()).thenReturn(smallImageUrl);
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
-        )).thenReturn(smallImageUrl);
+        )).thenReturn(smallImageBlob);
         LinkPicture expectedPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
                 withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).
                 withLargeImageMediaLink(new MediaLink(largeImageUrl)).
@@ -91,6 +97,9 @@ public class MediaStorageClientGcsTest {
     @Test(expected = ImageStorageException.class)
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        when(googleCloudStorageClient.storeMedia(
+                imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
+        )).thenReturn(mock(Blob.class));
         when(googleCloudStorageClient.storeMedia(
                 imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
         )).thenThrow(StorageException.class);
