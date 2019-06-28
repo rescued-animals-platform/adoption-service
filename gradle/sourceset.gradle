@@ -1,17 +1,31 @@
 sourceSets {
+    
     main {
         resources {
             srcDirs = ['migrations/','src/main/resources']
         }
     }
+    
     integrationTest {
         java {
-            srcDir file('src/integration/java')
+            srcDir file('src/integration-test/java')
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
         }
         resources {
-            srcDir file('src/integration/resources')
+            srcDir file('src/integration-test/resources')
         }
     }
+    
+    apiTest {
+        java {
+            srcDir file('src/api-test/java')
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+        resources {
+            srcDir file('src/api-test/resources')
+        }
+    }
+    
 }

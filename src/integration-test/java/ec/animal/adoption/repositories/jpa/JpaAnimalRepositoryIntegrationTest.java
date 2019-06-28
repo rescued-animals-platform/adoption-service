@@ -19,11 +19,9 @@
 
 package ec.animal.adoption.repositories.jpa;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -32,10 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaAnimalRepositoryIntegrationTest extends AbstractIntegrationTest {
-
-    @Autowired
-    private JpaAnimalRepository jpaAnimalRepository;
+public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
     @Test
     public void shouldSaveAnAnimal() {

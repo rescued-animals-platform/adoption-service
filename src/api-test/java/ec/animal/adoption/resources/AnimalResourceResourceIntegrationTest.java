@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -39,7 +38,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class AnimalResourceIntegrationTest extends AbstractIntegrationTest {
+public class AnimalResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201Created() {

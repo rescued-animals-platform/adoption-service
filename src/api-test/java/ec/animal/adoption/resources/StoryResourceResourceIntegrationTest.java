@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.models.rest.ApiError;
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class StoryResourceIntegrationTest extends AbstractIntegrationTest {
+public class StoryResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithStory() {

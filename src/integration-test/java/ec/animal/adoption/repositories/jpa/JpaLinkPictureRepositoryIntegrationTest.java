@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.repositories.jpa;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -35,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaLinkPictureRepositoryIntegrationTest extends AbstractIntegrationTest {
+public class JpaLinkPictureRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
     @Autowired
     private JpaLinkPictureRepository jpaLinkPictureRepository;

@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.repositories.jpa;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractIntegrationTest {
+public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
     @Autowired
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;

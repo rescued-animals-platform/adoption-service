@@ -17,12 +17,11 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption;
+package ec.animal.adoption.resources;
 
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.models.jpa.JpaAnimal;
-import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,20 +40,16 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles({"dev"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public abstract class AbstractIntegrationTest {
+abstract class AbstractResourceIntegrationTest {
 
-    protected static final String ANIMALS_URL = "/adoption/animals";
-    protected static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
-    protected static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
-    protected static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
-
-    @Autowired
-    protected TestRestTemplate testClient;
+    static final String ANIMALS_URL = "/adoption/animals";
+    static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
+    static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
+    static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
     @Autowired
-    private JpaAnimalRepository jpaAnimalRepository;
+    TestRestTemplate testClient;
 
     @Before
     public void runFirst() {
@@ -69,17 +63,13 @@ public abstract class AbstractIntegrationTest {
         restTemplate.getMessageConverters().add(messageConverter);
     }
 
-    protected static HttpHeaders getHttpHeaders() {
+    static HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return headers;
     }
 
-    protected JpaAnimal createAndSaveJpaAnimal() {
-        return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build()));
-    }
-
-    protected Animal createAndSaveAnimal() {
+    Animal createAndSaveAnimal() {
         Animal animalForAdoption = AnimalBuilder.random().withState(null).build();
         ResponseEntity<Animal> responseEntity = testClient.postForEntity(
                 ANIMALS_URL, animalForAdoption, Animal.class, getHttpHeaders()

@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
@@ -42,7 +41,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class CharacteristicsResourceIntegrationTest extends AbstractIntegrationTest {
+public class CharacteristicsResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {

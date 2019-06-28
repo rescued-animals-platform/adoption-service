@@ -41,10 +41,27 @@ repositories {
 configurations {
     integrationTestCompile.extendsFrom(testCompile)
     integrationTestRuntime.extendsFrom(testRuntime)
+    apiTestCompile.extendsFrom(testCompile)
+    apiTestRuntime.extendsFrom(testRuntime)
 }
 
 task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
-    systemProperty("spring.profiles.active", project.properties.get("springProfiles"))
+}
+
+task apiTest(type: Test) {
+    testClassesDirs = sourceSets.apiTest.output.classesDirs
+    classpath = sourceSets.apiTest.runtimeClasspath
+}
+
+tasks.withType(Test) {
+    clean.execute()
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "skipped", "failed"
+    }
+    configure {
+        systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
+    }
 }

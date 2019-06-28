@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.AbstractIntegrationTest;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
@@ -41,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 
-public class PictureResourceIntegrationTest extends AbstractIntegrationTest {
+public class PictureResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     private UUID animalUuid;
     private HttpHeaders headers;
