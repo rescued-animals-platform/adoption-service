@@ -302,14 +302,20 @@ workflows:
             branches:
               only: master
       - pitest:
+          requires:
+            - build
           filters:
             branches:
               only: master
       - integration-test:
+          requires:
+            - build
           filters:
             branches:
               only: master
       - api-test:
+          requires:
+            - build
           filters:
             branches:
               only: master
