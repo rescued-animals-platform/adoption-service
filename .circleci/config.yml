@@ -358,7 +358,7 @@ workflows:
               only: master
       - ci-service-deploy:
           requires:
-            - integration-test-ci
+            - ci-integration-test
           filters:
             branches:
               only: master
