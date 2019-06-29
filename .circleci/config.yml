@@ -116,8 +116,10 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
+      - run: sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
+
       - run:
-          name: Runing integration tests
+          name: Running integration tests
           command: ./gradlew integrationTest
           environment:
             SPRING_PROFILE: dev
@@ -173,8 +175,10 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
+      - run: sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
+
       - run:
-          name: Runing api tests
+          name: Running api tests
           command: ./gradlew apiTest
           environment:
             SPRING_PROFILE: dev
