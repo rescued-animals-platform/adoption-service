@@ -8,6 +8,9 @@ export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
 echo "Deploying Storages in CI project"
 
+export TF_VAR_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
+export TF_VAR_master_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
+
 cd terraform;
 terraform init;
 terraform apply -auto-approve -var-file="ci.tfvars";
