@@ -6,6 +6,5 @@ build
 *.iml
 *.ipr
 *.iws
-*.tfvars
 *.json
 .DS_Store
