@@ -352,7 +352,7 @@ workflows:
               only: master
       - ci-integration-test:
           requires:
-            - ci-storages-deploy
+            - a-dummy-wait
           filters:
             branches:
               only: master
