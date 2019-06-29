@@ -205,7 +205,7 @@ jobs:
       docker:
         - image: hashicorp/terraform
 
-      working_directory: ~/repo/terraform
+      working_directory: ~/repo
 
       steps:
         - attach_workspace:

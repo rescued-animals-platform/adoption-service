@@ -8,6 +8,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
 echo "Deploying Storages in CI project"
 
+cd terraform;
 terraform init;
 terraform apply -auto-approve -var-file="ci.tfvars";
 export DB_CONNECTION_NAME=$(terraform output master_proxy_connection)
