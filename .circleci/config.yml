@@ -213,11 +213,14 @@ jobs:
 
         - run:
             name: Deploy CI storages
-            command: |
-              terraform init
-              terraform apply -var-file="ci.tfvars" -auto-approve \;
+            command: ./scripts/ci/ci-storages-deploy.sh
 
-  integration-test-ci:
+        - persist_to_workspace:
+            root: ~/repo
+            paths:
+              - src/main/appengine/app.yaml
+
+  ci-integration-test:
     docker:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
@@ -340,7 +343,14 @@ workflows:
           filters:
             branches:
               only: master
-      - integration-test-ci:
+      - a-dummy-wait:
+          type: approval
+          requires:
+            - ci-storages-deploy
+          filters:
+            branches:
+              only: master
+      - ci-integration-test:
           requires:
             - ci-storages-deploy
           filters:

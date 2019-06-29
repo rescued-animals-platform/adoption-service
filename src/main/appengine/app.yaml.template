@@ -13,6 +13,6 @@ manual_scaling:
   instances: 1
 
 env_variables:
-  JAVA_OPTS: -Djdbc.connection_name=DB_CONNECTION_STRING -Djdbc.password=DB_PASSWORD
+  JAVA_OPTS: -Dspring.profiles.active=ci -Djdbc.connection_name=DB_CONNECTION_STRING -Djdbc.password=DB_PASSWORD -Djdbc.password=DB_USERNAME
 
 

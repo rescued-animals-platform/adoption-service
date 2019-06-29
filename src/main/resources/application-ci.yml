@@ -1,6 +1,6 @@
 spring:
   datasource:
-    username: postgres
+    username: ${jdbc.username}
     password: ${jdbc.password}
     url: jdbc:postgresql://google/animal_adoption_db?socketFactory=com.google.cloud.sql.postgres.SocketFactory&socketFactoryArg=${jdbc.connection_name}
 
