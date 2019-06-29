@@ -1,3 +1,5 @@
 FROM hashicorp/terraform:latest
 
-ENTRYPOINT ["/bin/sh"]
+RUN apk add --no-cache bash
+
+ENTRYPOINT ["/bin/bash"]
