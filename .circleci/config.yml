@@ -203,7 +203,7 @@ jobs:
 
   ci-storages-deploy:
       docker:
-        - image: hashicorp/terraform
+        - image: emmeblm/terraform-for-circleci:latest
 
       working_directory: ~/repo
 
