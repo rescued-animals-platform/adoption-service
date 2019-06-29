@@ -88,7 +88,6 @@ jobs:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
         environment:
-          SPRING_PROFILE: dev
           POSTGRES_DB: animal_adoption_db
 
     working_directory: ~/repo
@@ -120,6 +119,8 @@ jobs:
       - run:
           name: Runing integration tests
           command: ./gradlew integrationTest
+          environment:
+            SPRING_PROFILE: dev
 
       - save_cache:
           paths:
@@ -144,7 +145,6 @@ jobs:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
         environment:
-          SPRING_PROFILE: dev
           POSTGRES_DB: animal_adoption_db
 
     working_directory: ~/repo
@@ -176,6 +176,8 @@ jobs:
       - run:
           name: Runing api tests
           command: ./gradlew apiTest
+          environment:
+            SPRING_PROFILE: dev
 
       - save_cache:
           paths:
