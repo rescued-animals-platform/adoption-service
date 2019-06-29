@@ -13,7 +13,7 @@ java -version
 
 echo "Gcloud set up"
 
-echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
+echo $GCLOUD_CI_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
 gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 gcloud config set project $GCLOUD_PROJECT_ID;
 apt-get install -y google-cloud-sdk-app-engine-java

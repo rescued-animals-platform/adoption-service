@@ -7,4 +7,4 @@ spring:
 google:
   cloud:
     storage:
-      bucket: adoption-service-qa.appspot.com
+      bucket: animal-pictures-store

@@ -8,3 +8,4 @@ build
 *.iws
 *.tfvars
 *.json
+.DS_Store

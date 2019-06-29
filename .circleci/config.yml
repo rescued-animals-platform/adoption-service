@@ -88,6 +88,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
         environment:
+          SPRING_PROFILE: dev
           POSTGRES_DB: animal_adoption_db
 
     working_directory: ~/repo
@@ -113,8 +114,135 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run:
+          name: Runing integration tests
+          command: ./gradlew integrationTest
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+          when: always
+
+      - store_test_results:
+          path: ~/junit
+
+      - store_artifacts:
+          path: ~/junit
+
+  api-test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+      - image: postgres:10
+        environment:
+          SPRING_PROFILE: dev
+          POSTGRES_DB: animal_adoption_db
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run:
+          name: Runing api tests
+          command: ./gradlew apiTest
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+          when: always
+
+      - store_test_results:
+          path: ~/junit
+
+      - store_artifacts:
+          path: ~/junit
+
+  ci-storages-deploy:
+      docker:
+        - image: hashicorp/terraform
+
+      working_directory: ~/repo/terraform
+
+      steps:
+        - attach_workspace:
+            at: ~/repo
+
+        - run:
+            name: Deploy CI storages
+            command: |
+              terraform init
+              terraform apply -var-file="ci.tfvars" -auto-approve \;
+
+  integration-test-ci:
+    docker:
+      - image: circleci/openjdk:8-jdk
+      - image: postgres:10
+        environment:
+          POSTGRES_DB: animal_adoption_db
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
 
       - run:
           name: Runing integration tests
@@ -138,30 +266,11 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  qa-database-deploy:
-      docker:
-        - image: google/cloud-sdk
-
-      working_directory: ~/repo
-
-      steps:
-        - attach_workspace:
-            at: ~/repo
-
-        - run:
-            name: Deploy QA database
-            command: ./scripts/ci/qa-database-deploy.sh
-
-        - persist_to_workspace:
-            root: ~/repo
-            paths:
-              - src/main/appengine/app.yaml
-
-  qa-service-deploy:
+  ci-service-deploy:
       docker:
         - image: google/cloud-sdk
           environment:
-            GCLOUD_PROJECT_ID: adoption-service-qa-244823
+            GCLOUD_PROJECT_ID: adoption-service-ci-245106
 
       working_directory: ~/repo
 
@@ -175,8 +284,8 @@ jobs:
             - v1-dependencies-
 
         - run:
-            name: Deploy service to QA
-            command: ./scripts/ci/qa-service-deploy.sh
+            name: Deploy service to CI
+            command: ./scripts/ci/ci-service-deploy.sh
 
         - save_cache:
             paths:
@@ -200,27 +309,38 @@ workflows:
               only: master
       - integration-test:
           requires:
-            - build
+            - pitest
           filters:
             branches:
               only: master
-      - deploy-to-qa:
-          type: approval
+      - api-test:
           requires:
-            - pitest
             - integration-test
           filters:
             branches:
               only: master
-      - qa-database-deploy:
+      - deploy-to-ci:
+          type: approval
           requires:
-            - deploy-to-qa
+            - api-test
           filters:
             branches:
               only: master
-      - qa-service-deploy:
+      - ci-storages-deploy:
           requires:
-            - qa-database-deploy
+            - deploy-to-ci
+          filters:
+            branches:
+              only: master
+      - integration-test-ci:
+          requires:
+            - ci-storages-deploy
+          filters:
+            branches:
+              only: master
+      - ci-service-deploy:
+          requires:
+            - integration-test-ci
           filters:
             branches:
               only: master

@@ -15,7 +15,7 @@ terraform --version
 
 echo "Gcloud set up"
 
-echo $GCLOUD_QA_DEPLOY_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
+echo $GCLOUD_CI_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
 gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 
