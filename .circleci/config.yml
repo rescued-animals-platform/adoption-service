@@ -328,6 +328,8 @@ workflows:
       - deploy-to-ci:
           type: approval
           requires:
+            - pitest
+            - integration-test
             - api-test
           filters:
             branches:
