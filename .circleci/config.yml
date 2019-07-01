@@ -213,9 +213,7 @@ jobs:
 
         - run:
             name: Deploy CI storages
-            command: |
-              ./scripts/ci/gcloud-auth-setup.sh
-              ./scripts/ci/ci-storages-deploy.sh;
+            command: ./scripts/ci/ci-storages-deploy.sh;
 
         - persist_to_workspace:
             root: ~/repo
@@ -225,8 +223,6 @@ jobs:
   ci-integration-test:
     docker:
       - image: circleci/openjdk:8-jdk
-        environment:
-          POSTGRES_DB: animal_adoption_db
 
     working_directory: ~/repo
 
@@ -241,10 +237,7 @@ jobs:
 
       - run:
           name: Running integration tests in ci environment
-          command: |
-            ./scripts/ci/gcloud-auth-setup.sh
-            source db.env
-            ./gradlew integrationTest;
+          command: ./scripts/ci/ci-integration-test.sh
           environment:
             SPRING_PROFILE: ci
 
