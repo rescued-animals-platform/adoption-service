@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: ${jdbc.username}
-    password: ${jdbc.password}
-    url: jdbc:postgresql://google/animal_adoption_db?socketFactory=com.google.cloud.sql.postgres.SocketFactory&socketFactoryArg=${jdbc.connection_name}
+    username: ${CI_SQL_CLOUD_MASTER_PASSWORD}
+    password: ${CI_SQL_CLOUD_MASTER_USERNAME}
+    url: jdbc:postgresql://google/animal_adoption_db?socketFactory=com.google.cloud.sql.postgres.SocketFactory&socketFactoryArg=${DB_CONNECTION_NAME}
 
 google:
   cloud:

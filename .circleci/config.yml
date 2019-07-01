@@ -218,35 +218,19 @@ jobs:
         - persist_to_workspace:
             root: ~/repo
             paths:
-              - src/main/appengine/app.yaml
+              - terraform/db.env
 
   ci-integration-test:
     docker:
       - image: circleci/openjdk:8-jdk
-      - image: postgres:10
         environment:
           POSTGRES_DB: animal_adoption_db
 
     working_directory: ~/repo
 
-    environment:
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
-
     steps:
       - attach_workspace:
           at: ~/repo
-
-      - run:
-          name: Waiting for Postgres to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for Postgress && exit 1
 
       - restore_cache:
           keys:
@@ -254,8 +238,12 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: Runing integration tests
-          command: ./scripts/ci/integration-test.sh
+          name: Running integration tests in ci environment
+          command: |
+            source terraform/db.env
+            ./gradlew integrationTest;
+          environment:
+            SPRING_PROFILE: ci
 
       - save_cache:
           paths:
@@ -343,22 +331,22 @@ workflows:
           filters:
             branches:
               only: master
-      - a-dummy-wait:
-          type: approval
+      - ci-integration-test:
           requires:
             - ci-storages-deploy
           filters:
             branches:
               only: master
-      - ci-integration-test:
+      - a-dummy-wait:
+          type: approval
           requires:
-            - a-dummy-wait
+            - ci-integration-test
           filters:
             branches:
               only: master
       - ci-service-deploy:
           requires:
-            - ci-integration-test
+            - a-dummy-wait
           filters:
             branches:
               only: master
