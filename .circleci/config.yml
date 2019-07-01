@@ -316,18 +316,11 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy-to-ci:
-          type: approval
+      - ci-storages-deploy:
           requires:
             - pitest
             - integration-test
             - api-test
-          filters:
-            branches:
-              only: master
-      - ci-storages-deploy:
-          requires:
-            - deploy-to-ci
           filters:
             branches:
               only: master
