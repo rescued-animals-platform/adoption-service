@@ -213,7 +213,9 @@ jobs:
 
         - run:
             name: Deploy CI storages
-            command: ./scripts/ci/ci-storages-deploy.sh
+            command: |
+              ./scripts/ci/gcloud-auth-setup.sh
+              ./scripts/ci/ci-storages-deploy.sh;
 
         - persist_to_workspace:
             root: ~/repo
@@ -240,6 +242,7 @@ jobs:
       - run:
           name: Running integration tests in ci environment
           command: |
+            ./scripts/ci/gcloud-auth-setup.sh
             source db.env
             ./gradlew integrationTest;
           environment:
