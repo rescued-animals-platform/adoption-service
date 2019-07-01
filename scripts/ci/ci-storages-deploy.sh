@@ -18,5 +18,5 @@ echo "Deploying Storages in CI project"
 cd terraform;
 terraform init;
 terraform apply -auto-approve -var-file="ci.tfvars";
-echo "export DB_CONNECTION_NAME=$(terraform output master_proxy_connection)" >> ${HOME}/db.env
+echo "export DB_CONNECTION_NAME=$(terraform output master_proxy_connection)" >> ${HOME}/repo/db.env
 cat ${HOME}/db.env
