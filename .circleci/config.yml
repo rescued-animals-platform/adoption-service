@@ -218,7 +218,7 @@ jobs:
         - persist_to_workspace:
             root: ~/repo
             paths:
-              - terraform/db.env
+              - db.env
 
   ci-integration-test:
     docker:
@@ -240,7 +240,7 @@ jobs:
       - run:
           name: Running integration tests in ci environment
           command: |
-            source terraform/db.env
+            source db.env
             ./gradlew integrationTest;
           environment:
             SPRING_PROFILE: ci
