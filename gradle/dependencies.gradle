@@ -9,7 +9,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.5")
     compile("com.vladmihalcea:hibernate-types-52:2.2.0")
     compile("org.postgresql:postgresql:42.2.2")
-    compile("com.google.cloud.sql:postgres-socket-factory:1.0.8")
+    compile("com.google.cloud.sql:postgres-socket-factory:1.0.14")
     compile("com.google.cloud:google-cloud-storage:1.32.0")
     compile("org.flywaydb:flyway-core:5.0.7")
     compile("com.google.cloud:google-cloud-nio:0.97.0-alpha")
