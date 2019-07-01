@@ -240,7 +240,7 @@ jobs:
       - run:
           name: Running integration tests in ci environment
           command: |
-            source db.env
+            source ${HOME}/db.env
             ./gradlew integrationTest;
           environment:
             SPRING_PROFILE: ci
