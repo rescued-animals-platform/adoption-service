@@ -1,7 +1,7 @@
 # Animal adoption service
 
 
-[![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service/tree/master.svg?style=svg)](https://circleci.com/gh/rescued-animals-platform/adoption-service/tree/master)
+[![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service/tree/master.svg?style=svg&circle-token=53f27f7163c0b79a814befdfb2afc4929a5737f6)](https://circleci.com/gh/rescued-animals-platform/adoption-service/tree/master)
 
 
 Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10, Google Cloud Platform.
