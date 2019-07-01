@@ -6,4 +6,5 @@ spring:
 google:
   cloud:
     storage:
+      environment: ci
       bucket: animal-pictures-store
