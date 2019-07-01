@@ -2,7 +2,7 @@
 # MASTER OUTPUTS
 # ------------------------------------------------------------------------------
 
-output "master_proxy_connection" {
-  description = "Instance path for connecting with Cloud SQL Proxy. Read more at https://cloud.google.com/sql/docs/mysql/sql-proxy"
-  value       = module.postgres.master_proxy_connection
+output "db_connection_name" {
+  description = "Instance path for db connections"
+  value       = google_sql_database_instance.master.connection_name
 }
