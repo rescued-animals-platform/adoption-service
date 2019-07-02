@@ -16,7 +16,10 @@ sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > $
 echo "Deploying application"
 
 cat /etc/environment
-sudo source ${HOME}/repo/db.env >> /etc/environment
+
+source ${HOME}/repo/db.env
+
+echo "DB_CONNECTION_NAME=${DB_CONNECTION_NAME}" >> /etc/environment
 
 echo "New etc/environment file"
 cat /etc/environment
