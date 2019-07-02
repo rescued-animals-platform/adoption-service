@@ -61,6 +61,6 @@ tasks.withType(Test) {
         events "passed", "skipped", "failed"
     }
     configure {
-        System.setProperty('spring.profiles.active', System.env.SPRING_PROFILE)
+        systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
     }
 }
