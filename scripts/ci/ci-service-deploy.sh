@@ -28,4 +28,4 @@ hash -r
 
 echo $DB_CONNECTION_NAME
 
-./gradlew appengineDeploy
+./gradlew deployToAppEngine
