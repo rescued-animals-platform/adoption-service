@@ -3,6 +3,7 @@ env: flex
 
 runtime_config:
   jdk: openjdk8
+  server: jetty9
 
 resources:
   cpu: 1
