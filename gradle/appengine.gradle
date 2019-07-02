@@ -7,9 +7,3 @@ appengine {
         appEngineDirectory = 'src/appengine'
     }
 }
-
-task deployToAppEngine(dependsOn: appengineDeploy) {
-    doFirst {
-        environment 'DB_CONNECTION_NAME', System.env.DB_CONNECTION_NAME
-    }
-}

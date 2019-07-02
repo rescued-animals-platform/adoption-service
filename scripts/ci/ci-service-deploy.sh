@@ -16,12 +16,12 @@ echo $DB_CONNECTION_NAME
 
 APP_YAML_DIR=~/repo/src/main/appengine
 sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml.stashed
-sed "s/DB_CONNECTION_STRING/${DB_CONNECTION_NAME}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml
+sed "s/DB_CONNECTION_STRING/${DB_CONNECTION_NAME}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml.stashed
+sed "s/DB_USERNAME/${CI_SQL_CLOUD_MASTER_USERNAME}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml.stashed
+sed "s/DB_PASSWORD/${CI_SQL_CLOUD_MASTER_PASSWORD}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml
 rm ${APP_YAML_DIR}/app.yaml.stashed
-
-cat ${APP_YAML_DIR}/app.yaml
 
 echo "Deploying application"
 
 cd ~/repo
-./gradlew deployToAppEngine
+./gradlew appengineDeploy
