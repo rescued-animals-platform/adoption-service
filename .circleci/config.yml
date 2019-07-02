@@ -291,25 +291,32 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
       - pitest:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
       - integration-test:
           requires:
             - build
           filters:
-            branches:
-              only: master
+            only:
+              - master
+              - /tw-aprendethon-.*/
       - api-test:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
       - ci-storages-deploy:
           requires:
             - pitest
@@ -317,16 +324,22 @@ workflows:
             - api-test
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
       - ci-service-deploy:
           requires:
             - ci-storages-deploy
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
       - ci-integration-test:
           requires:
             - ci-storages-deploy
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /tw-aprendethon-.*/
