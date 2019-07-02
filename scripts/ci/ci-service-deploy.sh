@@ -24,7 +24,7 @@ source ${HOME}/repo/db.env >> ~/.profile
 
 echo "DB_CONNECTION_NAME=${DB_CONNECTION_NAME}" >> /etc/environment
 
-exec bash -l
+hash -r
 
 echo $DB_CONNECTION_NAME
 
