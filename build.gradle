@@ -64,3 +64,9 @@ tasks.withType(Test) {
         systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
     }
 }
+
+bootRun {
+    configure {
+        systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
+    }
+}
