@@ -320,9 +320,7 @@ workflows:
               only: master
       - ci-service-deploy:
           requires:
-            - pitest
-            - integration-test
-            - api-test
+            - ci-storages-deploy
           filters:
             branches:
               only: master
