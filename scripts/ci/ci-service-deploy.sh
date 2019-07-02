@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
 
+cd ~/repo
+
 echo "Gcloud auth set up"
 
 {
@@ -15,11 +17,12 @@ sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > $
 
 echo "Deploying application"
 
-ls -a ~/
+cat ~/.profile
 
 source ${HOME}/repo/db.env >> ~/.bashrc
+source ${HOME}/repo/db.env >> ~/.profile
 source ~/.bashrc
+source ~/.profile
 
 echo "Deploying application"
-cd ~/repo
 ./gradlew appengineDeploy
