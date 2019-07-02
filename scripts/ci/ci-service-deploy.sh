@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
 
-echo "Installing Oracle JDK 8"
+echo "Gcloud auth set up"
 
-apt-get install -y software-properties-common
-add-apt-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main"
-apt-get update
-echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
-apt-get install -y oracle-java8-installer
-java -version
+{
+  echo $GCLOUD_CI_SERVICE_KEY >> ${HOME}/gcloud-service-key.json;
+  gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
+} &> /dev/null
 
-echo "Gcloud set up"
+echo "Setting active spring profile in app.yaml"
 
-echo $GCLOUD_CI_SERVICE_KEY > ${HOME}/gcloud-service-key.json;
-gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
-gcloud config set project $GCLOUD_PROJECT_ID;
-apt-get install -y google-cloud-sdk-app-engine-java
-export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
+APP_YAML_DIR=~/repo/src/main/appengine
+sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml
 
 echo "Deploying application"
 

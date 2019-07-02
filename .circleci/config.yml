@@ -216,6 +216,34 @@ jobs:
             paths:
               - db.env
 
+  ci-service-deploy:
+    docker:
+      - image: emmeblm/google-cloud-sdk-and-java-8-for-circleci:latest
+        environment:
+          GCLOUD_PROJECT_ID: adoption-service-ci-245106
+
+    working_directory: ~/repo
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run:
+          name: Deploy service to CI
+          command: ./scripts/ci/ci-service-deploy.sh
+          environment:
+            SPRING_PROFILE: ci
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
   ci-integration-test:
     docker:
       - image: circleci/openjdk:8-jdk
@@ -255,32 +283,6 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  ci-service-deploy:
-      docker:
-        - image: google/cloud-sdk
-          environment:
-            GCLOUD_PROJECT_ID: adoption-service-ci-245106
-
-      working_directory: ~/repo
-
-      steps:
-        - attach_workspace:
-            at: ~/repo
-
-        - restore_cache:
-            keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-
-        - run:
-            name: Deploy service to CI
-            command: ./scripts/ci/ci-service-deploy.sh
-
-        - save_cache:
-            paths:
-              - ~/.gradle
-            key: v1-dependencies-{{ checksum "build.gradle" }}
-
 
 workflows:
   version: 2
@@ -316,22 +318,17 @@ workflows:
           filters:
             branches:
               only: master
+      - ci-service-deploy:
+          requires:
+            - pitest
+            - integration-test
+            - api-test
+          filters:
+            branches:
+              only: master
       - ci-integration-test:
           requires:
             - ci-storages-deploy
-          filters:
-            branches:
-              only: master
-      - a-dummy-wait:
-          type: approval
-          requires:
-            - ci-integration-test
-          filters:
-            branches:
-              only: master
-      - ci-service-deploy:
-          requires:
-            - a-dummy-wait
           filters:
             branches:
               only: master

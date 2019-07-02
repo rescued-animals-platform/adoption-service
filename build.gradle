@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.5'
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.0.1'
     }
 }
 
@@ -14,7 +14,6 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'com.google.cloud.tools.appengine'
 apply from: 'gradle/dependencies.gradle'
 apply from: 'gradle/pitest.gradle'
 apply from: 'gradle/appengine.gradle'
@@ -62,6 +61,6 @@ tasks.withType(Test) {
         events "passed", "skipped", "failed"
     }
     configure {
-        systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
+        System.setProperty('spring.profiles.active', System.env.SPRING_PROFILE)
     }
 }

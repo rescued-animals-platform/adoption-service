@@ -12,4 +12,7 @@ resources:
 manual_scaling:
   instances: 1
 
+env_variables:
+  JAVA_OPTS: -Dspring.profiles.active=SPRING_PROFILE
+
 

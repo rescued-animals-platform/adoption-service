@@ -1,5 +1,9 @@
+apply plugin: 'com.google.cloud.tools.appengine'
+
 appengine {
     deploy {
-        version = "0.0.1-SNAPSHOT"
+        projectId = System.env.GCLOUD_PROJECT_ID
+        version = 'GCLOUD_CONFIG'
+        appEngineDirectory = 'src/appengine'
     }
 }
