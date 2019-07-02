@@ -21,8 +21,11 @@ cat ~/.profile
 
 source ${HOME}/repo/db.env >> ~/.bashrc
 source ${HOME}/repo/db.env >> ~/.profile
-source ~/.bashrc
-source ~/.profile
 
-echo "Deploying application"
+echo "DB_CONNECTION_NAME=${DB_CONNECTION_NAME}" >> /etc/environment
+
+exec bash -l
+
+echo $DB_CONNECTION_NAME
+
 ./gradlew appengineDeploy
