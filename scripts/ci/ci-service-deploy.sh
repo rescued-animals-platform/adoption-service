@@ -15,5 +15,6 @@ sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > $
 
 echo "Deploying application"
 
+source ${HOME}/repo/db.env
 cd ~/repo
 ./gradlew appengineDeploy
