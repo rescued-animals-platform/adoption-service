@@ -293,7 +293,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - pitest:
           requires:
             - build
@@ -301,7 +301,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - integration-test:
           requires:
             - build
@@ -309,7 +309,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - api-test:
           requires:
             - build
@@ -317,7 +317,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - ci-storages-deploy:
           requires:
             - pitest
@@ -327,7 +327,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - ci-service-deploy:
           requires:
             - ci-storages-deploy
@@ -335,7 +335,7 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
       - ci-integration-test:
           requires:
             - ci-storages-deploy
@@ -343,4 +343,4 @@ workflows:
             branches:
               only:
                 - master
-                - /tw-aprendethon-.*/
+                - tw-aprendethon-testing
