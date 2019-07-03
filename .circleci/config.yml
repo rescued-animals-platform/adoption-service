@@ -1,4 +1,8 @@
-# Java Gradle CircleCI 2.0 configuration file
+####################
+# Jobs
+####################
+
+
 version: 2
 jobs:
   build:
@@ -284,6 +288,11 @@ jobs:
           path: ~/junit
 
 
+####################
+# Workflows
+####################
+
+
 workflows:
   version: 2
   adoption-service:
@@ -293,7 +302,7 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
+                - /^tw-aprendethon-.*/
       - pitest:
           requires:
             - build
@@ -301,7 +310,7 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
+                - /^tw-aprendethon-.*/
       - integration-test:
           requires:
             - build
@@ -309,7 +318,7 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
+                - /^tw-aprendethon-.*/
       - api-test:
           requires:
             - build
@@ -317,7 +326,7 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
+                - /^tw-aprendethon-.*/
       - ci-storages-deploy:
           requires:
             - pitest
@@ -327,7 +336,6 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
       - ci-service-deploy:
           requires:
             - ci-storages-deploy
@@ -335,7 +343,6 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
       - ci-integration-test:
           requires:
             - ci-storages-deploy
@@ -343,4 +350,3 @@ workflows:
             branches:
               only:
                 - master
-                - tw-aprendethon-testing
