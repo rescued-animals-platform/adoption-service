@@ -57,14 +57,18 @@ If you want to setup a Gcloud account to deploy you need to do the following:
     - App Engine Administrator
     - Cloud SQL Administrator
     - Compute Network Administrator
-    - Editor
+    - Project Editor
     - Storage Administrator
     
--  Create a bucket for terraform to save it's state with the name: `adoption-service-terraform-state` and the following configuration:
+- Create a key for the service account and store it safely. This will be the key to use for gcloud authentication.
+    
+-  Create a bucket for terraform to save it's state with a unique name and the following configuration:
     - Storage Class: Regional
     - Region: us-east4
     
-- Create a new app engine application inside your project
+- Update your bucket bucket name inside the terraform backend object in the file terraform/main.tf
+    
+- Create a new app engine application inside your project in the us-east4 region, java language and flexible environment.
 
 In the machine that will run the terraform scripts to deploy the storages and/or the gradle plugin to deploy the service into app engine, you'll need to setup the following environment variables:
         
