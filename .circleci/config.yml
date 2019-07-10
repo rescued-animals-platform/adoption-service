@@ -20,13 +20,14 @@ executors:
 
   integration-tester:
     environment:
-      POSTGRES_DB: animal_adoption_db
       SPRING_PROFILE: dev
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
+        environment:
+          POSTGRES_DB: animal_adoption_db
     working_directory: ~/repo
 
 jobs:
