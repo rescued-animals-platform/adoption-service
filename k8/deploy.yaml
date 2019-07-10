@@ -7,11 +7,11 @@ spec:
   selector:
     matchLabels:
       app: adoption-service
+  minReadySeconds: 5
   template:
     metadata:
       labels:
         app: adoption-service
-  minReadySeconds: 5
     spec:
       containers:
         - name: adoption-service
