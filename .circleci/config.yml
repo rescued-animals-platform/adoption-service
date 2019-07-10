@@ -120,14 +120,14 @@ jobs:
               echo -n .
               sleep 1
             done
-            echo Failed waiting for Postgress && exit 1
+            echo Failed waiting for Postgres && exit 1
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
+      - run: sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
 
       - run:
           name: Running integration tests
@@ -174,7 +174,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: sudo sh -c "echo '127.0.0.1      postgres' >> /etc/hosts"
+      - run: sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
 
       - run:
           name: Running api tests

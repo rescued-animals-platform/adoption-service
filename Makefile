@@ -4,7 +4,7 @@ postgres_db = animal_adoption_db
 spring_profile = $(SPRING_PROFILE)
 
 package:
-    ./gradlew clean bootJar
+	./gradlew clean bootJar
 
 deploy: deploy-postgres package
 	@docker build -t adoption-service .
