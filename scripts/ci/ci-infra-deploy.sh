@@ -25,5 +25,3 @@ terraform apply -auto-approve -var-file="ci.tfvars"
   echo "export DB_NAME=$(terraform output db_name)" >> ${ENVIRONMENT_PROPERTIES_PATH}
   echo "export ANIMAL_PICTURES_BUCKET=$(terraform output animal_pictures_bucket)" >> ${ENVIRONMENT_PROPERTIES_PATH}
 } &> /dev/null
-
-cat ${ENVIRONMENT_PROPERTIES_PATH}
