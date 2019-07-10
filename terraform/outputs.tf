@@ -21,3 +21,8 @@ output "cluster_name" {
   description = "Kubernetes cluster name"
   value = module.cluster.cluster_name
 }
+
+output "cluster_zone" {
+  description = "Kubernetes cluster zone"
+  value = module.cluster.cluster_zone
+}

@@ -12,7 +12,7 @@ echo "Kubectl auth set up"
 
 {
   source ${HOME}/repo/env.properties
-  gcloud container clusters get-credentials ${CI_CLUSTER_NAME}
+  gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE}
 } &> /dev/null
 
 echo "Deploying application"

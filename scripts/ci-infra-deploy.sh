@@ -25,4 +25,5 @@ terraform apply -auto-approve -var-file="ci.tfvars"
   echo "export CI_DB_NAME=$(terraform output db_name)" >> ${ENVIRONMENT_PROPERTIES_PATH}
   echo "export CI_ANIMAL_PICTURES_BUCKET=$(terraform output animal_pictures_bucket)" >> ${ENVIRONMENT_PROPERTIES_PATH}
   echo "export CI_CLUSTER_NAME=$(terraform output cluster_name)" >> ${ENVIRONMENT_PROPERTIES_PATH}
+  echo "export CI_CLUSTER_ZONE=$(terraform output cluster_zone)" >> ${ENVIRONMENT_PROPERTIES_PATH}
 } &> /dev/null
