@@ -27,7 +27,7 @@ executors:
       - image: circleci/openjdk:8-jdk
       - image: postgres:10
         environment:
-          POSTGRES_DB: animal_adoption_db
+          POSTGRES_DB: animal-adoption-db
     working_directory: ~/repo
 
 jobs:
