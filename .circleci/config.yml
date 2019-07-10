@@ -117,7 +117,7 @@ jobs:
 
       - run:
           name: Waiting for Postgres to be ready
-          command: ./scripts/ci/postgres-readiness-check.sh
+          command: ./scripts/postgres-readiness-check.sh
 
       - restore_cache:
           keys:
@@ -157,7 +157,7 @@ jobs:
 
       - run:
           name: Waiting for Postgres to be ready
-          command: ./scripts/ci/postgres-readiness-check.sh
+          command: ./scripts/postgres-readiness-check.sh
 
       - restore_cache:
           keys:
