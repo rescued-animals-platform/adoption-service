@@ -12,7 +12,20 @@ echo "Kubectl auth set up"
 
 {
   source ${HOME}/repo/env.properties
+  echo $CI_SQL_CLOUD_MASTER_USERNAME >> ${HOME}/ci-sql-cloud-master-username.txt;
+  echo $CI_SQL_CLOUD_MASTER_PASSWORD >> ${HOME}/ci-sql-cloud-master-password.txt;
+  echo $CI_DB_CONNECTION_NAME >> ${HOME}/ci-db-connection-name.txt;
+  echo $CI_DB_NAME >> ${HOME}/ci-db-name.txt;
+  echo $CI_ANIMAL_PICTURES_BUCKET >> ${HOME}/ci-animal-pictures-bucket.txt;
+
   gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
+
+  kubectl create secret generic adoption-service-secrets \
+    --from-file=${HOME}/ci-sql-cloud-master-username.txt \
+    --from-file=${HOME}/ci-sql-cloud-master-password.txt \
+    --from-file=${HOME}/ci-db-connection-name.txt \
+    --from-file=${HOME}/ci-db-name.txt \
+    --from-file=${HOME}/ci-animal-pictures-bucket.txt
 } &> /dev/null
 
 echo "Deploying application"

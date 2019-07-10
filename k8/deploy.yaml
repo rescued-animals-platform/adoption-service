@@ -19,5 +19,30 @@ spec:
           env:
             - name: SPRING_PROFILE
               value: ci
+            - name: CI_ANIMAL_PICTURES_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-animal-pictures-bucket
+            - name: CI_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-db-name
+            - name: CI_DB_CONNECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-db-connection-name
+            - name: CI_SQL_CLOUD_MASTER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-sql-cloud-master-username
+            - name: CI_SQL_CLOUD_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-sql-cloud-master-password
           ports:
             - containerPort: 8080
