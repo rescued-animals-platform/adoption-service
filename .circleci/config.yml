@@ -306,9 +306,7 @@ jobs:
 
   ci-service-deploy:
     docker:
-      - image: emmeblm/google-cloud-sdk-and-java-8-for-circleci:latest
-        environment:
-          GCLOUD_PROJECT_ID: adoption-service-ci-245106
+      - image: emmeblm/google-cloud-sdk-for-circleci:latest
 
     working_directory: ~/repo
 
@@ -316,21 +314,9 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-
       - run:
           name: Deploy service to CI
           command: ./scripts/ci/ci-service-deploy.sh
-          environment:
-            SPRING_PROFILE: ci
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
 
 
 ####################

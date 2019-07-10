@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://adoption-service-db:5432/animal_adoption_db
+    url: jdbc:postgresql://adoption-service-db:5432/animal-adoption-db
     username: postgres
     password: p0stgr3s
     test-on-borrow: true

@@ -1,6 +1,6 @@
 workspace=$(shell pwd)
 
-postgres_db = animal_adoption_db
+postgres_db = animal-adoption-db
 spring_profile = $(SPRING_PROFILE)
 
 package:

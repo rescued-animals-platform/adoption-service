@@ -4,22 +4,19 @@ set -xeuo pipefail
 echo "Gcloud auth set up"
 
 {
-  echo $GCLOUD_CI_SERVICE_KEY >> ${HOME}/gcloud-service-key.json;
+  echo $CI_GCLOUD_SERVICE_KEY >> ${HOME}/gcloud-service-key.json;
   gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
 } &> /dev/null
 
-echo "Setting variable values in app.yaml"
+echo "Kubectl auth set up"
 
-source ${HOME}/repo/env.properties
-
-APP_YAML_DIR=~/repo/src/main/appengine
-sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml.stashed
-sed "s/DB_CONNECTION_STRING/${DB_CONNECTION_NAME}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml.stashed
-sed "s/DB_USERNAME/${CI_SQL_CLOUD_MASTER_USERNAME}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml.stashed
-sed "s/DB_PASSWORD/${CI_SQL_CLOUD_MASTER_PASSWORD}/g" ${APP_YAML_DIR}/app.yaml.stashed > ${APP_YAML_DIR}/app.yaml
-rm ${APP_YAML_DIR}/app.yaml.stashed
+{
+  source ${HOME}/repo/env.properties
+  gcloud container clusters get-credentials ${CI_CLUSTER_NAME}
+} &> /dev/null
 
 echo "Deploying application"
 
 cd ~/repo
-./gradlew appengineDeploy
+kubectl apply -f k8/deploy.yaml
+kubectl apply -f k8/service.yaml

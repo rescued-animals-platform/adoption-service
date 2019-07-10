@@ -15,6 +15,9 @@ spec:
     spec:
       containers:
         - name: adoption-service
-          image: emmeblm/adoption-service:DOCKER_TAG
+          image: emmeblm/adoption-service:latest
+          env:
+            - name: SPRING_PROFILE
+              value: ci
           ports:
             - containerPort: 8080

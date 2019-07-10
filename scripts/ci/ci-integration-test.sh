@@ -8,7 +8,12 @@ echo "Gcloud auth set up"
   export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
 } &> /dev/null
 
+echo "Preparing environment"
+
+{
+  source ${HOME}/repo/env.properties
+} &> /dev/null
+
 echo "Running Integration Tests"
 
-source ${HOME}/repo/env.properties
 ./gradlew integrationTest

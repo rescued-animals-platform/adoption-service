@@ -16,3 +16,8 @@ output "animal_pictures_bucket" {
   description = "Bucket name where the animal pictures will be stored for the adoption service"
   value = module.storages.animal_pictures_bucket
 }
+
+output "cluster_name" {
+  description = "Kubernetes cluster name"
+  value = module.cluster.cluster_name
+}
