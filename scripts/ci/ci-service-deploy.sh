@@ -6,11 +6,11 @@ echo "Gcloud auth set up"
 {
   echo $GCLOUD_CI_SERVICE_KEY >> ${HOME}/gcloud-service-key.json;
   gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json;
-
-  source ${HOME}/repo/env.properties
 } &> /dev/null
 
 echo "Setting variable values in app.yaml"
+
+source ${HOME}/repo/env.properties
 
 APP_YAML_DIR=~/repo/src/main/appengine
 sed "s/SPRING_PROFILE/${SPRING_PROFILE}/g" ${APP_YAML_DIR}/app.yaml.template > ${APP_YAML_DIR}/app.yaml.stashed
