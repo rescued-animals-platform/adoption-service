@@ -200,7 +200,7 @@ jobs:
 
         - run:
             name: Deploy CI Infrastructure
-            command: ./scripts/ci/ci-infra-deploy.sh;
+            command: ./scripts/ci-infra-deploy.sh;
 
         - persist_to_workspace:
             root: ~/repo
@@ -224,7 +224,7 @@ jobs:
 
       - run:
           name: Running integration tests in ci environment
-          command: ./scripts/ci/ci-integration-test.sh
+          command: ./scripts/ci-integration-test.sh
           environment:
             SPRING_PROFILE: ci
 
@@ -302,7 +302,7 @@ jobs:
 
       - run:
           name: Deploy service to CI
-          command: ./scripts/ci/ci-service-deploy.sh
+          command: ./scripts/ci-service-deploy.sh
 
 
 ####################
