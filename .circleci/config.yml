@@ -3,7 +3,16 @@
 ####################
 
 
-version: 2
+version: 2.1
+
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: emmeblm/adoption-service
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    working_directory: ~/repo
+
 jobs:
   build:
     docker:
@@ -51,12 +60,14 @@ jobs:
             - src
             - migrations
             - terraform
+            - k8
             - scripts
             - gradle
             - build.gradle
             - settings.gradle
             - gradlew
             - gradlew.bat
+            - Dockerfile
 
   pitest:
     docker:
@@ -201,7 +212,7 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  ci-storages-deploy:
+  ci-infra-deploy:
       docker:
         - image: emmeblm/terraform-for-circleci:latest
 
@@ -212,41 +223,13 @@ jobs:
             at: ~/repo
 
         - run:
-            name: Deploy CI storages
-            command: ./scripts/ci/ci-storages-deploy.sh;
+            name: Deploy CI Infrastructure
+            command: ./scripts/ci/ci-infra-deploy.sh;
 
         - persist_to_workspace:
             root: ~/repo
             paths:
-              - db.env
-
-  ci-service-deploy:
-    docker:
-      - image: emmeblm/google-cloud-sdk-and-java-8-for-circleci:latest
-        environment:
-          GCLOUD_PROJECT_ID: adoption-service-ci-245106
-
-    working_directory: ~/repo
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-
-      - run:
-          name: Deploy service to CI
-          command: ./scripts/ci/ci-service-deploy.sh
-          environment:
-            SPRING_PROFILE: ci
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+              - env.properties
 
   ci-integration-test:
     docker:
@@ -287,6 +270,90 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  build-image:
+    executor: docker-publisher
+
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - attach_workspace:
+            at: ~/repo
+
+      - setup_remote_docker
+
+      - run:
+          name: Build Docker image
+          command: |
+            ./gradlew clean bootJar
+            docker build -t $IMAGE_NAME:latest .
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - image.tar
+
+  publish-image:
+    executor: docker-publisher
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - setup_remote_docker
+
+      - run:
+          name: Load archived Docker image
+          command: docker load -i image.tar
+
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            IMAGE_TAG="0.0.${CIRCLE_BUILD_NUM}"
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:$IMAGE_TAG
+
+  ci-service-deploy:
+    docker:
+      - image: emmeblm/google-cloud-sdk-and-java-8-for-circleci:latest
+        environment:
+          GCLOUD_PROJECT_ID: adoption-service-ci-245106
+
+    working_directory: ~/repo
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run:
+          name: Deploy service to CI
+          command: ./scripts/ci/ci-service-deploy.sh
+          environment:
+            SPRING_PROFILE: ci
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
 
 ####################
 # Workflows
@@ -294,7 +361,7 @@ jobs:
 
 
 workflows:
-  version: 2
+  version: 2.1
   adoption-service:
     jobs:
       - build:
@@ -319,23 +386,40 @@ workflows:
           filters:
             branches:
               only: master
-      - ci-storages-deploy:
+      - ci-infra-deploy:
           requires:
-            - pitest
-            - integration-test
-            - api-test
-          filters:
-            branches:
-              only: master
-      - ci-service-deploy:
-          requires:
-            - ci-storages-deploy
+            - build
           filters:
             branches:
               only: master
       - ci-integration-test:
           requires:
-            - ci-storages-deploy
+            - pitest
+            - integration-test
+            - api-test
+            - ci-infra-deploy
+          filters:
+            branches:
+              only: master
+      - build-image:
+          requires:
+            - pitest
+            - integration-test
+            - api-test
+            - ci-infra-deploy
+          filters:
+            branches:
+              only: master
+      - publish-image:
+          requires:
+            - build-image
+            - ci-integration-test
+          filters:
+            branches:
+              only: master
+      - ci-service-deploy:
+          requires:
+            - publish-image
           filters:
             branches:
               only: master

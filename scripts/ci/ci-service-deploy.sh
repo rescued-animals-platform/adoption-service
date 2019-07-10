@@ -10,7 +10,7 @@ echo "Gcloud auth set up"
 
 echo "Setting variable values in app.yaml"
 
-source ${HOME}/repo/db.env
+source ${HOME}/repo/storages.env
 
 echo $DB_CONNECTION_NAME
 

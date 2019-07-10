@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service.svg?style=svg)](https://circleci.com/gh/rescued-animals-platform/adoption-service)
 
 
-Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10, Google Cloud Platform.
+Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10, Terraform v0.12.3, Google Cloud Platform.
 
 # Setting up your development environment (Linux, macOS)
 

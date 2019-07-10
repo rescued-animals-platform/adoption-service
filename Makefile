@@ -3,8 +3,10 @@ workspace=$(shell pwd)
 postgres_db = animal_adoption_db
 spring_profile = $(SPRING_PROFILE)
 
-deploy: deploy-postgres
-	./gradlew clean bootJar
+package:
+    ./gradlew clean bootJar
+
+deploy: deploy-postgres package
 	@docker build -t adoption-service .
 	@docker run -d --rm --name adoption-service -p 8080:8080 --link adoption-service-db:adoption-service-db -e SPRING_PROFILE=$(spring_profile) adoption-service;
 

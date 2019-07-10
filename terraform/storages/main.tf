@@ -7,8 +7,7 @@ resource "random_id" "name" {
 }
 
 locals {
-  # If name_override is specified, use that - otherwise use the name_prefix with a random string
-  instance_name = var.name_override == null ? format("%s-%s", var.name_prefix, random_id.name.hex) : var.name_override
+  db_instance_name = format("%s-%s", var.db_instance_name_prefix, random_id.name.hex)
 }
 
 # ------------------------------------------------------------------------------
@@ -16,47 +15,35 @@ locals {
 # ------------------------------------------------------------------------------
 
 resource "google_sql_database_instance" "master" {
-  project = var.project
-  name = local.instance_name
+  name = local.db_instance_name
   database_version = var.postgres_version
-  region       = var.region
+  region = var.region
 
   settings {
-    tier = var.machine_type
+    tier = var.db_machine_type
   }
 }
 
 resource "google_sql_database" "database" {
-  project = var.project
-  name      = var.db_name
-  instance  = google_sql_database_instance.master.name
+  name = var.db_name
+  instance = google_sql_database_instance.master.name
   charset = "UTF8"
   collation = "en_US.UTF8"
 }
 
 resource "google_sql_user" "users" {
-  project = var.project
   instance = google_sql_database_instance.master.name
-  name     = var.master_user_name
-  password = var.master_user_password
+  name = var.cloud_sql_master_user_name
+  password = var.cloud_sql_master_user_password
 }
 
 # ------------------------------------------------------------------------------
 # CREATE BUCKET FOR ANIMAL PICTURES STORAGE
 # ------------------------------------------------------------------------------
 
-resource "google_storage_bucket" "animal-pictures-store" {
-  project = var.project
-  name = "animal-pictures-store"
+resource "google_storage_bucket" "animal_pictures_bucket" {
+  name = var.animal_pictures_storage_bucket
   location = var.region
   force_destroy = true
-  storage_class = "REGIONAL"
-  lifecycle_rule {
-    action {
-      type = "Delete"
-    }
-    condition {
-      age = 1
-    }
-  }
+  storage_class = var.animal_pictures_storage_class
 }

@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://google/animal_adoption_db?cloudSqlInstance=${DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=${CI_SQL_CLOUD_MASTER_USERNAME}&password=${CI_SQL_CLOUD_MASTER_PASSWORD}
+    url: jdbc:postgresql://google/animal_adoption_db?cloudSqlInstance=${DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=${SQL_CLOUD_MASTER_USERNAME}&password=${SQL_CLOUD_MASTER_PASSWORD}
 
 
 google:
   cloud:
     storage:
-      environment: ci
-      bucket: animal-pictures-store
+      environment: ${SPRING_PROFILE}
+      bucket: ${ANIMAL_PICTURES_BUCKET}

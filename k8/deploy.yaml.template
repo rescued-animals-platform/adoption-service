@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adoption-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: adoption-service
+  template:
+    metadata:
+      labels:
+        app: adoption-service
+  minReadySeconds: 5
+    spec:
+      containers:
+        - name: adoption-service
+          image: emmeblm/adoption-service:DOCKER_TAG
+          ports:
+            - containerPort: 8080
