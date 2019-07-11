@@ -26,10 +26,6 @@ import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.UUID;
@@ -38,14 +34,14 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class PictureResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     private UUID animalUuid;
-    private HttpHeaders headers;
     private String name;
     private PictureType pictureType;
+    private LinkedMultiValueMap<String, Object> validMultipartPicturesFormData;
 
     @Before
     public void setUp() {
@@ -53,141 +49,132 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
         animalUuid = animal.getUuid();
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
-        headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        validMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        validMultipartPicturesFormData.add("name", name);
+        validMultipartPicturesFormData.add("pictureType", pictureType.name());
+        validMultipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        validMultipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
     }
 
     @Test
     public void shouldReturn201CreatedWithLinkPicture() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", pictureType.name());
-        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
-
-        ResponseEntity<LinkPicture> response = testClient.postForEntity(
-                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
-        );
-
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        LinkPicture linkPicture = response.getBody();
-        assertNotNull(linkPicture);
-        assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
-        assertThat(linkPicture.getName(), is(name));
-        assertThat(linkPicture.getPictureType(), is(pictureType));
+        this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(validMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(LinkPicture.class)
+                .consumeWith(linkPictureEntityExchangeResult -> {
+                    LinkPicture linkPicture = linkPictureEntityExchangeResult.getResponseBody();
+                    assertNotNull(linkPicture);
+                    assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
+                    assertThat(linkPicture.getName(), is(name));
+                    assertThat(linkPicture.getPictureType(), is(pictureType));
+                });
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingPictureForNonExistentAnimal() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", pictureType.name());
-        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
-
-        ResponseEntity<ApiError> response = testClient.postForEntity(
-                PICTURES_URL, parameters, ApiError.class, UUID.randomUUID(), headers
-        );
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(PICTURES_URL, UUID.randomUUID())
+                .syncBody(validMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingPrimaryPictureThatAlreadyExist() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", PictureType.PRIMARY.name());
-        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
-        testClient.postForEntity(
-                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
-        );
+        this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(validMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isCreated();
 
-        ResponseEntity<ApiError> response = testClient.postForEntity(
-                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
-        );
-
-        assertThat(response.getStatusCode(), is(CONFLICT));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(validMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(CONFLICT)
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn400BadRequestForInvalidLargeImageFile() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", PictureType.PRIMARY.name());
-        parameters.add("largeImage", new ClassPathResource("invalid-image-file.txt"));
-        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add("name", name);
+        invalidMultipartPicturesFormData.add("pictureType", PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
 
-        ResponseEntity<ApiError> response = testClient.postForEntity(
-                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
-        );
-
-        assertThat(response.getStatusCode(), is(BAD_REQUEST));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(invalidMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn400BadRequestForInvalidSmallImageFile() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", PictureType.PRIMARY.name());
-        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        parameters.add("smallImage", new ClassPathResource("invalid-image-file.txt"));
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add("name", name);
+        invalidMultipartPicturesFormData.add("pictureType", PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("invalid-image-file.txt"));
 
-        ResponseEntity<ApiError> response = testClient.postForEntity(
-                PICTURES_URL, parameters, ApiError.class, animalUuid, headers
-        );
-
-        assertThat(response.getStatusCode(), is(BAD_REQUEST));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(invalidMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithPrimaryPicture() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("name", name);
-        parameters.add("pictureType", pictureType.name());
-        parameters.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        parameters.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
-        ResponseEntity<LinkPicture> createdPictureResponse = testClient.postForEntity(
-                PICTURES_URL, parameters, LinkPicture.class, animalUuid, headers
-        );
-        LinkPicture createdPicture = createdPictureResponse.getBody();
+        LinkPicture createdLinkPicture = this.webClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(validMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(LinkPicture.class)
+                .returnResult()
+                .getResponseBody();
 
-        ResponseEntity<LinkPicture> response = testClient.getForEntity(
-                PICTURES_URL, LinkPicture.class, animalUuid, getHttpHeaders()
-        );
-
-        assertThat(response.getStatusCode(), is(OK));
-        LinkPicture foundPicture = response.getBody();
-        assertThat(foundPicture, is(createdPicture));
+        this.webClient.get()
+                .uri(PICTURES_URL, animalUuid)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(LinkPicture.class)
+                .isEqualTo(createdLinkPicture);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        UUID randomUuid = UUID.randomUUID();
-
-        ResponseEntity<ApiError> response = testClient.getForEntity(
-                PICTURES_URL, ApiError.class, randomUuid, getHttpHeaders()
-        );
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.get()
+                .uri(PICTURES_URL, UUID.randomUUID())
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenPrimaryPictureCannotBeFoundForValidAnimal() {
-        ResponseEntity<ApiError> response = testClient.getForEntity(PICTURES_URL, ApiError.class, animalUuid);
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.get()
+                .uri(PICTURES_URL, animalUuid)
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 }
