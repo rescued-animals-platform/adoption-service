@@ -19,7 +19,7 @@ resource "google_container_cluster" "gcp_kubernetes" {
   }
 
   node_config {
-    disk_size_gb = "100"
+    machine_type = var.cluster_node_machine_type
     oauth_scopes = [
       "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/logging.write",

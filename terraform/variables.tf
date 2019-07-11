@@ -51,6 +51,11 @@ variable "cluster_initial_node_count" {
   description = "Initial node count for the GCP Cluster."
 }
 
+variable "cluster_node_machine_type" {
+  description = "The machine type to use, see https://cloud.google.com/sql/pricing for more details"
+  type = string
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # SENSIBLE PARAMETERS
 # This should typically be set as the environment variable TF_VAR_<variable_name> so you don't check it into source control.

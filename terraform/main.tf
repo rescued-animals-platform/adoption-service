@@ -35,4 +35,5 @@ module "cluster" {
 
   cluster_name = var.cluster_name
   cluster_initial_node_count = var.cluster_initial_node_count
+  cluster_node_machine_type = var.cluster_node_machine_type
 }

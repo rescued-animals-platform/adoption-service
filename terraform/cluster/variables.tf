@@ -12,3 +12,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_initial_node_count" {}
+
+variable "cluster_node_machine_type" {
+  type = string
+}
