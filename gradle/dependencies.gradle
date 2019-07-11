@@ -1,11 +1,11 @@
 apply plugin: 'io.spring.dependency-management'
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
-        exclude module: 'spring-boot-starter-tomcat'
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}"){
+        exclude module: "spring-boot-starter-tomcat"
     }
     compile("org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-json:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     compile("com.google.cloud.sql:postgres-socket-factory:1.0.14")
     compile("org.flywaydb:flyway-core:5.2.4")

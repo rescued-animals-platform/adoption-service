@@ -29,15 +29,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestTemplate;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.springframework.http.HttpStatus.CREATED;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -51,17 +47,8 @@ abstract class AbstractResourceIntegrationTest {
     @Autowired
     TestRestTemplate testClient;
 
-    @Before
-    public void runFirst() {
-        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        messageConverter.setObjectMapper(TestUtils.getObjectMapper());
-        RestTemplate restTemplate = testClient.getRestTemplate();
-
-        restTemplate.getMessageConverters().removeIf(
-                m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName())
-        );
-        restTemplate.getMessageConverters().add(messageConverter);
-    }
+    @Autowired
+    WebTestClient webClient;
 
     static HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -71,13 +58,11 @@ abstract class AbstractResourceIntegrationTest {
 
     Animal createAndSaveAnimal() {
         Animal animalForAdoption = AnimalBuilder.random().withState(null).build();
-        ResponseEntity<Animal> responseEntity = testClient.postForEntity(
-                ANIMALS_URL, animalForAdoption, Animal.class, getHttpHeaders()
-        );
-        assertThat(responseEntity.getStatusCode(), is(CREATED));
-        Animal animal = responseEntity.getBody();
-        assertNotNull(animal);
 
-        return animal;
+        EntityExchangeResult<Animal> animalEntityExchangeResult = this.webClient.post().uri(ANIMALS_URL).
+                syncBody(animalForAdoption).exchange().
+                expectStatus().isCreated().expectBody(Animal.class).returnResult();
+
+        return animalEntityExchangeResult.getResponseBody();
     }
 }
