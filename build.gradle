@@ -25,10 +25,6 @@ compileJava {
     targetCompatibility = '1.8'
 }
 
-bootJar {
-    archiveFileName = 'adoption-service'
-}
-
 repositories {
     mavenCentral()
 }
