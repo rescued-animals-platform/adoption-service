@@ -18,19 +18,19 @@ echo "Kubectl auth set up"
   echo "127.0.0.1:5432/${CI_DB_NAME}" >> ${HOME}/ci-db-host;
   echo $CI_ANIMAL_PICTURES_BUCKET >> ${HOME}/ci-animal-pictures-bucket;
   echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/credentials.json;
-
-
-  gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
-
-  kubectl create secret generic adoption-service-secrets \
-    --from-file=${HOME}/ci-sql-cloud-master-username \
-    --from-file=${HOME}/ci-sql-cloud-master-password \
-    --from-file=${HOME}/ci-db-connection-name \
-    --from-file=${HOME}/ci-db-host \
-    --from-file=${HOME}/ci-animal-pictures-bucket
-
-  kubectl create secret generic cloudsql-instance-credentials --from-file=${HOME}/credentials.json
 } &> /dev/null
+
+gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
+
+kubectl create secret generic adoption-service-secrets \
+  --from-file=${HOME}/ci-sql-cloud-master-username \
+  --from-file=${HOME}/ci-sql-cloud-master-password \
+  --from-file=${HOME}/ci-db-connection-name \
+  --from-file=${HOME}/ci-db-host \
+  --from-file=${HOME}/ci-animal-pictures-bucket
+
+kubectl create secret generic cloudsql-instance-credentials --from-file=${HOME}/credentials.json
+
 
 echo "Deploying application"
 
