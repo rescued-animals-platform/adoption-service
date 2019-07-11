@@ -19,21 +19,14 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -45,16 +38,7 @@ abstract class AbstractResourceIntegrationTest {
     static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
     @Autowired
-    TestRestTemplate testClient;
-
-    @Autowired
     WebTestClient webClient;
-
-    static HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return headers;
-    }
 
     Animal createAndSaveAnimal() {
         Animal animalForAdoption = AnimalBuilder.random().withState(null).build();

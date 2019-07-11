@@ -23,17 +23,13 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTest {
@@ -43,107 +39,119 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
         Animal animal = createAndSaveAnimal();
         Story story = new Story(randomAlphabetic(300));
 
-        ResponseEntity<Story> response = testClient.postForEntity(
-                STORY_URL, story, Story.class, animal.getUuid(), getHttpHeaders()
-        );
-
-        assertThat(response.getStatusCode(), is(CREATED));
-        Story createdStory = response.getBody();
-        assertReflectionEquals(story, createdStory);
+        this.webClient.post()
+                .uri(STORY_URL, animal.getUuid())
+                .syncBody(story)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Story.class)
+                .consumeWith(storyEntityExchangeResult -> {
+                    Story createdStory = storyEntityExchangeResult.getResponseBody();
+                    assertReflectionEquals(story, createdStory);
+                });
     }
 
     @Test
     public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
-        HttpEntity<String> entity = new HttpEntity<>(storyWithWrongData, getHttpHeaders());
 
-        ResponseEntity<ApiError> response = testClient.exchange(
-                STORY_URL, HttpMethod.POST, entity, ApiError.class, UUID.randomUUID()
-        );
-
-        assertThat(response.getStatusCode(), is(BAD_REQUEST));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(STORY_URL, UUID.randomUUID())
+                .syncBody(storyWithWrongData)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
         String storyWithMissingData = "{\"text\":\"\"}";
-        HttpEntity<String> entity = new HttpEntity<>(storyWithMissingData, getHttpHeaders());
 
-        ResponseEntity<ApiError> response = testClient.exchange(
-                STORY_URL, HttpMethod.POST, entity, ApiError.class, UUID.randomUUID()
-        );
-
-        assertThat(response.getStatusCode(), is(BAD_REQUEST));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(STORY_URL, UUID.randomUUID())
+                .syncBody(storyWithMissingData)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
-        Story story = new Story(randomAlphabetic(300));
-
-        ResponseEntity<ApiError> response = testClient.postForEntity(
-                STORY_URL, story, ApiError.class, UUID.randomUUID(), getHttpHeaders()
-        );
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(STORY_URL, UUID.randomUUID())
+                .syncBody(new Story(randomAlphabetic(300)))
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
         Animal animal = createAndSaveAnimal();
         Story story = new Story(randomAlphabetic(300));
-        testClient.postForEntity(STORY_URL, story, Story.class, animal.getUuid(), getHttpHeaders());
+        this.webClient.post()
+                .uri(STORY_URL, animal.getUuid())
+                .syncBody(story)
+                .exchange()
+                .expectStatus()
+                .isCreated();
 
-        ResponseEntity<ApiError> conflictResponse = testClient.postForEntity(
-                STORY_URL, story, ApiError.class, animal.getUuid(), getHttpHeaders()
-        );
-
-        assertThat(conflictResponse.getStatusCode(), is(CONFLICT));
-        ApiError apiError = conflictResponse.getBody();
-        assertNotNull(apiError);
+        this.webClient.post()
+                .uri(STORY_URL, animal.getUuid())
+                .syncBody(story)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(CONFLICT)
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithStory() {
         Animal animal = createAndSaveAnimal();
-        ResponseEntity<Story> createdStoryResponse = testClient.postForEntity(
-                STORY_URL, new Story(randomAlphabetic(100)), Story.class, animal.getUuid(), getHttpHeaders()
-        );
-        Story createdStory = createdStoryResponse.getBody();
+        Story createdStory = this.webClient.post()
+                .uri(STORY_URL, animal.getUuid())
+                .syncBody(new Story(randomAlphabetic(100)))
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Story.class)
+                .returnResult()
+                .getResponseBody();
 
-        ResponseEntity<Story> response = testClient.getForEntity(
-                STORY_URL, Story.class, animal.getUuid(), getHttpHeaders()
-        );
-
-        assertThat(response.getStatusCode(), is(OK));
-        Story foundStory = response.getBody();
-        assertThat(foundStory, is(createdStory));
+        this.webClient.get()
+                .uri(STORY_URL, animal.getUuid())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Story.class)
+                .isEqualTo(createdStory);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        UUID randomUuid = UUID.randomUUID();
-
-        ResponseEntity<ApiError> response = testClient.getForEntity(STORY_URL, ApiError.class, randomUuid);
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.get()
+                .uri(STORY_URL, UUID.randomUUID())
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
         Animal animal = createAndSaveAnimal();
 
-        ResponseEntity<ApiError> response = testClient.getForEntity(STORY_URL, ApiError.class, animal.getUuid());
-
-        assertThat(response.getStatusCode(), is(NOT_FOUND));
-        ApiError apiError = response.getBody();
-        assertNotNull(apiError);
+        this.webClient.get()
+                .uri(STORY_URL, animal.getUuid())
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .expectBody(ApiError.class);
     }
 }
