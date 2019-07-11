@@ -17,4 +17,5 @@ echo "Preparing environment"
 
 echo "Running Integration Tests"
 
+echo $SPRING_PROFILE
 ./gradlew integrationTest
