@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${CI_DB_HOST}
+    url: jdbc:postgresql://${DB_HOST}
     username: ${CI_SQL_CLOUD_MASTER_USERNAME}
     password: ${CI_SQL_CLOUD_MASTER_PASSWORD}
 

@@ -28,23 +28,23 @@ spec:
           env:
             - name: SPRING_PROFILE
               value: ci
-            - name: CI_DB_HOST
+            - name: DB_HOST
                 value: 127.0.0.1:5432
-            - name: CI_ANIMAL_PICTURES_BUCKET
+            - name: ANIMAL_PICTURES_BUCKET
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
-                  key: ci-animal-pictures-bucket
-            - name: CI_SQL_CLOUD_MASTER_USERNAME
+                  key: animal-pictures-storage-bucket
+            - name: SQL_CLOUD_MASTER_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
-                  key: ci-sql-cloud-master-username
-            - name: CI_SQL_CLOUD_MASTER_PASSWORD
+                  key: sql-cloud-master-username
+            - name: SQL_CLOUD_MASTER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
-                  key: ci-sql-cloud-master-password
+                  key: sql-cloud-master-password
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.14
           resources:
@@ -55,13 +55,13 @@ spec:
               cpu: "250m"
               memory: "512Mi"
           env:
-            - name: CI_DB_CONNECTION_NAME
+            - name: DB_CONNECTION_NAME
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
-                  key: ci-db-connection-name
+                  key: db-connection-name
           command: ["/cloud_sql_proxy",
-                    "-instances=$(CI_DB_CONNECTION_NAME)=tcp:5432",
+                    "-instances=$(DB_CONNECTION_NAME)=tcp:5432",
                     "-credential_file=/secrets/cloudsql/credentials.json"]
           securityContext:
             runAsUser: 2  # non-root user

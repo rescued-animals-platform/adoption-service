@@ -31,3 +31,26 @@ resource "google_container_cluster" "gcp_kubernetes" {
     ]
   }
 }
+
+resource "kubernetes_secret" "adoption-service-secrets" {
+  metadata {
+    name = "adoption-service-secrets"
+  }
+
+  data = {
+    "sql-cloud-master-username" = var.cloud_sql_master_user_name
+    "sql-cloud-master-password" = var.cloud_sql_master_user_password
+    "db-connection-name" = var.db-connection-name
+    "animal-pictures-storage-bucket" = var.animal_pictures_storage_bucket
+  }
+}
+
+resource "kubernetes_secret" "cloudsql-instance-credentials" {
+  metadata {
+    name = "cloudsql-instance-credentials"
+  }
+
+  data = {
+    "credentials.json" = file("${HOME}/credentials.json")
+  }
+}

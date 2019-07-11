@@ -13,6 +13,7 @@ echo "Deploying Infra in CI project"
 {
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
+  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/credentials.json;
 } &> /dev/null
 
 cd terraform
