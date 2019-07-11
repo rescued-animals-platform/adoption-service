@@ -16,11 +16,9 @@ apply from: 'gradle/sourceset.gradle'
 apply from: 'gradle/idea.gradle'
 
 group 'ec.animal.adoption'
-version '0.0.1-SNAPSHOT'
 
 bootJar {
     baseName = 'adoption-service'
-    version = '0.0.1-SNAPSHOT'
 }
 
 compileJava {
