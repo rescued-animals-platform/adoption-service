@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://google/${CI_DB_NAME}?cloudSqlInstance=${CI_DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=${CI_SQL_CLOUD_MASTER_USERNAME}&password=${CI_SQL_CLOUD_MASTER_PASSWORD}
+    url: jdbc:postgresql://${CI_DB_HOST}
+    username: ${CI_SQL_CLOUD_MASTER_USERNAME}
+    password: ${CI_SQL_CLOUD_MASTER_PASSWORD}
 
 
 google:

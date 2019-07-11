@@ -12,6 +12,7 @@ echo "Preparing environment"
 
 {
   source ${HOME}/repo/env.properties
+  export CI_DB_HOST="google/${CI_DB_NAME}?cloudSqlInstance=${CI_DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
 } &> /dev/null
 
 echo "Running Integration Tests"

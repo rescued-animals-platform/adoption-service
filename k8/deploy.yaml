@@ -16,6 +16,8 @@ spec:
       containers:
         - name: adoption-service
           image: emmeblm/adoption-service:latest
+          ports:
+            - containerPort: 8080
           env:
             - name: SPRING_PROFILE
               value: ci
@@ -24,11 +26,11 @@ spec:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: ci-animal-pictures-bucket
-            - name: CI_DB_NAME
+            - name: CI_DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
-                  key: ci-db-name
+                  key: ci-db-host
             - name: CI_DB_CONNECTION_NAME
               valueFrom:
                 secretKeyRef:
@@ -44,5 +46,19 @@ spec:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: ci-sql-cloud-master-password
-          ports:
-            - containerPort: 8080
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.14
+          command: ["/cloud_sql_proxy",
+                    "-instances=${CI_DB_CONNECTION_NAME}=tcp:5432",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          securityContext:
+            runAsUser: 2  # non-root user
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+        volumes:
+          - name: cloudsql-instance-credentials
+            secret:
+              secretName: cloudsql-instance-credentials
