@@ -28,16 +28,13 @@ spec:
           env:
             - name: SPRING_PROFILE
               value: ci
+            - name: CI_DB_HOST
+                value: "127.0.0.1:5432"
             - name: CI_ANIMAL_PICTURES_BUCKET
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: ci-animal-pictures-bucket
-            - name: CI_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: adoption-service-secrets
-                  key: ci-db-host
             - name: CI_SQL_CLOUD_MASTER_USERNAME
               valueFrom:
                 secretKeyRef:
