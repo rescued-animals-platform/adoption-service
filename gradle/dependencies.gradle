@@ -8,6 +8,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     compile("com.google.cloud.sql:postgres-socket-factory:1.0.14")
+    compile("org.postgresql:postgresql:42.2.2")
     compile("org.flywaydb:flyway-core:5.2.4")
     compile("com.vladmihalcea:hibernate-types-52:2.2.0")
     compile("com.google.cloud:google-cloud-storage:1.32.0")
@@ -18,5 +19,4 @@ dependencies {
     testCompile("nl.jqno.equalsverifier:equalsverifier:2.4.6")
     testCompile("org.unitils:unitils-core:3.4.6")
     testCompile("commons-io:commons-io:2.6")
-    testCompile("org.postgresql:postgresql:42.2.2")
 }

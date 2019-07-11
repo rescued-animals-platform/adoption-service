@@ -9,6 +9,7 @@ server:
 
 spring:
   datasource:
+    driver-class-name: org.postgresql.Driver
     platform: postgres
   jpa:
     open-in-view: false
