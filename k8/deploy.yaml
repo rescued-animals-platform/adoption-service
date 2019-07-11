@@ -31,11 +31,6 @@ spec:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: ci-db-host
-            - name: CI_DB_CONNECTION_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: adoption-service-secrets
-                  key: ci-db-connection-name
             - name: CI_SQL_CLOUD_MASTER_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -48,8 +43,14 @@ spec:
                   key: ci-sql-cloud-master-password
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.14
+          env:
+            - name: CI_DB_CONNECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: adoption-service-secrets
+                  key: ci-db-connection-name
           command: ["/cloud_sql_proxy",
-                    "-instances=${CI_DB_CONNECTION_NAME}=tcp:5432",
+                    "-instances=$(CI_DB_CONNECTION_NAME)=tcp:5432",
                     "-credential_file=/secrets/cloudsql/credentials.json"]
           securityContext:
             runAsUser: 2  # non-root user
