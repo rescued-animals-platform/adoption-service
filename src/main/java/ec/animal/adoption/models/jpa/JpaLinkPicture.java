@@ -29,7 +29,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,10 +39,10 @@ public class JpaLinkPicture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @NotNull
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID animalUuid;
 
     @NotNull
@@ -62,7 +61,7 @@ public class JpaLinkPicture {
 
     public JpaLinkPicture(LinkPicture linkPicture) {
         this();
-        this.creationDate = Timestamp.valueOf(LocalDateTime.now());
+        this.creationDate = LocalDateTime.now();
         this.animalUuid = linkPicture.getAnimalUuid();
         this.name = linkPicture.getName();
         this.pictureType = linkPicture.getPictureType().name();

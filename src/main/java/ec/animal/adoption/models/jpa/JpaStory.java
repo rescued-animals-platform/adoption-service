@@ -27,7 +27,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -38,10 +37,10 @@ public class JpaStory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @NotNull
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID animalUuid;
 
     @NotNull
@@ -53,7 +52,7 @@ public class JpaStory {
 
     public JpaStory(Story story) {
         this();
-        this.creationDate = Timestamp.valueOf(LocalDateTime.now());
+        this.creationDate = LocalDateTime.now();
         this.animalUuid = story.getAnimalUuid();
         this.text = story.getText();
 

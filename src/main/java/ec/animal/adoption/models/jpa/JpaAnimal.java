@@ -29,7 +29,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -55,7 +54,7 @@ public class JpaAnimal {
     @NotNull
     private String sex;
 
-    private Timestamp registrationDate;
+    private LocalDateTime registrationDate;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaState jpaState;
@@ -69,7 +68,7 @@ public class JpaAnimal {
         this.uuid = UUID.randomUUID();
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
-        this.registrationDate = Timestamp.valueOf(LocalDateTime.now());
+        this.registrationDate = LocalDateTime.now();
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
@@ -79,7 +78,7 @@ public class JpaAnimal {
     public Animal toAnimal() {
         return new Animal(
                 uuid,
-                registrationDate.toLocalDateTime(),
+                registrationDate,
                 clinicalRecord,
                 name,
                 Species.valueOf(animalSpecies),

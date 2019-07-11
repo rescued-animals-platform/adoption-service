@@ -1,3 +1,5 @@
+apply plugin: 'info.solidsoft.pitest'
+
 pitest {
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [

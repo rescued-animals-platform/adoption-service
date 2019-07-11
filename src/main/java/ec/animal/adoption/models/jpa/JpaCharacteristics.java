@@ -29,7 +29,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -43,10 +42,10 @@ public class JpaCharacteristics {
     private Long id;
 
     @NotNull
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID animalUuid;
 
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @NotNull
     private String size;
@@ -69,7 +68,7 @@ public class JpaCharacteristics {
     public JpaCharacteristics(Characteristics characteristics) {
         this();
         this.animalUuid = characteristics.getAnimalUuid();
-        this.creationDate = Timestamp.valueOf(LocalDateTime.now());
+        this.creationDate = LocalDateTime.now();
         this.size = characteristics.getSize().name();
         this.physicalActivity = characteristics.getPhysicalActivity().name();
         this.jpaTemperaments = new JpaTemperaments(characteristics.getTemperaments());
@@ -102,7 +101,8 @@ public class JpaCharacteristics {
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
             return false;
-        if (jpaTemperaments != null ? !jpaTemperaments.equals(that.jpaTemperaments) : that.jpaTemperaments != null) return false;
+        if (jpaTemperaments != null ? !jpaTemperaments.equals(that.jpaTemperaments) : that.jpaTemperaments != null)
+            return false;
         return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 

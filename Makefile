@@ -23,15 +23,15 @@ build-project:
 	./gradlew clean build
 
 unit-test:
-	./gradlew clean test
+	./gradlew cleanTest test
 
 pitest:
 	./gradlew pitest
 
 integration-test: deploy-postgres
-	./gradlew integrationTest
+	./gradlew integrationTest --rerun-tasks
 
 api-test: deploy-postgres
-	./gradlew apiTest
+	./gradlew apiTest --rerun-tasks
 
 all-test: build-project pitest integration-test api-test
