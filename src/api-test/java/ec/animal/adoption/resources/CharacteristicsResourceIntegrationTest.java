@@ -41,7 +41,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class CharacteristicsResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
+public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {

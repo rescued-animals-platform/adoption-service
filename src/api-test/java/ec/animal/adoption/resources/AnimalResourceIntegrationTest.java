@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class AnimalResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
+public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201Created() {

@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.*;
 
-public class PictureResourceResourceIntegrationTest extends AbstractResourceIntegrationTest {
+public class PictureResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     private UUID animalUuid;
     private HttpHeaders headers;
