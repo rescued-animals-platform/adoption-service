@@ -51,6 +51,6 @@ resource "kubernetes_secret" "cloudsql-instance-credentials" {
   }
 
   data = {
-    "credentials.json" = file("${HOME}/credentials.json")
+    "credentials.json" = file("${path.module}/credentials.json")
   }
 }
