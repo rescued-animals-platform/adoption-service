@@ -28,8 +28,9 @@ spec:
           env:
             - name: SPRING_PROFILE
               value: ci
+            # TODO: Make DB_HOST dynamic
             - name: DB_HOST
-              value: 127.0.0.1:5432
+              value: 127.0.0.1:5432/animal-adoption-db-ci
             - name: ANIMAL_PICTURES_BUCKET
               valueFrom:
                 secretKeyRef:

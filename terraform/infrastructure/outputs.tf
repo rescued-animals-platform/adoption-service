@@ -12,7 +12,7 @@ output "db_name" {
   value = module.storages.db_name
 }
 
-output "animal_pictures_bucket" {
+output "animal_pictures_storage_bucket" {
   description = "Bucket name where the animal pictures will be stored for the adoption service"
   value = module.storages.animal_pictures_bucket
 }

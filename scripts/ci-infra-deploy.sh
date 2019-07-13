@@ -5,7 +5,7 @@ echo "Gcloud auth set up"
 
 {
   echo $CI_GCLOUD_SERVICE_KEY >> ${HOME}/gcloud-service-key.json;
-  export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
+  export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json;
 } &> /dev/null
 
 echo "Deploying Infra in CI project"
@@ -13,12 +13,11 @@ echo "Deploying Infra in CI project"
 {
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
-  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/cluster/credentials.json;
 } &> /dev/null
 
-cd terraform
-terraform init -backend-config="backend-ci.tfvars"
-terraform apply -auto-approve -var-file="ci.tfvars"
+cd terraform/infrastructure
+terraform init -backend-config="../backend-ci.tfvars"
+terraform apply -auto-approve -var-file="../ci.tfvars"
 
 {
   export ENVIRONMENT_PROPERTIES_PATH=${HOME}/repo/env.properties

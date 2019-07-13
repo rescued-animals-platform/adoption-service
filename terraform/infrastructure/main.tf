@@ -16,10 +16,9 @@ terraform {
 }
 
 module "storages" {
-  source = "./storages"
+  source = "storages"
 
   region = var.region
-
   animal_pictures_storage_bucket = var.animal_pictures_storage_bucket
   db_instance_name_prefix = var.db_instance_name_prefix
   db_name = var.db_name
@@ -29,15 +28,14 @@ module "storages" {
 }
 
 module "cluster" {
-  source = "./cluster"
+  source = "cluster"
 
   location = var.zone
-
   cluster_name = var.cluster_name
   cluster_initial_node_count = var.cluster_initial_node_count
   cluster_node_machine_type = var.cluster_node_machine_type
-  db-connection-name = module.storages.db_connection_name
-  animal_pictures_storage_bucket = module.storages.animal_pictures_bucket
   cloud_sql_master_user_name = var.cloud_sql_master_user_name
   cloud_sql_master_user_password = var.cloud_sql_master_user_password
+  db-connection-name = module.storages.db_connection_name
+  animal_pictures_storage_bucket = module.storages.animal_pictures_bucket
 }
