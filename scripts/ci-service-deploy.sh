@@ -11,13 +11,13 @@ echo "Gcloud auth set up"
 
 echo "Kubectl set up"
 
-{
-  source ${HOME}/repo/env.properties
-  gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
+source ${HOME}/repo/env.properties
+gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
 
+{
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
-  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/cluster/credentials.json;
+  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/deployment/credentials.json;
 } &> /dev/null
 
 echo "Deploying service dependencies with terraform"
