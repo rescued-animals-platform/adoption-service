@@ -4,10 +4,11 @@ logging:
 
 server:
   port: 8080
-  servlet:
-    path: /adoption
 
 spring:
+  mvc:
+    servlet:
+      path: /adoption
   datasource:
     driver-class-name: org.postgresql.Driver
     platform: postgres
