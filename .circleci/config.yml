@@ -190,7 +190,7 @@ jobs:
 
   ci-infra-deploy:
       docker:
-        - image: emmeblm/terraform-for-circleci:latest
+        - image: emmeblm/adoption-service-deployer:latest
 
       working_directory: ~/repo
 
@@ -292,7 +292,7 @@ jobs:
 
   ci-service-deploy:
     docker:
-      - image: emmeblm/google-cloud-sdk-for-circleci:latest
+      - image: emmeblm/adoption-service-deployer:latest
 
     working_directory: ~/repo
 
