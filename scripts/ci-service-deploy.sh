@@ -23,8 +23,8 @@ gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER
 echo "Deploying service dependencies with terraform"
 
 cd terraform/deployment
-terraform init -backend-config="../backend-ci.tfvars"
-terraform apply -auto-approve -var-file="../ci.tfvars" -var-file="../backend-ci.tfvars"
+terraform init -backend-config="../deployment-backend-ci.tfvars"
+terraform apply -auto-approve -var-file="../ci.tfvars" -var-file="../infra-backend-ci.tfvars"
 
 echo "Deploying application"
 
