@@ -17,7 +17,7 @@ echo "Deploying Infra in CI project"
 
 cd terraform/infrastructure
 terraform init -backend-config="../infra-backend-ci.tfvars"
-terraform apply -auto-approve -var-file="../ci.tfvars"
+terraform apply -auto-approve -var-file="ci.tfvars"
 
 {
   export ENVIRONMENT_PROPERTIES_PATH=${HOME}/repo/env.properties

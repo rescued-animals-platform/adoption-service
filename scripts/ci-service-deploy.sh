@@ -24,7 +24,7 @@ echo "Deploying service dependencies with terraform"
 
 cd terraform/deployment
 terraform init -backend-config="../deployment-backend-ci.tfvars"
-terraform apply -auto-approve -var-file="../ci.tfvars" -var-file="../infra-backend-ci.tfvars"
+terraform apply -auto-approve -var-file="ci.tfvars" -var-file="../infra-backend-ci.tfvars"
 
 echo "Deploying application"
 

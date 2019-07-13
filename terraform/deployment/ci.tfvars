@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# TERRAFORM BACKEND CONFIGURATION
+# APPLICATION SPECIFIC VARIABLES
 # ---------------------------------------------------------------------------------------------------------------------
 
-bucket = "adoption-service-terraform-state-ci"
-prefix = "terraform/state/infra"
+animal_pictures_storage_bucket = "animal-pictures-store-ci"

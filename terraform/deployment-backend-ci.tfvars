@@ -3,4 +3,4 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 bucket = "adoption-service-terraform-state-ci"
-prefix = "terraform/state"
+prefix = "terraform/state/deployment"

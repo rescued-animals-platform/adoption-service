@@ -18,11 +18,6 @@ variable "zone" {
   type = string
 }
 
-variable "terraform_state_bucket" {
-  description = "The bucket name where the terraform state will be persisted"
-  type = string
-}
-
 variable "animal_pictures_storage_bucket" {
   description = "The bucket name where the animal pictures for the adoption service will be persisted"
   type = string
