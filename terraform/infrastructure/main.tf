@@ -16,7 +16,7 @@ terraform {
 }
 
 module "storages" {
-  source = "storages"
+  source = "./storages"
 
   region = var.region
   animal_pictures_storage_bucket = var.animal_pictures_storage_bucket
@@ -28,7 +28,7 @@ module "storages" {
 }
 
 module "cluster" {
-  source = "cluster"
+  source = "./cluster"
 
   location = var.zone
   cluster_name = var.cluster_name
