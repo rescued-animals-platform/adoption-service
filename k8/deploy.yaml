@@ -31,7 +31,7 @@ spec:
             # TODO: Make DB_HOST dynamic
             - name: DB_HOST
               value: 127.0.0.1:5432/animal-adoption-db-ci
-            - name: ANIMAL_PICTURES_BUCKET
+            - name: CI_ANIMAL_PICTURES_BUCKET
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
