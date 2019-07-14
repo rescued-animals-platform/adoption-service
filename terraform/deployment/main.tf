@@ -23,7 +23,7 @@ resource "kubernetes_secret" "adoption-service-secrets" {
     "sql-cloud-master-username" = var.cloud_sql_master_user_name
     "sql-cloud-master-password" = var.cloud_sql_master_user_password
     "animal-pictures-storage-bucket" = var.animal_pictures_storage_bucket
-    "db-connection-name" = data.terraform_remote_state.infra_terraform_state.db-connection-name
+    "db-connection-name" = data.terraform_remote_state.infra_terraform_state.outputs.db-connection-name
   }
 }
 
