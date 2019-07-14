@@ -36,12 +36,12 @@ spec:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: animal-pictures-storage-bucket
-            - name: SQL_CLOUD_MASTER_USERNAME
+            - name: CI_SQL_CLOUD_MASTER_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
                   key: sql-cloud-master-username
-            - name: SQL_CLOUD_MASTER_PASSWORD
+            - name: CI_SQL_CLOUD_MASTER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: adoption-service-secrets
