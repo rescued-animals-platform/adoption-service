@@ -23,7 +23,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "250m"
+              cpu: "100m"
               memory: "512Mi"
           env:
             - name: SPRING_PROFILE
@@ -53,7 +53,7 @@ spec:
               cpu: "500m"
               memory: "1Gi"
             requests:
-              cpu: "250m"
+              cpu: "100m"
               memory: "512Mi"
           env:
             - name: DB_CONNECTION_NAME
