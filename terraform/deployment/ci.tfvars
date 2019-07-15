@@ -2,7 +2,6 @@
 # APPLICATION SPECIFIC VARIABLES
 # ---------------------------------------------------------------------------------------------------------------------
 
-animal_pictures_storage_bucket = "animal-pictures-store-ci"
 infra_state_bucket = "adoption-service-terraform-state-ci"
 infra_state_prefix = "terraform/state/infra"
 number_of_replicas = 2
