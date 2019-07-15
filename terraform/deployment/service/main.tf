@@ -144,7 +144,7 @@ resource "kubernetes_service" "adoption-service-ingress" {
       target_port = "8080"
     }
 
-    selector {
+    selector = {
       app = "adoption-service"
     }
   }
