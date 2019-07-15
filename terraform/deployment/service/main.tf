@@ -55,7 +55,7 @@ resource "kubernetes_deployment" "adoption-service-deployment" {
 
           env {
             name = "DB_HOST"
-            value = concat(var.db_host, "/", data.terraform_remote_state.infra_terraform_state.outputs.db_name)
+            value = format("%s/%s", var.db_host, data.terraform_remote_state.infra_terraform_state.outputs.db_name)
           }
 
           env {
