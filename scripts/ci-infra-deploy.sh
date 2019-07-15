@@ -16,7 +16,7 @@ echo "Deploying Infra in CI project"
 } &> /dev/null
 
 cd terraform/infrastructure
-terraform init -backend-config="../infra-backend-ci.tfvars"
+terraform init -backend-config="backend-ci.tfvars"
 terraform apply -auto-approve -var-file="ci.tfvars"
 
 {

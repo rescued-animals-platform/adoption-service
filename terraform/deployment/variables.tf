@@ -3,20 +3,71 @@
 # These variables are expected to be passed in by the operator
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "animal_pictures_storage_bucket" {
-  description = "The bucket name where the animal pictures for the adoption service will be persisted"
-  type = string
-}
-
-# Terraform state data variables
-variable "bucket" {
+variable "infra_state_bucket" {
   description = "Terraform state bucket for the infrastructure data"
   type = string
 }
 
-variable "prefix" {
+variable "infra_state_prefix" {
   description = "Terraform state prefix for the infrastructure data"
   type = string
+}
+
+variable "spring_profile" {
+  description = "The spring profile defining the environment where this service will be deployed"
+}
+
+variable "number_of_replicas" {
+  description = "The number of desired replicas"
+}
+
+variable "min_ready_seconds" {
+  description = "Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available"
+}
+
+variable "db_host" {
+  description = "The database host for this service"
+  type = "string"
+}
+
+variable "adoption_service_resources_limits_cpu" {
+  description = "Describes the maximum amount of CPU allowed"
+  type = "string"
+}
+
+variable "adoption_service_resources_limits_memory" {
+  description = "Describes the maximum amount of memory allowed"
+  type = "string"
+}
+
+variable "adoption_service_resources_requests_cpu" {
+  description = "Describes the minimum amount of CPU required."
+  type = "string"
+}
+
+variable "adoption_service_resources_requests_memory" {
+  description = "Describes the minimum amount of memory required."
+  type = "string"
+}
+
+variable "cloudsql_proxy_resources_limits_cpu" {
+  description = "Describes the maximum amount of CPU allowed"
+  type = "string"
+}
+
+variable "cloudsql_proxy_resources_limits_memory" {
+  description = "Describes the maximum amount of memory allowed"
+  type = "string"
+}
+
+variable "cloudsql_proxy_resources_requests_cpu" {
+  description = "Describes the minimum amount of CPU required."
+  type = "string"
+}
+
+variable "cloudsql_proxy_resources_requests_memory" {
+  description = "Describes the minimum amount of memory required."
+  type = "string"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

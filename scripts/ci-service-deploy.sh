@@ -14,20 +14,14 @@ echo "Kubectl set up"
 {
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
-  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/deployment/credentials.json;
+  echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/deployment/secrets/credentials.json;
 
   source ${HOME}/repo/env.properties
   gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
 } &> /dev/null
 
-echo "Deploying service dependencies with terraform"
+echo "Deploying service with terraform"
 
 cd terraform/deployment
-terraform init -backend-config="../deployment-backend-ci.tfvars"
-terraform apply -auto-approve -var-file="ci.tfvars" -var-file="../infra-backend-ci.tfvars"
-
-echo "Deploying application"
-
-cd ~/repo
-kubectl apply -f k8/deploy.yaml
-kubectl apply -f k8/service.yaml
+terraform init -backend-config="backend-ci.tfvars"
+terraform apply -auto-approve -var-file="ci.tfvars"
