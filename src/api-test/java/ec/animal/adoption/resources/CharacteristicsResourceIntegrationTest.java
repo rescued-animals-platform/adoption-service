@@ -27,9 +27,11 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.models.rest.ApiError;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
@@ -38,12 +40,17 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
+    @Before
+    public void setUp() {
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+    }
+
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {
         Animal animal = createAndSaveAnimal();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .syncBody(characteristics)
                 .exchange()
@@ -60,7 +67,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
                 "\",\"temperaments\":{\"sociability\":\"" + randomAlphabetic(10) +
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, UUID.randomUUID())
                 .syncBody(characteristicsWithWrongData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -76,7 +83,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
                 "\",\"temperaments\":{\"balance\":\"" + Balance.BALANCED +
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, UUID.randomUUID())
                 .syncBody(characteristicsWithMissingData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -90,7 +97,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
     public void shouldReturn404NotFoundWhenCreatingCharacteristicsForNonExistentAnimal() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, UUID.randomUUID())
                 .syncBody(characteristics)
                 .exchange()
@@ -103,14 +110,14 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
         Animal animal = createAndSaveAnimal();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .syncBody(characteristics)
                 .exchange()
                 .expectStatus()
                 .isCreated();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .syncBody(characteristics)
                 .exchange()
@@ -122,7 +129,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
     @Test
     public void shouldReturn200OkWithCharacteristics() {
         Animal animal = createAndSaveAnimal();
-        Characteristics createdCharacteristics = this.webClient.post()
+        Characteristics createdCharacteristics = webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .syncBody(CharacteristicsBuilder.random().build())
                 .exchange()
@@ -132,7 +139,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
                 .returnResult()
                 .getResponseBody();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .exchange()
                 .expectStatus()
@@ -143,7 +150,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        this.webClient.get()
+        webTestClient.get()
                 .uri(CHARACTERISTICS_URL, UUID.randomUUID())
                 .exchange()
                 .expectStatus()
@@ -155,7 +162,7 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
         Animal animal = createAndSaveAnimal();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .exchange()
                 .expectStatus()

@@ -26,6 +26,7 @@ import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.UUID;
@@ -45,6 +46,8 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Before
     public void setUp() {
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+
         Animal animal = createAndSaveAnimal();
         animalUuid = animal.getUuid();
         name = randomAlphabetic(10);
@@ -58,7 +61,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn201CreatedWithLinkPicture() {
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(validMultipartPicturesFormData)
                 .exchange()
@@ -76,7 +79,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingPictureForNonExistentAnimal() {
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, UUID.randomUUID())
                 .syncBody(validMultipartPicturesFormData)
                 .exchange()
@@ -87,14 +90,14 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn409ConflictWhenCreatingPrimaryPictureThatAlreadyExist() {
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(validMultipartPicturesFormData)
                 .exchange()
                 .expectStatus()
                 .isCreated();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(validMultipartPicturesFormData)
                 .exchange()
@@ -111,7 +114,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
         invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("invalid-image-file.txt"));
         invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(invalidMultipartPicturesFormData)
                 .exchange()
@@ -128,7 +131,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
         invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
         invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("invalid-image-file.txt"));
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(invalidMultipartPicturesFormData)
                 .exchange()
@@ -139,7 +142,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn200OkWithPrimaryPicture() {
-        LinkPicture createdLinkPicture = this.webClient.post()
+        LinkPicture createdLinkPicture = webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
                 .syncBody(validMultipartPicturesFormData)
                 .exchange()
@@ -149,7 +152,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
                 .returnResult()
                 .getResponseBody();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(PICTURES_URL, animalUuid)
                 .exchange()
                 .expectStatus()
@@ -160,7 +163,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        this.webClient.get()
+        webTestClient.get()
                 .uri(PICTURES_URL, UUID.randomUUID())
                 .exchange()
                 .expectStatus()
@@ -170,7 +173,7 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Test
     public void shouldReturn404NotFoundWhenPrimaryPictureCannotBeFoundForValidAnimal() {
-        this.webClient.get()
+        webTestClient.get()
                 .uri(PICTURES_URL, animalUuid)
                 .exchange()
                 .expectStatus()

@@ -21,29 +21,35 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.net.URI;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-abstract class AbstractResourceIntegrationTest {
+public abstract class AbstractResourceIntegrationTest {
 
-    static final String ANIMALS_URL = "/adoption/animals";
+    @Value("${adoption.service.host}")
+    String host;
+
+    static final String ANIMALS_URL ="/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
     static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
     static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
-    @Autowired
-    WebTestClient webClient;
+    WebTestClient webTestClient;
 
     Animal createAndSaveAnimal() {
         Animal animalForAdoption = AnimalBuilder.random().withState(null).build();
 
-        EntityExchangeResult<Animal> animalEntityExchangeResult = this.webClient.post().uri(ANIMALS_URL).
+        EntityExchangeResult<Animal> animalEntityExchangeResult = webTestClient.post().uri(ANIMALS_URL).
                 syncBody(animalForAdoption).exchange().
                 expectStatus().isCreated().expectBody(Animal.class).returnResult();
 

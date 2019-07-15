@@ -1,3 +1,7 @@
+adoption:
+  service:
+    host: "http://localhost:8080"
+
 spring:
   datasource:
     url: jdbc:postgresql://adoption-service-db:5432/animal-adoption-db

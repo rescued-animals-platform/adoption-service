@@ -22,9 +22,11 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.models.rest.ApiError;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
@@ -34,12 +36,17 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
+    @Before
+    public void setUp() {
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+    }
+
     @Test
     public void shouldReturn201CreatedWithStory() {
         Animal animal = createAndSaveAnimal();
         Story story = new Story(randomAlphabetic(300));
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(story)
                 .exchange()
@@ -56,7 +63,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, UUID.randomUUID())
                 .syncBody(storyWithWrongData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -70,7 +77,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
         String storyWithMissingData = "{\"text\":\"\"}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, UUID.randomUUID())
                 .syncBody(storyWithMissingData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -82,7 +89,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, UUID.randomUUID())
                 .syncBody(new Story(randomAlphabetic(300)))
                 .exchange()
@@ -95,14 +102,14 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
         Animal animal = createAndSaveAnimal();
         Story story = new Story(randomAlphabetic(300));
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(story)
                 .exchange()
                 .expectStatus()
                 .isCreated();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(story)
                 .exchange()
@@ -114,7 +121,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     @Test
     public void shouldReturn200OkWithStory() {
         Animal animal = createAndSaveAnimal();
-        Story createdStory = this.webClient.post()
+        Story createdStory = webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(new Story(randomAlphabetic(100)))
                 .exchange()
@@ -124,7 +131,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
                 .returnResult()
                 .getResponseBody();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(STORY_URL, animal.getUuid())
                 .exchange()
                 .expectStatus()
@@ -135,7 +142,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        this.webClient.get()
+        webTestClient.get()
                 .uri(STORY_URL, UUID.randomUUID())
                 .exchange()
                 .expectStatus()
@@ -147,7 +154,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
         Animal animal = createAndSaveAnimal();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(STORY_URL, animal.getUuid())
                 .exchange()
                 .expectStatus()

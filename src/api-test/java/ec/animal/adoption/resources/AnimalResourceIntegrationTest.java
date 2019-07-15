@@ -23,9 +23,11 @@ import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.models.rest.ApiError;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
@@ -39,11 +41,16 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
+    @Before
+    public void setUp() {
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+    }
+
     @Test
     public void shouldReturn201Created() {
         Animal animal = AnimalBuilder.random().build();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animal)
                 .exchange()
@@ -67,7 +74,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSend() {
         Animal animal = AnimalBuilder.random().withState(null).build();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animal)
                 .exchange()
@@ -96,7 +103,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                 "\",\"species\":\"" + animal.getSpecies() + "\",\"estimatedAge\":\"" + animal.getEstimatedAge() +
                 "\",\"sex\":\"12345\"}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animalWithWrongData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -112,7 +119,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
         String animalWithMissingData = "{\"clinicalRecord\":\"\",\"name\":\"" + animal.getName() +
                 "\",\"species\":\"" + animal.getSpecies() + "\"}";
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animalWithMissingData)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -125,14 +132,14 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         Animal animal = AnimalBuilder.random().build();
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animal)
                 .exchange()
                 .expectStatus()
                 .isCreated();
 
-        this.webClient.post()
+        webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(animal)
                 .exchange()
@@ -143,7 +150,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
 
     @Test
     public void shouldReturn200OkWithAnimal() {
-        Animal createdAnimal = this.webClient.post()
+        Animal createdAnimal = webTestClient.post()
                 .uri(ANIMALS_URL)
                 .syncBody(AnimalBuilder.random().build())
                 .exchange()
@@ -153,7 +160,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                 .returnResult()
                 .getResponseBody();
 
-        this.webClient.get()
+        webTestClient.get()
                 .uri(ANIMALS_URL + "/{uuid}", createdAnimal.getUuid())
                 .exchange()
                 .expectStatus()
@@ -167,7 +174,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
-        this.webClient.get()
+        webTestClient.get()
                 .uri(ANIMALS_URL + "/{uuid}", UUID.randomUUID())
                 .exchange()
                 .expectStatus()
