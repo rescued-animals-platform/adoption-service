@@ -11,11 +11,12 @@ echo "Gcloud auth set up"
 echo "Preparing environment"
 
 {
-  source ${HOME}/repo/env.properties
-  export DB_HOST="google/${CI_DB_NAME}?cloudSqlInstance=${CI_DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+  source ${ENVIRONMENT_PROPERTIES_PATH}
+  export DB_HOST="127.0.0.1:5432/${CI_DB_NAME}"
 } &> /dev/null
 
-echo "Running Integration Tests"
+echo "Running Api Tests"
 
 echo $SPRING_PROFILE
-./gradlew integrationTest --rerun-tasks
+echo $APP_HOST
+./gradlew apiTest --rerun-tasks

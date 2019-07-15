@@ -304,6 +304,50 @@ jobs:
           name: Deploy service to CI
           command: ./scripts/ci-service-deploy.sh
 
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - env.properties
+
+  ci-api-test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run:
+          name: Running api tests in ci environment
+          command: ./scripts/ci-api-test.sh
+          environment:
+            SPRING_PROFILE: ci
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+          when: always
+
+      - store_test_results:
+          path: ~/junit
+
+      - store_artifacts:
+          path: ~/junit
+
 
 ####################
 # Workflows
@@ -370,6 +414,12 @@ workflows:
       - ci-service-deploy:
           requires:
             - publish-image
+          filters:
+            branches:
+              only: master
+      - ci-api-test:
+          requires:
+            - ci-service-deploy
           filters:
             branches:
               only: master
