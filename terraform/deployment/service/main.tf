@@ -109,11 +109,6 @@ resource "kubernetes_deployment" "adoption-service-deployment" {
             "-instances=$(DB_CONNECTION_NAME)=tcp:5432",
             "-credential_file=/secrets/cloudsql/credentials.json"]
 
-          security_context {
-            run_as_non_root = true
-            allow_privilege_escalation = false
-          }
-
           volume_mount {
             mount_path = "/secrets/cloudsql"
             name = "cloudsql-instance-credentials"
