@@ -3,5 +3,5 @@
 # ------------------------------------------------------------------------------
 
 output "adoption_service_endpoint" {
-  value = kubernetes_service.adoption-service-ingress.load_balancer_ingress
+  value = kubernetes_service.adoption-service-ingress.load_balancer_ingress[0].ip
 }
