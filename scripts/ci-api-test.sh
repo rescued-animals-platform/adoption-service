@@ -18,5 +18,5 @@ echo "Preparing environment"
 echo "Running Api Tests"
 
 echo $SPRING_PROFILE
-echo $APP_HOST
+echo $ADOPTION_SERVICE_URL
 ./gradlew apiTest --rerun-tasks
