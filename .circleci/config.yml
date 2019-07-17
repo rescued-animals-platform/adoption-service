@@ -181,7 +181,7 @@ jobs:
 
       - run:
           name: Running api tests
-          command: make apiTest
+          command: make api-test
 
       - save_cache:
           paths:
