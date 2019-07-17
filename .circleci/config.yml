@@ -21,6 +21,7 @@ executors:
   integration-tester:
     environment:
       SPRING_PROFILE: dev
+      ADOPTION_SERVICE_URL: http://localhost:8080
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
@@ -28,6 +29,15 @@ executors:
       - image: postgres:10
         environment:
           POSTGRES_DB: animal-adoption-db
+    working_directory: ~/repo
+
+  ci-integration-tester:
+    environment:
+      SPRING_PROFILE: ci
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    docker:
+      - image: circleci/openjdk:8-jdk
     working_directory: ~/repo
 
 jobs:
@@ -208,10 +218,7 @@ jobs:
               - env.properties
 
   ci-integration-test:
-    docker:
-      - image: circleci/openjdk:8-jdk
-
-    working_directory: ~/repo
+    executor: ci-integration-tester
 
     steps:
       - attach_workspace:
@@ -225,8 +232,6 @@ jobs:
       - run:
           name: Running integration tests in ci environment
           command: ./scripts/ci-integration-test.sh
-          environment:
-            SPRING_PROFILE: ci
 
       - save_cache:
           paths:
@@ -310,10 +315,7 @@ jobs:
             - env.properties
 
   ci-api-test:
-    docker:
-      - image: circleci/openjdk:8-jdk
-
-    working_directory: ~/repo
+    executor: ci-integration-tester
 
     steps:
       - attach_workspace:
@@ -327,8 +329,6 @@ jobs:
       - run:
           name: Running api tests in ci environment
           command: ./scripts/ci-api-test.sh
-          environment:
-            SPRING_PROFILE: ci
 
       - save_cache:
           paths:
