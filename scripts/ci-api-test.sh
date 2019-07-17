@@ -13,7 +13,6 @@ echo "Preparing environment"
 
 {
   source ${ENVIRONMENT_PROPERTIES_PATH}
-  export DB_HOST="127.0.0.1:5432/${CI_DB_NAME}"
 } &> /dev/null
 
 echo "Running Api Tests"

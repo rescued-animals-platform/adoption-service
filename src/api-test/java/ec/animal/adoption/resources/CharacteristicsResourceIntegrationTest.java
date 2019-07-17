@@ -27,11 +27,9 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.models.rest.ApiError;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
@@ -39,11 +37,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
-
-    @Before
-    public void setUp() {
-        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
-    }
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {

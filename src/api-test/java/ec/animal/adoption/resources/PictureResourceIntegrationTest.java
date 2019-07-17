@@ -26,7 +26,6 @@ import ec.animal.adoption.models.rest.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.UUID;
@@ -46,8 +45,6 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
 
     @Before
     public void setUp() {
-        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
-
         Animal animal = createAndSaveAnimal();
         animalUuid = animal.getUuid();
         name = randomAlphabetic(10);

@@ -22,29 +22,27 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.net.URI;
+import static java.lang.System.getenv;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public abstract class AbstractResourceIntegrationTest {
+    
+    private static String host;
 
-    @Value("${adoption.service.host}")
-    String host;
-
-    static final String ANIMALS_URL ="/adoption/animals";
+    static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
     static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
     static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
-    WebTestClient webTestClient;
+    static WebTestClient webTestClient;
+
+    @BeforeClass
+    public static void setUpClass() {
+        host = getenv("ADOPTION_SERVICE_URL");
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+    }
 
     Animal createAndSaveAnimal() {
         Animal animalForAdoption = AnimalBuilder.random().withState(null).build();

@@ -23,11 +23,9 @@ import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.models.rest.ApiError;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
@@ -40,11 +38,6 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
-
-    @Before
-    public void setUp() {
-        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
-    }
 
     @Test
     public void shouldReturn201Created() {
