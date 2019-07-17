@@ -12,7 +12,7 @@ zone = "us-east1-b"
 
 db_instance_name_prefix = "adoption-service-db-instance-ci"
 db_name = "animal-adoption-db-ci"
-db_machine_type = "db-f1-micro"
+db_machine_type = "db-g1-small"
 animal_pictures_storage_bucket = "animal-pictures-store-ci"
 cluster_name = "rescued-animals-platform"
 cluster_initial_node_count = 2
