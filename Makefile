@@ -6,7 +6,7 @@ spring_profile = $(SPRING_PROFILE)
 package:
 	./gradlew clean bootJar
 
-deploy: deploy-postgres package
+deploy: package
 	@docker build -t adoption-service .
 	echo "Deploying Adoption Service"; docker kill adoption-service; docker run -d --rm --name adoption-service -p 8080:8080 --link adoption-service-db:adoption-service-db -e SPRING_PROFILE=$(spring_profile) adoption-service; sleep 10;
 

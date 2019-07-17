@@ -95,6 +95,7 @@ jobs:
             - gradlew
             - gradlew.bat
             - Dockerfile
+            - Makefile
 
   pitest:
     executor: code-builder
@@ -138,7 +139,7 @@ jobs:
 
       - run:
           name: Running integration tests
-          command: ./gradlew integrationTest
+          command: ./gradlew integrationTest --rerun-tasks
 
       - save_cache:
           paths:
@@ -165,6 +166,8 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
+      - setup_remote_docker
+
       - run:
           name: Waiting for Postgres to be ready
           command: ./scripts/postgres-readiness-check.sh
@@ -178,7 +181,7 @@ jobs:
 
       - run:
           name: Running api tests
-          command: ./gradlew apiTest
+          command: make apiTest
 
       - save_cache:
           paths:
