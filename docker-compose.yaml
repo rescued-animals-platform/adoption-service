@@ -3,7 +3,7 @@ services:
   adoption-service:
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: docker/Dockerfile-dev
     image: adoption-service
     ports:
       - "8080:8080"
@@ -14,11 +14,22 @@ services:
     command: ["./wait-for-postgres.sh", "adoption-service-db", "java", "-jar", "-Dspring.profiles.active=$${SPRING_PROFILE}", "-d64", "-server", "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m", "-XX:+UseParNewGC", "-XX:+UseConcMarkSweepGC", "-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:+DisableExplicitGC", "-XX:+UseTLAB", "AdoptionService.jar"]
     # TODO: Add health check for adoption service
 
+  adoption-service-builder:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-builder
+    container_name: adoption-service-builder
+    environment:
+      SPRING_PROFILE:
+      ADOPTION_SERVICE_URL: http://adoption-service:8080
+    volumes:
+      - ~/.gradle:/home/gradle/.gradle
+
   adoption-service-db:
     image: postgres:10
     container_name: adoption-service-db
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     environment:
       POSTGRES_DB: animal-adoption-db
     healthcheck:

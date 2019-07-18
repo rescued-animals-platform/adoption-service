@@ -1,0 +1,9 @@
+FROM gradle:5.5.1-jdk8
+
+RUN mkdir /app
+
+ADD . /app
+
+VOLUME /app
+
+WORKDIR /app

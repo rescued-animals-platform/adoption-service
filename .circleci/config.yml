@@ -21,7 +21,7 @@ executors:
   integration-tester:
     environment:
       SPRING_PROFILE: dev
-      ADOPTION_SERVICE_URL: http://localhost:8080
+      ADOPTION_SERVICE_URL: http://adoption-service:8080
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
@@ -135,7 +135,8 @@ jobs:
       - run:
           name: Running integration tests
           command: |
-            sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
+            docker create -v /cfg --name configs alpine:3.4 /bin/true
+            docker cp ~/repo configs:/cfg
             make integration-test
 
       - save_cache:
