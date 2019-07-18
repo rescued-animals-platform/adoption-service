@@ -28,5 +28,6 @@ terraform init -backend-config="backend-ci.tfvars"
 terraform apply -auto-approve -var-file="ci.tfvars"
 
 {
-  echo "export ADOPTION_SERVICE_URL=\"$(terraform output adoption_service_ip):8080\"" >> ${ENVIRONMENT_PROPERTIES_PATH}
+  REMOTE_HOST = $(terraform output adoption_service_ip)
+  echo "export ADOPTION_SERVICE_URL=\"${REMOTE_HOST}:8080\"" >> ${ENVIRONMENT_PROPERTIES_PATH}
 } &> /dev/null
