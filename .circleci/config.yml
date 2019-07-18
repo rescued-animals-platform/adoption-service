@@ -21,18 +21,6 @@ executors:
   integration-tester:
     environment:
       SPRING_PROFILE: dev
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
-    docker:
-      - image: circleci/openjdk:8-jdk
-      - image: postgres:10
-        environment:
-          POSTGRES_DB: animal-adoption-db
-    working_directory: ~/repo
-
-  api-tester:
-    environment:
-      SPRING_PROFILE: dev
       ADOPTION_SERVICE_URL: http://localhost:8080
       JVM_OPTS: -Xmx3200m
       TERM: dumb
@@ -137,20 +125,16 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      - run:
-          name: Waiting for Postgres to be ready
-          command: ./scripts/ci-postgres-readiness-check.sh
+      - setup_remote_docker
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
-
       - run:
           name: Running integration tests
-          command: ./gradlew integrationTest --rerun-tasks
+          command: make integration-test
 
       - save_cache:
           paths:
@@ -171,7 +155,7 @@ jobs:
           path: ~/junit
 
   api-test:
-    executor: api-tester
+    executor: integration-tester
 
     steps:
       - attach_workspace:
