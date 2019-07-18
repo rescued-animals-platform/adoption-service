@@ -21,7 +21,6 @@ executors:
   integration-tester:
     environment:
       SPRING_PROFILE: dev
-      ADOPTION_SERVICE_URL: http://localhost:8080
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
@@ -31,7 +30,17 @@ executors:
           POSTGRES_DB: animal-adoption-db
     working_directory: ~/repo
 
-  ci-integration-tester:
+  api-tester:
+    environment:
+      SPRING_PROFILE: dev
+      ADOPTION_SERVICE_URL: http://localhost:8080
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+
+  ci-integration-api-tester:
     environment:
       SPRING_PROFILE: ci
       JVM_OPTS: -Xmx3200m
@@ -128,7 +137,7 @@ jobs:
 
       - run:
           name: Waiting for Postgres to be ready
-          command: ./scripts/postgres-readiness-check.sh
+          command: ./scripts/ci-postgres-readiness-check.sh
 
       - restore_cache:
           keys:
@@ -160,7 +169,7 @@ jobs:
           path: ~/junit
 
   api-test:
-    executor: integration-tester
+    executor: api-tester
 
     steps:
       - attach_workspace:
@@ -168,16 +177,10 @@ jobs:
 
       - setup_remote_docker
 
-      - run:
-          name: Waiting for Postgres to be ready
-          command: ./scripts/postgres-readiness-check.sh
-
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
-
-      - run: sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
 
       - run:
           name: Running api tests
@@ -221,7 +224,7 @@ jobs:
               - env.properties
 
   ci-integration-test:
-    executor: ci-integration-tester
+    executor: ci-integration-api-tester
 
     steps:
       - attach_workspace:
@@ -296,7 +299,7 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
             docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:$IMAGE_TAG;
 
   ci-service-deploy:
     docker:
@@ -318,7 +321,7 @@ jobs:
             - env.properties
 
   ci-api-test:
-    executor: ci-integration-tester
+    executor: ci-integration-api-tester
 
     steps:
       - attach_workspace:
