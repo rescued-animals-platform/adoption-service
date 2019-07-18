@@ -182,7 +182,7 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/junit
-            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+            find . -type f -regex ".*/build/test-results/apiTest/.*xml" -exec cp {} ~/junit \;
           when: always
 
       - store_test_results:
@@ -332,7 +332,7 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/junit
-            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+            find . -type f -regex ".*/build/test-results/apiTest/.*xml" -exec cp {} ~/junit \;
           when: always
 
       - store_test_results:
