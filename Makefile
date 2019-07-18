@@ -21,7 +21,7 @@ pitest:
 	./gradlew pitest
 
 integration-test:
-	@docker-compose start adoption-service-db
+	@docker-compose up -d adoption-service-db
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks
 	make undeploy
 
