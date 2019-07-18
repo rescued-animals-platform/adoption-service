@@ -104,6 +104,8 @@ jobs:
             - gradlew
             - gradlew.bat
             - Dockerfile
+            - Dockerfile-dev
+            - docker-compose.yaml
             - Makefile
 
   pitest:
