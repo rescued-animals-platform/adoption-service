@@ -29,5 +29,5 @@ terraform apply -auto-approve -var-file="ci.tfvars"
 
 {
   REMOTE_HOST = $(terraform output adoption_service_ip)
-  echo "export ADOPTION_SERVICE_URL=\"${REMOTE_HOST}:8080\"" >> ${ENVIRONMENT_PROPERTIES_PATH}
+  echo "export ADOPTION_SERVICE_URL=\"http://${REMOTE_HOST}:8080\"" >> ${ENVIRONMENT_PROPERTIES_PATH}
 } &> /dev/null
