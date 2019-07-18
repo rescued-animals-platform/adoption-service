@@ -28,7 +28,7 @@ executors:
       - image: circleci/openjdk:8-jdk
     working_directory: ~/repo
 
-  ci-integration-api-tester:
+  ci-integration-tester:
     environment:
       SPRING_PROFILE: ci
       JVM_OPTS: -Xmx3200m
@@ -210,7 +210,7 @@ jobs:
               - env.properties
 
   ci-integration-test:
-    executor: ci-integration-api-tester
+    executor: ci-integration-tester
 
     steps:
       - attach_workspace:
@@ -307,7 +307,7 @@ jobs:
             - env.properties
 
   ci-api-test:
-    executor: ci-integration-api-tester
+    executor: ci-integration-tester
 
     steps:
       - attach_workspace:
