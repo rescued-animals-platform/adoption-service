@@ -132,6 +132,8 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
+      - run: sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
+
       - run:
           name: Running integration tests
           command: make integration-test

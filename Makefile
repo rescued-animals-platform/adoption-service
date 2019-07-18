@@ -2,14 +2,13 @@ workspace=$(shell pwd)
 
 postgres_db = animal-adoption-db
 spring_profile = $(SPRING_PROFILE)
-docker_compose_builder = docker-compose run --rm adoption-service-builder
 
 package:
 	./gradlew clean bootJar
 
 deploy: package
 	@docker-compose build;
-	@docker-compose up -d adoption-service adoption-service-db; sleep 10;
+	@docker-compose up -d; sleep 10;
 
 undeploy:
 	@docker-compose stop
@@ -22,7 +21,7 @@ pitest:
 
 integration-test:
 	@docker-compose up -d adoption-service-db
-	$(docker_compose_builder) gradle integrationTest --rerun-tasks
+	./gradlew integrationTest --rerun-tasks
 	make undeploy
 
 api-test: deploy
@@ -30,6 +29,6 @@ api-test: deploy
 	make undeploy
 
 all-test: unit-test deploy
-	$(docker_compose_builder) gradle integrationTest --rerun-tasks
+	./gradlew integrationTest --rerun-tasks
 	./gradlew apiTest --rerun-tasks
 	make undeploy
