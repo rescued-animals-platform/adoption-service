@@ -1,12 +1,15 @@
 FROM adoptopenjdk/openjdk8:jre8u212-b04-alpine
 
-MAINTAINER Luisa Emme "emmeblm@gmail.com"
-
 ENV LANG C.UTF-8
 
 EXPOSE 8080
 
+RUN apk update && apk add postgresql
+
+RUN psql --version
+
 COPY build/libs/*.jar /api/AdoptionService.jar
+COPY scripts/wait-for-postgres.sh /api/wait-for-postgres.sh
 
 RUN ls /api
 

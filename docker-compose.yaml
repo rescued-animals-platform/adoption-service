@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  adoption-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    image: adoption-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILE:
+    depends_on:
+      - adoption-service-db
+    command: ["./wait-for-postgres.sh", "adoption-service-db", "java", "-jar", "-Dspring.profiles.active=$${SPRING_PROFILE}", "-d64", "-server", "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m", "-XX:+UseParNewGC", "-XX:+UseConcMarkSweepGC", "-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:+DisableExplicitGC", "-XX:+UseTLAB", "AdoptionService.jar"]
+    # TODO: Add health check for adoption service
+
+  adoption-service-db:
+    image: postgres:10
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_DB: animal-adoption-db
+    healthcheck:
+      test: ["CMD", "psql", "-U", "postgres", "-d", "animal-adoption-db"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
