@@ -135,10 +135,7 @@ jobs:
 
       - run:
           name: Running integration tests
-          command: |
-            docker create -v /cfg --name configs alpine:3.4 /bin/true
-            docker cp ~/repo configs:/cfg
-            make integration-test
+          command: make integration-test
 
       - save_cache:
           paths:
