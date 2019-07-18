@@ -39,6 +39,9 @@ public abstract class AbstractResourceIntegrationTest {
     @BeforeClass
     public static void setUpClass() {
         String host = getenv("ADOPTION_SERVICE_URL");
+
+        System.out.println(host);
+
         webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
     }
 
