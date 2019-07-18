@@ -86,6 +86,7 @@ jobs:
             - terraform
             - k8
             - scripts
+            - docker
             - gradle
             - build.gradle
             - settings.gradle
