@@ -28,8 +28,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static java.lang.System.getenv;
 
 public abstract class AbstractResourceIntegrationTest {
-    
-    private static String host;
 
     static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
@@ -40,7 +38,7 @@ public abstract class AbstractResourceIntegrationTest {
 
     @BeforeClass
     public static void setUpClass() {
-        host = getenv("ADOPTION_SERVICE_URL");
+        String host = getenv("ADOPTION_SERVICE_URL");
         webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
     }
 
