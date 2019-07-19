@@ -17,6 +17,11 @@ variable "spring_profile" {
   description = "The spring profile defining the environment where this service will be deployed"
 }
 
+variable "adoption_service_image" {
+  description = "The image for the adoption service pod"
+  type = "string"
+}
+
 variable "number_of_replicas" {
   description = "The number of desired replicas"
 }

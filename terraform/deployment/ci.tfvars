@@ -7,6 +7,7 @@ infra_state_prefix = "terraform/state/infra"
 number_of_replicas = 2
 min_ready_seconds = 5
 spring_profile = "ci"
+adoption_service_image = "emmeblm/adoption-service:latest"
 db_host = "127.0.0.1:5432"
 adoption_service_resources_limits_cpu = "500m"
 adoption_service_resources_limits_memory = "1Gi"
