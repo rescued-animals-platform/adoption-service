@@ -30,4 +30,5 @@ module "service" {
   min_ready_seconds = var.min_ready_seconds
   number_of_replicas = var.number_of_replicas
   spring_profile = var.spring_profile
+  adoption_service_image = var.adoption_service_image
 }
