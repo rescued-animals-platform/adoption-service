@@ -30,7 +30,7 @@ resource "kubernetes_deployment" "adoption-service-deployment" {
 
       spec {
         container {
-          image = var.adoption_service_image
+          image = "emmeblm/adoption-service:latest"
           name = "adoption-service"
 
           port {

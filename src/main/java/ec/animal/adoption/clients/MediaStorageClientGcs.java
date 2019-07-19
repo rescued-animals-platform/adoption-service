@@ -43,7 +43,6 @@ public class MediaStorageClientGcs implements MediaStorageClient {
         try {
             return storeImagePicture(imagePicture);
         } catch (StorageException ex) {
-
             throw new ImageStorageException();
         }
     }
