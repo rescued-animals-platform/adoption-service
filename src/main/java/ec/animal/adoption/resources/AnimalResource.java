@@ -46,6 +46,7 @@ public class AnimalResource {
     }
 
     @GetMapping("/{uuid}")
+
     public Animal get(@PathVariable("uuid") UUID uuid) {
         return animalService.getBy(uuid);
     }

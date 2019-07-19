@@ -1,7 +1,3 @@
-logging:
-  level:
-    root: WARN
-
 server:
   port: 8080
 
@@ -23,3 +19,11 @@ spring:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
+
+logging:
+  file: adoption-service.log
+    max-history: 15
+  pattern:
+    console: %date level=%level log_order=%sequence pkg=%logger %msg%n%n
+    dateformat: yyyy/MM/dd HH:mm:ss.SSS
+    file:

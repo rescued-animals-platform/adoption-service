@@ -13,6 +13,10 @@ variable "infra_state_prefix" {
 
 variable "spring_profile" {}
 
+variable "adoption_service_image" {
+  type = "string"
+}
+
 variable "number_of_replicas" {}
 
 variable "min_ready_seconds" {}
