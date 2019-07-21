@@ -25,11 +25,16 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.ImageStorageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MediaStorageClientGcs implements MediaStorageClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(MediaStorageClientGcs.class);
+
 
     private final GoogleCloudStorageClient googleCloudStorageClient;
 
@@ -43,6 +48,7 @@ public class MediaStorageClientGcs implements MediaStorageClient {
         try {
             return storeImagePicture(imagePicture);
         } catch (StorageException ex) {
+            logger.error("Image Storage Exception will be thrown", ex);
             throw new ImageStorageException();
         }
     }
