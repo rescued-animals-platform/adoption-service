@@ -1,7 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <conversionRule conversionWord="sequence" converterClass="ec.animal.adoption.logger.Sequence"/>
-    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
     <logger name="org.hibernate" level="ERROR"/>
+    <conversionRule conversionWord="sequence" converterClass="ec.animal.adoption.logger.Sequence"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} level=%level log_order=%sequence pkg=%logger %msg%n%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/adoption-service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/adoption-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} level=%level log_order=%sequence pkg=%logger %msg%n%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>500</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+    </root>
+
 </configuration>

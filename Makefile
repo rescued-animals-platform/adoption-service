@@ -11,6 +11,9 @@ deploy: package
 	@docker-compose build;
 	@docker-compose up -d adoption-service adoption-service-db; sleep 10;
 
+deploy-adoption-service-db:
+	@docker-compose up -d adoption-service-db
+
 undeploy:
 	@docker-compose stop
 
@@ -21,7 +24,7 @@ pitest:
 	./gradlew pitest
 
 integration-test:
-	@docker-compose build;
+	@docker-compose build
 	@docker-compose up -d adoption-service-db
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks
 	make undeploy

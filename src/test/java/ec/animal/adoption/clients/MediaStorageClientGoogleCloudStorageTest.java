@@ -20,10 +20,12 @@
 package ec.animal.adoption.clients;
 
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
+import ec.animal.adoption.clients.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -31,79 +33,86 @@ import ec.animal.adoption.exceptions.ImageStorageException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MediaStorageClientGcsTest {
+public class MediaStorageClientGoogleCloudStorageTest {
 
     @Mock
-    private GoogleCloudStorageClient googleCloudStorageClient;
+    private Storage storage;
 
-    private MediaStorageClientGcs mediaStorageClientGcs;
+    private MediaStorageClientGoogleCloudStorage mediaStorageClientGoogleCloudStorage;
 
     @Before
     public void setUp() {
-        mediaStorageClientGcs = new MediaStorageClientGcs(googleCloudStorageClient);
+        GoogleCloudStorageFactory googleCloudStorageFactory = mock(GoogleCloudStorageFactory.class);
+        mediaStorageClientGoogleCloudStorage = new MediaStorageClientGoogleCloudStorage(googleCloudStorageFactory);
+        String environment = randomAlphabetic(10);
+        ReflectionTestUtils.setField(mediaStorageClientGoogleCloudStorage, "bucketName", randomAlphabetic(10));
+        ReflectionTestUtils.setField(mediaStorageClientGoogleCloudStorage, "environment", environment);
+        when(googleCloudStorageFactory.get(environment)).thenReturn(storage);
     }
 
     @Test
     public void shouldBeAnInstanceOgMediaStorageClient() {
-        assertThat(mediaStorageClientGcs, is(instanceOf(MediaStorageClient.class)));
+        assertThat(mediaStorageClientGoogleCloudStorage, is(instanceOf(MediaStorageClient.class)));
     }
 
     @Test
     public void shouldStorePicture() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
+
         String largeImageUrl = randomAlphabetic(10);
         Blob largeImageBlob = mock(Blob.class);
         when(largeImageBlob.getMediaLink()).thenReturn(largeImageUrl);
-        when(googleCloudStorageClient.storeMedia(
-                imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
-        )).thenReturn(largeImageBlob);
+        when(storage.create(any(BlobInfo.class), eq(imagePicture.getLargeImageContent())))
+                .thenReturn(largeImageBlob);
+
         String smallImageUrl = randomAlphabetic(10);
         Blob smallImageBlob = mock(Blob.class);
         when(smallImageBlob.getMediaLink()).thenReturn(smallImageUrl);
-        when(googleCloudStorageClient.storeMedia(
-                imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
-        )).thenReturn(smallImageBlob);
+        when(storage.create(any(BlobInfo.class), eq(imagePicture.getSmallImageContent())))
+                .thenReturn(smallImageBlob);
+
         LinkPicture expectedPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
                 withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).
                 withLargeImageMediaLink(new MediaLink(largeImageUrl)).
                 withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
-        LinkPicture storedPicture = mediaStorageClientGcs.save(imagePicture);
+        LinkPicture storedPicture = mediaStorageClientGoogleCloudStorage.save(imagePicture);
 
-        assertThat(storedPicture, is(expectedPicture));
+        assertReflectionEquals(expectedPicture, storedPicture);
     }
 
     @Test(expected = ImageStorageException.class)
     public void shouldThrowImageStorageExceptionWhenStoringLargeImage() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
-        when(googleCloudStorageClient.storeMedia(
-                imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
-        )).thenThrow(StorageException.class);
+        when(storage.create(any(BlobInfo.class), eq(imagePicture.getLargeImageContent())))
+                .thenThrow(StorageException.class);
 
-        mediaStorageClientGcs.save(imagePicture);
+        mediaStorageClientGoogleCloudStorage.save(imagePicture);
     }
 
     @Test(expected = ImageStorageException.class)
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
-        when(googleCloudStorageClient.storeMedia(
-                imagePicture.getLargeImagePath(), imagePicture.getLargeImageContent()
-        )).thenReturn(mock(Blob.class));
-        when(googleCloudStorageClient.storeMedia(
-                imagePicture.getSmallImagePath(), imagePicture.getSmallImageContent()
-        )).thenThrow(StorageException.class);
+        when(storage.create(any(BlobInfo.class), eq(imagePicture.getLargeImageContent())))
+                .thenReturn(mock(Blob.class));
+        when(storage.create(any(BlobInfo.class), eq(imagePicture.getSmallImageContent())))
+                .thenThrow(StorageException.class);
 
-        mediaStorageClientGcs.save(imagePicture);
+        mediaStorageClientGoogleCloudStorage.save(imagePicture);
     }
 }

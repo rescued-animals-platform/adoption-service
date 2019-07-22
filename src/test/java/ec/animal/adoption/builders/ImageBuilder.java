@@ -22,6 +22,7 @@ package ec.animal.adoption.builders;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
@@ -38,9 +39,20 @@ public class ImageBuilder {
         ImageBuilder imageBuilder = new ImageBuilder();
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         imageBuilder.extension = supportedImageExtension.getExtension();
-        imageBuilder.content = supportedImageExtension.getStartingBytes();
+
+        byte[] startingBytes = supportedImageExtension.getStartingBytes();
+        Random random = new Random();
+        byte[] randomContent = new byte[100];
+        random.nextBytes(randomContent);
+        byte[] content = new byte[startingBytes.length + randomContent.length];
+        ByteBuffer byteBuffer = ByteBuffer.wrap(content);
+        byteBuffer.put(startingBytes);
+        byteBuffer.put(randomContent);
+        imageBuilder.content = byteBuffer.array();
+
         int sizeInBytes = new Random().nextInt(ONE_MEGA_BYTE_IN_BYTES);
         imageBuilder.sizeInBytes = sizeInBytes == 0 ? 1 : sizeInBytes;
+
         return imageBuilder;
     }
 

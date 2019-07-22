@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service.svg?style=svg)](https://circleci.com/gh/rescued-animals-platform/adoption-service)
 
 
-Tech stack: Java 8, Gradle 4.0, SpringBoot 2.0.2.RELEASE, Flyway, Jetty 9.4.10.v20180503, Docker 18.03.1-ce, PostgresSQL 10, Terraform v0.12.3, Google Cloud Platform.
+Tech stack: Java 8, Gradle 5.5.1, SpringBoot 2.1.6.RELEASE, Flyway, Docker 18.09.2, PostgresSQL 10, Terraform v0.12.4, Google Cloud Platform.
 
 # Setting up your development environment (Linux, macOS)
 
@@ -28,20 +28,19 @@ Follow the next steps in the order they appear. After completing them, you would
 Without this steps, you would be able to run all tests from a terminal. Only if you want to be able to run integration tests from your IDE, you can do the following:
 
 _**(Only for the first time)**_
-  
+
 - Run:
-        
-        sudo sh -c "echo '127.0.0.1      adoption-service-db' >> /etc/hosts"
+        sudo sh -c "echo '127.0.0.1       adoption-service-db' >> /etc/hosts"
         
 - Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `SPRING_PROFILE=dev` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
 
 _**(Always, before running the integration tests)**_
 
-- Verify that the postgres container is running:
+- Verify that the adoption-service-db container is running:
 
         docker ps -a    
   
-  If it is not, run: `make deploy-postgres`
+  If it is not, run: `make deploy-adoption-service-db`
         
 ## Useful commands
 
@@ -56,30 +55,20 @@ _**(Always, before running the integration tests)**_
 3. Run integration tests with:
 
         make integration-test
-   
-   This command automatically runs deploy-postgres (before tests).
 
 4. Run api tests with:
 
         make api-test
-   
-   This command automatically runs deploy-postgres (before tests).
 
-5. Run all tests (unit, pitest, integration, and api) with:
+5. Run all tests (unit, integration, and api) with:
 
         make all-test
 
-6. Deploy the postgres database with:
+6. Deploy the adoption service database (useful when running integration tests from the IDE) with:
 
-        make deploy-postgres
-   
-   You'll need to do this if you want to run integration tests from the IDE.
-
-7. Un deploy the postgres database with:
-
-        make undeploy-postgres
+        make deploy-adoption-service-db
         
-8. Local deployment of the adoption service:
+7. Local deployment of the adoption service (useful when running api tests from the IDE and manual local testing):
 
         make deploy
         

@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.clients;
 
-import com.google.cloud.storage.StorageException;
-import ec.animal.adoption.clients.gcloud.GoogleCloudStorageClient;
+import com.google.cloud.storage.*;
+import ec.animal.adoption.clients.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -28,19 +28,29 @@ import ec.animal.adoption.exceptions.ImageStorageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import static com.google.cloud.storage.Acl.of;
+
 @Component
-public class MediaStorageClientGcs implements MediaStorageClient {
+public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(MediaStorageClientGcs.class);
+    @Value("${google.cloud.storage.bucket}")
+    private String bucketName;
 
+    @Value("${google.cloud.storage.environment}")
+    private String environment;
 
-    private final GoogleCloudStorageClient googleCloudStorageClient;
+    private final GoogleCloudStorageFactory googleCloudStorageFactory;
+    private static final Logger logger = LoggerFactory.getLogger(MediaStorageClientGoogleCloudStorage.class);
 
     @Autowired
-    public MediaStorageClientGcs(GoogleCloudStorageClient googleCloudStorageClient) {
-        this.googleCloudStorageClient = googleCloudStorageClient;
+    public MediaStorageClientGoogleCloudStorage(GoogleCloudStorageFactory googleCloudStorageFactory) {
+        this.googleCloudStorageFactory = googleCloudStorageFactory;
     }
 
     @Override
@@ -54,12 +64,9 @@ public class MediaStorageClientGcs implements MediaStorageClient {
     }
 
     private LinkPicture storeImagePicture(ImagePicture picture) {
-        String largeImageUrl = googleCloudStorageClient.storeMedia(
-                picture.getLargeImagePath(), picture.getLargeImageContent()
-        ).getMediaLink();
-        String smallImageUrl = googleCloudStorageClient.storeMedia(
-                picture.getSmallImagePath(), picture.getSmallImageContent()
-        ).getMediaLink();
+        String largeImageUrl = storeMedia(picture.getLargeImagePath(), picture.getLargeImageContent()).getMediaLink();
+        String smallImageUrl = storeMedia(picture.getSmallImagePath(), picture.getSmallImageContent()).getMediaLink();
+
         return new LinkPicture(
                 picture.getAnimalUuid(),
                 picture.getName(),
@@ -67,5 +74,14 @@ public class MediaStorageClientGcs implements MediaStorageClient {
                 new MediaLink(largeImageUrl),
                 new MediaLink(smallImageUrl)
         );
+    }
+
+    private Blob storeMedia(String mediaPath, byte[] content) {
+        Storage storage = googleCloudStorageFactory.get(environment);
+        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
+                setAcl(new ArrayList<>(Collections.singletonList(of(Acl.User.ofAllUsers(), Acl.Role.READER)))).
+                build();
+
+        return storage.create(blobInfo, content);
     }
 }

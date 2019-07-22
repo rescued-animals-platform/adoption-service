@@ -28,8 +28,8 @@ services:
   adoption-service-db:
     image: postgres:10
     container_name: adoption-service-db
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: animal-adoption-db
     healthcheck:
