@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    gcp:
+      config.enabled: false
+      logging.enabled: false
   datasource:
     url: jdbc:postgresql://adoption-service-db:5432/animal-adoption-db
     username: postgres
@@ -15,3 +19,6 @@ google:
     storage:
       environment: dev
       bucket: adoption-service-testing
+
+logging:
+  config: classpath:logback-spring-dev.xml

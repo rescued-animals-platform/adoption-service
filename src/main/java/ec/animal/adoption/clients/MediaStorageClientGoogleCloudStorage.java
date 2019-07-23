@@ -25,8 +25,8 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.ImageStorageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     private String environment;
 
     private final GoogleCloudStorageFactory googleCloudStorageFactory;
-    private static final Logger logger = LoggerFactory.getLogger(MediaStorageClientGoogleCloudStorage.class);
+    private static final Log LOGGER = LogFactory.getLog(MediaStorageClientGoogleCloudStorage.class);
 
     @Autowired
     public MediaStorageClientGoogleCloudStorage(GoogleCloudStorageFactory googleCloudStorageFactory) {
@@ -58,7 +58,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
         try {
             return storeImagePicture(imagePicture);
         } catch (StorageException ex) {
-            logger.error("Image Storage Exception will be thrown", ex);
+            LOGGER.error("Image Storage Exception will be thrown", ex);
             throw new ImageStorageException();
         }
     }

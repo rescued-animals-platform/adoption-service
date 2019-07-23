@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    gcp:
+      config.enabled: true
+      logging.enabled: true
   datasource:
     url: jdbc:postgresql://${DB_HOST}
     username: ${CI_SQL_CLOUD_MASTER_USERNAME}
@@ -10,3 +14,6 @@ google:
     storage:
       environment: ${SPRING_PROFILE}
       bucket: ${CI_ANIMAL_PICTURES_BUCKET}
+
+logging:
+  config: classpath:logback-spring-ci.xml

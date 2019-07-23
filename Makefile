@@ -8,7 +8,7 @@ package:
 	./gradlew clean bootJar
 
 deploy: package
-	@docker-compose build;
+	@docker-compose build adoption-service
 	@docker-compose up -d adoption-service adoption-service-db; sleep 10;
 
 deploy-adoption-service-db:
@@ -17,22 +17,24 @@ deploy-adoption-service-db:
 undeploy:
 	@docker-compose stop
 
+builder-build:
+	@docker-compose build adoption-service-builder
+
 unit-test:
 	./gradlew clean build
 
 pitest:
 	./gradlew pitest
 
-integration-test:
-	@docker-compose build
+integration-test: builder-build
 	@docker-compose up -d adoption-service-db
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks
 	make undeploy
 
-api-test: deploy
+api-test: deploy builder-build
 	$(docker_compose_builder) gradle apiTest --rerun-tasks
 	make undeploy
 
-all-test: unit-test deploy
+all-test: unit-test deploy builder-build
 	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
 	make undeploy
