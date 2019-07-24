@@ -22,8 +22,11 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import org.junit.BeforeClass;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.time.Duration;
 
 import static java.lang.System.getenv;
 
@@ -39,7 +42,7 @@ public abstract class AbstractResourceIntegrationTest {
     @BeforeClass
     public static void setUpClass() {
         String host = getenv("ADOPTION_SERVICE_URL");
-        webTestClient = WebTestClient.bindToServer().baseUrl(host).build();
+        webTestClient = WebTestClient.bindToServer().baseUrl(host).responseTimeout(Duration.ofSeconds(10)).build();
     }
 
     Animal createAndSaveAnimal() {
