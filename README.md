@@ -76,3 +76,7 @@ _**(Always, before running the integration tests)**_
         
 
 Check the **Makefile** file to discover more tasks.
+
+# Postman collection with sample requests
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3916ba8b54f6943cb99b)
