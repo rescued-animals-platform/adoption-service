@@ -21,10 +21,8 @@ echo "Kubectl set up"
   gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
 } &> /dev/null
 
-echo "Deploying service with terraform"
+echo "Un-deploying service with terraform"
 
 cd terraform/deployment
 terraform init -backend-config="backend-ci.tfvars"
-terraform apply -auto-approve -var-file="ci.tfvars"
-
-echo "export ADOPTION_SERVICE_URL=\"http://$(terraform output adoption_service_ip):8080\"" >> ${ENVIRONMENT_PROPERTIES_PATH}
+terraform destroy -auto-approve -var-file="ci.tfvars"
