@@ -434,9 +434,16 @@ workflows:
           filters:
             branches:
               only: master
-      - ci-service-undeploy:
+      - destroy-ci-service:
+          type: approval
           requires:
             - ci-api-test
+          filters:
+            branches:
+              only: master
+      - ci-service-undeploy:
+          requires:
+            - destroy-ci-service
           filters:
             branches:
               only: master
