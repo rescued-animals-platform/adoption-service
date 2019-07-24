@@ -21,7 +21,7 @@ echo "Kubectl set up"
   gcloud container clusters get-credentials ${CI_CLUSTER_NAME} --zone=${CI_CLUSTER_ZONE} --project=${CI_CLUSTER_PROJECT}
 } &> /dev/null
 
-echo "Un-deploying service with terraform"
+echo "Un deploying service with terraform"
 
 cd terraform/deployment
 terraform init -backend-config="backend-ci.tfvars"

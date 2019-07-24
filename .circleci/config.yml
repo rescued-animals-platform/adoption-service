@@ -355,10 +355,20 @@ jobs:
           name: Un deploying service in CI
           command: ./scripts/ci-service-undeploy.sh
 
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - env.properties
+  ci-infra-undeploy:
+    docker:
+      - image: emmeblm/adoption-service-deployer:latest
+
+    working_directory: ~/repo
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Un deploying CI Infrastructure
+          command: ./scripts/ci-infra-undeploy.sh;
+
 
 ####################
 # Workflows
@@ -444,6 +454,19 @@ workflows:
       - ci-service-undeploy:
           requires:
             - destroy-ci-service
+          filters:
+            branches:
+              only: master
+      - destroy-ci-infra:
+          type: approval
+          requires:
+            - ci-api-test
+          filters:
+            branches:
+              only: master
+      - ci-infra-undeploy:
+          requires:
+            - destroy-ci-infra
           filters:
             branches:
               only: master
