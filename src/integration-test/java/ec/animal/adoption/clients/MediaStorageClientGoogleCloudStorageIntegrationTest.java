@@ -42,7 +42,6 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -93,7 +92,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
         deleteMedia(smallImagePath);
     }
 
-    public void deleteMedia(String mediaPath) {
+    public void deleteMedia(final String mediaPath) {
         Storage storage = googleCloudStorageFactory.get(environment);
         BlobId blobId = BlobId.of(bucketName, mediaPath);
 

@@ -30,7 +30,10 @@ public class Adopted extends State {
     private final String adoptionFormId;
 
     @JsonCreator
-    public Adopted(@JsonProperty("date") LocalDateTime date, @JsonProperty("adoptionFormId") String adoptionFormId) {
+    public Adopted(
+            @JsonProperty("date") final LocalDateTime date,
+            @JsonProperty("adoptionFormId") final String adoptionFormId
+    ) {
         super(date);
         this.adoptionFormId = adoptionFormId;
     }

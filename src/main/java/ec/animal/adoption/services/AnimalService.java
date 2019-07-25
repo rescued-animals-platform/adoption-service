@@ -32,15 +32,15 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
 
     @Autowired
-    public AnimalService(AnimalRepository animalRepository) {
+    public AnimalService(final AnimalRepository animalRepository) {
         this.animalRepository = animalRepository;
     }
 
-    public Animal create(Animal animal) {
+    public Animal create(final Animal animal) {
         return animalRepository.save(animal);
     }
 
-    public Animal getBy(UUID uuid) {
+    public Animal getBy(final UUID uuid) {
         return animalRepository.getBy(uuid);
     }
 }

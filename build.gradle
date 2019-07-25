@@ -13,6 +13,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'pmd'
 apply from: 'gradle/dependencies.gradle'
 apply from: 'gradle/pitest.gradle'
 apply from: 'gradle/sourceset.gradle'
@@ -36,6 +37,11 @@ configurations {
     apiTestRuntime.extendsFrom(testRuntime)
 }
 
+pmd {
+    ruleSets = []
+    ruleSetConfig = resources.text.fromFile("pmd/ruleset.xml")
+}
+
 task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
@@ -53,5 +59,12 @@ tasks.withType(Test) {
     }
     configure {
         systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
+    }
+}
+
+tasks.withType(Pmd){
+    reports{
+        xml.enabled=true
+        html.enabled=true
     }
 }

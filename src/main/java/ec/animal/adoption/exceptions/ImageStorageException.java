@@ -19,16 +19,18 @@
 
 package ec.animal.adoption.exceptions;
 
+import javax.persistence.Transient;
+
 public class ImageStorageException extends RuntimeException {
 
-    private final String message;
+    @Transient
+    private static final long serialVersionUID = -341446159169481893L;
 
-    public ImageStorageException() {
-        this.message = "The image could not be stored";
-    }
+    @Transient
+    private static final String MESSAGE = "The image could not be stored";
 
-    @Override
-    public String getMessage() {
-        return this.message;
+    public ImageStorageException(final Throwable throwable) {
+        super(MESSAGE);
+        this.initCause(throwable);
     }
 }

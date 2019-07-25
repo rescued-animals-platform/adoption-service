@@ -54,6 +54,7 @@ public class ApiErrorTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ApiError.class)
                 .usingGetClass()

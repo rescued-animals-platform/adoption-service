@@ -63,7 +63,7 @@ public class JpaAnimal {
         // Required by jpa
     }
 
-    public JpaAnimal(Animal animal) {
+    public JpaAnimal(final Animal animal) {
         this();
         this.uuid = UUID.randomUUID();
         this.clinicalRecord = animal.getClinicalRecord();
@@ -89,6 +89,7 @@ public class JpaAnimal {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -110,6 +111,7 @@ public class JpaAnimal {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);

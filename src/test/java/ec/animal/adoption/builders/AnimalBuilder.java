@@ -43,9 +43,7 @@ public class AnimalBuilder {
     private LocalDateTime registrationDate;
 
     public static AnimalBuilder random() {
-        AnimalBuilder animalBuilder = new AnimalBuilder();
-        animalBuilder.uuid = null;
-        animalBuilder.registrationDate = null;
+        final AnimalBuilder animalBuilder = new AnimalBuilder();
         animalBuilder.clinicalRecord = randomAlphabetic(10);
         animalBuilder.name = randomAlphabetic(10);
         animalBuilder.species = getRandomSpecies();
@@ -55,42 +53,42 @@ public class AnimalBuilder {
         return animalBuilder;
     }
 
-    public AnimalBuilder withUuid(UUID uuid) {
+    public AnimalBuilder withUuid(final UUID uuid) {
         this.uuid = uuid;
         return this;
     }
 
-    public AnimalBuilder withClinicalRecord(String clinicalRecord) {
+    public AnimalBuilder withClinicalRecord(final String clinicalRecord) {
         this.clinicalRecord = clinicalRecord;
         return this;
     }
 
-    public AnimalBuilder withName(String name) {
+    public AnimalBuilder withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public AnimalBuilder withRegistrationDate(LocalDateTime registrationDate) {
+    public AnimalBuilder withRegistrationDate(final LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
 
-    public AnimalBuilder withSpecies(Species species) {
+    public AnimalBuilder withSpecies(final Species species) {
         this.species = species;
         return this;
     }
 
-    public AnimalBuilder withEstimatedAge(EstimatedAge estimatedAge) {
+    public AnimalBuilder withEstimatedAge(final EstimatedAge estimatedAge) {
         this.estimatedAge = estimatedAge;
         return this;
     }
 
-    public AnimalBuilder withSex(Sex sex) {
+    public AnimalBuilder withSex(final Sex sex) {
         this.sex = sex;
         return this;
     }
 
-    public AnimalBuilder withState(State state) {
+    public AnimalBuilder withState(final State state) {
         this.state = state;
         return this;
     }

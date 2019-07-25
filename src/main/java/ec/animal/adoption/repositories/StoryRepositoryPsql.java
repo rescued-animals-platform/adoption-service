@@ -38,30 +38,32 @@ public class StoryRepositoryPsql implements StoryRepository {
     private final AnimalRepositoryPsql animalRepositoryPsql;
 
     @Autowired
-    public StoryRepositoryPsql(JpaStoryRepository jpaStoryRepository, AnimalRepositoryPsql animalRepositoryPsql) {
+    public StoryRepositoryPsql(
+            final JpaStoryRepository jpaStoryRepository,
+            final AnimalRepositoryPsql animalRepositoryPsql
+    ) {
         this.jpaStoryRepository = jpaStoryRepository;
         this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
-    public Story save(Story story) {
-        if(!animalRepositoryPsql.animalExists(story.getAnimalUuid())) {
+    public Story save(final Story story) {
+        if (!animalRepositoryPsql.animalExists(story.getAnimalUuid())) {
             throw new EntityNotFoundException();
         }
 
         try {
-            JpaStory jpaStory = jpaStoryRepository.save(new JpaStory(story));
-            return jpaStory.toStory();
-        } catch (DataIntegrityViolationException ex) {
-            throw new EntityAlreadyExistsException();
+            return jpaStoryRepository.save(new JpaStory(story)).toStory();
+        } catch (DataIntegrityViolationException exception) {
+            throw new EntityAlreadyExistsException(exception);
         }
     }
 
     @Override
-    public Story getBy(UUID animalUuid) {
-        Optional<JpaStory> jpaStory = jpaStoryRepository.findByAnimalUuid(animalUuid);
+    public Story getBy(final UUID animalUuid) {
+        final Optional<JpaStory> jpaStory = jpaStoryRepository.findByAnimalUuid(animalUuid);
 
-        if(!jpaStory.isPresent()) {
+        if (!jpaStory.isPresent()) {
             throw new EntityNotFoundException();
         }
 

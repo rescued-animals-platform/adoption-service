@@ -32,9 +32,9 @@ public enum SupportedImageExtension {
     private final String extension;
     private final byte[] startingBytes;
 
-    SupportedImageExtension(byte[] startingBytes, String extension) {
+    SupportedImageExtension(final byte[] startingBytes, final String extension) {
         this.extension = extension;
-        this.startingBytes = startingBytes;
+        this.startingBytes = Arrays.copyOf(startingBytes, startingBytes.length);
     }
 
     public String getExtension() {
@@ -42,12 +42,12 @@ public enum SupportedImageExtension {
     }
 
     public byte[] getStartingBytes() {
-        return startingBytes;
+        return Arrays.copyOf(startingBytes, startingBytes.length);
     }
 
-    public static Optional<SupportedImageExtension> getMatchFor(String extension, byte[] content) {
+    public static Optional<SupportedImageExtension> getMatchFor(final String extension, final byte[] content) {
         return Arrays.stream(SupportedImageExtension.values()).filter(s -> {
-            byte[] startingBytesFromContent = Arrays.copyOf(content, s.startingBytes.length);
+            final byte[] startingBytesFromContent = Arrays.copyOf(content, s.startingBytes.length);
             return s.extension.equals(extension) && Arrays.equals(startingBytesFromContent, s.startingBytes);
         }).findFirst();
     }

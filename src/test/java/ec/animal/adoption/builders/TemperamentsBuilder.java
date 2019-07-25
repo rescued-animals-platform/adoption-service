@@ -33,7 +33,7 @@ public class TemperamentsBuilder {
     private Balance balance;
 
     public static TemperamentsBuilder random() {
-        TemperamentsBuilder temperamentsBuilder = new TemperamentsBuilder();
+        final TemperamentsBuilder temperamentsBuilder = new TemperamentsBuilder();
         temperamentsBuilder.sociability = getRandomSociability();
         temperamentsBuilder.docility = getRandomDocility();
         temperamentsBuilder.balance = getRandomBalance();
@@ -44,17 +44,17 @@ public class TemperamentsBuilder {
         return new TemperamentsBuilder();
     }
 
-    public TemperamentsBuilder withSociability(Sociability sociability) {
+    public TemperamentsBuilder withSociability(final Sociability sociability) {
         this.sociability = sociability;
         return this;
     }
 
-    public TemperamentsBuilder withDocility(Docility docility) {
+    public TemperamentsBuilder withDocility(final Docility docility) {
         this.docility = docility;
         return this;
     }
 
-    public TemperamentsBuilder withBalance(Balance balance) {
+    public TemperamentsBuilder withBalance(final Balance balance) {
         this.balance = balance;
         return this;
     }

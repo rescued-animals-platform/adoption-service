@@ -35,18 +35,18 @@ public class AnimalResource {
     private final AnimalService animalService;
 
     @Autowired
-    public AnimalResource(AnimalService animalService) {
+    public AnimalResource(final AnimalService animalService) {
         this.animalService = animalService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Animal create(@RequestBody @Valid Animal animal) {
+    public Animal create(@RequestBody @Valid final Animal animal) {
         return animalService.create(animal);
     }
 
     @GetMapping("/{uuid}")
-    public Animal get(@PathVariable("uuid") UUID uuid) {
+    public Animal get(@PathVariable("uuid") final UUID uuid) {
         return animalService.getBy(uuid);
     }
 }

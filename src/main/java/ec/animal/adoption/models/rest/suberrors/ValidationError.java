@@ -31,12 +31,13 @@ public class ValidationError implements ApiSubError {
     private final String message;
 
     @JsonCreator
-    public ValidationError(@JsonProperty("field") String field, @JsonProperty("message") String message) {
+    public ValidationError(@JsonProperty("field") final String field, @JsonProperty("message") final String message) {
         this.field = field;
         this.message = message;
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -48,6 +49,7 @@ public class ValidationError implements ApiSubError {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = field != null ? field.hashCode() : 0;
         result = 31 * result + (message != null ? message.hashCode() : 0);

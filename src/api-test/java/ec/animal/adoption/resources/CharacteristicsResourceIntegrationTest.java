@@ -36,7 +36,8 @@ import java.util.UUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
-public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+public class CharacteristicsResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {

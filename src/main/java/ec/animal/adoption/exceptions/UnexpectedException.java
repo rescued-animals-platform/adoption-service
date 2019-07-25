@@ -19,11 +19,17 @@
 
 package ec.animal.adoption.exceptions;
 
+import javax.persistence.Transient;
+
 public class UnexpectedException extends RuntimeException {
+
+    @Transient
+    private static final long serialVersionUID = -142416559179421823L;
 
     private final String message;
 
-    public UnexpectedException(Throwable throwable) {
+    public UnexpectedException(final Throwable throwable) {
+        super();
         this.message = "An unexpected error occurred";
         this.initCause(throwable);
     }

@@ -63,6 +63,7 @@ public class StoryTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Story.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }

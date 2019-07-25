@@ -33,12 +33,12 @@ import java.time.LocalDateTime;
         @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
         @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
 })
-public abstract class State {
+public class State {
 
     @JsonProperty("date")
     private final LocalDateTime date;
 
-    protected State(LocalDateTime date) {
+    protected State(final LocalDateTime date) {
         this.date = date;
     }
 

@@ -29,7 +29,7 @@ public class GoogleCloudStorageFactory {
 
     private static final String DEV_ENVIRONMENT = "dev";
 
-    public Storage get(String environment) {
+    public Storage get(final String environment) {
         if (DEV_ENVIRONMENT.equals(environment)) {
             return LocalStorageHelper.getOptions().getService();
         }

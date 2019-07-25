@@ -67,6 +67,7 @@ public class JpaTemperamentsTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAnsHashCode() {
         EqualsVerifier.forClass(JpaTemperaments.class).usingGetClass().verify();
     }

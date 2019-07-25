@@ -39,29 +39,30 @@ public class CharacteristicsRepositoryPsql implements CharacteristicsRepository 
 
     @Autowired
     public CharacteristicsRepositoryPsql(
-            JpaCharacteristicsRepository jpaCharacteristicsRepository, AnimalRepositoryPsql animalRepositoryPsql
+            final JpaCharacteristicsRepository jpaCharacteristicsRepository,
+            final AnimalRepositoryPsql animalRepositoryPsql
     ) {
         this.jpaCharacteristicsRepository = jpaCharacteristicsRepository;
         this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
-    public Characteristics save(Characteristics characteristics) {
-        if(!animalRepositoryPsql.animalExists(characteristics.getAnimalUuid())) {
+    public Characteristics save(final Characteristics characteristics) {
+        if (!animalRepositoryPsql.animalExists(characteristics.getAnimalUuid())) {
             throw new EntityNotFoundException();
         }
 
         try {
-            JpaCharacteristics entity = new JpaCharacteristics(characteristics);
-            JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository.save(entity);
+            JpaCharacteristics jpaCharacteristics = jpaCharacteristicsRepository
+                    .save(new JpaCharacteristics(characteristics));
             return jpaCharacteristics.toCharacteristics();
-        } catch (DataIntegrityViolationException ex) {
-            throw new EntityAlreadyExistsException();
+        } catch (DataIntegrityViolationException exception) {
+            throw new EntityAlreadyExistsException(exception);
         }
     }
 
     @Override
-    public Characteristics getBy(UUID animalUuid) {
+    public Characteristics getBy(final UUID animalUuid) {
         Optional<JpaCharacteristics> jpaCharacteristics = jpaCharacteristicsRepository.findByAnimalUuid(animalUuid);
 
         if (!jpaCharacteristics.isPresent()) {

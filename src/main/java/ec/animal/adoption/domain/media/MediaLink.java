@@ -27,7 +27,7 @@ public class MediaLink {
     private final String url;
 
     @JsonCreator
-    public MediaLink(@JsonProperty("url") String url) {
+    public MediaLink(@JsonProperty("url") final String url) {
         this.url = url;
     }
 
@@ -36,6 +36,7 @@ public class MediaLink {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -46,6 +47,7 @@ public class MediaLink {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         return url != null ? url.hashCode() : 0;
     }

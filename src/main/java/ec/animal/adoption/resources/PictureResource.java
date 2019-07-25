@@ -42,18 +42,18 @@ public class PictureResource {
     private final PictureService pictureService;
 
     @Autowired
-    public PictureResource(PictureService pictureService) {
+    public PictureResource(final PictureService pictureService) {
         this.pictureService = pictureService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public LinkPicture create(
-            @PathVariable("animalUuid") UUID animalUuid,
-            @RequestParam("name") String name,
-            @RequestParam("pictureType") PictureType pictureType,
-            @RequestPart("largeImage") MultipartFile largeImageMultipartFile,
-            @RequestPart("smallImage") MultipartFile smallImageMultipartFile
+            @PathVariable("animalUuid") final UUID animalUuid,
+            @RequestParam("name") final String name,
+            @RequestParam("pictureType") final PictureType pictureType,
+            @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
+            @RequestPart("smallImage") final MultipartFile smallImageMultipartFile
     ) {
         return pictureService.create(new ImagePicture(
                 animalUuid,
@@ -64,7 +64,7 @@ public class PictureResource {
         ));
     }
 
-    private Image createImageFromMultipartFile(MultipartFile multipartFile) {
+    private Image createImageFromMultipartFile(final MultipartFile multipartFile) {
         if (multipartFile.isEmpty() || multipartFile.getOriginalFilename() == null) {
             throw new InvalidPictureException();
         }
@@ -75,13 +75,13 @@ public class PictureResource {
                     multipartFile.getBytes(),
                     multipartFile.getSize()
             );
-        } catch (IOException e) {
-            throw new InvalidPictureException();
+        } catch (IOException exception) {
+            throw new InvalidPictureException(exception);
         }
     }
 
     @GetMapping
-    public LinkPicture get(@PathVariable("animalUuid") UUID animalUuid) {
+    public LinkPicture get(@PathVariable("animalUuid") final UUID animalUuid) {
         return pictureService.getBy(animalUuid);
     }
 }

@@ -35,21 +35,22 @@ public class CharacteristicsResource {
     private final CharacteristicsService characteristicsService;
 
     @Autowired
-    public CharacteristicsResource(CharacteristicsService characteristicsService) {
+    public CharacteristicsResource(final CharacteristicsService characteristicsService) {
         this.characteristicsService = characteristicsService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Characteristics create(
-            @PathVariable("animalUuid") UUID animalUuid, @RequestBody @Valid Characteristics characteristics
+            @PathVariable("animalUuid") final UUID animalUuid,
+            @RequestBody @Valid final Characteristics characteristics
     ) {
         characteristics.setAnimalUuid(animalUuid);
         return characteristicsService.create(characteristics);
     }
 
     @GetMapping
-    public Characteristics get(@PathVariable("animalUuid") UUID animalUuid) {
+    public Characteristics get(@PathVariable("animalUuid") final UUID animalUuid) {
         return characteristicsService.getBy(animalUuid);
     }
 }

@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@SuppressWarnings("PMD.DataClass")
 public class Animal extends Entity {
 
     @NotEmpty(message = "Animal clinical record is required")
@@ -56,14 +57,14 @@ public class Animal extends Entity {
 
     @JsonCreator
     private Animal(
-            @JsonProperty("clinicalRecord") String clinicalRecord,
-            @JsonProperty("name") String name,
-            @JsonProperty("species") Species species,
-            @JsonProperty("estimatedAge") EstimatedAge estimatedAge,
-            @JsonProperty("sex") Sex sex,
-            @JsonProperty("state") State state
+            @JsonProperty("clinicalRecord") final String clinicalRecord,
+            @JsonProperty("name") final String name,
+            @JsonProperty("species") final Species species,
+            @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
+            @JsonProperty("sex") final Sex sex,
+            @JsonProperty("state") final State state
     ) {
-        super();
+        super(null, null);
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -78,14 +79,14 @@ public class Animal extends Entity {
     }
 
     public Animal(
-            UUID uuid,
-            LocalDateTime registrationDate,
-            String clinicalRecord,
-            String name,
-            Species species,
-            EstimatedAge estimatedAge,
-            Sex sex,
-            State state
+            final UUID uuid,
+            final LocalDateTime registrationDate,
+            final String clinicalRecord,
+            final String name,
+            final Species species,
+            final EstimatedAge estimatedAge,
+            final Sex sex,
+            final State state
     ) {
         super(uuid, registrationDate);
         this.clinicalRecord = clinicalRecord;
@@ -121,7 +122,8 @@ public class Animal extends Entity {
     }
 
     @Override
-    public boolean equals(Object o) {
+    @SuppressWarnings("PMD")
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -138,6 +140,7 @@ public class Animal extends Entity {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);

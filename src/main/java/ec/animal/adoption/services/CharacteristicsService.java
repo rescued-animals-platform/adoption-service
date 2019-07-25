@@ -32,15 +32,15 @@ public class CharacteristicsService {
     private final CharacteristicsRepository characteristicsRepository;
 
     @Autowired
-    public CharacteristicsService(CharacteristicsRepository characteristicsRepository) {
+    public CharacteristicsService(final CharacteristicsRepository characteristicsRepository) {
         this.characteristicsRepository = characteristicsRepository;
     }
 
-    public Characteristics create(Characteristics characteristics) {
+    public Characteristics create(final Characteristics characteristics) {
         return characteristicsRepository.save(characteristics);
     }
 
-    public Characteristics getBy(UUID animalUuid) {
+    public Characteristics getBy(final UUID animalUuid) {
         return characteristicsRepository.getBy(animalUuid);
     }
 }

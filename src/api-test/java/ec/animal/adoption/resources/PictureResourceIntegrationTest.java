@@ -36,7 +36,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
-public class PictureResourceIntegrationTest extends AbstractResourceIntegrationTest {
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+public class PictureResourceIntegrationTest extends ResourceIntegrationTest {
 
     private UUID animalUuid;
     private String name;

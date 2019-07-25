@@ -34,7 +34,7 @@ public class JpaFriendlyWith {
         // Required by jpa
     }
 
-    public JpaFriendlyWith(FriendlyWith friendlyWith, JpaCharacteristics jpaCharacteristics) {
+    public JpaFriendlyWith(final FriendlyWith friendlyWith, final JpaCharacteristics jpaCharacteristics) {
         this();
         this.jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith.name(), jpaCharacteristics);
     }
@@ -44,6 +44,7 @@ public class JpaFriendlyWith {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -54,6 +55,7 @@ public class JpaFriendlyWith {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         return jpaFriendlyWithId != null ? jpaFriendlyWithId.hashCode() : 0;
     }

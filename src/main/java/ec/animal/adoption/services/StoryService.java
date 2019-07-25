@@ -32,15 +32,15 @@ public class StoryService {
     private final StoryRepository storyRepository;
 
     @Autowired
-    public StoryService(StoryRepository storyRepository) {
+    public StoryService(final StoryRepository storyRepository) {
         this.storyRepository = storyRepository;
     }
 
-    public Story create(Story story) {
+    public Story create(final Story story) {
         return storyRepository.save(story);
     }
 
-    public Story getBy(UUID animalUuid) {
+    public Story getBy(final UUID animalUuid) {
         return storyRepository.getBy(animalUuid);
     }
 }

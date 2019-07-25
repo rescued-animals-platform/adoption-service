@@ -28,7 +28,7 @@ import java.util.UUID;
 public class LinkPicture {
 
     @JsonIgnore
-    private UUID animalUuid;
+    private final UUID animalUuid;
 
     @JsonProperty("name")
     private final String name;
@@ -44,11 +44,11 @@ public class LinkPicture {
 
     @JsonCreator
     public LinkPicture(
-            @JsonProperty("animalUuid") UUID animalUuid,
-            @JsonProperty("name") String name,
-            @JsonProperty("pictureType") PictureType pictureType,
-            @JsonProperty("largeImageMediaLink") MediaLink largeImageMediaLink,
-            @JsonProperty("smallImageMediaLink") MediaLink smallImageMediaLink
+            @JsonProperty("animalUuid") final UUID animalUuid,
+            @JsonProperty("name") final String name,
+            @JsonProperty("pictureType") final PictureType pictureType,
+            @JsonProperty("largeImageMediaLink") final MediaLink largeImageMediaLink,
+            @JsonProperty("smallImageMediaLink") final MediaLink smallImageMediaLink
     ) {
         this.animalUuid = animalUuid;
         this.name = name;
@@ -80,6 +80,7 @@ public class LinkPicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -95,6 +96,7 @@ public class LinkPicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = animalUuid != null ? animalUuid.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);

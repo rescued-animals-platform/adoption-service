@@ -25,7 +25,7 @@ import java.lang.annotation.*;
 
 @Constraint(validatedBy = {TemperamentsValidator.class})
 @Target({ElementType.FIELD, ElementType.PARAMETER})
-@Retention(value = RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ValidTemperaments {
 

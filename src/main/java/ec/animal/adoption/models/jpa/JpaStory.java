@@ -35,6 +35,7 @@ public class JpaStory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     private LocalDateTime creationDate;
@@ -50,7 +51,7 @@ public class JpaStory {
         // Required by jpa
     }
 
-    public JpaStory(Story story) {
+    public JpaStory(final Story story) {
         this();
         this.creationDate = LocalDateTime.now();
         this.animalUuid = story.getAnimalUuid();
@@ -59,12 +60,13 @@ public class JpaStory {
     }
 
     public Story toStory() {
-        Story story = new Story(text);
+        final Story story = new Story(text);
         story.setAnimalUuid(animalUuid);
         return story;
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -79,6 +81,7 @@ public class JpaStory {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);

@@ -35,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 public class RestExceptionHandlerTest {
 
     @Mock
@@ -209,7 +210,7 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForImageStorageException() {
-        ImageStorageException imageStorageException = new ImageStorageException();
+        ImageStorageException imageStorageException = new ImageStorageException(mock(Throwable.class));
         ApiError expectedApiError = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR, "The image could not be stored"
         );
@@ -221,7 +222,7 @@ public class RestExceptionHandlerTest {
         assertThat(apiError, is(expectedApiError));
     }
 
-    private ArrayList<FieldError> createFieldErrors() {
+    private List<FieldError> createFieldErrors() {
         ArrayList<FieldError> fieldErrors = new ArrayList<>();
         FieldError fieldError = new FieldError(
                 randomAlphabetic(10), randomAlphabetic(10), randomAlphabetic(10)

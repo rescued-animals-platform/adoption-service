@@ -26,6 +26,7 @@ public class ImageTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Image.class).usingGetClass().verify();
     }

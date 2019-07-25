@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 public class LookingForHuman extends State {
 
     @JsonCreator
-    public LookingForHuman(@JsonProperty("date") LocalDateTime date) {
+    public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {
         super(date);
     }
 }

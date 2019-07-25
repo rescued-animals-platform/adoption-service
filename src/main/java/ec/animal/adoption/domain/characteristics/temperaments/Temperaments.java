@@ -26,19 +26,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Temperaments {
 
     @JsonProperty("sociability")
-    private Sociability sociability;
+    private final Sociability sociability;
 
     @JsonProperty("docility")
-    private Docility docility;
+    private final Docility docility;
 
     @JsonProperty("balance")
-    private Balance balance;
+    private final Balance balance;
 
     @JsonCreator
     public Temperaments(
-            @JsonProperty("sociability") Sociability sociability,
-            @JsonProperty("docility") Docility docility,
-            @JsonProperty("balance") Balance balance) {
+            @JsonProperty("sociability") final Sociability sociability,
+            @JsonProperty("docility") final Docility docility,
+            @JsonProperty("balance") final Balance balance) {
         this.sociability = sociability;
         this.docility = docility;
         this.balance = balance;
@@ -47,26 +47,6 @@ public class Temperaments {
     @JsonIgnore
     public boolean isEmpty() {
         return sociability == null && docility == null && balance == null;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Temperaments that = (Temperaments) o;
-
-        if (sociability != that.sociability) return false;
-        if (docility != that.docility) return false;
-        return balance == that.balance;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = sociability != null ? sociability.hashCode() : 0;
-        result = 31 * result + (docility != null ? docility.hashCode() : 0);
-        result = 31 * result + (balance != null ? balance.hashCode() : 0);
-        return result;
     }
 
     public Sociability getSociability() {
@@ -79,5 +59,27 @@ public class Temperaments {
 
     public Balance getBalance() {
         return balance;
+    }
+
+    @Override
+    @SuppressWarnings("PMD")
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Temperaments that = (Temperaments) o;
+
+        if (sociability != that.sociability) return false;
+        if (docility != that.docility) return false;
+        return balance == that.balance;
+    }
+
+    @Override
+    @SuppressWarnings("PMD")
+    public int hashCode() {
+        int result = sociability != null ? sociability.hashCode() : 0;
+        result = 31 * result + (docility != null ? docility.hashCode() : 0);
+        result = 31 * result + (balance != null ? balance.hashCode() : 0);
+        return result;
     }
 }

@@ -36,25 +36,26 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     private final JpaAnimalRepository jpaAnimalRepository;
 
     @Autowired
-    public AnimalRepositoryPsql(JpaAnimalRepository jpaAnimalRepository) {
+    public AnimalRepositoryPsql(final JpaAnimalRepository jpaAnimalRepository) {
         this.jpaAnimalRepository = jpaAnimalRepository;
     }
 
     @Override
-    public Animal save(Animal animal) {
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public Animal save(final Animal animal) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
+            final JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
             return savedJpaAnimal.toAnimal();
-        } catch (Exception ex) {
-            throw new EntityAlreadyExistsException();
+        } catch (Exception exception) {
+            throw new EntityAlreadyExistsException(exception);
         }
     }
 
     @Override
-    public Animal getBy(UUID uuid) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
+    public Animal getBy(final UUID uuid) {
+        final Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
 
-        if(!jpaAnimal.isPresent()) {
+        if (!jpaAnimal.isPresent()) {
             throw new EntityNotFoundException();
         }
 
@@ -62,7 +63,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public boolean animalExists(UUID animalUuid) {
+    public boolean animalExists(final UUID animalUuid) {
         return jpaAnimalRepository.findById(animalUuid).isPresent();
     }
 }

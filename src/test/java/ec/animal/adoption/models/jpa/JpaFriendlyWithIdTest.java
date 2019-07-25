@@ -51,6 +51,7 @@ public class JpaFriendlyWithIdTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaFriendlyWithId.class).usingGetClass().withPrefabValues(
                 JpaCharacteristics.class,

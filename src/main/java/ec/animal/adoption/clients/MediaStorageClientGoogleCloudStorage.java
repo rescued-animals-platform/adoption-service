@@ -19,7 +19,10 @@
 
 package ec.animal.adoption.clients;
 
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.clients.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -46,42 +49,48 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     private String environment;
 
     private final GoogleCloudStorageFactory googleCloudStorageFactory;
-    private static final Log LOGGER = LogFactory.getLog(MediaStorageClientGoogleCloudStorage.class);
+    private static final Log LOG = LogFactory.getLog(MediaStorageClientGoogleCloudStorage.class);
 
     @Autowired
-    public MediaStorageClientGoogleCloudStorage(GoogleCloudStorageFactory googleCloudStorageFactory) {
+    public MediaStorageClientGoogleCloudStorage(final GoogleCloudStorageFactory googleCloudStorageFactory) {
         this.googleCloudStorageFactory = googleCloudStorageFactory;
     }
 
     @Override
-    public LinkPicture save(ImagePicture imagePicture) {
+    public LinkPicture save(final ImagePicture imagePicture) {
         try {
             return storeImagePicture(imagePicture);
         } catch (StorageException ex) {
-            LOGGER.error("Image Storage Exception will be thrown", ex);
-            throw new ImageStorageException();
+            LOG.error("Image Storage Exception will be thrown", ex);
+            throw new ImageStorageException(ex);
         }
     }
 
-    private LinkPicture storeImagePicture(ImagePicture picture) {
-        String largeImageUrl = storeMedia(picture.getLargeImagePath(), picture.getLargeImageContent()).getMediaLink();
-        String smallImageUrl = storeMedia(picture.getSmallImagePath(), picture.getSmallImageContent()).getMediaLink();
+    private LinkPicture storeImagePicture(final ImagePicture imagePicture) {
+        final String largeImageUrl = storeMediaAndGetLink(
+                imagePicture.getLargeImagePath(),
+                imagePicture.getLargeImageContent()
+        );
+        final String smallImageUrl = storeMediaAndGetLink(
+                imagePicture.getSmallImagePath(),
+                imagePicture.getSmallImageContent()
+        );
 
         return new LinkPicture(
-                picture.getAnimalUuid(),
-                picture.getName(),
-                picture.getPictureType(),
+                imagePicture.getAnimalUuid(),
+                imagePicture.getName(),
+                imagePicture.getPictureType(),
                 new MediaLink(largeImageUrl),
                 new MediaLink(smallImageUrl)
         );
     }
 
-    private Blob storeMedia(String mediaPath, byte[] content) {
-        Storage storage = googleCloudStorageFactory.get(environment);
-        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
+    private String storeMediaAndGetLink(final String mediaPath, final byte[] content) {
+        final Storage storage = googleCloudStorageFactory.get(environment);
+        final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
                 setAcl(new ArrayList<>(Collections.singletonList(of(Acl.User.ofAllUsers(), Acl.Role.READER)))).
                 build();
 
-        return storage.create(blobInfo, content);
+        return storage.create(blobInfo, content).getMediaLink();
     }
 }

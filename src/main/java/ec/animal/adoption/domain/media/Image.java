@@ -29,9 +29,9 @@ public class Image {
     private final byte[] content;
     private final long sizeInBytes;
 
-    public Image(String extension, byte[] content, long sizeInBytes) {
+    public Image(final String extension, final byte[] content, final long sizeInBytes) {
         this.extension = extension;
-        this.content = content;
+        this.content = Arrays.copyOf(content, content.length);
         this.sizeInBytes = sizeInBytes;
     }
 
@@ -40,14 +40,20 @@ public class Image {
     }
 
     public byte[] getContent() {
-        return content;
+        return Arrays.copyOf(content, content.length);
     }
 
     public long getSizeInBytes() {
         return sizeInBytes;
     }
 
+    public boolean isValid() {
+        final boolean isValidImage = SupportedImageExtension.getMatchFor(extension, content).isPresent();
+        return isValidImage && sizeInBytes > 0 && sizeInBytes <= ONE_MEGA_BYTE;
+    }
+
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -60,15 +66,11 @@ public class Image {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = extension != null ? extension.hashCode() : 0;
         result = 31 * result + Arrays.hashCode(content);
         result = 31 * result + (int) (sizeInBytes ^ (sizeInBytes >>> 32));
         return result;
-    }
-
-    public boolean isValid() {
-        boolean isValidImage = SupportedImageExtension.getMatchFor(extension, content).isPresent();
-        return isValidImage && sizeInBytes > 0 && sizeInBytes <= ONE_MEGA_BYTE;
     }
 }

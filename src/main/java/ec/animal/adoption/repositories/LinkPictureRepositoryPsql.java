@@ -40,15 +40,15 @@ public class LinkPictureRepositoryPsql implements LinkPictureRepository {
 
     @Autowired
     public LinkPictureRepositoryPsql(
-            JpaLinkPictureRepository jpaLinkPictureRepository, AnimalRepositoryPsql animalRepositoryPsql
+            final JpaLinkPictureRepository jpaLinkPictureRepository, final AnimalRepositoryPsql animalRepositoryPsql
     ) {
         this.jpaLinkPictureRepository = jpaLinkPictureRepository;
         this.animalRepositoryPsql = animalRepositoryPsql;
     }
 
     @Override
-    public LinkPicture save(LinkPicture linkPicture) {
-        UUID animalUuid = linkPicture.getAnimalUuid();
+    public LinkPicture save(final LinkPicture linkPicture) {
+        final UUID animalUuid = linkPicture.getAnimalUuid();
 
         if(!animalRepositoryPsql.animalExists(animalUuid)) {
             throw new EntityNotFoundException();
@@ -62,8 +62,8 @@ public class LinkPictureRepositoryPsql implements LinkPictureRepository {
     }
 
     @Override
-    public LinkPicture getBy(UUID animalUuid) {
-        Optional<JpaLinkPicture> primaryLinkPicture = getPrimaryLinkPicture(animalUuid);
+    public LinkPicture getBy(final UUID animalUuid) {
+        final Optional<JpaLinkPicture> primaryLinkPicture = getPrimaryLinkPicture(animalUuid);
 
         if(primaryLinkPicture.isPresent()) {
             return primaryLinkPicture.get().toLinkPicture();
@@ -72,15 +72,15 @@ public class LinkPictureRepositoryPsql implements LinkPictureRepository {
         throw new EntityNotFoundException();
     }
 
-    private Optional<JpaLinkPicture> getPrimaryLinkPicture(UUID animalUuid) {
+    private Optional<JpaLinkPicture> getPrimaryLinkPicture(final UUID animalUuid) {
         return jpaLinkPictureRepository.findByPictureTypeAndAnimalUuid(PictureType.PRIMARY.name(), animalUuid);
     }
 
-    private JpaLinkPicture saveJpaLinkPicture(JpaLinkPicture jpaLinkPicture) {
+    private JpaLinkPicture saveJpaLinkPicture(final JpaLinkPicture jpaLinkPicture) {
         try {
             return jpaLinkPictureRepository.save(jpaLinkPicture);
-        } catch (DataIntegrityViolationException ex) {
-            throw new EntityAlreadyExistsException();
+        } catch (DataIntegrityViolationException exception) {
+            throw new EntityAlreadyExistsException(exception);
         }
     }
 }

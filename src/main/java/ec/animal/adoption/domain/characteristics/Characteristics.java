@@ -28,6 +28,7 @@ import ec.animal.adoption.validators.ValidTemperaments;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+@SuppressWarnings("PMD.DataClass")
 public class Characteristics {
 
     @NotNull(message = "Size is required")
@@ -50,10 +51,10 @@ public class Characteristics {
 
     @JsonCreator
     public Characteristics(
-            @JsonProperty("size") Size size,
-            @JsonProperty("physicalActivity") PhysicalActivity physicalActivity,
-            @JsonProperty("temperaments") Temperaments temperaments,
-            @JsonProperty("friendlyWith") FriendlyWith... friendlyWith
+            @JsonProperty("size") final Size size,
+            @JsonProperty("physicalActivity") final PhysicalActivity physicalActivity,
+            @JsonProperty("temperaments") final Temperaments temperaments,
+            @JsonProperty("friendlyWith") final FriendlyWith... friendlyWith
     ) {
         this.size = size;
         this.physicalActivity = physicalActivity;
@@ -81,11 +82,12 @@ public class Characteristics {
         return animalUuid;
     }
 
-    public void setAnimalUuid(UUID animalUuid) {
+    public void setAnimalUuid(final UUID animalUuid) {
         this.animalUuid = animalUuid;
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -100,6 +102,7 @@ public class Characteristics {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = size != null ? size.hashCode() : 0;
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);

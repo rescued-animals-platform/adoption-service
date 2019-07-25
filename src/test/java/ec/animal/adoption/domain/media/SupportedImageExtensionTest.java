@@ -33,9 +33,7 @@ public class SupportedImageExtensionTest {
     @Test
     public void shouldReturnJpegFromExtensionAndContent() {
         byte[] jpegImageContent = {(byte) 0xff, (byte) 0xd8};
-        Optional<SupportedImageExtension> supportedImageExtension = SupportedImageExtension.getMatchFor(
-                "jpeg", jpegImageContent
-        );
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("jpeg", jpegImageContent);
 
         assertThat(supportedImageExtension.isPresent(), is(true));
         assertThat(supportedImageExtension.get(), is(JPEG));
@@ -44,9 +42,7 @@ public class SupportedImageExtensionTest {
     @Test
     public void shouldReturnJpgFromExtensionAndContent() {
         byte[] jpgImageContent = {(byte) 0xff, (byte) 0xd8};
-        Optional<SupportedImageExtension> supportedImageExtension = SupportedImageExtension.getMatchFor(
-                "jpg", jpgImageContent
-        );
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("jpg", jpgImageContent);
 
         assertThat(supportedImageExtension.isPresent(), is(true));
         assertThat(supportedImageExtension.get(), is(JPG));
@@ -57,9 +53,7 @@ public class SupportedImageExtensionTest {
         byte[] pngImageContent = {
                 (byte) 0x89, (byte) 0x50, (byte) 0x4e, (byte) 0x47, (byte) 0x0d, (byte) 0x0a, (byte) 0x1a, (byte) 0x0a
         };
-        Optional<SupportedImageExtension> supportedImageExtension = SupportedImageExtension.getMatchFor(
-                "png", pngImageContent
-        );
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("png", pngImageContent);
 
         assertThat(supportedImageExtension.isPresent(), is(true));
         assertThat(supportedImageExtension.get(), is(PNG));
@@ -69,9 +63,7 @@ public class SupportedImageExtensionTest {
     public void shouldReturnEmptyFromUnmatchingExtension() {
         String unmatchingExtension = randomAlphabetic(10);
         byte[] jpgImageContent = {(byte) 0xff, (byte) 0xd8};
-        Optional<SupportedImageExtension> supportedImageExtension = SupportedImageExtension.getMatchFor(
-                unmatchingExtension, jpgImageContent
-        );
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor(unmatchingExtension, jpgImageContent);
 
         assertThat(supportedImageExtension.isPresent(), is(false));
     }
@@ -79,9 +71,7 @@ public class SupportedImageExtensionTest {
     @Test
     public void shouldReturnEmptyFromUnmatchingContent() {
         byte[] unmatchingContent = {};
-        Optional<SupportedImageExtension> supportedImageExtension = SupportedImageExtension.getMatchFor(
-                "png", unmatchingContent
-        );
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("png", unmatchingContent);
 
         assertThat(supportedImageExtension.isPresent(), is(false));
     }

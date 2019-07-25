@@ -41,6 +41,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class AnimalTest {
 
     private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
@@ -48,10 +49,16 @@ public class AnimalTest {
     private static final String ANIMAL_SPECIES_IS_REQUIRED = "Animal species is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
+    private static final String CLINICAL_RECORD_JSON = "{\"clinicalRecord\":\"";
+    private static final String NAME_JSON = "\",\"name\":\"";
+    private static final String SPECIES_JSON = "\",\"species\":\"";
+    private static final String ESTIMATED_AGE_JSON = "\",\"estimatedAge\":\"";
+    private static final String SEX_JSON = "\",\"sex\":\"";
 
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
     }
@@ -78,9 +85,9 @@ public class AnimalTest {
     @Test
     public void shouldDeserializeAnimalWithoutStateIntoAnAnimalWithLookingForHumanStateAsDefault() throws IOException {
         Animal animal = AnimalBuilder.random().build();
-        String serializedAnimalWithoutState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
-                "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
-                "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" +
+        String serializedAnimalWithoutState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
                 animal.getSex().name() + "\"}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithoutState, Animal.class);
@@ -98,9 +105,9 @@ public class AnimalTest {
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         Animal animal = AnimalBuilder.random().withState(new LookingForHuman(localDateTime)).build();
-        String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
-                "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
-                "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
+        String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
                 "\",\"state\":{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
@@ -114,9 +121,9 @@ public class AnimalTest {
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         Animal animal = AnimalBuilder.random().withState(new Unavailable(localDateTime, notes)).build();
-        String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
-                "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
-                "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
+        String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
                 "\",\"state\":{\"unavailable\":{\"notes\":\"" + notes +
                 "\",\"date\":" + serializedLocalDateTime + "}}}";
 
@@ -131,9 +138,9 @@ public class AnimalTest {
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         Animal animal = AnimalBuilder.random().withState(new Adopted(localDateTime, adoptionFormId)).build();
-        String serializedAnimalWithState = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
-                "\",\"name\":\"" + animal.getName() + "\",\"species\":\"" + animal.getSpecies().name() +
-                "\",\"estimatedAge\":\"" + animal.getEstimatedAge().name() + "\",\"sex\":\"" + animal.getSex().name() +
+        String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
                 "\",\"state\":{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId +
                 "\",\"date\":" + serializedLocalDateTime + "}}}";
 

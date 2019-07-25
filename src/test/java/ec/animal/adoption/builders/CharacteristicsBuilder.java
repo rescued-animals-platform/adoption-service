@@ -25,6 +25,8 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
+import java.util.Arrays;
+
 import static ec.animal.adoption.TestUtils.*;
 
 public class CharacteristicsBuilder {
@@ -35,7 +37,7 @@ public class CharacteristicsBuilder {
     private FriendlyWith[] friendlyWith;
 
     public static CharacteristicsBuilder random() {
-        CharacteristicsBuilder characteristicsBuilder = new CharacteristicsBuilder();
+        final CharacteristicsBuilder characteristicsBuilder = new CharacteristicsBuilder();
         characteristicsBuilder.size = getRandomSize();
         characteristicsBuilder.physicalActivity = getRandomPhysicalActivity();
         characteristicsBuilder.temperaments = TemperamentsBuilder.random().build();
@@ -43,23 +45,23 @@ public class CharacteristicsBuilder {
         return characteristicsBuilder;
     }
 
-    public CharacteristicsBuilder withSize(Size size) {
+    public CharacteristicsBuilder withSize(final Size size) {
         this.size = size;
         return this;
     }
 
-    public CharacteristicsBuilder withPhysicalActivity(PhysicalActivity physicalActivity) {
+    public CharacteristicsBuilder withPhysicalActivity(final PhysicalActivity physicalActivity) {
         this.physicalActivity = physicalActivity;
         return this;
     }
 
-    public CharacteristicsBuilder withTemperaments(Temperaments temperaments) {
+    public CharacteristicsBuilder withTemperaments(final Temperaments temperaments) {
         this.temperaments = temperaments;
         return this;
     }
 
-    public CharacteristicsBuilder withFriendlyWith(FriendlyWith... friendlyWith) {
-        this.friendlyWith = friendlyWith;
+    public CharacteristicsBuilder withFriendlyWith(final FriendlyWith... friendlyWith) {
+        this.friendlyWith = Arrays.copyOf(friendlyWith, friendlyWith.length);
         return this;
     }
 

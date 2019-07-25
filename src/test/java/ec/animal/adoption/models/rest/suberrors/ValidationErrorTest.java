@@ -41,6 +41,7 @@ public class ValidationErrorTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ValidationError.class).usingGetClass().verify();
     }

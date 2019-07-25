@@ -54,6 +54,7 @@ public class JpaAnimalTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaAnimal.class).usingGetClass().withPrefabValues(
                 Timestamp.class,

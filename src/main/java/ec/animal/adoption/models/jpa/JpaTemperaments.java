@@ -34,6 +34,7 @@ public class JpaTemperaments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     private String sociability;
@@ -47,22 +48,23 @@ public class JpaTemperaments {
         // Required by jpa
     }
 
-    public JpaTemperaments(Temperaments temperaments) {
+    public JpaTemperaments(final Temperaments temperaments) {
         this();
-        this.sociability = temperaments.getSociability() != null ? temperaments.getSociability().name() : null;
-        this.docility = temperaments.getDocility() != null ? temperaments.getDocility().name() : null;
-        this.balance = temperaments.getBalance() != null ? temperaments.getBalance().name() : null;
+        this.sociability = temperaments.getSociability() == null ? null : temperaments.getSociability().name();
+        this.docility = temperaments.getDocility() == null ? null : temperaments.getDocility().name();
+        this.balance = temperaments.getBalance() == null ? null : temperaments.getBalance().name();
     }
 
     public Temperaments toTemperaments() {
         return new Temperaments(
-                this.sociability != null ? Sociability.valueOf(sociability) : null,
-                this.docility != null ? Docility.valueOf(this.docility) : null,
-                this.balance != null ? Balance.valueOf(this.balance) : null
+                this.sociability == null ? null : Sociability.valueOf(sociability),
+                this.docility == null ? null : Docility.valueOf(this.docility),
+                this.balance == null ? null : Balance.valueOf(this.balance)
         );
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -76,6 +78,7 @@ public class JpaTemperaments {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (sociability != null ? sociability.hashCode() : 0);

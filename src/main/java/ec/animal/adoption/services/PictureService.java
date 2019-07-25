@@ -36,21 +36,24 @@ public class PictureService {
     private final LinkPictureRepository linkPictureRepository;
 
     @Autowired
-    public PictureService(MediaStorageClient mediaStorageClient, LinkPictureRepository linkPictureRepository) {
+    public PictureService(
+            final MediaStorageClient mediaStorageClient,
+            final LinkPictureRepository linkPictureRepository
+    ) {
         this.mediaStorageClient = mediaStorageClient;
         this.linkPictureRepository = linkPictureRepository;
     }
 
-    public LinkPicture create(ImagePicture imagePicture) {
+    public LinkPicture create(final ImagePicture imagePicture) {
         if(!imagePicture.isValid()) {
             throw new InvalidPictureException();
         }
 
-        LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
+        final LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
         return linkPictureRepository.save(linkPicture);
     }
 
-    public LinkPicture getBy(UUID animalUuid) {
+    public LinkPicture getBy(final UUID animalUuid) {
         return linkPictureRepository.getBy(animalUuid);
     }
 }

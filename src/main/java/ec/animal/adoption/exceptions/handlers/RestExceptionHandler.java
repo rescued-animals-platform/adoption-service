@@ -21,8 +21,8 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.exceptions.ImageStorageException;
+import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -44,54 +44,60 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request
+            final HttpMessageNotReadableException exception,
+            final HttpHeaders headers,
+            final HttpStatus status,
+            final WebRequest request
     ) {
         final String error = "Malformed JSON request";
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, error, ex.getLocalizedMessage()), badRequest);
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        return buildResponseEntity(new ApiError(badRequest, error, exception.getLocalizedMessage()), badRequest);
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    protected ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
-        HttpStatus conflict = HttpStatus.CONFLICT;
-        return buildResponseEntity(new ApiError(conflict, ex.getMessage()), conflict);
+    protected ResponseEntity<Object> handleEntityAlreadyExists(final EntityAlreadyExistsException exception) {
+        final HttpStatus conflict = HttpStatus.CONFLICT;
+        return buildResponseEntity(new ApiError(conflict, exception.getMessage()), conflict);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
-        HttpStatus notFound = HttpStatus.NOT_FOUND;
-        return buildResponseEntity(new ApiError(notFound, ex.getMessage()), notFound);
+    public ResponseEntity<Object> handleEntityNotFound(final EntityNotFoundException exception) {
+        final HttpStatus notFound = HttpStatus.NOT_FOUND;
+        return buildResponseEntity(new ApiError(notFound, exception.getMessage()), notFound);
     }
 
     @ExceptionHandler(InvalidPictureException.class)
-    public ResponseEntity<Object> handleImageMediaProcessingError(InvalidPictureException ex) {
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, ex.getMessage()), badRequest);
+    public ResponseEntity<Object> handleImageMediaProcessingError(final InvalidPictureException exception) {
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        return buildResponseEntity(new ApiError(badRequest, exception.getMessage()), badRequest);
     }
 
     @ExceptionHandler(ImageStorageException.class)
-    public ResponseEntity<Object> handleImageStorageException(ImageStorageException ex) {
-        HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
-        return buildResponseEntity(new ApiError(internalServerError, ex.getMessage()), internalServerError);
+    public ResponseEntity<Object> handleImageStorageException(final ImageStorageException exception) {
+        final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
+        return buildResponseEntity(new ApiError(internalServerError, exception.getMessage()), internalServerError);
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request
+            final MethodArgumentNotValidException exception,
+            final HttpHeaders headers,
+            final HttpStatus status,
+            final WebRequest request
     ) {
         final String error = "Validation failed";
-        List<ApiSubError> apiSubErrors = ex.getBindingResult().getFieldErrors()
+        final List<ApiSubError> apiSubErrors = exception.getBindingResult().getFieldErrors()
                 .stream()
                 .map(f -> new ValidationError(f.getField(), f.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         return buildResponseEntity(
-                new ApiError(badRequest, error, ex.getLocalizedMessage()).setSubErrors(apiSubErrors), badRequest
+                new ApiError(badRequest, error, exception.getLocalizedMessage()).setSubErrors(apiSubErrors), badRequest
         );
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError, HttpStatus status) {
+    private ResponseEntity<Object> buildResponseEntity(final ApiError apiError, final HttpStatus status) {
         return new ResponseEntity<>(apiError, status);
     }
 }

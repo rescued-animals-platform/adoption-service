@@ -125,8 +125,8 @@ public class TestUtils {
                 ).build();
     }
 
-    private static int getRandomIndex(int bound) {
-        Random random = new Random();
+    private static int getRandomIndex(final int bound) {
+        final Random random = new Random();
         return random.nextInt(bound);
     }
 }

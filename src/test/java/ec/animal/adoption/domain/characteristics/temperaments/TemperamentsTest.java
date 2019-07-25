@@ -1,7 +1,6 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -13,6 +12,7 @@ import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class TemperamentsTest {
 
     @Test
@@ -89,6 +89,7 @@ public class TemperamentsTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Temperaments.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
@@ -96,7 +97,7 @@ public class TemperamentsTest {
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
         Temperaments temperaments = TemperamentsBuilder.random().build();
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        ObjectMapper objectMapper = getObjectMapper();
 
         String serializedTemperaments = objectMapper.writeValueAsString(temperaments);
         Temperaments deserializedTemperaments = objectMapper.readValue(

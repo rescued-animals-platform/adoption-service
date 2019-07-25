@@ -29,7 +29,13 @@ public class ImagePicture {
     private final Image largeImage;
     private final Image smallImage;
 
-    public ImagePicture(UUID animalUuid, String name, PictureType pictureType, Image largeImage, Image smallImage) {
+    public ImagePicture(
+            final UUID animalUuid,
+            final String name,
+            final PictureType pictureType,
+            final Image largeImage,
+            final Image smallImage
+    ) {
         this.animalUuid = animalUuid;
         this.name = name;
         this.pictureType = pictureType;
@@ -78,6 +84,7 @@ public class ImagePicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -92,6 +99,7 @@ public class ImagePicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = animalUuid != null ? animalUuid.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);

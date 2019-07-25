@@ -37,7 +37,7 @@ public class LinkPictureBuilder {
     private MediaLink smallImageMediaLink;
 
     public static LinkPictureBuilder random() {
-        LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
+        final LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
         linkPictureBuilder.animalUuid = UUID.randomUUID();
         linkPictureBuilder.name = randomAlphabetic(10);
         linkPictureBuilder.pictureType = getRandomPictureType();
@@ -46,27 +46,27 @@ public class LinkPictureBuilder {
         return linkPictureBuilder;
     }
 
-    public LinkPictureBuilder withAnimalUuid(UUID animalUuid) {
+    public LinkPictureBuilder withAnimalUuid(final UUID animalUuid) {
         this.animalUuid = animalUuid;
         return this;
     }
 
-    public LinkPictureBuilder withName(String name) {
+    public LinkPictureBuilder withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public LinkPictureBuilder withPictureType(PictureType pictureType) {
+    public LinkPictureBuilder withPictureType(final PictureType pictureType) {
         this.pictureType = pictureType;
         return this;
     }
 
-    public LinkPictureBuilder withLargeImageMediaLink(MediaLink largeImageMediaLink) {
+    public LinkPictureBuilder withLargeImageMediaLink(final MediaLink largeImageMediaLink) {
         this.largeImageMediaLink = largeImageMediaLink;
         return this;
     }
 
-    public LinkPictureBuilder withSmallImageMediaLink(MediaLink smallImageMediaLink) {
+    public LinkPictureBuilder withSmallImageMediaLink(final MediaLink smallImageMediaLink) {
         this.smallImageMediaLink = smallImageMediaLink;
         return this;
     }

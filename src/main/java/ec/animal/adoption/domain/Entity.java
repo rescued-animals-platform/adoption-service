@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public abstract class Entity {
+public class Entity {
 
     @JsonProperty("uuid")
     private final UUID uuid;
@@ -32,12 +32,7 @@ public abstract class Entity {
     @JsonProperty("registrationDate")
     private final LocalDateTime registrationDate;
 
-    protected Entity() {
-        this.uuid = null;
-        this.registrationDate = null;
-    }
-
-    protected Entity(UUID uuid, LocalDateTime registrationDate) {
+    protected Entity(final UUID uuid, final LocalDateTime registrationDate) {
         this.uuid = uuid;
         this.registrationDate = registrationDate;
     }
@@ -51,6 +46,7 @@ public abstract class Entity {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -62,6 +58,7 @@ public abstract class Entity {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);

@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableAutoConfiguration
+@SuppressWarnings("PMD")
 public class AdoptionServiceApplication {
 
     public static void main(String[] args) {

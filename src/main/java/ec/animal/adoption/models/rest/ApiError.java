@@ -29,6 +29,7 @@ import java.util.List;
 public class ApiError {
 
     @JsonProperty("timestamp")
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final LocalDateTime timestamp;
 
     @JsonProperty("status")
@@ -47,26 +48,27 @@ public class ApiError {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiError(HttpStatus status, String message, String debugMessage) {
+    public ApiError(final HttpStatus status, final String message, final String debugMessage) {
         this();
         this.status = status;
         this.message = message;
         this.debugMessage = debugMessage;
     }
 
-    public ApiError(HttpStatus status, String message) {
+    public ApiError(final HttpStatus status, final String message) {
         this();
         this.status = status;
         this.message = message;
         this.debugMessage = "";
     }
 
-    public ApiError setSubErrors(List<ApiSubError> subErrors) {
+    public ApiError setSubErrors(final List<ApiSubError> subErrors) {
         this.subErrors = subErrors;
         return this;
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -81,6 +83,7 @@ public class ApiError {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = status != null ? status.hashCode() : 0;
         result = 31 * result + (message != null ? message.hashCode() : 0);

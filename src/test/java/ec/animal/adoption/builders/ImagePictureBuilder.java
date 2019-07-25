@@ -37,7 +37,7 @@ public class ImagePictureBuilder {
     private Image smallImage;
 
     public static ImagePictureBuilder random() {
-        ImagePictureBuilder imagePictureBuilder = new ImagePictureBuilder();
+        final ImagePictureBuilder imagePictureBuilder = new ImagePictureBuilder();
         imagePictureBuilder.animalUuid = UUID.randomUUID();
         imagePictureBuilder.name = randomAlphabetic(10);
         imagePictureBuilder.pictureType = getRandomPictureType();
@@ -46,27 +46,27 @@ public class ImagePictureBuilder {
         return imagePictureBuilder;
     }
 
-    public ImagePictureBuilder withAnimalUuid(UUID animalUuid) {
+    public ImagePictureBuilder withAnimalUuid(final UUID animalUuid) {
         this.animalUuid = animalUuid;
         return this;
     }
 
-    public ImagePictureBuilder withName(String name) {
+    public ImagePictureBuilder withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public ImagePictureBuilder withPictureType(PictureType pictureType) {
+    public ImagePictureBuilder withPictureType(final PictureType pictureType) {
         this.pictureType = pictureType;
         return this;
     }
 
-    public ImagePictureBuilder withLargeImage(Image largeImage) {
+    public ImagePictureBuilder withLargeImage(final Image largeImage) {
         this.largeImage = largeImage;
         return this;
     }
 
-    public ImagePictureBuilder withSmallImage(Image smallImage) {
+    public ImagePictureBuilder withSmallImage(final Image smallImage) {
         this.smallImage = smallImage;
         return this;
     }

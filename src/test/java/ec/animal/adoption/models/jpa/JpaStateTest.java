@@ -68,6 +68,7 @@ public class JpaStateTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaState.class).usingGetClass().withPrefabValues(
                 Timestamp.class,

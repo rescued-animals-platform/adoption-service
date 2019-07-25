@@ -22,7 +22,6 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import org.junit.BeforeClass;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -30,7 +29,8 @@ import java.time.Duration;
 
 import static java.lang.System.getenv;
 
-public abstract class AbstractResourceIntegrationTest {
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
+public abstract class ResourceIntegrationTest {
 
     static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";

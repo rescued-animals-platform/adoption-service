@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
+public class JpaAnimalRepositoryIntegrationTest extends JpaRepositoryIntegrationTest {
 
     @Test
     public void shouldSaveAnAnimal() {

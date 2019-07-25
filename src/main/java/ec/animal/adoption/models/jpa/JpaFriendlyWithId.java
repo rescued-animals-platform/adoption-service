@@ -22,10 +22,14 @@ package ec.animal.adoption.models.jpa;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class JpaFriendlyWithId implements Serializable {
+
+    @Transient
+    private static final long serialVersionUID = -142436659179428820L;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,7 +43,7 @@ public class JpaFriendlyWithId implements Serializable {
         // Required by jpa
     }
 
-    public JpaFriendlyWithId(String friendlyWith, JpaCharacteristics jpaCharacteristics) {
+    public JpaFriendlyWithId(final String friendlyWith, final JpaCharacteristics jpaCharacteristics) {
         this();
         this.friendlyWith = friendlyWith;
         this.jpaCharacteristics = jpaCharacteristics;
@@ -50,6 +54,7 @@ public class JpaFriendlyWithId implements Serializable {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -62,6 +67,7 @@ public class JpaFriendlyWithId implements Serializable {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0;
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);

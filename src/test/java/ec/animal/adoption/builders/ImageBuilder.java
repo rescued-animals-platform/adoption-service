@@ -23,6 +23,7 @@ import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Random;
 
 import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
@@ -36,43 +37,43 @@ public class ImageBuilder {
     private long sizeInBytes;
 
     public static ImageBuilder random() {
-        ImageBuilder imageBuilder = new ImageBuilder();
-        SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
+        final ImageBuilder imageBuilder = new ImageBuilder();
+        final SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         imageBuilder.extension = supportedImageExtension.getExtension();
 
-        byte[] startingBytes = supportedImageExtension.getStartingBytes();
-        Random random = new Random();
-        byte[] randomContent = new byte[100];
+        final byte[] startingBytes = supportedImageExtension.getStartingBytes();
+        final Random random = new Random();
+        final byte[] randomContent = new byte[100];
         random.nextBytes(randomContent);
-        byte[] content = new byte[startingBytes.length + randomContent.length];
-        ByteBuffer byteBuffer = ByteBuffer.wrap(content);
+        final byte[] content = new byte[startingBytes.length + randomContent.length];
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(content);
         byteBuffer.put(startingBytes);
         byteBuffer.put(randomContent);
         imageBuilder.content = byteBuffer.array();
 
-        int sizeInBytes = new Random().nextInt(ONE_MEGA_BYTE_IN_BYTES);
+        final int sizeInBytes = new Random().nextInt(ONE_MEGA_BYTE_IN_BYTES);
         imageBuilder.sizeInBytes = sizeInBytes == 0 ? 1 : sizeInBytes;
 
         return imageBuilder;
     }
 
-    public ImageBuilder withSupportedImageExtension(SupportedImageExtension supportedImageExtension) {
+    public ImageBuilder withSupportedImageExtension(final SupportedImageExtension supportedImageExtension) {
         this.extension = supportedImageExtension.getExtension();
         this.content = supportedImageExtension.getStartingBytes();
         return this;
     }
 
-    public ImageBuilder withExtension(String extension) {
+    public ImageBuilder withExtension(final String extension) {
         this.extension = extension;
         return this;
     }
 
-    public ImageBuilder withContent(byte[] content) {
-        this.content = content;
+    public ImageBuilder withContent(final byte[] content) {
+        this.content = Arrays.copyOf(content, content.length);
         return this;
     }
 
-    public ImageBuilder withSizeInBytes(long sizeInBytes) {
+    public ImageBuilder withSizeInBytes(final long sizeInBytes) {
         this.sizeInBytes = sizeInBytes;
         return this;
     }

@@ -42,6 +42,7 @@ public class JpaLinkPictureTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaLinkPicture.class).usingGetClass().withPrefabValues(
                 Timestamp.class,

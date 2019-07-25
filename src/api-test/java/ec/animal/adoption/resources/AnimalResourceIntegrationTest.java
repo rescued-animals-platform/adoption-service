@@ -37,7 +37,8 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn201Created() {

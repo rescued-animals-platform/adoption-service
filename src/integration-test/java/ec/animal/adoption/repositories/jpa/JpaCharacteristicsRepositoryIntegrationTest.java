@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaCharacteristicsRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
+public class JpaCharacteristicsRepositoryIntegrationTest extends JpaRepositoryIntegrationTest {
 
     @Autowired
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;

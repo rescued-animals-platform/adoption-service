@@ -36,6 +36,7 @@ public class JpaState {
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @SuppressWarnings("PMD.ShortVariable")
     private UUID id;
 
     @OneToOne
@@ -54,7 +55,7 @@ public class JpaState {
         // Required by Jpa
     }
 
-    public JpaState(State state, JpaAnimal jpaAnimal) {
+    public JpaState(final State state, final JpaAnimal jpaAnimal) {
         this();
         this.id = UUID.randomUUID();
         this.jpaAnimal = jpaAnimal;
@@ -67,6 +68,7 @@ public class JpaState {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -80,6 +82,7 @@ public class JpaState {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);

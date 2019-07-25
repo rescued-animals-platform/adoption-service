@@ -36,11 +36,11 @@ public class Story {
     private final String text;
 
     @JsonCreator
-    public Story(@JsonProperty("text") String text) {
+    public Story(@JsonProperty("text") final String text) {
         this.text = text;
     }
 
-    public void setAnimalUuid(UUID animalUuid) {
+    public void setAnimalUuid(final UUID animalUuid) {
         this.animalUuid = animalUuid;
     }
 
@@ -53,6 +53,7 @@ public class Story {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -64,6 +65,7 @@ public class Story {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = animalUuid != null ? animalUuid.hashCode() : 0;
         result = 31 * result + (text != null ? text.hashCode() : 0);

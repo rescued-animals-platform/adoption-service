@@ -32,7 +32,8 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTest {
+@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+public class StoryResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithStory() {

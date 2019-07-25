@@ -33,6 +33,7 @@ import static org.junit.Assert.assertThat;
 public class MediaLinkTest {
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(MediaLink.class).usingGetClass().verify();
     }

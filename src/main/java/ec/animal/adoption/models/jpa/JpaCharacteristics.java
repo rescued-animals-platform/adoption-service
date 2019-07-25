@@ -39,6 +39,7 @@ public class JpaCharacteristics {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     @NotNull
@@ -65,7 +66,7 @@ public class JpaCharacteristics {
         // Required by jpa
     }
 
-    public JpaCharacteristics(Characteristics characteristics) {
+    public JpaCharacteristics(final Characteristics characteristics) {
         this();
         this.animalUuid = characteristics.getAnimalUuid();
         this.creationDate = LocalDateTime.now();
@@ -78,7 +79,7 @@ public class JpaCharacteristics {
     }
 
     public Characteristics toCharacteristics() {
-        Characteristics characteristics = new Characteristics(
+        final Characteristics characteristics = new Characteristics(
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
                 this.jpaTemperaments.toTemperaments(),
@@ -89,6 +90,7 @@ public class JpaCharacteristics {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -107,6 +109,7 @@ public class JpaCharacteristics {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (animalUuid != null ? animalUuid.hashCode() : 0);

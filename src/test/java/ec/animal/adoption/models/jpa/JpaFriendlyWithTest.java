@@ -40,6 +40,7 @@ public class JpaFriendlyWithTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAnsHashCode() {
         EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().withPrefabValues(
                 JpaCharacteristics.class,

@@ -37,6 +37,7 @@ public class JpaLinkPicture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     private LocalDateTime creationDate;
@@ -59,7 +60,7 @@ public class JpaLinkPicture {
         // Required by jpa
     }
 
-    public JpaLinkPicture(LinkPicture linkPicture) {
+    public JpaLinkPicture(final LinkPicture linkPicture) {
         this();
         this.creationDate = LocalDateTime.now();
         this.animalUuid = linkPicture.getAnimalUuid();
@@ -80,6 +81,7 @@ public class JpaLinkPicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -97,6 +99,7 @@ public class JpaLinkPicture {
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);

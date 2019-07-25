@@ -9,10 +9,10 @@ package:
 
 deploy: package
 	@docker-compose build adoption-service
-	@docker-compose up --rm -d adoption-service adoption-service-db; sleep 10;
+	@docker-compose up -d adoption-service adoption-service-db; sleep 10;
 
 deploy-adoption-service-db:
-	@docker-compose up --rm -d adoption-service-db
+	@docker-compose up -d adoption-service-db
 
 undeploy:
 	@docker-compose stop
@@ -21,10 +21,13 @@ builder-build:
 	@docker-compose build adoption-service-builder
 
 unit-test:
-	./gradlew clean build
+	./gradlew check --rerun-tasks
 
 pitest:
 	./gradlew pitest
+
+pmd-check:
+	./gradlew pmdMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
 
 integration-test: deploy-adoption-service-db builder-build
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks

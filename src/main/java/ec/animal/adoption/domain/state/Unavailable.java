@@ -32,7 +32,10 @@ public class Unavailable extends State {
     private final String notes;
 
     @JsonCreator
-    public Unavailable(@JsonProperty("date") LocalDateTime date, @NotEmpty @JsonProperty("notes") String notes) {
+    public Unavailable(
+            @JsonProperty("date") final LocalDateTime date,
+            @NotEmpty @JsonProperty("notes") final String notes
+    ) {
         super(date);
         this.notes = notes;
     }

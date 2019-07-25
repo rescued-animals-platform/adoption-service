@@ -35,19 +35,19 @@ public class StoryResource {
     private final StoryService storyService;
 
     @Autowired
-    public StoryResource(StoryService storyService) {
+    public StoryResource(final StoryService storyService) {
         this.storyService = storyService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Story create(@PathVariable("animalUuid") UUID animalUuid, @RequestBody @Valid Story story) {
+    public Story create(@PathVariable("animalUuid") final UUID animalUuid, @RequestBody @Valid final Story story) {
         story.setAnimalUuid(animalUuid);
         return storyService.create(story);
     }
 
     @GetMapping
-    public Story get(@PathVariable("animalUuid") UUID animalUuid) {
+    public Story get(@PathVariable("animalUuid") final UUID animalUuid) {
         return storyService.getBy(animalUuid);
     }
 }

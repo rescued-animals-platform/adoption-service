@@ -46,6 +46,7 @@ public class JpaStoryTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaStory.class).usingGetClass().withPrefabValues(
                 Timestamp.class,
