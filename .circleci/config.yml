@@ -84,7 +84,7 @@ jobs:
             - build
             - migrations
             - terraform
-            - k8
+            - pmd
             - scripts
             - docker
             - gradle
@@ -93,7 +93,6 @@ jobs:
             - gradlew
             - gradlew.bat
             - Dockerfile
-            - Dockerfile-dev
             - docker-compose.yaml
             - Makefile
 
