@@ -437,6 +437,7 @@ workflows:
       - ci-integration-test:
           requires:
             - pitest
+            - pmd-check
             - integration-test
             - api-test
             - ci-infra-deploy
@@ -446,6 +447,7 @@ workflows:
       - build-image:
           requires:
             - pitest
+            - pmd-check
             - integration-test
             - api-test
             - ci-infra-deploy
