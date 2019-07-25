@@ -55,7 +55,7 @@ jobs:
 
       - run: ./gradlew dependencies
 
-      - run: ./gradlew clean build
+      - run: ./gradlew cleanTest test --rerun-tasks
 
       - run: ./gradlew bootJar --rerun-tasks
 
@@ -118,6 +118,28 @@ jobs:
 
       - store_artifacts:
           path: build/reports/pitest
+
+  pmd-check:
+    executor: code-builder
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run: make pmd-check
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - store_artifacts:
+          path: build/reports/pmd
 
   integration-test:
     executor: integration-tester
@@ -384,6 +406,12 @@ workflows:
             branches:
               only: master
       - pitest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - pmd-check:
           requires:
             - build
           filters:
