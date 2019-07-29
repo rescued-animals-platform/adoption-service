@@ -63,17 +63,17 @@ public class PictureResource {
                 createImageFromMultipartFile(smallImageMultipartFile)
         ));
     }
-
+    
     private Image createImageFromMultipartFile(final MultipartFile multipartFile) {
-        if (multipartFile.isEmpty() || multipartFile.getOriginalFilename() == null) {
+        String originalFilename = multipartFile.getOriginalFilename();
+
+        if (multipartFile.isEmpty() || originalFilename == null) {
             throw new InvalidPictureException();
         }
 
         try {
             return new Image(
-                    Files.getFileExtension(multipartFile.getOriginalFilename()),
-                    multipartFile.getBytes(),
-                    multipartFile.getSize()
+                    Files.getFileExtension(originalFilename), multipartFile.getBytes(), multipartFile.getSize()
             );
         } catch (IOException exception) {
             throw new InvalidPictureException(exception);

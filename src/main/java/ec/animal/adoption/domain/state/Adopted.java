@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 
 public class Adopted extends State {
 
+    private transient static final long serialVersionUID = -212446656134428610L;
+
     @JsonProperty("adoptionFormId")
     private final String adoptionFormId;
 

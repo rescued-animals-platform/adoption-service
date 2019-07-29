@@ -1,5 +1,3 @@
-apply plugin: 'io.spring.dependency-management'
-
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-gcp-dependencies:1.1.2.RELEASE'

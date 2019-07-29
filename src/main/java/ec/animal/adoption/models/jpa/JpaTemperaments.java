@@ -28,9 +28,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity(name = "temperaments")
-public class JpaTemperaments {
+public class JpaTemperaments implements Serializable {
+
+    private transient static final long serialVersionUID = -132432659164428810L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

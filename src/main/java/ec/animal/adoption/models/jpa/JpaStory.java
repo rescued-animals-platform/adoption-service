@@ -27,11 +27,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "story")
-public class JpaStory {
+public class JpaStory implements Serializable {
+
+    private transient static final long serialVersionUID = -242532859161428810L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,11 @@
+pmd {
+    ruleSets = []
+    ruleSetConfig = resources.text.fromFile("pmd/ruleset.xml")
+}
+
+tasks.withType(Pmd) {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}

@@ -23,9 +23,12 @@ import ec.animal.adoption.domain.characteristics.FriendlyWith;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import java.io.Serializable;
 
 @Entity(name = "friendly_with")
-public class JpaFriendlyWith {
+public class JpaFriendlyWith implements Serializable {
+
+    private transient static final long serialVersionUID = -412422759164428810L;
 
     @EmbeddedId
     private JpaFriendlyWithId jpaFriendlyWithId;

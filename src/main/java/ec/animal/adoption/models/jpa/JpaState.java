@@ -27,12 +27,15 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.UUID;
 
 @TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity
 @Table(name = "state")
-public class JpaState {
+public class JpaState implements Serializable {
+
+    private transient static final long serialVersionUID = -232452658164448810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")

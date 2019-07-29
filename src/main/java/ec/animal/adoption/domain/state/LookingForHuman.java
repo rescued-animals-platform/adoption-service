@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 
 public class LookingForHuman extends State {
 
+    private transient static final long serialVersionUID = -612446656134428617L;
+
     @JsonCreator
     public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {
         super(date);

@@ -1,5 +1,4 @@
 sourceSets {
-    
     main {
         resources {
             srcDirs = ['migrations/','src/main/resources']
@@ -27,5 +26,4 @@ sourceSets {
             srcDir file('src/api-test/resources')
         }
     }
-    
 }

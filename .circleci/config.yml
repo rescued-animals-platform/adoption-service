@@ -118,7 +118,7 @@ jobs:
       - store_artifacts:
           path: build/reports/pitest
 
-  pmd-check:
+  style-check:
     executor: code-builder
 
     steps:
@@ -130,7 +130,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: make pmd-check
+      - run: make style-check
 
       - save_cache:
           paths:
@@ -138,7 +138,9 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - store_artifacts:
-          path: build/reports/pmd
+          paths:
+            - build/reports/pmd
+            - build/reports/spotbugs
 
   integration-test:
     executor: integration-tester
@@ -410,7 +412,7 @@ workflows:
           filters:
             branches:
               only: master
-      - pmd-check:
+      - style-check:
           requires:
             - build
           filters:
@@ -437,7 +439,7 @@ workflows:
       - ci-integration-test:
           requires:
             - pitest
-            - pmd-check
+            - style-check
             - integration-test
             - api-test
             - ci-infra-deploy
@@ -447,7 +449,7 @@ workflows:
       - build-image:
           requires:
             - pitest
-            - pmd-check
+            - style-check
             - integration-test
             - api-test
             - ci-infra-deploy

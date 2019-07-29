@@ -17,13 +17,14 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.clients;
+package ec.animal.adoption.clients.gcloud;
 
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
-import ec.animal.adoption.clients.factories.GoogleCloudStorageFactory;
+import ec.animal.adoption.clients.MediaStorageClient;
+import ec.animal.adoption.clients.gcloud.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -45,7 +46,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    @Value("${google.cloud.storage.environment}")
+    @Value("${spring.profiles}")
     private String environment;
 
     private final GoogleCloudStorageFactory googleCloudStorageFactory;

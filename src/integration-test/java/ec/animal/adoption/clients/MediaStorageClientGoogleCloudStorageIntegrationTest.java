@@ -21,7 +21,8 @@ package ec.animal.adoption.clients;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
-import ec.animal.adoption.clients.factories.GoogleCloudStorageFactory;
+import ec.animal.adoption.clients.gcloud.factories.GoogleCloudStorageFactory;
+import ec.animal.adoption.clients.gcloud.MediaStorageClientGoogleCloudStorage;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -50,7 +51,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    @Value("${google.cloud.storage.environment}")
+    @Value("${spring.profiles}")
     private String environment;
 
     @Autowired

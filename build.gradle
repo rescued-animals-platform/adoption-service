@@ -1,29 +1,33 @@
+import com.github.spotbugs.SpotBugsTask
+
 buildscript {
     ext {
-        springBootVersion = '2.1.6.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.0")
+        springBootVersion = "2.1.6.RELEASE"
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'pmd'
-apply from: 'gradle/dependencies.gradle'
-apply from: 'gradle/pitest.gradle'
-apply from: 'gradle/sourceset.gradle'
-apply from: 'gradle/idea.gradle'
+plugins {
+    id "java"
+    id "idea"
+    id "pmd"
+    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id "org.springframework.boot" version "2.1.6.RELEASE"
+    id "info.solidsoft.pitest" version "1.4.0"
+    id "com.github.spotbugs" version "2.0.0"
+}
 
-group 'ec.animal.adoption'
+apply from: "gradle/dependencies.gradle"
+apply from: "gradle/pitest.gradle"
+apply from: "gradle/pmd.gradle"
+apply from: "gradle/sourceset.gradle"
+apply from: "gradle/idea.gradle"
+
+
+group "ec.animal.adoption"
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
 }
 
 repositories {
@@ -35,11 +39,6 @@ configurations {
     integrationTestRuntime.extendsFrom(testRuntime)
     apiTestCompile.extendsFrom(testCompile)
     apiTestRuntime.extendsFrom(testRuntime)
-}
-
-pmd {
-    ruleSets = []
-    ruleSetConfig = resources.text.fromFile("pmd/ruleset.xml")
 }
 
 task integrationTest(type: Test) {
@@ -62,9 +61,15 @@ tasks.withType(Test) {
     }
 }
 
-tasks.withType(Pmd){
-    reports{
-        xml.enabled=true
-        html.enabled=true
+spotbugs {
+    spotbugsTest.enabled = false
+    spotbugsIntegrationTest.enabled = false
+    spotbugsApiTest.enabled = false
+}
+
+tasks.withType(SpotBugsTask) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
     }
 }

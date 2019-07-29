@@ -22,14 +22,12 @@ package ec.animal.adoption.models.jpa;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class JpaFriendlyWithId implements Serializable {
 
-    @Transient
-    private static final long serialVersionUID = -142436659179428820L;
+    private transient static final long serialVersionUID = -142436659179428820L;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

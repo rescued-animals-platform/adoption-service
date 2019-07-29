@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,7 +34,9 @@ import java.time.LocalDateTime;
         @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
         @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
 })
-public class State {
+public class State implements Serializable {
+
+    private transient static final long serialVersionUID = -312436659134428610L;
 
     @JsonProperty("date")
     private final LocalDateTime date;

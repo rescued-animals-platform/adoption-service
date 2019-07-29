@@ -29,11 +29,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "link_picture")
-public class JpaLinkPicture {
+public class JpaLinkPicture implements Serializable {
+
+    private transient static final long serialVersionUID = -832433659194420810L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -29,13 +29,16 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity(name = "characteristics")
-public class JpaCharacteristics {
+public class JpaCharacteristics implements Serializable {
+
+    private transient static final long serialVersionUID = -132432659169428820L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

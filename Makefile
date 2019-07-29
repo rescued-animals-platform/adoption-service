@@ -15,7 +15,7 @@ deploy-adoption-service-db:
 	@docker-compose up -d adoption-service-db
 
 undeploy:
-	@docker-compose stop
+	@docker-compose down
 
 builder-build:
 	@docker-compose build adoption-service-builder
@@ -26,8 +26,8 @@ unit-test:
 pitest:
 	./gradlew pitest
 
-pmd-check:
-	./gradlew pmdMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
+style-check:
+	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
 
 integration-test: deploy-adoption-service-db builder-build
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks
@@ -37,6 +37,6 @@ api-test: deploy builder-build
 	$(docker_compose_builder) gradle apiTest --rerun-tasks
 	make undeploy
 
-all-test: unit-test deploy builder-build
+all-test: unit-test pitest deploy builder-build
 	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
 	make undeploy

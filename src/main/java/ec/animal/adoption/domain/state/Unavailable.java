@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 
 public class Unavailable extends State {
 
+    private transient static final long serialVersionUID = -512442656134428600L;
+
     @NotEmpty(message = "Notes are required for unavailable state")
     @JsonProperty("notes")
     private final String notes;

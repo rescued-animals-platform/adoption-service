@@ -1,4 +1,5 @@
 spring:
+  profiles: dev
   cloud:
     gcp:
       config.enabled: false
@@ -14,11 +15,7 @@ spring:
     show-sql: false
     generate-ddl: false
 
-google:
-  cloud:
-    storage:
-      environment: dev
-      bucket: adoption-service-testing
+google.cloud.storage.bucket: adoption-service-testing
 
 logging:
   config: classpath:logback-spring-dev.xml

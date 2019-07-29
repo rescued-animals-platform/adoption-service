@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.clients.factories;
+package ec.animal.adoption.clients.gcloud.factories;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
