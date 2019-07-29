@@ -138,9 +138,10 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - store_artifacts:
-          paths:
-            - build/reports/pmd
-            - build/reports/spotbugs
+          path: build/reports/pmd
+
+      - store_artifacts:
+          path: build/reports/spotbugs
 
   integration-test:
     executor: integration-tester
