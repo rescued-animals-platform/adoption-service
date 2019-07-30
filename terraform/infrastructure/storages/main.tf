@@ -29,14 +29,14 @@ resource "google_sql_database" "database" {
   instance = google_sql_database_instance.master.name
   charset = "UTF8"
   collation = "en_US.UTF8"
+
+  depends_on = [google_sql_user.users]
 }
 
 resource "google_sql_user" "users" {
   instance = google_sql_database_instance.master.name
   name = var.cloud_sql_master_user_name
   password = var.cloud_sql_master_user_password
-
-  depends_on = [google_sql_database.database]
 }
 
 # ------------------------------------------------------------------------------
