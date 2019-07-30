@@ -81,9 +81,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
 
     private String storeMediaAndGetLink(final String mediaPath, final byte[] content) {
         final Storage storage = googleCloudStorageFactory.get();
-        final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
-                setAcl(new ArrayList<>(Collections.singletonList(of(Acl.User.ofAllUsers(), Acl.Role.READER)))).
-                build();
+        final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).build();
 
         return storage.create(blobInfo, content).getMediaLink();
     }
