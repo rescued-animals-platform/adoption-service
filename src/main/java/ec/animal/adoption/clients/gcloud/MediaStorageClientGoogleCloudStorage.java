@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.clients.gcloud;
 
-import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
@@ -32,11 +31,6 @@ import ec.animal.adoption.exceptions.ImageStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
-import static com.google.cloud.storage.Acl.of;
 
 @Component
 public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient {
