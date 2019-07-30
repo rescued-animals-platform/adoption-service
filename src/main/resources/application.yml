@@ -5,7 +5,6 @@ spring:
   cloud:
     gcp:
       sql.enabled: false
-      storage.enabled: false
   mvc:
     servlet:
       path: /adoption

@@ -17,12 +17,11 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.clients;
+package ec.animal.adoption.clients.gcloud;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import ec.animal.adoption.clients.gcloud.factories.GoogleCloudStorageFactory;
-import ec.animal.adoption.clients.gcloud.MediaStorageClientGoogleCloudStorage;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -94,7 +93,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
     }
 
     public void deleteMedia(final String mediaPath) {
-        Storage storage = googleCloudStorageFactory.get(environment);
+        Storage storage = googleCloudStorageFactory.get();
         BlobId blobId = BlobId.of(bucketName, mediaPath);
 
         storage.delete(blobId);

@@ -3,6 +3,7 @@ spring:
   cloud:
     gcp:
       config.enabled: false
+      storage.enabled: false
       logging.enabled: false
   datasource:
     url: jdbc:postgresql://adoption-service-db:5432/animal-adoption-db

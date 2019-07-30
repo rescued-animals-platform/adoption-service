@@ -22,14 +22,18 @@ package ec.animal.adoption.clients.gcloud.factories;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.contrib.nio.testing.LocalStorageHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleCloudStorageFactory {
 
+    @Value("${spring.profiles}")
+    private String environment;
+
     private static final String DEV_ENVIRONMENT = "dev";
 
-    public Storage get(final String environment) {
+    public Storage get() {
         if (DEV_ENVIRONMENT.equals(environment)) {
             return LocalStorageHelper.getOptions().getService();
         }

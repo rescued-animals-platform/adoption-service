@@ -29,8 +29,6 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.exceptions.ImageStorageException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -46,11 +44,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    @Value("${spring.profiles}")
-    private String environment;
-
     private final GoogleCloudStorageFactory googleCloudStorageFactory;
-    private static final Log LOG = LogFactory.getLog(MediaStorageClientGoogleCloudStorage.class);
 
     @Autowired
     public MediaStorageClientGoogleCloudStorage(final GoogleCloudStorageFactory googleCloudStorageFactory) {
@@ -61,9 +55,8 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     public LinkPicture save(final ImagePicture imagePicture) {
         try {
             return storeImagePicture(imagePicture);
-        } catch (StorageException ex) {
-            LOG.error("Image Storage Exception will be thrown", ex);
-            throw new ImageStorageException(ex);
+        } catch (StorageException exception) {
+            throw new ImageStorageException(exception);
         }
     }
 
@@ -87,7 +80,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     private String storeMediaAndGetLink(final String mediaPath, final byte[] content) {
-        final Storage storage = googleCloudStorageFactory.get(environment);
+        final Storage storage = googleCloudStorageFactory.get();
         final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).
                 setAcl(new ArrayList<>(Collections.singletonList(of(Acl.User.ofAllUsers(), Acl.Role.READER)))).
                 build();

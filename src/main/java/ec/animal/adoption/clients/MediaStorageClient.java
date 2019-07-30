@@ -24,5 +24,5 @@ import ec.animal.adoption.domain.media.LinkPicture;
 
 public interface MediaStorageClient {
 
-    LinkPicture save(ImagePicture picture);
+    LinkPicture save(ImagePicture imagePicture);
 }

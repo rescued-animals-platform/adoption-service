@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.clients;
+package ec.animal.adoption.clients.gcloud;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
@@ -25,8 +25,8 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.clients.gcloud.factories.GoogleCloudStorageFactory;
-import ec.animal.adoption.clients.gcloud.MediaStorageClientGoogleCloudStorage;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -59,11 +59,9 @@ public class MediaStorageClientGoogleCloudStorageTest {
     @Before
     public void setUp() {
         GoogleCloudStorageFactory googleCloudStorageFactory = mock(GoogleCloudStorageFactory.class);
+        when(googleCloudStorageFactory.get()).thenReturn(storage);
         mediaStorageClientGoogleCloudStorage = new MediaStorageClientGoogleCloudStorage(googleCloudStorageFactory);
-        String environment = randomAlphabetic(10);
         ReflectionTestUtils.setField(mediaStorageClientGoogleCloudStorage, "bucketName", randomAlphabetic(10));
-        ReflectionTestUtils.setField(mediaStorageClientGoogleCloudStorage, "environment", environment);
-        when(googleCloudStorageFactory.get(environment)).thenReturn(storage);
     }
 
     @Test
