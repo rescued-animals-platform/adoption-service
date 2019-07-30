@@ -30,7 +30,7 @@ resource "google_sql_database" "database" {
   charset = "UTF8"
   collation = "en_US.UTF8"
 
-  depends_on = [google_sql_database_instance.master]
+  depends_on = [google_sql_database_instance.master, google_sql_user.users]
 }
 
 resource "google_sql_user" "users" {
