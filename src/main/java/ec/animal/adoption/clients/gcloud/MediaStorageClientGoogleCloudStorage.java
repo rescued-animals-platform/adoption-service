@@ -82,8 +82,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
 
         return storage.create(blobInfo, content).getMediaLink();
     }
-
-    @HystrixCommand
+    
     @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private LinkPicture circuitBreakerFallback(final ImagePicture imagePicture) {
         throw new GoogleCloudStorageException();
