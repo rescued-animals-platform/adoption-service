@@ -19,10 +19,7 @@
 
 package ec.animal.adoption.exceptions.handlers;
 
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.ImageStorageException;
-import ec.animal.adoption.exceptions.InvalidPictureException;
+import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
@@ -76,6 +73,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleImageStorageException(final ImageStorageException exception) {
         final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
         return buildResponseEntity(new ApiError(internalServerError, exception.getMessage()), internalServerError);
+    }
+
+    @ExceptionHandler(GoogleCloudStorageException.class)
+    public ResponseEntity<Object> handleGoogleCloudStorageException(final GoogleCloudStorageException exception) {
+        final HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
+        return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
     @Override

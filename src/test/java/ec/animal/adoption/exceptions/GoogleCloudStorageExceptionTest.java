@@ -19,14 +19,19 @@
 
 package ec.animal.adoption.exceptions;
 
-public class ImageStorageException extends RuntimeException {
+import org.junit.Test;
 
-    private transient static final long serialVersionUID = -341446159169481893L;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
-    private static final String MESSAGE = "The image could not be stored";
+public class GoogleCloudStorageExceptionTest {
 
-    public ImageStorageException(final Throwable throwable) {
-        super(MESSAGE);
-        this.initCause(throwable);
+    @Test
+    public void shouldReturnMessage() {
+        String expectedMessage = "Can not fulfill the request now. Please, retry later (client unavailable)";
+
+        GoogleCloudStorageException googleCloudStorageException = new GoogleCloudStorageException();
+
+        assertThat(googleCloudStorageException.getMessage(), is(expectedMessage));
     }
 }

@@ -13,7 +13,6 @@ echo "Un deploying Infra in CI project"
 {
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
-  export TF_LOG=DEBUG
 } &> /dev/null
 
 cd terraform/infrastructure

@@ -19,14 +19,10 @@
 
 package ec.animal.adoption.exceptions;
 
-import javax.persistence.Transient;
-
 public class EntityAlreadyExistsException extends RuntimeException {
 
-    @Transient
-    private static final long serialVersionUID = -242436159149421823L;
+    private transient static final long serialVersionUID = -242436159149421823L;
 
-    @Transient
     private static final String MESSAGE = "The resource already exists";
 
     public EntityAlreadyExistsException() {

@@ -19,22 +19,11 @@
 
 package ec.animal.adoption.exceptions;
 
-import javax.persistence.Transient;
-
 public class EntityNotFoundException extends RuntimeException {
 
-    @Transient
-    private static final long serialVersionUID = -242426159819421923L;
-
-    private final String message;
+    private transient static final long serialVersionUID = -242426159819421923L;
 
     public EntityNotFoundException() {
-        super();
-        this.message = "Unable to find the resource";
-    }
-
-    @Override
-    public String getMessage() {
-        return this.message;
+        super("Unable to find the resource");
     }
 }

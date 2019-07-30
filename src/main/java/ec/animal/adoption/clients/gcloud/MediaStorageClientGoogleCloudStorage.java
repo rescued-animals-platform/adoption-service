@@ -22,11 +22,13 @@ package ec.animal.adoption.clients.gcloud;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.clients.gcloud.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.exceptions.GoogleCloudStorageException;
 import ec.animal.adoption.exceptions.ImageStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +48,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "circuitBreakerFallback")
     public LinkPicture save(final ImagePicture imagePicture) {
         try {
             return storeImagePicture(imagePicture);
@@ -78,5 +81,11 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
         final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).build();
 
         return storage.create(blobInfo, content).getMediaLink();
+    }
+
+    @HystrixCommand
+    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+    private LinkPicture circuitBreakerFallback(final ImagePicture imagePicture) {
+        throw new GoogleCloudStorageException();
     }
 }

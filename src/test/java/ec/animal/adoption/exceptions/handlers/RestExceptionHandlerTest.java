@@ -1,10 +1,7 @@
 package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.domain.media.SupportedImageExtension;
-import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
-import ec.animal.adoption.exceptions.EntityNotFoundException;
-import ec.animal.adoption.exceptions.ImageStorageException;
-import ec.animal.adoption.exceptions.InvalidPictureException;
+import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.models.rest.ApiError;
 import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import org.junit.Before;
@@ -216,6 +213,32 @@ public class RestExceptionHandlerTest {
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableErrorForGoogleCloudStorageException() {
+        GoogleCloudStorageException googleCloudStorageException = mock(GoogleCloudStorageException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler
+                .handleGoogleCloudStorageException(googleCloudStorageException);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.SERVICE_UNAVAILABLE));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForGoogleCloudStorageException() {
+        GoogleCloudStorageException googleCloudStorageException = new GoogleCloudStorageException();
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "Can not fulfill the request now. Please, retry later (client unavailable)"
+        );
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler
+                .handleGoogleCloudStorageException(googleCloudStorageException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

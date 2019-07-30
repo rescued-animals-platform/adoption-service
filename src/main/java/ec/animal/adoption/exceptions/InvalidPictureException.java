@@ -21,16 +21,13 @@ package ec.animal.adoption.exceptions;
 
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 
-import javax.persistence.Transient;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class InvalidPictureException extends RuntimeException {
 
-    @Transient
-    private static final long serialVersionUID = -442435159749429820L;
+    private transient static final long serialVersionUID = -442435159749429820L;
 
-    @Transient
     private static final String MESSAGE = "The image(s) could not be processed. Check they meet the minimum " +
             "requirements: Supported extensions: %s. Maximum size: 1MB";
 

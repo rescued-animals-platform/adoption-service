@@ -19,20 +19,11 @@
 
 package ec.animal.adoption.exceptions;
 
-import org.junit.Test;
+public class GoogleCloudStorageException extends RuntimeException {
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+    private transient static final long serialVersionUID = -232426153813421923L;
 
-public class UnexpectedExceptionTest {
-
-    @Test
-    public void shouldReturnMessage() {
-        String expectedMessage = "An unexpected error occurred";
-
-        UnexpectedException unexpectedException = new UnexpectedException(mock(Throwable.class));
-
-        assertThat(unexpectedException.getMessage(), is(expectedMessage));
+    public GoogleCloudStorageException() {
+        super("Can not fulfill the request now. Please, retry later (client unavailable)");
     }
 }

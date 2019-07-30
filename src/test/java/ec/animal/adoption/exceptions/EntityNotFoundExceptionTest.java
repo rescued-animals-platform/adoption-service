@@ -19,23 +19,19 @@
 
 package ec.animal.adoption.exceptions;
 
-import javax.persistence.Transient;
+import org.junit.Test;
 
-public class UnexpectedException extends RuntimeException {
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
-    @Transient
-    private static final long serialVersionUID = -142416559179421823L;
+public class EntityNotFoundExceptionTest {
 
-    private final String message;
+    @Test
+    public void shouldReturnMessage() {
+        String expectedMessage = "Unable to find the resource";
 
-    public UnexpectedException(final Throwable throwable) {
-        super();
-        this.message = "An unexpected error occurred";
-        this.initCause(throwable);
-    }
+        EntityNotFoundException entityNotFoundException = new EntityNotFoundException();
 
-    @Override
-    public String getMessage() {
-        return this.message;
+        assertThat(entityNotFoundException.getMessage(), is(expectedMessage));
     }
 }
