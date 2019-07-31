@@ -21,8 +21,8 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.suberrors.ApiSubError;
-import ec.animal.adoption.models.rest.suberrors.ValidationError;
+import ec.animal.adoption.models.rest.ApiSubError;
+import ec.animal.adoption.models.rest.ValidationApiSubError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +91,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final String error = "Validation failed";
         final List<ApiSubError> apiSubErrors = exception.getBindingResult().getFieldErrors()
                 .stream()
-                .map(f -> new ValidationError(f.getField(), f.getDefaultMessage()))
+                .map(f -> new ValidationApiSubError(f.getField(), f.getDefaultMessage()))
                 .collect(Collectors.toList());
 
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;

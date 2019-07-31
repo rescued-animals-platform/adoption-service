@@ -3,7 +3,7 @@ package ec.animal.adoption.exceptions.handlers;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.suberrors.ValidationError;
+import ec.animal.adoption.models.rest.ValidationApiSubError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,7 +130,7 @@ public class RestExceptionHandlerTest {
         ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
                 .setSubErrors(
                         fieldErrors.stream()
-                        .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                        .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
                         .collect(Collectors.toList())
                 );
 

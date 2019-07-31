@@ -23,9 +23,11 @@ import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
@@ -50,5 +52,17 @@ public class JpaAnimalRepositoryIntegrationTest extends JpaRepositoryIntegration
 
         assertThat(optionalJpaAnimal.isPresent(), is(true));
         assertReflectionEquals(optionalJpaAnimal.get(), jpaAnimal);
+    }
+
+    @Test
+    public void shouldFindAllAnimals() {
+        ArrayList<JpaAnimal> expectedJpaAnimals = newArrayList(
+                new JpaAnimal(AnimalBuilder.random().build()),
+                new JpaAnimal(AnimalBuilder.random().build()),
+                new JpaAnimal(AnimalBuilder.random().build())
+        );
+        expectedJpaAnimals.forEach(jpaAnimal -> jpaAnimalRepository.save(jpaAnimal));
+
+        assertReflectionEquals(expectedJpaAnimals, jpaAnimalRepository.findAll());
     }
 }

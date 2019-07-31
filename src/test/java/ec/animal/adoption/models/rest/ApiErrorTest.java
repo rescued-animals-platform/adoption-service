@@ -21,8 +21,6 @@ package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.models.rest.suberrors.ApiSubError;
-import ec.animal.adoption.models.rest.suberrors.ValidationError;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
@@ -47,8 +45,8 @@ public class ApiErrorTest {
         HttpStatus status = HttpStatus.BAD_GATEWAY;
         String message = randomAlphabetic(10);
         List<ApiSubError> subErrors = new ArrayList<>();
-        subErrors.add(new ValidationError(randomAlphabetic(10), randomAlphabetic(10)));
-        subErrors.add(new ValidationError(randomAlphabetic(10), randomAlphabetic(10)));
+        subErrors.add(new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10)));
+        subErrors.add(new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10)));
         apiError = new ApiError(status, message, debugMessage);
         apiError.setSubErrors(subErrors);
     }

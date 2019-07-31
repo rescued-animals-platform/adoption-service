@@ -17,20 +17,34 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.repositories;
+package ec.animal.adoption.models.rest.dto;
 
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.domain.Species;
 
-import java.util.List;
 import java.util.UUID;
 
-public interface AnimalRepository {
+@SuppressWarnings("PMD")
+public class AnimalDto {
 
-    Animal save(Animal animal);
+    private final UUID animalUuid;
+    private final String name;
+    private final Species species;
+    private final EstimatedAge estimatedAge;
+    private final Sex sex;
 
-    Animal getBy(UUID uuid);
-
-    List<Animal> get();
-
-    boolean animalExists(UUID animalUuid);
+    public AnimalDto(
+            final UUID animalUuid,
+            final String name,
+            final Species species,
+            final EstimatedAge estimatedAge,
+            final Sex sex
+    ) {
+        this.animalUuid = animalUuid;
+        this.name = name;
+        this.species = species;
+        this.estimatedAge = estimatedAge;
+        this.sex = sex;
+    }
 }

@@ -28,8 +28,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -68,5 +70,18 @@ public class AnimalServiceTest {
         Animal animal = animalService.getBy(uuid);
 
         assertThat(animal, is(expectedAnimal));
+    }
+
+    @Test
+    public void shouldGetAllAnimals() {
+        Animal firstAnimalInList = AnimalBuilder.random().build();
+        Animal secondAnimalInList = AnimalBuilder.random().build();
+        Animal thirdAnimalInList = AnimalBuilder.random().build();
+        List<Animal> expectedListOfAnimals = newArrayList(firstAnimalInList, secondAnimalInList, thirdAnimalInList);
+        when(animalRepository.get()).thenReturn(expectedListOfAnimals);
+
+        List<Animal> listOfAnimals = animalService.get();
+
+        assertThat(listOfAnimals, is(expectedListOfAnimals));
     }
 }

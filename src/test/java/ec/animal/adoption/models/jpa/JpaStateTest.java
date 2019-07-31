@@ -22,12 +22,9 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.Unavailable;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -65,17 +62,5 @@ public class JpaStateTest {
         JpaState jpaState = new JpaState(unavailable, mock(JpaAnimal.class));
 
         assertReflectionEquals(unavailable, jpaState.toState());
-    }
-
-    @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-    public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaState.class).usingGetClass().withPrefabValues(
-                Timestamp.class,
-                Timestamp.valueOf(LocalDateTime.now()),
-                Timestamp.valueOf(LocalDateTime.now().minusDays(2))
-        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class)).suppress(
-                Warning.REFERENCE_EQUALITY
-        ).verify();
     }
 }

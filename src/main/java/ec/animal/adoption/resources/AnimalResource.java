@@ -20,13 +20,16 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.models.rest.dto.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/animals")
@@ -48,5 +51,12 @@ public class AnimalResource {
     @GetMapping("/{uuid}")
     public Animal get(@PathVariable("uuid") final UUID uuid) {
         return animalService.getBy(uuid);
+    }
+
+    public List<AnimalDto> get() {
+        return animalService.get()
+                .stream()
+                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
+                .collect(Collectors.toList());
     }
 }

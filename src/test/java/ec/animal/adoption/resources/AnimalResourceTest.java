@@ -19,7 +19,9 @@
 
 package ec.animal.adoption.resources;
 
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.models.rest.dto.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,12 +29,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnimalResourceTest {
@@ -68,5 +74,21 @@ public class AnimalResourceTest {
         Animal animal = animalResource.get(uuid);
 
         assertThat(animal, is(expectedAnimal));
+    }
+
+    @Test
+    public void shouldGetAllAnimals() {
+        Animal firstAnimalInList = AnimalBuilder.random().build();
+        Animal secondAnimalInList = AnimalBuilder.random().build();
+        Animal thirdAnimalInList = AnimalBuilder.random().build();
+        List<Animal> listOfAnimals = newArrayList(firstAnimalInList, secondAnimalInList, thirdAnimalInList);
+        when(animalService.get()).thenReturn(listOfAnimals);
+        List<AnimalDto> expectedListOfAnimalDtos = listOfAnimals.stream()
+                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
+                .collect(Collectors.toList());
+
+        List<AnimalDto> listOfAnimalDtos = animalResource.get();
+
+        assertReflectionEquals(expectedListOfAnimalDtos, listOfAnimalDtos);
     }
 }

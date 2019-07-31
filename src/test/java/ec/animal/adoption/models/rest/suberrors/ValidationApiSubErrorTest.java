@@ -21,6 +21,8 @@ package ec.animal.adoption.models.rest.suberrors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.models.rest.ApiSubError;
+import ec.animal.adoption.models.rest.ValidationApiSubError;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
@@ -31,29 +33,29 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ValidationErrorTest {
+public class ValidationApiSubErrorTest {
 
     @Test
     public void shouldBeAnInstanceOfApiSubError() {
-        ValidationError validationError = new ValidationError(randomAlphabetic(10), randomAlphabetic(10));
+        ValidationApiSubError validationApiSubError = new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10));
 
-        assertThat(validationError, is(instanceOf(ApiSubError.class)));
+        assertThat(validationApiSubError, is(instanceOf(ApiSubError.class)));
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(ValidationError.class).usingGetClass().verify();
+        EqualsVerifier.forClass(ValidationApiSubError.class).usingGetClass().verify();
     }
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        ValidationError validationError = new ValidationError(randomAlphabetic(10), randomAlphabetic(10));
+        ValidationApiSubError validationApiSubError = new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10));
 
-        String serializedValidationError = objectMapper.writeValueAsString(validationError);
-        ValidationError deserializedValidationError = objectMapper.readValue(serializedValidationError, ValidationError.class);
+        String serializedValidationError = objectMapper.writeValueAsString(validationApiSubError);
+        ValidationApiSubError deserializedValidationApiSubError = objectMapper.readValue(serializedValidationError, ValidationApiSubError.class);
 
-        assertThat(deserializedValidationError, is(validationError));
+        assertThat(deserializedValidationApiSubError, is(validationApiSubError));
     }
 }

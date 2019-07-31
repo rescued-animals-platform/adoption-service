@@ -91,40 +91,4 @@ public class JpaAnimal implements Serializable {
                 jpaState.toState()
         );
     }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JpaAnimal jpaAnimal = (JpaAnimal) o;
-
-        if (uuid != null ? !uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid != null) return false;
-        if (clinicalRecord != null ? !clinicalRecord.equals(jpaAnimal.clinicalRecord) : jpaAnimal.clinicalRecord != null)
-            return false;
-        if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
-        if (animalSpecies != null ? !animalSpecies.equals(jpaAnimal.animalSpecies) : jpaAnimal.animalSpecies != null)
-            return false;
-        if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
-            return false;
-        if (sex != null ? !sex.equals(jpaAnimal.sex) : jpaAnimal.sex != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(jpaAnimal.registrationDate) : jpaAnimal.registrationDate != null)
-            return false;
-        return jpaState != null ? jpaState.equals(jpaAnimal.jpaState) : jpaAnimal.jpaState == null;
-    }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (animalSpecies != null ? animalSpecies.hashCode() : 0);
-        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
-        result = 31 * result + (sex != null ? sex.hashCode() : 0);
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (jpaState != null ? jpaState.hashCode() : 0);
-        return result;
-    }
 }

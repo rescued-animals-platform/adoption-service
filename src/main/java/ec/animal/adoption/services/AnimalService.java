@@ -24,6 +24,7 @@ import ec.animal.adoption.repositories.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,5 +43,9 @@ public class AnimalService {
 
     public Animal getBy(final UUID uuid) {
         return animalRepository.getBy(uuid);
+    }
+
+    public List<Animal> get() {
+        return animalRepository.get();
     }
 }

@@ -33,6 +33,7 @@ import java.util.UUID;
 @TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity
 @Table(name = "state")
+@SuppressWarnings({"PMD.SingularField", "PMD.UnusedPrivateField"})
 public class JpaState implements Serializable {
 
     private transient static final long serialVersionUID = -232452658164448810L;
@@ -68,29 +69,5 @@ public class JpaState implements Serializable {
 
     public State toState() {
         return this.state;
-    }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JpaState jpaState = (JpaState) o;
-
-        if (id != null ? !id.equals(jpaState.id) : jpaState.id != null) return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(jpaState.jpaAnimal) : jpaState.jpaAnimal != null) return false;
-        if (stateName != null ? !stateName.equals(jpaState.stateName) : jpaState.stateName != null) return false;
-        return state != null ? state.equals(jpaState.state) : jpaState.state == null;
-    }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
-        result = 31 * result + (stateName != null ? stateName.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        return result;
     }
 }

@@ -20,7 +20,6 @@
 package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.models.rest.suberrors.ApiSubError;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;

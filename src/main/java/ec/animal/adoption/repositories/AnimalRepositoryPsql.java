@@ -27,6 +27,8 @@ import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,7 +46,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Animal save(final Animal animal) {
         try {
-            final JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
             throw new EntityAlreadyExistsException(exception);
@@ -53,13 +55,20 @@ public class AnimalRepositoryPsql implements AnimalRepository {
 
     @Override
     public Animal getBy(final UUID uuid) {
-        final Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
 
         if (!jpaAnimal.isPresent()) {
             throw new EntityNotFoundException();
         }
 
         return jpaAnimal.get().toAnimal();
+    }
+
+    @Override
+    public List<Animal> get() {
+        List<Animal> animals = new ArrayList<>();
+        jpaAnimalRepository.findAll().forEach( jpaAnimal -> animals.add(jpaAnimal.toAnimal()));
+        return animals;
     }
 
     @Override

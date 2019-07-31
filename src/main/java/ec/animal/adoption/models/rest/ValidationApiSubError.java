@@ -17,12 +17,12 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.models.rest.suberrors;
+package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ValidationError implements ApiSubError {
+public class ValidationApiSubError implements ApiSubError {
 
     @JsonProperty("field")
     private final String field;
@@ -31,7 +31,7 @@ public class ValidationError implements ApiSubError {
     private final String message;
 
     @JsonCreator
-    public ValidationError(@JsonProperty("field") final String field, @JsonProperty("message") final String message) {
+    public ValidationApiSubError(@JsonProperty("field") final String field, @JsonProperty("message") final String message) {
         this.field = field;
         this.message = message;
     }
@@ -42,7 +42,7 @@ public class ValidationError implements ApiSubError {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ValidationError that = (ValidationError) o;
+        ValidationApiSubError that = (ValidationApiSubError) o;
 
         if (field != null ? !field.equals(that.field) : that.field != null) return false;
         return message != null ? message.equals(that.message) : that.message == null;
