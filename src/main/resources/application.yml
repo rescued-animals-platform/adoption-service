@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  cloud:
+    gcp:
+      sql.enabled: false
   mvc:
     servlet:
       path: /adoption
