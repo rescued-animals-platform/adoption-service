@@ -466,7 +466,6 @@ workflows:
       - ci-service-deploy:
           requires:
             - publish-image
-            - ci-integration-test
           filters:
             branches:
               only: master
@@ -480,6 +479,7 @@ workflows:
           type: approval
           requires:
             - ci-api-test
+            - ci-integration-test
           filters:
             branches:
               only: master
