@@ -22,7 +22,6 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import org.junit.BeforeClass;
-import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
@@ -46,12 +45,14 @@ public abstract class ResourceIntegrationTest {
     }
 
     Animal createAndSaveAnimal() {
-        Animal animalForAdoption = AnimalBuilder.random().withState(null).build();
-
-        EntityExchangeResult<Animal> animalEntityExchangeResult = webTestClient.post().uri(ANIMALS_URL).
-                syncBody(animalForAdoption).exchange().
-                expectStatus().isCreated().expectBody(Animal.class).returnResult();
-
-        return animalEntityExchangeResult.getResponseBody();
+        return webTestClient.post()
+                .uri(ANIMALS_URL)
+                .syncBody(AnimalBuilder.random().build())
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Animal.class)
+                .returnResult()
+                .getResponseBody();
     }
 }

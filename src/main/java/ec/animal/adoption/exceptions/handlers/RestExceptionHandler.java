@@ -20,9 +20,9 @@
 package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.exceptions.*;
-import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.ApiSubError;
-import ec.animal.adoption.models.rest.ValidationApiSubError;
+import ec.animal.adoption.domain.error.ApiError;
+import ec.animal.adoption.domain.error.ApiSubError;
+import ec.animal.adoption.domain.error.ValidationApiSubError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

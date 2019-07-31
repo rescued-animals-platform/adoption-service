@@ -2,8 +2,8 @@ package ec.animal.adoption.exceptions.handlers;
 
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import ec.animal.adoption.exceptions.*;
-import ec.animal.adoption.models.rest.ApiError;
-import ec.animal.adoption.models.rest.ValidationApiSubError;
+import ec.animal.adoption.domain.error.ApiError;
+import ec.animal.adoption.domain.error.ValidationApiSubError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

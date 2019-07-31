@@ -21,6 +21,8 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +32,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnimalServiceTest {
@@ -74,14 +78,16 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldGetAllAnimals() {
-        Animal firstAnimalInList = AnimalBuilder.random().build();
-        Animal secondAnimalInList = AnimalBuilder.random().build();
-        Animal thirdAnimalInList = AnimalBuilder.random().build();
-        List<Animal> expectedListOfAnimals = newArrayList(firstAnimalInList, secondAnimalInList, thirdAnimalInList);
-        when(animalRepository.get()).thenReturn(expectedListOfAnimals);
+        List<Animal> listOfAnimals = newArrayList(
+                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+        );
+        when(animalRepository.get()).thenReturn(listOfAnimals);
+        Animals expectedAnimals = new Animals(listOfAnimals.stream().map(a -> new AnimalDto(
+                a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex())
+        ).collect(Collectors.toList()));
 
-        List<Animal> listOfAnimals = animalService.get();
+        Animals animals = animalService.get();
 
-        assertThat(listOfAnimals, is(expectedListOfAnimals));
+        assertReflectionEquals(expectedAnimals, animals);
     }
 }

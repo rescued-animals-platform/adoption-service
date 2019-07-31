@@ -21,8 +21,9 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.Animals;
 import ec.animal.adoption.domain.state.LookingForHuman;
-import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.domain.error.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -144,15 +145,7 @@ public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn200OkWithAnimal() {
-        Animal createdAnimal = webTestClient.post()
-                .uri(ANIMALS_URL)
-                .syncBody(AnimalBuilder.random().build())
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Animal.class)
-                .returnResult()
-                .getResponseBody();
+        Animal createdAnimal = createAndSaveAnimal();
 
         webTestClient.get()
                 .uri(ANIMALS_URL + "/{uuid}", createdAnimal.getUuid())
@@ -174,5 +167,15 @@ public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
                 .expectStatus()
                 .isNotFound()
                 .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn200OkWithAnimals() {
+        webTestClient.get()
+                .uri(ANIMALS_URL)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Animals.class);
     }
 }

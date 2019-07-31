@@ -17,18 +17,22 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.models.rest;
+package ec.animal.adoption.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.dtos.AnimalDto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = ValidationApiSubError.class, name = "validationError")
-})
-public interface ApiSubError {
+@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+public class Animals {
 
+    @JsonProperty("animals")
+    private final List<AnimalDto> animalDtos;
+
+    @JsonCreator
+    public Animals(@JsonProperty("animals") final List<AnimalDto> animalDtos) {
+        this.animalDtos = animalDtos;
+    }
 }

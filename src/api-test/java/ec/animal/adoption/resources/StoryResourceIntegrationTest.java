@@ -21,7 +21,7 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
-import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.domain.error.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

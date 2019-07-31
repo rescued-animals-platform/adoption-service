@@ -21,6 +21,9 @@ package ec.animal.adoption.models.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.error.ApiError;
+import ec.animal.adoption.domain.error.ApiSubError;
+import ec.animal.adoption.domain.error.ValidationApiSubError;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;

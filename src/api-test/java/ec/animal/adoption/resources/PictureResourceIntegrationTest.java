@@ -22,7 +22,7 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.models.rest.ApiError;
+import ec.animal.adoption.domain.error.ApiError;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
