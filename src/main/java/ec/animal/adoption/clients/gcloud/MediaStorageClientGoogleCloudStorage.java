@@ -48,7 +48,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "circuitBreakerFallback")
+    @HystrixCommand(fallbackMethod = "circuitBreakerFallback", ignoreExceptions = {GoogleCloudStorageException.class})
     public LinkPicture save(final ImagePicture imagePicture) {
         try {
             return storeImagePicture(imagePicture);
@@ -82,7 +82,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
 
         return storage.create(blobInfo, content).getMediaLink();
     }
-    
+
     @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private LinkPicture circuitBreakerFallback(final ImagePicture imagePicture) {
         throw new GoogleCloudStorageException();
