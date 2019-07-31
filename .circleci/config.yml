@@ -460,13 +460,13 @@ workflows:
       - publish-image:
           requires:
             - build-image
-            - ci-integration-test
           filters:
             branches:
               only: master
       - ci-service-deploy:
           requires:
             - publish-image
+            - ci-integration-test
           filters:
             branches:
               only: master
@@ -492,7 +492,7 @@ workflows:
       - destroy-ci-infra:
           type: approval
           requires:
-            - ci-api-test
+            - ci-service-undeploy
           filters:
             branches:
               only: master
