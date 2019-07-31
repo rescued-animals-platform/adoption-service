@@ -22,3 +22,10 @@ spring:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false

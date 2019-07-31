@@ -48,7 +48,7 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "circuitBreakerFallback", ignoreExceptions = {GoogleCloudStorageException.class})
+    @HystrixCommand(defaultFallback = "circuitBreakerFallback", ignoreExceptions = {GoogleCloudStorageException.class})
     public LinkPicture save(final ImagePicture imagePicture) {
         try {
             return storeImagePicture(imagePicture);
@@ -58,11 +58,11 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     private LinkPicture storeImagePicture(final ImagePicture imagePicture) {
-        final String largeImageUrl = storeMediaAndGetLink(
+        String largeImageUrl = storeMediaAndGetLink(
                 imagePicture.getLargeImagePath(),
                 imagePicture.getLargeImageContent()
         );
-        final String smallImageUrl = storeMediaAndGetLink(
+        String smallImageUrl = storeMediaAndGetLink(
                 imagePicture.getSmallImagePath(),
                 imagePicture.getSmallImageContent()
         );
@@ -77,14 +77,14 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     private String storeMediaAndGetLink(final String mediaPath, final byte[] content) {
-        final Storage storage = googleCloudStorageFactory.get();
-        final BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).build();
+        Storage storage = googleCloudStorageFactory.get();
+        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).build();
 
         return storage.create(blobInfo, content).getMediaLink();
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
-    private LinkPicture circuitBreakerFallback(final ImagePicture imagePicture) {
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private LinkPicture circuitBreakerFallback() {
         throw new GoogleCloudStorageException();
     }
 }

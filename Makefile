@@ -33,6 +33,6 @@ api-test: deploy builder-build
 	$(docker_compose_builder) gradle apiTest --rerun-tasks
 	make undeploy
 
-all-test: deploy builder-build
-	$(docker_compose_builder) gradle check pitest integrationTest apiTest --rerun-tasks
+all-test: unit-test pitest deploy builder-build
+	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
 	make undeploy
