@@ -23,6 +23,7 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -39,7 +40,7 @@ public class JpaAnimal implements Serializable {
     private transient static final long serialVersionUID = -632732651164438810L;
 
     @Id
-    @org.hibernate.annotations.Type(type = "org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
     @NotNull

@@ -5,6 +5,7 @@ spring:
       config.enabled: true
       storage.enabled: true
       logging.enabled: true
+      sql.enabled: true
   datasource:
     url: jdbc:postgresql://${DB_HOST}
     username: ${CI_SQL_CLOUD_MASTER_USERNAME}

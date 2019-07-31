@@ -46,7 +46,6 @@ public class JpaTemperaments implements Serializable {
 
     private String balance;
 
-
     private JpaTemperaments() {
         // Required by jpa
     }
