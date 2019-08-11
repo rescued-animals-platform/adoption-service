@@ -52,7 +52,7 @@ public class AnimalResource {
     }
 
     @GetMapping
-    public Animals get() {
-        return animalService.get();
+    public Animals getAllFilteredByState(@RequestParam("state") final String state) {
+        return animalService.getAllFilteredByState(state);
     }
 }

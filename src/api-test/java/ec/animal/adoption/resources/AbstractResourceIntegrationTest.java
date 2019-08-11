@@ -29,7 +29,7 @@ import java.time.Duration;
 import static java.lang.System.getenv;
 
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
-public abstract class ResourceIntegrationTest {
+public abstract class AbstractResourceIntegrationTest {
 
     static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
@@ -44,10 +44,10 @@ public abstract class ResourceIntegrationTest {
         webTestClient = WebTestClient.bindToServer().baseUrl(host).responseTimeout(Duration.ofSeconds(10)).build();
     }
 
-    Animal createAndSaveAnimal() {
+    Animal createAndSaveAnimalWithDefaultLookingForHumanState() {
         return webTestClient.post()
                 .uri(ANIMALS_URL)
-                .syncBody(AnimalBuilder.random().build())
+                .syncBody(AnimalBuilder.random().withState(null).build())
                 .exchange()
                 .expectStatus()
                 .isCreated()

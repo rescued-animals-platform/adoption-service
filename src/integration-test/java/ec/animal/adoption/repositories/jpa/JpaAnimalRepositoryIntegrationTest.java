@@ -21,21 +21,18 @@ package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.models.jpa.JpaAnimal;
-import org.bouncycastle.util.Arrays;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class JpaAnimalRepositoryIntegrationTest extends JpaRepositoryIntegrationTest {
+public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
     @Test
     public void shouldSaveAnAnimal() {
@@ -59,7 +56,7 @@ public class JpaAnimalRepositoryIntegrationTest extends JpaRepositoryIntegration
 
     @Test
     public void shouldFindAllAnimals() {
-        jpaAnimalRepository.deleteAll();
+        deleteAllJpaAnimals();
         JpaAnimal firstJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
         JpaAnimal secondJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
         JpaAnimal thirdJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());

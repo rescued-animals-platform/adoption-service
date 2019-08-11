@@ -17,26 +17,30 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain;
+package ec.animal.adoption.dtos;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.dtos.AnimalDto;
+import org.junit.Test;
 
-import java.util.List;
+import java.util.UUID;
 
-@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-public class Animals {
+import static ec.animal.adoption.TestUtils.*;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
-    @JsonProperty("animals")
-    private final List<AnimalDto> animalDtos;
+public class AnimalDtoTest {
 
-    @JsonCreator
-    public Animals(@JsonProperty("animals") final List<AnimalDto> animalDtos) {
-        this.animalDtos = animalDtos;
-    }
+    @Test
+    public void shouldReturnAnimalUuid() {
+        UUID expectedAnimalUuid = UUID.randomUUID();
+        AnimalDto animalDto = new AnimalDto(
+                expectedAnimalUuid,
+                randomAlphabetic(10),
+                getRandomSpecies(),
+                getRandomEstimatedAge(),
+                getRandomSex()
+        );
 
-    public List<AnimalDto> getListOfAnimals() {
-        return animalDtos;
+        assertThat(animalDto.getAnimalUuid(), is(expectedAnimalUuid));
     }
 }

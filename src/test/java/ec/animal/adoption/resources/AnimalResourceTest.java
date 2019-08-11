@@ -19,9 +19,11 @@
 
 package ec.animal.adoption.resources;
 
+import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
 import org.junit.Before;
@@ -77,18 +79,20 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldGetAllAnimals() {
-        Animal firstAnimalInList = AnimalBuilder.random().build();
-        Animal secondAnimalInList = AnimalBuilder.random().build();
-        Animal thirdAnimalInList = AnimalBuilder.random().build();
+    public void shouldGetAllAnimalsFilteredByState() {
+        State randomState = TestUtils.getRandomState();
+        Animal firstAnimalInList = AnimalBuilder.random().withState(randomState).build();
+        Animal secondAnimalInList = AnimalBuilder.random().withState(randomState).build();
+        Animal thirdAnimalInList = AnimalBuilder.random().withState(randomState).build();
         Animals expectedAnimals = new Animals(
                 newArrayList(firstAnimalInList, secondAnimalInList, thirdAnimalInList).stream().map(a -> new AnimalDto(
                         a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex())
                 ).collect(Collectors.toList())
         );
-        when(animalService.get()).thenReturn(expectedAnimals);
+        String stateName = randomState.getClass().getSimpleName();
+        when(animalService.getAllFilteredByState(stateName)).thenReturn(expectedAnimals);
 
-        Animals animals = animalResource.get();
+        Animals animals = animalResource.getAllFilteredByState(stateName);
 
         assertReflectionEquals(expectedAnimals, animals);
     }

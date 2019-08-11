@@ -22,12 +22,14 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Animals;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.error.ApiError;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.dtos.AnimalDto;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -39,7 +41,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
+public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201Created() {
@@ -145,7 +147,7 @@ public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn200OkWithAnimal() {
-        Animal createdAnimal = createAndSaveAnimal();
+        Animal createdAnimal = createAndSaveAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
                 .uri(ANIMALS_URL + "/{uuid}", createdAnimal.getUuid())
@@ -170,12 +172,37 @@ public class AnimalResourceIntegrationTest extends ResourceIntegrationTest {
     }
 
     @Test
-    public void shouldReturn200OkWithAnimals() {
+    public void shouldReturn200OkWithAnimalsFilteredByState() {
+        createAndSaveAnimalWithDefaultLookingForHumanState();
+        createAndSaveAnimalWithDefaultLookingForHumanState();
+        createAndSaveAnimalWithDefaultLookingForHumanState();
+        String stateName = "LookingForHuman";
         webTestClient.get()
-                .uri(ANIMALS_URL)
+                .uri(ANIMALS_URL + "?state={state}", stateName)
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(Animals.class);
+                .expectBody(Animals.class)
+                .consumeWith(animalsEntityExchangeResult -> {
+                    Animals animals = animalsEntityExchangeResult.getResponseBody();
+                    assertNotNull(animals);
+                    assertEachAnimalInListHasExpectedState(stateName, animals.getListOfAnimals());
+                });
+    }
+
+    private void assertEachAnimalInListHasExpectedState(final String stateName, final List<AnimalDto> listOfAnimals) {
+        listOfAnimals.forEach(animalDto -> {
+            webTestClient.get()
+                    .uri(ANIMALS_URL + "/{uuid}", animalDto.getAnimalUuid())
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectBody(Animal.class)
+                    .consumeWith(animalEntityExchangeResult -> {
+                        Animal animal = animalEntityExchangeResult.getResponseBody();
+                        assertNotNull(animal);
+                        assertThat(animal.getState().getClass().getSimpleName(), is(stateName));
+                    });
+        });
     }
 }

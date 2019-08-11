@@ -22,6 +22,9 @@ package ec.animal.adoption.services;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
@@ -30,11 +33,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -67,7 +71,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldGetAnimalByItsUuid() {
+    public void shouldReturnAnimalByItsUuid() {
         UUID uuid = UUID.randomUUID();
         when(animalRepository.getBy(uuid)).thenReturn(expectedAnimal);
 
@@ -77,16 +81,23 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldGetAllAnimals() {
-        List<Animal> listOfAnimals = newArrayList(
-                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
-        );
-        when(animalRepository.get()).thenReturn(listOfAnimals);
-        Animals expectedAnimals = new Animals(listOfAnimals.stream().map(a -> new AnimalDto(
-                a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex())
-        ).collect(Collectors.toList()));
+    public void shouldReturnAllAnimalsFilteredByState() {
+        State state = new LookingForHuman(LocalDateTime.now());
+        Animal firstAnimalExpected = AnimalBuilder.random().withState(state).build();
+        Animal secondAnimalExpected = AnimalBuilder.random().withState(state).build();
+        Animals expectedAnimals = new Animals(newArrayList(
+                firstAnimalExpected, secondAnimalExpected).stream()
+                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
+                .collect(Collectors.toList()));
+        State anotherState = new Unavailable(LocalDateTime.now(), randomAlphabetic(10));
+        when(animalRepository.get()).thenReturn(newArrayList(
+                firstAnimalExpected,
+                secondAnimalExpected,
+                AnimalBuilder.random().withState(anotherState).build(),
+                AnimalBuilder.random().withState(anotherState).build()
+        ));
 
-        Animals animals = animalService.get();
+        Animals animals = animalService.getAllFilteredByState(state.getClass().getSimpleName());
 
         assertReflectionEquals(expectedAnimals, animals);
     }

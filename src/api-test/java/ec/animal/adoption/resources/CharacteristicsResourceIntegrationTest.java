@@ -37,11 +37,11 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-public class CharacteristicsResourceIntegrationTest extends ResourceIntegrationTest {
+public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
@@ -102,7 +102,7 @@ public class CharacteristicsResourceIntegrationTest extends ResourceIntegrationT
 
     @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
@@ -122,7 +122,7 @@ public class CharacteristicsResourceIntegrationTest extends ResourceIntegrationT
 
     @Test
     public void shouldReturn200OkWithCharacteristics() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Characteristics createdCharacteristics = webTestClient.post()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())
                 .syncBody(CharacteristicsBuilder.random().build())
@@ -154,7 +154,7 @@ public class CharacteristicsResourceIntegrationTest extends ResourceIntegrationT
 
     @Test
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
                 .uri(CHARACTERISTICS_URL, animal.getUuid())

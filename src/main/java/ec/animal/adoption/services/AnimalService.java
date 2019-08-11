@@ -48,8 +48,9 @@ public class AnimalService {
         return animalRepository.getBy(uuid);
     }
 
-    public Animals get() {
+    public Animals getAllFilteredByState(final String state) {
         List<AnimalDto> listOfAnimalDtos = animalRepository.get().stream()
+                .filter(animal -> state.equals(animal.getState().getClass().getSimpleName()))
                 .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
                 .collect(Collectors.toList());
 

@@ -59,4 +59,8 @@ public class AnimalDto {
         this.estimatedAge = estimatedAge;
         this.sex = sex;
     }
+
+    public UUID getAnimalUuid() {
+        return animalUuid;
+    }
 }

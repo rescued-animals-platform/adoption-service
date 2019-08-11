@@ -12,12 +12,28 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
-public abstract class JpaRepositoryIntegrationTest {
+public abstract class AbstractJpaRepositoryIntegrationTest {
 
     @Autowired
     JpaAnimalRepository jpaAnimalRepository;
 
+    @Autowired
+    private JpaStoryRepository jpaStoryRepository;
+
+    @Autowired
+    private JpaCharacteristicsRepository jpaCharacteristicsRepository;
+
+    @Autowired
+    private JpaLinkPictureRepository jpaLinkPictureRepository;
+
     JpaAnimal createAndSaveJpaAnimal() {
         return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build()));
+    }
+
+    void deleteAllJpaAnimals() {
+        jpaStoryRepository.deleteAll();
+        jpaCharacteristicsRepository.deleteAll();
+        jpaLinkPictureRepository.deleteAll();
+        jpaAnimalRepository.deleteAll();
     }
 }

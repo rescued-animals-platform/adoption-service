@@ -33,11 +33,11 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-public class StoryResourceIntegrationTest extends ResourceIntegrationTest {
+public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
     public void shouldReturn201CreatedWithStory() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Story story = new Story(randomAlphabetic(300));
 
         webTestClient.post()
@@ -94,7 +94,7 @@ public class StoryResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Story story = new Story(randomAlphabetic(300));
         webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
@@ -114,7 +114,7 @@ public class StoryResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn200OkWithStory() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Story createdStory = webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(new Story(randomAlphabetic(100)))
@@ -146,7 +146,7 @@ public class StoryResourceIntegrationTest extends ResourceIntegrationTest {
 
     @Test
     public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
-        Animal animal = createAndSaveAnimal();
+        Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
                 .uri(STORY_URL, animal.getUuid())
