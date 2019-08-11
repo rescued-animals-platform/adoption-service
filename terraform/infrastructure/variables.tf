@@ -25,6 +25,7 @@ variable "animal_pictures_storage_bucket" {
 
 variable "db_instance_name_prefix" {
   description = "The name prefix for the database instance. Will be appended with a random string. Use lowercase letters, numbers, and hyphens. Start with a letter."
+  type = string
 }
 
 variable "db_name" {
@@ -44,6 +45,7 @@ variable "cluster_name" {
 
 variable "cluster_initial_node_count" {
   description = "Initial node count for the GCP Cluster."
+  type = number
 }
 
 variable "cluster_node_machine_type" {

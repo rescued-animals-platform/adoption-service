@@ -15,69 +15,72 @@ variable "infra_state_prefix" {
 
 variable "spring_profile" {
   description = "The spring profile defining the environment where this service will be deployed"
+  type = string
 }
 
 variable "adoption_service_image_name" {
   description = "The image name for the adoption service pod"
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_image_tag" {
   description = "The image tag for the adoption service pod. Provided by the env variable TF_VAR_adoption_service_image_tag in the service deployment script"
-  type = "string"
+  type = string
 }
 
 variable "number_of_replicas" {
   description = "The number of desired replicas"
+  type = number
 }
 
 variable "min_ready_seconds" {
   description = "Minimum number of seconds for which a newly created pod should be ready without any of its container crashing, for it to be considered available"
+  type = number
 }
 
 variable "db_host" {
   description = "The database host for this service"
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_limits_cpu" {
   description = "Describes the maximum amount of CPU allowed"
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_limits_memory" {
   description = "Describes the maximum amount of memory allowed"
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_requests_cpu" {
   description = "Describes the minimum amount of CPU required."
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_requests_memory" {
   description = "Describes the minimum amount of memory required."
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_limits_cpu" {
   description = "Describes the maximum amount of CPU allowed"
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_limits_memory" {
   description = "Describes the maximum amount of memory allowed"
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_requests_cpu" {
   description = "Describes the minimum amount of CPU required."
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_requests_memory" {
   description = "Describes the minimum amount of memory required."
-  type = "string"
+  type = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -11,52 +11,58 @@ variable "infra_state_prefix" {
   type = string
 }
 
-variable "spring_profile" {}
+variable "spring_profile" {
+  type = string
+}
 
 variable "adoption_service_image_name" {
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_image_tag" {
-  type = "string"
+  type = string
 }
 
-variable "number_of_replicas" {}
+variable "number_of_replicas" {
+  type = number
+}
 
-variable "min_ready_seconds" {}
+variable "min_ready_seconds" {
+  type = number
+}
 
 variable "db_host" {
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_limits_cpu" {
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_limits_memory" {
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_requests_cpu" {
-  type = "string"
+  type = string
 }
 
 variable "adoption_service_resources_requests_memory" {
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_limits_cpu" {
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_limits_memory" {
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_requests_cpu" {
-  type = "string"
+  type = string
 }
 
 variable "cloudsql_proxy_resources_requests_memory" {
-  type = "string"
+  type = string
 }
