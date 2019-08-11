@@ -15,6 +15,7 @@ echo "Kubectl set up"
 {
   export TF_VAR_cloud_sql_master_user_name=${CI_SQL_CLOUD_MASTER_USERNAME}
   export TF_VAR_cloud_sql_master_user_password=${CI_SQL_CLOUD_MASTER_PASSWORD}
+  export TF_VAR_adoption_service_image_tag=${CIRCLE_WORKFLOW_ID}
   echo $CI_ADOPTION_SERVICE_SERVICE_KEY >> ${HOME}/repo/terraform/deployment/secrets/credentials.json;
 
   source ${ENVIRONMENT_PROPERTIES_PATH}

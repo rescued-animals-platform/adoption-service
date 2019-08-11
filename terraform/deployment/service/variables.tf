@@ -13,7 +13,11 @@ variable "infra_state_prefix" {
 
 variable "spring_profile" {}
 
-variable "adoption_service_image" {
+variable "adoption_service_image_name" {
+  type = "string"
+}
+
+variable "adoption_service_image_tag" {
   type = "string"
 }
 

@@ -17,8 +17,13 @@ variable "spring_profile" {
   description = "The spring profile defining the environment where this service will be deployed"
 }
 
-variable "adoption_service_image" {
-  description = "The image for the adoption service pod"
+variable "adoption_service_image_name" {
+  description = "The image name for the adoption service pod"
+  type = "string"
+}
+
+variable "adoption_service_image_tag" {
+  description = "The image tag for the adoption service pod. Provided by the env variable TF_VAR_adoption_service_image_tag in the service deployment script"
   type = "string"
 }
 

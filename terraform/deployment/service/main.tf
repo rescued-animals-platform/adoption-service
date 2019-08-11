@@ -30,7 +30,7 @@ resource "kubernetes_deployment" "adoption-service-deployment" {
 
       spec {
         container {
-          image = var.adoption_service_image
+          image = "${var.adoption_service_image_name}:${var.adoption_service_image_tag}"
           name = "adoption-service"
 
           port {
