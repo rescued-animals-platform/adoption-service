@@ -1,12 +1,6 @@
-FROM adoptopenjdk/openjdk8:jdk8u212-b04-slim
+FROM gradle:5.5.1-jdk8
 
-WORKDIR /usr/lib
-
-COPY gradle/wrapper ./gradle/wrapper
-COPY gradlew ./
-
-ENV PATH "${PATH}:/usr/lib"
-RUN ./gradlew --version
-
-WORKDIR /usr/src/app
-ENTRYPOINT ["gradlew"]
+RUN mkdir /app
+ADD . /app
+VOLUME /app
+WORKDIR /app

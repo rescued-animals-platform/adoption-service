@@ -4,7 +4,7 @@ builder-build:
 	@docker-compose build adoption-service-builder
 
 deploy:
-	$(docker_compose_builder) bootJar
+	./gradlew bootJar
 	@docker-compose build adoption-service
 	@docker-compose up -d adoption-service adoption-service-db
 
@@ -24,13 +24,13 @@ style-check:
 	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest
 
 integration-test: deploy-adoption-service-db
-	$(docker_compose_builder) integrationTest
+	$(docker_compose_builder) gradle integrationTest
 	make undeploy
 
 api-test: deploy
-	$(docker_compose_builder) apiTest
+	$(docker_compose_builder) gradle apiTest
 	make undeploy
 
 all-test: unit-test pitest deploy
-	$(docker_compose_builder) integrationTest apiTest
+	$(docker_compose_builder) gradle integrationTest apiTest
 	make undeploy
