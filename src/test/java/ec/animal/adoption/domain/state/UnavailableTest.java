@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import static ec.animal.adoption.TestUtils.getValidator;
+import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -42,8 +43,13 @@ public class UnavailableTest {
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
+    public void shouldReturnStateName() {
+        assertThat(new Unavailable(now(), randomAlphabetic(10)).getStateName(), is("unavailable"));
+    }
+
+    @Test
     public void shouldBeAnInstanceOfState() {
-        Unavailable unavailableState = new Unavailable(LocalDateTime.now(), randomAlphabetic(20));
+        Unavailable unavailableState = new Unavailable(now(), randomAlphabetic(20));
 
         assertThat(unavailableState, is(instanceOf(State.class)));
     }
@@ -51,7 +57,7 @@ public class UnavailableTest {
     @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         String notes = randomAlphabetic(20);
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String expectedSerializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
                 ",\"notes\":\"" + notes + "\"}}";
@@ -65,7 +71,7 @@ public class UnavailableTest {
     @Test
     public void shouldBeDeserializableWithDateAndNotes() throws IOException {
         String notes = randomAlphabetic(20);
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String serializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
                 ",\"notes\":\"" + notes + "\"}}";
@@ -95,7 +101,7 @@ public class UnavailableTest {
 
     @Test
     public void shouldValidateNonNullNotes() {
-        Unavailable unavailable = new Unavailable(LocalDateTime.now(), null);
+        Unavailable unavailable = new Unavailable(now(), null);
 
         Set<ConstraintViolation<Unavailable>> constraintViolations = getValidator().validate(unavailable);
 
@@ -107,7 +113,7 @@ public class UnavailableTest {
 
     @Test
     public void shouldValidateNonEmptyNotes() {
-        Unavailable unavailable = new Unavailable(LocalDateTime.now(), "");
+        Unavailable unavailable = new Unavailable(now(), "");
 
         Set<ConstraintViolation<Unavailable>> constraintViolations = getValidator().validate(unavailable);
 

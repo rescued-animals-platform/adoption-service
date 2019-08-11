@@ -19,21 +19,25 @@
 
 package ec.animal.adoption.models.jpa;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.state.State;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity(name = "animal")
 public class JpaAnimal implements Serializable {
 
@@ -60,8 +64,14 @@ public class JpaAnimal implements Serializable {
 
     private LocalDateTime registrationDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
-    private JpaState jpaState;
+    @NotNull
+    @SuppressWarnings({"PMD.SingularField", "PMD.UnusedPrivateField"})
+    private String stateName;
+
+    @NotNull
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private State state;
 
     private JpaAnimal() {
         // Required by jpa
@@ -76,7 +86,8 @@ public class JpaAnimal implements Serializable {
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
-        this.jpaState = new JpaState(animal.getState(), this);
+        this.stateName = animal.getStateName();
+        this.state = animal.getState();
     }
 
     public Animal toAnimal() {
@@ -88,7 +99,7 @@ public class JpaAnimal implements Serializable {
                 Species.valueOf(animalSpecies),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
-                jpaState.toState()
+                state
         );
     }
 }

@@ -1,9 +1,10 @@
-docker_compose_builder = docker-compose run --rm adoption-service-builder
+docker_compose_builder = docker-compose run adoption-service-builder
 
-package:
-	./gradlew clean bootJar
+builder-build:
+	@docker-compose build adoption-service-builder
 
-deploy: package
+deploy:
+	$(docker_compose_builder) bootJar
 	@docker-compose build adoption-service
 	@docker-compose up -d adoption-service adoption-service-db
 
@@ -13,26 +14,23 @@ deploy-adoption-service-db:
 undeploy:
 	@docker-compose down
 
-builder-build:
-	@docker-compose build adoption-service-builder
-
 unit-test:
-	./gradlew check --rerun-tasks
+	$(docker_compose_builder) check --rerun-tasks
 
 pitest:
-	./gradlew pitest
+	$(docker_compose_builder) pitest
 
 style-check:
-	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
+	$(docker_compose_builder) pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
 
-integration-test: deploy-adoption-service-db builder-build
-	$(docker_compose_builder) gradle integrationTest --rerun-tasks
+integration-test: deploy-adoption-service-db
+	$(docker_compose_builder) integrationTest --rerun-tasks
 	make undeploy
 
-api-test: deploy builder-build
-	$(docker_compose_builder) gradle apiTest --rerun-tasks
+api-test: deploy
+	$(docker_compose_builder) apiTest --rerun-tasks
 	make undeploy
 
-all-test: unit-test pitest deploy builder-build
-	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
+all-test: unit-test pitest deploy
+	$(docker_compose_builder) integrationTest apiTest --rerun-tasks
 	make undeploy

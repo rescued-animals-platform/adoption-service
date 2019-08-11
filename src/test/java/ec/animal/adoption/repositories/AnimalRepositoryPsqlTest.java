@@ -94,7 +94,7 @@ public class AnimalRepositoryPsqlTest {
                 .collect(Collectors.toList());
         when(jpaAnimalRepository.findAll()).thenReturn(listOfJpaAnimals);
 
-        List<Animal> listOfAnimals = animalRepositoryPsql.get();
+        List<Animal> listOfAnimals = animalRepositoryPsql.getAll();
 
         assertReflectionEquals(expectedListOfAnimals, listOfAnimals);
     }
@@ -103,7 +103,7 @@ public class AnimalRepositoryPsqlTest {
     public void shouldGetEmptyList() {
         when(jpaAnimalRepository.findAll()).thenReturn(newArrayList());
 
-        assertThat(animalRepositoryPsql.get().isEmpty(), is(true));
+        assertThat(animalRepositoryPsql.getAll().isEmpty(), is(true));
     }
 
     @Test

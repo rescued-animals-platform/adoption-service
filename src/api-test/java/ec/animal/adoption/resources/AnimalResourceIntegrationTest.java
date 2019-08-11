@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -176,7 +177,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
-        String stateName = "LookingForHuman";
+        String stateName = new LookingForHuman(LocalDateTime.now()).getStateName();
         webTestClient.get()
                 .uri(ANIMALS_URL + "?state={state}", stateName)
                 .exchange()
@@ -201,7 +202,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                     .consumeWith(animalEntityExchangeResult -> {
                         Animal animal = animalEntityExchangeResult.getResponseBody();
                         assertNotNull(animal);
-                        assertThat(animal.getState().getClass().getSimpleName(), is(stateName));
+                        assertThat(animal.getStateName(), is(stateName));
                     });
         });
     }

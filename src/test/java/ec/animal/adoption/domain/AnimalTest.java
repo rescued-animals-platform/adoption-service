@@ -25,6 +25,7 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.getRandomState;
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.*;
@@ -56,6 +58,14 @@ public class AnimalTest {
     private static final String SEX_JSON = "\",\"sex\":\"";
 
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
+
+    @Test
+    public void shouldReturnStateName() {
+        State randomState = getRandomState();
+        Animal animal = AnimalBuilder.random().withState(randomState).build();
+
+        assertThat(animal.getStateName(), is(randomState.getStateName()));
+    }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")

@@ -23,7 +23,8 @@ services:
       SPRING_PROFILE:
       ADOPTION_SERVICE_URL: http://adoption-service:8080
     volumes:
-      - ~/.gradle:/home/gradle/.gradle
+      - ~/.gradle/caches:/root/.gradle/caches:rw
+      - .:/usr/src/app:rw
 
   adoption-service-db:
     image: postgres:10

@@ -27,6 +27,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import static java.time.LocalDateTime.now;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -36,15 +37,20 @@ public class LookingForHumanTest {
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
+    public void shouldReturnStateName() {
+        assertThat(new LookingForHuman(now()).getStateName(), is("lookingForHuman"));
+    }
+
+    @Test
     public void shouldBeAnInstanceOfState() {
-        LookingForHuman lookingForHumanState = new LookingForHuman(LocalDateTime.now());
+        LookingForHuman lookingForHumanState = new LookingForHuman(now());
 
         assertThat(lookingForHumanState, is(instanceOf(State.class)));
     }
 
     @Test
     public void shouldBeSerializable() throws JsonProcessingException {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String expectedSerializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" +
                 serializedLocalDateTime + "}}";
@@ -69,7 +75,7 @@ public class LookingForHumanTest {
 
     @Test
     public void shouldNotDeserializeWithDate() throws IOException {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String serializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}";
 

@@ -27,6 +27,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,8 +38,13 @@ public class AdoptedTest {
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
+    public void shouldReturnStateName() {
+        assertThat(new Adopted(now(), randomAlphabetic(10)).getStateName(), is("adopted"));
+    }
+
+    @Test
     public void shouldBeAnInstanceOfState() {
-        Adopted adoptedState = new Adopted(LocalDateTime.now(), randomAlphabetic(10));
+        Adopted adoptedState = new Adopted(now(), randomAlphabetic(10));
 
         assertThat(adoptedState, is(instanceOf(State.class)));
     }
@@ -46,7 +52,7 @@ public class AdoptedTest {
     @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         String adoptionFormId = randomAlphabetic(10);
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String expectedSerializedAdoptedState = "{\"adopted\":{\"date\":" + serializedLocalDateTime +
                 ",\"adoptionFormId\":\"" + adoptionFormId + "\"}}";
@@ -82,7 +88,7 @@ public class AdoptedTest {
 
     @Test
     public void shouldBeDeserializableWithDateOnly() throws IOException {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String serializedAdoptedState = "{\"adopted\":{\"date\":" + serializedLocalDateTime + "}}";
 

@@ -43,4 +43,9 @@ public class Adopted extends State {
     public String getAdoptionFormId() {
         return adoptionFormId;
     }
+
+    @Override
+    public String getStateName() {
+        return "adopted";
+    }
 }

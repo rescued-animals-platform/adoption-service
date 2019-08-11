@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -119,6 +120,11 @@ public class Animal extends Entity {
 
     public State getState() {
         return state;
+    }
+
+    @JsonIgnore
+    public String getStateName() {
+        return state.getStateName();
     }
 
     @Override

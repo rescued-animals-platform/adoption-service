@@ -45,4 +45,9 @@ public class Unavailable extends State {
     public String getNotes() {
         return notes;
     }
+
+    @Override
+    public String getStateName() {
+        return "unavailable";
+    }
 }

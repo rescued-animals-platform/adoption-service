@@ -26,7 +26,6 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class JpaAnimalTest {
 
@@ -44,6 +43,6 @@ public class JpaAnimalTest {
         assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
         assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
         assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
-        assertReflectionEquals(animal.getState(), jpaAnimalToAnimal.getState());
+        assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
     }
 }

@@ -65,7 +65,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public List<Animal> get() {
+    public List<Animal> getAll() {
         List<Animal> animals = new ArrayList<>();
         jpaAnimalRepository.findAll().forEach( jpaAnimal -> animals.add(jpaAnimal.toAnimal()));
         return animals;

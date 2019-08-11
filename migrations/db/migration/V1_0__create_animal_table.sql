@@ -5,5 +5,7 @@ CREATE TABLE animal (
   name VARCHAR(40) NOT NULL,
   animal_species VARCHAR(3) NOT NULL,
   estimated_age VARCHAR(12) NOT NULL,
-  sex VARCHAR(6) NOT NULL
+  sex VARCHAR(6) NOT NULL,
+  state_name VARCHAR(20) NOT NULL,
+  state VARCHAR(500) NOT NULL
 );

@@ -30,7 +30,7 @@ public interface AnimalRepository {
 
     Animal getBy(UUID uuid);
 
-    List<Animal> get();
+    List<Animal> getAll();
 
     boolean animalExists(UUID animalUuid);
 }

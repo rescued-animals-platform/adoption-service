@@ -19,10 +19,7 @@
 
 package ec.animal.adoption.domain.state;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -34,7 +31,7 @@ import java.time.LocalDateTime;
         @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
         @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
 })
-public class State implements Serializable {
+public abstract class State implements Serializable {
 
     private transient static final long serialVersionUID = -312436659134428610L;
 
@@ -45,7 +42,14 @@ public class State implements Serializable {
         this.date = date;
     }
 
+    public static boolean isValidStateName(final String stateName) {
+        return "lookingForHuman".equals(stateName) || "adopted".equals(stateName) || "unavailable".equals(stateName);
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
+
+    @JsonIgnore
+    public abstract String getStateName();
 }

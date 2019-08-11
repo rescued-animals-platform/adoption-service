@@ -19,22 +19,31 @@
 
 package ec.animal.adoption.domain.state;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.junit.Test;
 
-import java.time.LocalDateTime;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class LookingForHuman extends State {
+public class StateTest {
 
-    private transient static final long serialVersionUID = -612446656134428617L;
-
-    @JsonCreator
-    public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {
-        super(date);
+    @Test
+    public void shouldReturnTrueForValidLookingForHumanStateName() {
+        assertTrue(State.isValidStateName("lookingForHuman"));
     }
 
-    @Override
-    public String getStateName() {
-        return "lookingForHuman";
+    @Test
+    public void shouldReturnTrueForValidAdoptedStateName() {
+        assertTrue(State.isValidStateName("adopted"));
+    }
+
+    @Test
+    public void shouldReturnTrueForValidUnavailableStateName() {
+        assertTrue(State.isValidStateName("unavailable"));
+    }
+
+    @Test
+    public void shouldReturnFalseForInvalidStateName() {
+        assertFalse(State.isValidStateName(randomAlphabetic(10)));
     }
 }

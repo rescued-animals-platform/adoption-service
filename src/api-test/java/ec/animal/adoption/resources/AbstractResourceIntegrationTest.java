@@ -21,10 +21,12 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import org.junit.BeforeClass;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static java.lang.System.getenv;
 
@@ -47,7 +49,7 @@ public abstract class AbstractResourceIntegrationTest {
     Animal createAndSaveAnimalWithDefaultLookingForHumanState() {
         return webTestClient.post()
                 .uri(ANIMALS_URL)
-                .syncBody(AnimalBuilder.random().withState(null).build())
+                .syncBody(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
                 .exchange()
                 .expectStatus()
                 .isCreated()

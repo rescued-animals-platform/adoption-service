@@ -90,14 +90,14 @@ public class AnimalServiceTest {
                 .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
                 .collect(Collectors.toList()));
         State anotherState = new Unavailable(LocalDateTime.now(), randomAlphabetic(10));
-        when(animalRepository.get()).thenReturn(newArrayList(
+        when(animalRepository.getAll()).thenReturn(newArrayList(
                 firstAnimalExpected,
                 secondAnimalExpected,
                 AnimalBuilder.random().withState(anotherState).build(),
                 AnimalBuilder.random().withState(anotherState).build()
         ));
 
-        Animals animals = animalService.getAllFilteredByState(state.getClass().getSimpleName());
+        Animals animals = animalService.getAllFilteredByState(state.getStateName());
 
         assertReflectionEquals(expectedAnimals, animals);
     }
