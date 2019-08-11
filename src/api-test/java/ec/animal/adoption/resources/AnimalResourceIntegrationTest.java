@@ -206,4 +206,16 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                     });
         });
     }
+
+    @Test
+    public void shouldReturn400BadRequestWhenStateIsInvalid() {
+        String invalidStateName = randomAlphabetic(10);
+
+        webTestClient.get()
+                .uri(ANIMALS_URL + "?state={state}", invalidStateName)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
+    }
 }

@@ -19,14 +19,15 @@
 
 package ec.animal.adoption.exceptions.handlers;
 
-import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.domain.error.ApiError;
 import ec.animal.adoption.domain.error.ApiSubError;
 import ec.animal.adoption.domain.error.ValidationApiSubError;
+import ec.animal.adoption.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,18 +39,6 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            final HttpMessageNotReadableException exception,
-            final HttpHeaders headers,
-            final HttpStatus status,
-            final WebRequest request
-    ) {
-        final String error = "Malformed JSON request";
-        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, error, exception.getLocalizedMessage()), badRequest);
-    }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     protected ResponseEntity<Object> handleEntityAlreadyExists(final EntityAlreadyExistsException exception) {
@@ -81,12 +70,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
+    @ExceptionHandler(InvalidStateException.class)
+    public ResponseEntity<Object> handleInvalidStateError(final InvalidStateException exception) {
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        return buildResponseEntity(new ApiError(badRequest, exception.getMessage()), badRequest);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            final HttpMessageNotReadableException exception,
+            @Nullable final HttpHeaders headers,
+            @Nullable final HttpStatus status,
+            @Nullable final WebRequest request
+    ) {
+        final String error = "Malformed JSON request";
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        return buildResponseEntity(new ApiError(badRequest, error, exception.getLocalizedMessage()), badRequest);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             final MethodArgumentNotValidException exception,
-            final HttpHeaders headers,
-            final HttpStatus status,
-            final WebRequest request
+            @Nullable final HttpHeaders headers,
+            @Nullable final HttpStatus status,
+            @Nullable final WebRequest request
     ) {
         final String error = "Validation failed";
         final List<ApiSubError> apiSubErrors = exception.getBindingResult().getFieldErrors()

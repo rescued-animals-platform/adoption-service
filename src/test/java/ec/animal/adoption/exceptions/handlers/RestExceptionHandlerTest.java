@@ -1,9 +1,9 @@
 package ec.animal.adoption.exceptions.handlers;
 
-import ec.animal.adoption.domain.media.SupportedImageExtension;
-import ec.animal.adoption.exceptions.*;
 import ec.animal.adoption.domain.error.ApiError;
 import ec.animal.adoption.domain.error.ValidationApiSubError;
+import ec.animal.adoption.domain.media.SupportedImageExtension;
+import ec.animal.adoption.exceptions.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,8 +130,8 @@ public class RestExceptionHandlerTest {
         ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
                 .setSubErrors(
                         fieldErrors.stream()
-                        .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
-                        .collect(Collectors.toList())
+                                .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
+                                .collect(Collectors.toList())
                 );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
@@ -183,8 +183,8 @@ public class RestExceptionHandlerTest {
         ApiError expectedApiError = new ApiError(
                 HttpStatus.BAD_REQUEST,
                 String.format(invalidMessage, Arrays.stream(SupportedImageExtension.values()).
-                map(SupportedImageExtension::getExtension).
-                collect(Collectors.joining(", ")))
+                        map(SupportedImageExtension::getExtension).
+                        collect(Collectors.joining(", ")))
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
@@ -239,6 +239,29 @@ public class RestExceptionHandlerTest {
 
         ResponseEntity<Object> responseEntity = restExceptionHandler
                 .handleGoogleCloudStorageException(googleCloudStorageException);
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidStateException() {
+        InvalidStateException invalidStateException = mock(InvalidStateException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidStateError(invalidStateException);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForInvalidStateException() {
+        String stateName = randomAlphabetic(10);
+        String invalidMessage = String.format("%s is not a valid state", stateName);
+        InvalidStateException invalidStateException = new InvalidStateException(stateName);
+        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, invalidMessage);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidStateError(invalidStateException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

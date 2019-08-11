@@ -26,6 +26,7 @@ import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.dtos.AnimalDto;
+import ec.animal.adoption.exceptions.InvalidStateException;
 import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +79,13 @@ public class AnimalServiceTest {
         Animal animal = animalService.getBy(uuid);
 
         assertThat(animal, is(expectedAnimal));
+    }
+
+    @Test(expected = InvalidStateException.class)
+    public void shouldThrowInvalidStateExceptionWhenStateNameIsNotValid() {
+        String invalidStateName = randomAlphabetic(10);
+
+        animalService.getAllFilteredByState(invalidStateName);
     }
 
     @Test

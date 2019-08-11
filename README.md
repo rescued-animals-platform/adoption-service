@@ -41,6 +41,20 @@ _**(Always, before running the integration tests)**_
         docker ps -a    
   
   If it is not, run: `make deploy-adoption-service-db`
+  
+## [Important] If you want to run api tests from the IDE
+
+Without this steps, you would be able to run all tests from a terminal. Only if you want to be able to run api tests from your IDE, you can do the following:
+
+_**(Only for the first time)**_
+        
+- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `ADOPTION_SERVICE_URL=http://localhost:8080` and `SPRING_PROFILE=dev` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
+
+_**(Always, before running the api tests)**_
+
+- Deploy the application with:
+
+        make deploy
         
 ## Useful commands
 
@@ -51,6 +65,12 @@ _**(Always, before running the integration tests)**_
 2. Run pitest (mutation testing) with:
     
         make pitest
+        
+3. Check code style with:
+        
+        make style-check
+        
+   Task unit-test also checks the code style by default before running the unit tests.
 
 3. Run integration tests with:
 
@@ -68,7 +88,7 @@ _**(Always, before running the integration tests)**_
 
         make deploy-adoption-service-db
         
-7. Local deployment of the adoption service (useful when running api tests from the IDE and manual local testing):
+7. Local deployment of the adoption service (useful when running api tests from the IDE and for manual local testing):
 
         make deploy
         

@@ -15,22 +15,22 @@ undeploy:
 	@docker-compose down
 
 unit-test:
-	./gradlew check --rerun-tasks
+	./gradlew check
 
 pitest:
 	./gradlew pitest
 
 style-check:
-	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
+	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest
 
 integration-test: deploy-adoption-service-db
-	$(docker_compose_builder) integrationTest --rerun-tasks
+	$(docker_compose_builder) integrationTest
 	make undeploy
 
 api-test: deploy
-	$(docker_compose_builder) apiTest --rerun-tasks
+	$(docker_compose_builder) apiTest
 	make undeploy
 
 all-test: unit-test pitest deploy
-	$(docker_compose_builder) integrationTest apiTest --rerun-tasks
+	$(docker_compose_builder) integrationTest apiTest
 	make undeploy
