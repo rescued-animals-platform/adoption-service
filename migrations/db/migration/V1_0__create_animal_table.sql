@@ -7,5 +7,5 @@ CREATE TABLE animal (
   estimated_age VARCHAR(12) NOT NULL,
   sex VARCHAR(6) NOT NULL,
   state_name VARCHAR(20) NOT NULL,
-  state VARCHAR(500) NOT NULL
+  state TEXT NOT NULL
 );
