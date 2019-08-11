@@ -25,4 +25,4 @@ echo "Un deploying service with terraform"
 
 cd terraform/deployment
 terraform init -backend-config="backend-ci.tfvars"
-terraform destroy -auto-approve -var-file="ci.tfvars"
+terraform destroy -auto-approve -var-file="ci.tfvars" -var 'adoption_service_image_tag=latest'
