@@ -31,6 +31,6 @@ api-test: deploy
 	$(docker_compose_builder) gradle apiTest
 	make undeploy
 
-all-test: unit-test pitest deploy
+all-test: unit-test pitest deploy builder-build
 	$(docker_compose_builder) gradle integrationTest apiTest
 	make undeploy

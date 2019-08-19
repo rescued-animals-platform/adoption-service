@@ -171,7 +171,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturnAnimalsFilteredByStateWithPagination() {
+    public void shouldReturn200OkWithAnimalsFilteredByStateAndPagination() {
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
