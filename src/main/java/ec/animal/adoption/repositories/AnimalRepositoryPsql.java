@@ -20,15 +20,15 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import ec.animal.adoption.repositories.jpa.JpaAnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,10 +65,8 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public List<Animal> getAll() {
-        List<Animal> animals = new ArrayList<>();
-        jpaAnimalRepository.findAll().forEach( jpaAnimal -> animals.add(jpaAnimal.toAnimal()));
-        return animals;
+    public PagedEntity<Animal> getAllBy(final String stateName, final Pageable pageable) {
+        return new PagedEntity<>(jpaAnimalRepository.findAllByStateName(stateName, pageable).map(JpaAnimal::toAnimal));
     }
 
     @Override

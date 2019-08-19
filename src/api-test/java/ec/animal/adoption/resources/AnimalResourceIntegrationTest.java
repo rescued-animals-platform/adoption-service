@@ -21,16 +21,14 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.error.ApiError;
 import ec.animal.adoption.domain.state.LookingForHuman;
-import ec.animal.adoption.dtos.AnimalDto;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -41,7 +39,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+@SuppressWarnings({"PMD.JUnitTestsShouldIncludeAssert", "PMD.TooManyMethods"})
 public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
     @Test
@@ -173,38 +171,27 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturn200OkWithAnimalsFilteredByState() {
+    public void shouldReturnAnimalsFilteredByStateWithPagination() {
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
         createAndSaveAnimalWithDefaultLookingForHumanState();
         String stateName = new LookingForHuman(LocalDateTime.now()).getStateName();
+
         webTestClient.get()
-                .uri(ANIMALS_URL + "?state={state}", stateName)
+                .uri(ANIMALS_URL + "?state={state}&page=0&size=3", stateName)
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(Animals.class)
+                .expectBody(PagedEntity.class)
                 .consumeWith(animalsEntityExchangeResult -> {
-                    Animals animals = animalsEntityExchangeResult.getResponseBody();
-                    assertNotNull(animals);
-                    assertEachAnimalInListHasExpectedState(stateName, animals.getListOfAnimals());
-                });
-    }
-
-    private void assertEachAnimalInListHasExpectedState(final String stateName, final List<AnimalDto> listOfAnimals) {
-        listOfAnimals.forEach(animalDto -> {
-            webTestClient.get()
-                    .uri(ANIMALS_URL + "/{uuid}", animalDto.getAnimalUuid())
-                    .exchange()
-                    .expectStatus()
-                    .isOk()
-                    .expectBody(Animal.class)
-                    .consumeWith(animalEntityExchangeResult -> {
-                        Animal animal = animalEntityExchangeResult.getResponseBody();
-                        assertNotNull(animal);
-                        assertThat(animal.getStateName(), is(stateName));
-                    });
-        });
+                    PagedEntity pagedEntity = animalsEntityExchangeResult.getResponseBody();
+                    assertNotNull(pagedEntity);
+                    assertThat(pagedEntity.isEmpty(), is(false));
+                    assertThat(pagedEntity.getNumberOfElements(), is(3));
+                    assertThat(pagedEntity.getSize(), is(3));
+                    assertThat(pagedEntity.isFirst(), is(true));
+                    assertThat(pagedEntity.getContent().size(), is(3));
+                }).returnResult().getResponseBody();
     }
 
     @Test

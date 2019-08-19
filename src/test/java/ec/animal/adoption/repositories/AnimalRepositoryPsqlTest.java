@@ -2,6 +2,8 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -13,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.postgresql.util.PSQLException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -84,26 +89,24 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetListOfAnimals() {
+    public void shouldReturnAllAnimalsByStateWithPagination() {
+        State randomState = getRandomState();
+        String stateName = randomState.getStateName();
+        Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> listOfJpaAnimals = newArrayList(
-                AnimalBuilder.random().build(),
-                AnimalBuilder.random().build(),
-                AnimalBuilder.random().build()
+                AnimalBuilder.random().withState(randomState).build(),
+                AnimalBuilder.random().withState(randomState).build(),
+                AnimalBuilder.random().withState(randomState).build()
         ).stream().map(JpaAnimal::new).collect(Collectors.toList());
-        List<Animal> expectedListOfAnimals = listOfJpaAnimals.stream().map(JpaAnimal::toAnimal)
-                .collect(Collectors.toList());
-        when(jpaAnimalRepository.findAll()).thenReturn(listOfJpaAnimals);
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
+                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+        );
+        when(jpaAnimalRepository.findAllByStateName(stateName, pageable))
+                .thenReturn(new PageImpl<>(listOfJpaAnimals));
 
-        List<Animal> listOfAnimals = animalRepositoryPsql.getAll();
+        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(stateName, pageable);
 
-        assertReflectionEquals(expectedListOfAnimals, listOfAnimals);
-    }
-
-    @Test
-    public void shouldGetEmptyList() {
-        when(jpaAnimalRepository.findAll()).thenReturn(newArrayList());
-
-        assertThat(animalRepositoryPsql.getAll().isEmpty(), is(true));
+        assertReflectionEquals(expectedPageOfAnimals, pageOfAnimals);
     }
 
     @Test

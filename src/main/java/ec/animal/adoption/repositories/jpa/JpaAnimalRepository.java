@@ -20,9 +20,13 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.models.jpa.JpaAnimal;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.UUID;
 
-public interface JpaAnimalRepository extends CrudRepository<JpaAnimal, UUID> {
+public interface JpaAnimalRepository extends PagingAndSortingRepository<JpaAnimal, UUID> {
+
+    Page<JpaAnimal> findAllByStateName(String stateName, Pageable pageable);
 }

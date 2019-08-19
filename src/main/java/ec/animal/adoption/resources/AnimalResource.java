@@ -20,9 +20,11 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +54,9 @@ public class AnimalResource {
     }
 
     @GetMapping
-    public Animals getAllFilteredByState(@RequestParam("state") final String state) {
-        return animalService.getAllFilteredByState(state);
+    public PagedEntity<AnimalDto> listAllByStateWithPagination(
+            @RequestParam("state") final String stateName, final Pageable pageable
+    ) {
+        return animalService.listAllByStateWithPagination(stateName, pageable);
     }
 }

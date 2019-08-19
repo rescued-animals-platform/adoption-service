@@ -20,14 +20,25 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.models.jpa.JpaAnimal;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
@@ -64,5 +75,32 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         expectedJpaAnimals.forEach(jpaAnimal -> jpaAnimalRepository.save(jpaAnimal));
 
         assertReflectionEquals(expectedJpaAnimals, jpaAnimalRepository.findAll());
+    }
+
+    @Test
+    public void shouldReturnPageWithAllAnimalsByLookingForHumanStateName() {
+        deleteAllJpaAnimals();
+        State lookingForHuman = new LookingForHuman(LocalDateTime.now());
+        List<JpaAnimal> expectedJpaAnimalsWithLookingForHumanState = newArrayList(
+                new JpaAnimal(AnimalBuilder.random().withState(lookingForHuman).build()),
+                new JpaAnimal(AnimalBuilder.random().withState(lookingForHuman).build()),
+                new JpaAnimal(AnimalBuilder.random().withState(lookingForHuman).build())
+        );
+        expectedJpaAnimalsWithLookingForHumanState.forEach(jpaAnimal -> jpaAnimalRepository.save(jpaAnimal));
+        IntStream.rangeClosed(1, 10).forEach(n -> {
+            State anotherState = new Unavailable(LocalDateTime.now(), randomAlphabetic(10));
+            JpaAnimal jpaAnimalWithAnotherState = new JpaAnimal(AnimalBuilder.random().withState(anotherState).build());
+            jpaAnimalRepository.save(jpaAnimalWithAnotherState);
+        });
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<JpaAnimal> expectedPageOfJpaAnimals = new PageImpl<>(
+                expectedJpaAnimalsWithLookingForHumanState, pageable, 3
+        );
+
+        Page<JpaAnimal> allByStateName = jpaAnimalRepository.findAllByStateName(
+                lookingForHuman.getStateName(), pageable
+        );
+
+        assertReflectionEquals(expectedPageOfJpaAnimals, allByStateName);
     }
 }

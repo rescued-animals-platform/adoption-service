@@ -20,8 +20,9 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.PagedEntity;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface AnimalRepository {
@@ -30,7 +31,7 @@ public interface AnimalRepository {
 
     Animal getBy(UUID uuid);
 
-    List<Animal> getAll();
+    PagedEntity<Animal> getAllBy(String stateName, Pageable pageable);
 
     boolean animalExists(UUID animalUuid);
 }

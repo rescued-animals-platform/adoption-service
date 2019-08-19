@@ -22,7 +22,7 @@ package ec.animal.adoption.resources;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +41,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnimalResourceTest {
@@ -79,21 +79,24 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldGetAllAnimalsFilteredByState() {
+    public void shouldReturnAllAnimalsByStateWithPagination() {
         State randomState = TestUtils.getRandomState();
-        Animal firstAnimalInList = AnimalBuilder.random().withState(randomState).build();
-        Animal secondAnimalInList = AnimalBuilder.random().withState(randomState).build();
-        Animal thirdAnimalInList = AnimalBuilder.random().withState(randomState).build();
-        Animals expectedAnimals = new Animals(
-                newArrayList(firstAnimalInList, secondAnimalInList, thirdAnimalInList).stream().map(a -> new AnimalDto(
+        String stateName = randomState.getStateName();
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
+                newArrayList(
+                        AnimalBuilder.random().withState(randomState).build(),
+                        AnimalBuilder.random().withState(randomState).build(),
+                        AnimalBuilder.random().withState(randomState).build()
+                ).stream().map(a -> new AnimalDto(
                         a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex())
-                ).collect(Collectors.toList())
+                ).collect(Collectors.toList()));
+        Pageable pageable = mock(Pageable.class);
+        when(animalService.listAllByStateWithPagination(stateName, pageable)).thenReturn(expectedPageOfAnimalDtos);
+
+        PagedEntity<AnimalDto> animalsByStateWithPagination = animalResource.listAllByStateWithPagination(
+                stateName, pageable
         );
-        String stateName = randomState.getClass().getSimpleName();
-        when(animalService.getAllFilteredByState(stateName)).thenReturn(expectedAnimals);
 
-        Animals animals = animalResource.getAllFilteredByState(stateName);
-
-        assertReflectionEquals(expectedAnimals, animals);
+        assertThat(animalsByStateWithPagination, is(expectedPageOfAnimalDtos));
     }
 }

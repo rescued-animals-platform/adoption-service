@@ -4,7 +4,7 @@ builder-build:
 	@docker-compose build adoption-service-builder
 
 deploy:
-	./gradlew bootJar
+	./gradlew clean bootJar
 	@docker-compose build adoption-service
 	@docker-compose up -d adoption-service adoption-service-db
 
@@ -15,7 +15,7 @@ undeploy:
 	@docker-compose down
 
 unit-test:
-	./gradlew check
+	./gradlew clean check
 
 pitest:
 	./gradlew pitest

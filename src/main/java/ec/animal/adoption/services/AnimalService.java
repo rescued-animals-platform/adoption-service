@@ -20,17 +20,16 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Animals;
+import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.exceptions.InvalidStateException;
 import ec.animal.adoption.repositories.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AnimalService {
@@ -50,16 +49,12 @@ public class AnimalService {
         return animalRepository.getBy(uuid);
     }
 
-    public Animals getAllFilteredByState(final String stateName) {
+    public PagedEntity<AnimalDto> listAllByStateWithPagination(final String stateName, final Pageable pageable) {
         if (!State.isValidStateName(stateName)) {
             throw new InvalidStateException(stateName);
         }
 
-        List<AnimalDto> listOfAnimalDtos = animalRepository.getAll().stream()
-                .filter(animal -> stateName.equals(animal.getStateName()))
-                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
-                .collect(Collectors.toList());
-
-        return new Animals(listOfAnimalDtos);
+        return animalRepository.getAllBy(stateName, pageable)
+                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()));
     }
 }
