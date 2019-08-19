@@ -50,8 +50,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "build.gradle" }}
+          - v2-dependencies-
 
       - run: ./gradlew dependencies
 
@@ -62,7 +62,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
@@ -105,15 +105,15 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "build.gradle" }}
+          - v2-dependencies-
 
       - run: ./gradlew clean pitest
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - store_artifacts:
           path: build/reports/pitest
@@ -127,15 +127,15 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run: make style-check
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - store_artifacts:
           path: build/reports/pmd
@@ -154,8 +154,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run:
           name: Running integration tests
@@ -164,7 +164,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
@@ -190,8 +190,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run:
           name: Running api tests
@@ -200,7 +200,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
@@ -243,8 +243,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run:
           name: Running integration tests in ci environment
@@ -253,7 +253,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
@@ -314,8 +314,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run:
           name: Running api tests in ci environment
@@ -324,7 +324,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}
 
       - run:
           name: Save test results
