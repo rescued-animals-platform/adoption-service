@@ -20,15 +20,17 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.builders.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -37,10 +39,42 @@ public class JpaCharacteristicsTest {
     @Test
     public void shouldCreateJpaCharacteristicsFromCharacteristics() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
-        characteristics.setAnimalUuid(UUID.randomUUID());
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics);
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         assertThat(jpaCharacteristics.toCharacteristics(), is(characteristics));
+    }
+
+    @Test
+    public void shouldAcceptNullSociability() {
+        Temperaments temperaments = TemperamentsBuilder.random().withSociability(null).build();
+        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getSociability());
+    }
+
+    @Test
+    public void shouldAcceptNullDocility() {
+        Temperaments temperaments = TemperamentsBuilder.random().withDocility(null).build();
+        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getDocility());
+    }
+
+    @Test
+    public void shouldAcceptNullBalance() {
+        Temperaments temperaments = TemperamentsBuilder.random().withBalance(null).build();
+        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getBalance());
     }
 
     @Test
@@ -52,6 +86,8 @@ public class JpaCharacteristicsTest {
                 Timestamp.valueOf(LocalDateTime.now().minusDays(2))
         ).withPrefabValues(
                 JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)
+        ).withPrefabValues(
+                JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class)
         ).verify();
     }
 }

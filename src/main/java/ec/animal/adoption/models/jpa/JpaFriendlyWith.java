@@ -21,8 +21,8 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity(name = "friendly_with")
@@ -33,13 +33,20 @@ public class JpaFriendlyWith implements Serializable {
     @EmbeddedId
     private JpaFriendlyWithId jpaFriendlyWithId;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "characteristics_id", nullable = false)
+    @MapsId("characteristicsId")
+    private JpaCharacteristics jpaCharacteristics;
+
     private JpaFriendlyWith() {
         // Required by jpa
     }
 
     public JpaFriendlyWith(final FriendlyWith friendlyWith, final JpaCharacteristics jpaCharacteristics) {
         this();
-        this.jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith.name(), jpaCharacteristics);
+        this.jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith.name());
+        this.jpaCharacteristics = jpaCharacteristics;
     }
 
     public FriendlyWith toFriendlyWith() {
@@ -54,12 +61,16 @@ public class JpaFriendlyWith implements Serializable {
 
         JpaFriendlyWith that = (JpaFriendlyWith) o;
 
-        return jpaFriendlyWithId != null ? jpaFriendlyWithId.equals(that.jpaFriendlyWithId) : that.jpaFriendlyWithId == null;
+        if (jpaFriendlyWithId != null ? !jpaFriendlyWithId.equals(that.jpaFriendlyWithId) : that.jpaFriendlyWithId != null)
+            return false;
+        return jpaCharacteristics != null ? jpaCharacteristics.equals(that.jpaCharacteristics) : that.jpaCharacteristics == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return jpaFriendlyWithId != null ? jpaFriendlyWithId.hashCode() : 0;
+        int result = jpaFriendlyWithId != null ? jpaFriendlyWithId.hashCode() : 0;
+        result = 31 * result + (jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0);
+        return result;
     }
 }

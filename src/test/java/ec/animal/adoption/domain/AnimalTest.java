@@ -23,7 +23,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.Adopted;
@@ -77,14 +79,6 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldReturnPrimaryLinkPicture() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
-
-        assertThat(animal.getPrimaryLinkPicture(), is(primaryLinkPicture));
-    }
-
-    @Test
     public void shouldSetPrimaryLinkPicture() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Animal animal = AnimalBuilder.random().build();
@@ -106,6 +100,16 @@ public class AnimalTest {
     }
 
     @Test
+    public void shouldSetCharacteristics() {
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        Animal animal = AnimalBuilder.random().build();
+
+        animal.setCharacteristics(characteristics);
+
+        assertThat(animal.getCharacteristics(), is(characteristics));
+    }
+
+    @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Animal.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
@@ -114,11 +118,13 @@ public class AnimalTest {
     @Test
     public void shouldSerializeAnimal() throws JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
         Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).withPrimaryLinkPicture(primaryLinkPicture)
-                .withRegistrationDate(LocalDateTime.now()).build();
+                .withCharacteristics(characteristics).withRegistrationDate(LocalDateTime.now()).build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
         String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
+        String expectedCharacteristics = objectMapper.writeValueAsString(characteristics);
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
@@ -131,6 +137,7 @@ public class AnimalTest {
         assertThat(serializedAnimal, containsString(animal.getSex().name()));
         assertThat(serializedAnimal, containsString(expectedSerializedState));
         assertThat(serializedAnimal, containsString(expectedPrimaryLinkPicture));
+        assertThat(serializedAnimal, containsString(expectedCharacteristics));
     }
 
     @Test
@@ -138,14 +145,29 @@ public class AnimalTest {
         Animal animal = AnimalBuilder.random().build();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         String primaryLinkPictureAsJson = objectMapper.writeValueAsString(primaryLinkPicture);
-        String serializedAnimalWithoutState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+        String serializedAnimalWithPrimaryLinkPicture = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
                 animal.getSex().name() + "\",\"primaryLinkPicture\":" + primaryLinkPictureAsJson + "}";
 
-        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithoutState, Animal.class);
+        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithPrimaryLinkPicture, Animal.class);
 
         assertThat(deserializedAnimal.getPrimaryLinkPicture(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldDeserializeAnimalWithoutCharacteristics() throws IOException {
+        Animal animal = AnimalBuilder.random().build();
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        String characteristicsAsJson = objectMapper.writeValueAsString(characteristics);
+        String serializedAnimalWithCharacteristics = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
+                animal.getSex().name() + "\",\"characteristics\":" + characteristicsAsJson + "}";
+
+        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithCharacteristics, Animal.class);
+
+        assertThat(deserializedAnimal.getCharacteristics(), is(nullValue()));
     }
 
     @Test

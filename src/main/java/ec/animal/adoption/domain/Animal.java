@@ -22,6 +22,7 @@ package ec.animal.adoption.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -60,6 +61,9 @@ public class Animal extends Entity {
 
     @JsonProperty(value = "primaryLinkPicture", access = JsonProperty.Access.READ_ONLY)
     private LinkPicture primaryLinkPicture;
+
+    @JsonProperty(value = "characteristics", access = JsonProperty.Access.READ_ONLY)
+    private Characteristics characteristics;
 
     @JsonCreator
     private Animal(
@@ -144,6 +148,14 @@ public class Animal extends Entity {
         return primaryLinkPicture;
     }
 
+    public void setCharacteristics(final Characteristics characteristics) {
+        this.characteristics = characteristics;
+    }
+
+    public Characteristics getCharacteristics() {
+        return characteristics;
+    }
+
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
@@ -160,7 +172,9 @@ public class Animal extends Entity {
         if (estimatedAge != animal.estimatedAge) return false;
         if (sex != animal.sex) return false;
         if (state != null ? !state.equals(animal.state) : animal.state != null) return false;
-        return primaryLinkPicture != null ? primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture == null;
+        if (primaryLinkPicture != null ? !primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture != null)
+            return false;
+        return characteristics != null ? characteristics.equals(animal.characteristics) : animal.characteristics == null;
     }
 
     @Override
@@ -174,6 +188,7 @@ public class Animal extends Entity {
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (primaryLinkPicture != null ? primaryLinkPicture.hashCode() : 0);
+        result = 31 * result + (characteristics != null ? characteristics.hashCode() : 0);
         return result;
     }
 }

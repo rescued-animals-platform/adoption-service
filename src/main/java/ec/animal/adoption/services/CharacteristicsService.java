@@ -19,8 +19,10 @@
 
 package ec.animal.adoption.services;
 
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.repositories.CharacteristicsRepository;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.repositories.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,18 +31,27 @@ import java.util.UUID;
 @Service
 public class CharacteristicsService {
 
-    private final CharacteristicsRepository characteristicsRepository;
+    private final AnimalRepository animalRepository;
 
     @Autowired
-    public CharacteristicsService(final CharacteristicsRepository characteristicsRepository) {
-        this.characteristicsRepository = characteristicsRepository;
+    public CharacteristicsService(final AnimalRepository animalRepository) {
+        this.animalRepository = animalRepository;
     }
 
-    public Characteristics create(final Characteristics characteristics) {
-        return characteristicsRepository.save(characteristics);
+    public Characteristics create(final UUID animalUuid, final Characteristics characteristics) {
+        Animal animal = animalRepository.getBy(animalUuid);
+        animal.setCharacteristics(characteristics);
+
+        return animalRepository.save(animal).getCharacteristics();
     }
 
     public Characteristics getBy(final UUID animalUuid) {
-        return characteristicsRepository.getBy(animalUuid);
+        Animal animal = animalRepository.getBy(animalUuid);
+
+        if (animal.getCharacteristics() == null) {
+            throw new EntityNotFoundException();
+        }
+
+        return animal.getCharacteristics();
     }
 }

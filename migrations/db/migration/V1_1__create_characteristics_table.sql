@@ -4,7 +4,8 @@ CREATE TABLE characteristics (
   creation_date TIMESTAMP DEFAULT current_timestamp,
   size VARCHAR(7) NOT NULL,
   physical_activity VARCHAR(6) NOT NULL,
-  temperaments_id BIGSERIAL NOT NULL,
-  CONSTRAINT characteristics_temperaments FOREIGN KEY(temperaments_id) REFERENCES temperaments(id),
+  sociability VARCHAR(24),
+  docility VARCHAR(27),
+  balance VARCHAR(31),
   CONSTRAINT characteristics_animal FOREIGN KEY(animal_uuid) REFERENCES animal(uuid)
 );

@@ -23,16 +23,18 @@ import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.characteristics.temperaments.Balance;
+import ec.animal.adoption.domain.characteristics.temperaments.Docility;
+import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity(name = "characteristics")
@@ -45,11 +47,11 @@ public class JpaCharacteristics implements Serializable {
     @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
-    @NotNull
-    @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID animalUuid;
-
     private LocalDateTime creationDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "animal_uuid", nullable = false)
+    private JpaAnimal jpaAnimal;
 
     @NotNull
     private String size;
@@ -57,11 +59,13 @@ public class JpaCharacteristics implements Serializable {
     @NotNull
     private String physicalActivity;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "temperaments_id")
-    private JpaTemperaments jpaTemperaments;
+    private String sociability;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaFriendlyWithId.jpaCharacteristics")
+    private String docility;
+
+    private String balance;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaCharacteristics")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<JpaFriendlyWith> friendlyWith;
 
@@ -69,27 +73,32 @@ public class JpaCharacteristics implements Serializable {
         // Required by jpa
     }
 
-    public JpaCharacteristics(final Characteristics characteristics) {
+    public JpaCharacteristics(final Characteristics characteristics, final JpaAnimal jpaAnimal) {
         this();
-        this.animalUuid = characteristics.getAnimalUuid();
         this.creationDate = LocalDateTime.now();
         this.size = characteristics.getSize().name();
         this.physicalActivity = characteristics.getPhysicalActivity().name();
-        this.jpaTemperaments = new JpaTemperaments(characteristics.getTemperaments());
+        Temperaments temperaments = characteristics.getTemperaments();
+        this.sociability = temperaments.getSociability() == null ? null : temperaments.getSociability().name();
+        this.docility = temperaments.getDocility() == null ? null : temperaments.getDocility().name();
+        this.balance = temperaments.getBalance() == null ? null : temperaments.getBalance().name();
         this.friendlyWith = characteristics.getFriendlyWith().stream()
                 .map(friendlyWith -> new JpaFriendlyWith(friendlyWith, this))
                 .collect(Collectors.toList());
+        this.jpaAnimal = jpaAnimal;
     }
 
     public Characteristics toCharacteristics() {
-        final Characteristics characteristics = new Characteristics(
+        return new Characteristics(
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
-                this.jpaTemperaments.toTemperaments(),
+                new Temperaments(
+                        this.sociability == null ? null : Sociability.valueOf(sociability),
+                        this.docility == null ? null : Docility.valueOf(this.docility),
+                        this.balance == null ? null : Balance.valueOf(this.balance)
+                ),
                 this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith).toArray(FriendlyWith[]::new)
         );
-        characteristics.setAnimalUuid(animalUuid);
-        return characteristics;
     }
 
     @Override
@@ -101,13 +110,14 @@ public class JpaCharacteristics implements Serializable {
         JpaCharacteristics that = (JpaCharacteristics) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (animalUuid != null ? !animalUuid.equals(that.animalUuid) : that.animalUuid != null) return false;
         if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
             return false;
-        if (jpaTemperaments != null ? !jpaTemperaments.equals(that.jpaTemperaments) : that.jpaTemperaments != null)
-            return false;
+        if (sociability != null ? !sociability.equals(that.sociability) : that.sociability != null) return false;
+        if (docility != null ? !docility.equals(that.docility) : that.docility != null) return false;
+        if (balance != null ? !balance.equals(that.balance) : that.balance != null) return false;
         return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 
@@ -115,11 +125,13 @@ public class JpaCharacteristics implements Serializable {
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (animalUuid != null ? animalUuid.hashCode() : 0);
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
-        result = 31 * result + (jpaTemperaments != null ? jpaTemperaments.hashCode() : 0);
+        result = 31 * result + (sociability != null ? sociability.hashCode() : 0);
+        result = 31 * result + (docility != null ? docility.hashCode() : 0);
+        result = 31 * result + (balance != null ? balance.hashCode() : 0);
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
         return result;
     }

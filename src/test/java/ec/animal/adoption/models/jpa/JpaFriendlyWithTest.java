@@ -22,6 +22,7 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -46,6 +47,6 @@ public class JpaFriendlyWithTest {
                 JpaCharacteristics.class,
                 mock(JpaCharacteristics.class),
                 mock(JpaCharacteristics.class)
-        ).verify();
+        ).suppress(Warning.REFERENCE_EQUALITY).verify();
     }
 }

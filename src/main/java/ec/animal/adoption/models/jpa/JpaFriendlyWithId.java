@@ -19,20 +19,17 @@
 
 package ec.animal.adoption.models.jpa;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+@Embeddable
 public class JpaFriendlyWithId implements Serializable {
 
     private transient static final long serialVersionUID = -142436659179428820L;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "characteristics_id", nullable = false)
-    private JpaCharacteristics jpaCharacteristics;
+    private Long characteristicsId;
 
     @NotNull
     private String friendlyWith;
@@ -41,10 +38,9 @@ public class JpaFriendlyWithId implements Serializable {
         // Required by jpa
     }
 
-    public JpaFriendlyWithId(final String friendlyWith, final JpaCharacteristics jpaCharacteristics) {
+    public JpaFriendlyWithId(final String friendlyWith) {
         this();
         this.friendlyWith = friendlyWith;
-        this.jpaCharacteristics = jpaCharacteristics;
     }
 
     public @NotNull String getFriendlyWith() {
@@ -59,7 +55,7 @@ public class JpaFriendlyWithId implements Serializable {
 
         JpaFriendlyWithId that = (JpaFriendlyWithId) o;
 
-        if (jpaCharacteristics != null ? !jpaCharacteristics.equals(that.jpaCharacteristics) : that.jpaCharacteristics != null)
+        if (characteristicsId != null ? !characteristicsId.equals(that.characteristicsId) : that.characteristicsId != null)
             return false;
         return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
@@ -67,7 +63,7 @@ public class JpaFriendlyWithId implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0;
+        int result = characteristicsId != null ? characteristicsId.hashCode() : 0;
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
         return result;
     }

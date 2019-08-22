@@ -19,11 +19,16 @@
 
 package ec.animal.adoption.services;
 
+import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.repositories.CharacteristicsRepository;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
+import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -31,42 +36,62 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CharacteristicsServiceTest {
 
     @Mock
-    private CharacteristicsRepository characteristicsRepository;
-
-    @Mock
-    private Characteristics expectedCharacteristics;
+    private AnimalRepository animalRepository;
 
     private CharacteristicsService characteristicsService;
 
     @Before
     public void setUp() {
-        characteristicsService = new CharacteristicsService(characteristicsRepository);
+        characteristicsService = new CharacteristicsService(animalRepository);
     }
 
     @Test
     public void shouldCreateCharacteristics() {
-        Characteristics characteristics = mock(Characteristics.class);
-        when(characteristicsRepository.save(characteristics)).thenReturn(expectedCharacteristics);
+        ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
+        UUID animalUuid = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid).build();
+        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
+        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        Animal animalWithCharacteristics = AnimalBuilder.random().withCharacteristics(expectedCharacteristics)
+                .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
+                .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
+                .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+        when(animalRepository.save(any(Animal.class))).thenReturn(animalWithCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsService.create(characteristics);
+        Characteristics createdCharacteristics = characteristicsService.create(animalUuid, expectedCharacteristics);
 
+        verify(animalRepository).save(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().getCharacteristics(), is(expectedCharacteristics));
         assertThat(createdCharacteristics, is(expectedCharacteristics));
     }
 
     @Test
     public void shouldGetCharacteristicsByAnimalUuid() {
         UUID animalUuid = UUID.randomUUID();
-        when(characteristicsRepository.getBy(animalUuid)).thenReturn(expectedCharacteristics);
+        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withCharacteristics(expectedCharacteristics)
+                .build();
+        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
 
         Characteristics characteristics = characteristicsService.getBy(animalUuid);
 
         assertThat(characteristics, is(expectedCharacteristics));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPCharacteristicsForAnimal() {
+        UUID animalUuid = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().build();
+        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+
+        characteristicsService.getBy(animalUuid);
     }
 }

@@ -23,6 +23,7 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
 
@@ -44,6 +45,7 @@ public class AnimalBuilder {
     private State state;
     private LocalDateTime registrationDate;
     private LinkPicture primaryLinkPicture;
+    private Characteristics characteristics;
 
     public static AnimalBuilder random() {
         final AnimalBuilder animalBuilder = new AnimalBuilder();
@@ -101,6 +103,11 @@ public class AnimalBuilder {
         return this;
     }
 
+    public AnimalBuilder withCharacteristics(final Characteristics characteristics) {
+        this.characteristics = characteristics;
+        return this;
+    }
+
     public Animal build() {
         Animal animal = new Animal(
                 this.uuid,
@@ -115,6 +122,10 @@ public class AnimalBuilder {
 
         if (primaryLinkPicture != null) {
             animal.setPrimaryLinkPicture(primaryLinkPicture);
+        }
+
+        if (characteristics != null) {
+            animal.setCharacteristics(characteristics);
         }
 
         return animal;

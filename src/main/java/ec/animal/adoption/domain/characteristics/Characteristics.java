@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.validators.ValidTemperaments;
@@ -45,9 +44,6 @@ public class Characteristics {
 
     @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;
-
-    @JsonIgnore
-    private UUID animalUuid;
 
     @JsonCreator
     public Characteristics(
@@ -78,14 +74,6 @@ public class Characteristics {
         return new ArrayList<>(friendlyWith);
     }
 
-    public UUID getAnimalUuid() {
-        return animalUuid;
-    }
-
-    public void setAnimalUuid(final UUID animalUuid) {
-        this.animalUuid = animalUuid;
-    }
-
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
@@ -97,8 +85,7 @@ public class Characteristics {
         if (size != that.size) return false;
         if (physicalActivity != that.physicalActivity) return false;
         if (temperaments != null ? !temperaments.equals(that.temperaments) : that.temperaments != null) return false;
-        if (friendlyWith != null ? !friendlyWith.equals(that.friendlyWith) : that.friendlyWith != null) return false;
-        return animalUuid != null ? animalUuid.equals(that.animalUuid) : that.animalUuid == null;
+        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 
     @Override
@@ -108,7 +95,6 @@ public class Characteristics {
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
         result = 31 * result + (temperaments != null ? temperaments.hashCode() : 0);
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
-        result = 31 * result + (animalUuid != null ? animalUuid.hashCode() : 0);
         return result;
     }
 }

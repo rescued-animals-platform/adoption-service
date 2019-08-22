@@ -20,8 +20,10 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import org.junit.Test;
@@ -30,9 +32,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class JpaAnimalTest {
 
@@ -79,20 +79,12 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldGenerateARegistrationDateWhenCreatingAJpaAnimal() {
-        Animal animal = AnimalBuilder.random().build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
-
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
-
-        assertNotNull(jpaAnimalToAnimal.getRegistrationDate());
-    }
-
-    @Test
     public void shouldCreateAJpaAnimalFromAnAnimal() {
         Animal animal = AnimalBuilder.random().build();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         animal.setPrimaryLinkPicture(primaryLinkPicture);
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        animal.setCharacteristics(characteristics);
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
@@ -104,6 +96,7 @@ public class JpaAnimalTest {
         assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
         assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
         assertThat(jpaAnimalToAnimal.getPrimaryLinkPicture(), is(primaryLinkPicture));
+        assertThat(jpaAnimalToAnimal.getCharacteristics(), is(characteristics));
     }
 
     @Test
@@ -114,12 +107,6 @@ public class JpaAnimalTest {
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertThat(jpaAnimalToAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-        assertThat(jpaAnimalToAnimal.getName(), is(animal.getName()));
-        assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
-        assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-        assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
-        assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
-        assertThat(jpaAnimalToAnimal.getPrimaryLinkPicture(), is(nullValue()));
+        assertNull(jpaAnimalToAnimal.getPrimaryLinkPicture());
     }
 }

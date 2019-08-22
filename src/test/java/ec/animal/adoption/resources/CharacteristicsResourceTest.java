@@ -31,7 +31,8 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CharacteristicsResourceTest {
@@ -54,11 +55,10 @@ public class CharacteristicsResourceTest {
     @Test
     public void shouldCreateCharacteristicsForAnimal() {
         Characteristics characteristics = mock(Characteristics.class);
-        when(characteristicsService.create(characteristics)).thenReturn(expectedCharacteristics);
+        when(characteristicsService.create(animalUuid, characteristics)).thenReturn(expectedCharacteristics);
 
         Characteristics createdCharacteristics = characteristicsResource.create(animalUuid, characteristics);
 
-        verify(characteristics).setAnimalUuid(animalUuid);
         assertThat(createdCharacteristics, is(expectedCharacteristics));
     }
 

@@ -24,12 +24,12 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -73,9 +73,11 @@ public class JpaAnimal implements Serializable {
     @Column(columnDefinition = "jsonb", nullable = false)
     private State state;
 
-    @Nullable
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaPrimaryLinkPicture jpaPrimaryLinkPicture;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
+    private JpaCharacteristics jpaCharacteristics;
 
     private JpaAnimal() {
         // Required by jpa
@@ -93,6 +95,7 @@ public class JpaAnimal implements Serializable {
         this.stateName = animal.getStateName();
         this.state = animal.getState();
         this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture());
+        this.setJpaCharacteristics(animal.getCharacteristics());
     }
 
     private void setUuid(final UUID uuid) {
@@ -106,6 +109,11 @@ public class JpaAnimal implements Serializable {
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
         this.jpaPrimaryLinkPicture = primaryLinkPicture == null ? null :
                 new JpaPrimaryLinkPicture(primaryLinkPicture, this);
+    }
+
+    private void setJpaCharacteristics(final Characteristics characteristics) {
+        this.jpaCharacteristics = characteristics == null ? null :
+                new JpaCharacteristics(characteristics, this);
     }
 
     public Animal toAnimal() {
@@ -122,6 +130,10 @@ public class JpaAnimal implements Serializable {
 
         if (jpaPrimaryLinkPicture != null) {
             animal.setPrimaryLinkPicture(jpaPrimaryLinkPicture.toLinkPicture());
+        }
+
+        if (jpaCharacteristics != null) {
+            animal.setCharacteristics(jpaCharacteristics.toCharacteristics());
         }
 
         return animal;

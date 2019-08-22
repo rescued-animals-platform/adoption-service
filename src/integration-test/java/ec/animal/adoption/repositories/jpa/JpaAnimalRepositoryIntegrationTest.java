@@ -20,8 +20,11 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -59,20 +62,32 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSavePrimaryLinkPictureForAnimal() {
-        JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = jpaAnimalRepository.save(
-                new JpaAnimal(AnimalBuilder.random().build())
-        );
+        JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = createAndSaveJpaAnimal();
         Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
         assertThat(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), is(nullValue()));
-        animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(
-                LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build()
-        );
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(primaryLinkPicture);
         JpaAnimal entity = new JpaAnimal(animalWithNoPrimaryLinkPicture);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
 
-        assertReflectionEquals(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), animalWithPrimaryLinkPicture.getPrimaryLinkPicture());
+        assertReflectionEquals(primaryLinkPicture, animalWithPrimaryLinkPicture.getPrimaryLinkPicture());
+    }
+
+    @Test
+    public void shouldSaveCharacteristicsForAnimal() {
+        JpaAnimal jpaAnimalWithNoCharacteristics = createAndSaveJpaAnimal();
+        Animal animalWithNoCharacteristics = jpaAnimalWithNoCharacteristics.toAnimal();
+        assertThat(animalWithNoCharacteristics.getCharacteristics(), is(nullValue()));
+        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        animalWithNoCharacteristics.setCharacteristics(characteristics);
+        JpaAnimal entity = new JpaAnimal(animalWithNoCharacteristics);
+
+        JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
+        Animal animalWithCharacteristics = jpaAnimal.toAnimal();
+
+        assertReflectionEquals(characteristics, animalWithCharacteristics.getCharacteristics());
     }
 
     @Test

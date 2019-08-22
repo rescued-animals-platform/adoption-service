@@ -29,7 +29,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class JpaFriendlyWithIdTest {
 
@@ -37,7 +36,7 @@ public class JpaFriendlyWithIdTest {
 
     @Test
     public void shouldBeAnInstanceOfSerializable() {
-        jpaFriendlyWithId = new JpaFriendlyWithId(randomAlphabetic(10), mock(JpaCharacteristics.class));
+        jpaFriendlyWithId = new JpaFriendlyWithId(randomAlphabetic(10));
 
         assertThat(jpaFriendlyWithId, is(instanceOf(Serializable.class)));
     }
@@ -45,7 +44,7 @@ public class JpaFriendlyWithIdTest {
     @Test
     public void shouldCreateJpaFriendlyWithIdWithFriendlyWith() {
         String friendlyWith = randomAlphabetic(10);
-        jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith, mock(JpaCharacteristics.class));
+        jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith);
 
         assertThat(jpaFriendlyWithId.getFriendlyWith(), is(friendlyWith));
     }
@@ -53,10 +52,7 @@ public class JpaFriendlyWithIdTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaFriendlyWithId.class).usingGetClass().withPrefabValues(
-                JpaCharacteristics.class,
-                mock(JpaCharacteristics.class),
-                mock(JpaCharacteristics.class)
-        ).suppress(Warning.REFERENCE_EQUALITY, Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(JpaFriendlyWithId.class).usingGetClass()
+                .suppress(Warning.REFERENCE_EQUALITY, Warning.NONFINAL_FIELDS).verify();
     }
 }

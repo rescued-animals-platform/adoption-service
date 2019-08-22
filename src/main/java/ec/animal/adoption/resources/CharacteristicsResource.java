@@ -45,8 +45,7 @@ public class CharacteristicsResource {
             @PathVariable("animalUuid") final UUID animalUuid,
             @RequestBody @Valid final Characteristics characteristics
     ) {
-        characteristics.setAnimalUuid(animalUuid);
-        return characteristicsService.create(characteristics);
+        return characteristicsService.create(animalUuid, characteristics);
     }
 
     @GetMapping
