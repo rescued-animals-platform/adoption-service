@@ -83,22 +83,33 @@ public class JpaAnimal implements Serializable {
 
     public JpaAnimal(final Animal animal) {
         this();
-        this.uuid = animal.getUuid() == null ? UUID.randomUUID() : animal.getUuid();
+        this.setUuid(animal.getUuid());
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
-        this.registrationDate = LocalDateTime.now();
+        this.setRegistrationDate(animal.getRegistrationDate());
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
         this.stateName = animal.getStateName();
         this.state = animal.getState();
-        LinkPicture primaryLinkPicture = animal.getPrimaryLinkPicture();
+        this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture());
+    }
+
+    private void setUuid(final UUID uuid) {
+        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    }
+
+    private void setRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
+    }
+
+    private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
         this.jpaPrimaryLinkPicture = primaryLinkPicture == null ? null :
                 new JpaPrimaryLinkPicture(primaryLinkPicture, this);
     }
 
     public Animal toAnimal() {
-        return new Animal(
+        Animal animal = new Animal(
                 uuid,
                 registrationDate,
                 clinicalRecord,
@@ -106,8 +117,13 @@ public class JpaAnimal implements Serializable {
                 Species.valueOf(animalSpecies),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
-                state,
-                jpaPrimaryLinkPicture == null ? null : jpaPrimaryLinkPicture.toLinkPicture()
+                state
         );
+
+        if (jpaPrimaryLinkPicture != null) {
+            animal.setPrimaryLinkPicture(jpaPrimaryLinkPicture.toLinkPicture());
+        }
+
+        return animal;
     }
 }

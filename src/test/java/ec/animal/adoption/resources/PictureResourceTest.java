@@ -19,17 +19,14 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.ImageBuilder;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.InvalidPictureException;
-import ec.animal.adoption.services.AnimalService;
 import ec.animal.adoption.services.PictureService;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,9 +56,6 @@ public class PictureResourceTest {
     @Mock
     private PictureService pictureService;
 
-    @Mock
-    private AnimalService animalService;
-
     private ImagePicture imagePicture;
     private PictureResource pictureResource;
 
@@ -82,31 +76,17 @@ public class PictureResourceTest {
         when(smallImageMultipartFile.getBytes()).thenReturn(smallImage.getContent());
         when(smallImageMultipartFile.getSize()).thenReturn(smallImage.getSizeInBytes());
 
-        pictureResource = new PictureResource(pictureService, animalService);
-    }
-
-    @Test(expected = InvalidPictureException.class)
-    public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimary() {
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                imagePicture.getName(),
-                PictureType.ALTERNATE,
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        pictureResource = new PictureResource(pictureService);
     }
 
     @Test
     public void shouldCreateAPicture() {
-        UUID animalUuid = imagePicture.getAnimalUuid();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).build();
-        when(animalService.getBy(animalUuid)).thenReturn(animal);
         LinkPicture expectedLinkPicture = LinkPictureBuilder.random().withName(imagePicture.getName())
                 .withPictureType(imagePicture.getPictureType()).build();
-        when(pictureService.createPrimaryPicture(imagePicture, animal)).thenReturn(expectedLinkPicture);
+        when(pictureService.createPrimaryPicture(imagePicture)).thenReturn(expectedLinkPicture);
 
         LinkPicture linkPicture = pictureResource.createPrimaryPicture(
-                animalUuid,
+                imagePicture.getAnimalUuid(),
                 imagePicture.getName(),
                 imagePicture.getPictureType(),
                 largeImageMultipartFile,

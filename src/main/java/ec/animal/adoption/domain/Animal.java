@@ -58,7 +58,7 @@ public class Animal extends Entity {
     @JsonProperty("state")
     private final State state;
 
-    @JsonIgnore
+    @JsonProperty(value = "primaryLinkPicture", access = JsonProperty.Access.READ_ONLY)
     private LinkPicture primaryLinkPicture;
 
     @JsonCreator
@@ -92,8 +92,7 @@ public class Animal extends Entity {
             final Species species,
             final EstimatedAge estimatedAge,
             final Sex sex,
-            final State state,
-            final LinkPicture primaryLinkpicture
+            final State state
     ) {
         super(uuid, registrationDate);
         this.clinicalRecord = clinicalRecord;
@@ -102,7 +101,6 @@ public class Animal extends Entity {
         this.estimatedAge = estimatedAge;
         this.sex = sex;
         this.state = state;
-        this.primaryLinkPicture = primaryLinkpicture;
     }
 
     public String getClinicalRecord() {

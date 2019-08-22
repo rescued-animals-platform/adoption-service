@@ -102,7 +102,7 @@ public class AnimalBuilder {
     }
 
     public Animal build() {
-        return new Animal(
+        Animal animal = new Animal(
                 this.uuid,
                 this.registrationDate,
                 this.clinicalRecord,
@@ -110,8 +110,13 @@ public class AnimalBuilder {
                 this.species,
                 this.estimatedAge,
                 this.sex,
-                this.state,
-                primaryLinkPicture
+                this.state
         );
+
+        if (primaryLinkPicture != null) {
+            animal.setPrimaryLinkPicture(primaryLinkPicture);
+        }
+
+        return animal;
     }
 }

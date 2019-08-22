@@ -20,13 +20,11 @@
 package ec.animal.adoption.resources;
 
 import com.google.common.io.Files;
-import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.InvalidPictureException;
-import ec.animal.adoption.services.AnimalService;
 import ec.animal.adoption.services.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,12 +40,10 @@ import java.util.UUID;
 public class PictureResource {
 
     private final PictureService pictureService;
-    private final AnimalService animalService;
 
     @Autowired
-    public PictureResource(final PictureService pictureService, final AnimalService animalService) {
+    public PictureResource(final PictureService pictureService) {
         this.pictureService = pictureService;
-        this.animalService = animalService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -59,20 +55,15 @@ public class PictureResource {
             @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
             @RequestPart("smallImage") final MultipartFile smallImageMultipartFile
     ) {
-        if(!PictureType.PRIMARY.equals(pictureType)) {
-            throw new InvalidPictureException();
-        }
-
-        Animal animal = animalService.getBy(animalUuid);
-        ImagePicture imagePicture = new ImagePicture(
-                animalUuid,
-                name,
-                pictureType,
-                createImageFromMultipartFile(largeImageMultipartFile),
-                createImageFromMultipartFile(smallImageMultipartFile)
+        return pictureService.createPrimaryPicture(
+                new ImagePicture(
+                        animalUuid,
+                        name,
+                        pictureType,
+                        createImageFromMultipartFile(largeImageMultipartFile),
+                        createImageFromMultipartFile(smallImageMultipartFile)
+                )
         );
-
-        return pictureService.createPrimaryPicture(imagePicture, animal);
     }
 
     private Image createImageFromMultipartFile(final MultipartFile multipartFile) {

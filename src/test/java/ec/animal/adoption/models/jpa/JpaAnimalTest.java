@@ -26,6 +26,7 @@ import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
@@ -46,6 +47,16 @@ public class JpaAnimalTest {
     }
 
     @Test
+    public void shouldGenerateARegistrationDateWhenCreatingAJpaAnimalForAnAnimalWithNoRegistrationDate() {
+        Animal animal = AnimalBuilder.random().withRegistrationDate(null).build();
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
+        assertNotNull(jpaAnimalToAnimal.getRegistrationDate());
+    }
+
+    @Test
     public void shouldCreateAnAnimalWithUuid() {
         UUID uuid = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().withUuid(uuid).build();
@@ -54,6 +65,17 @@ public class JpaAnimalTest {
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
         assertThat(jpaAnimalToAnimal.getUuid(), is(uuid));
+    }
+
+    @Test
+    public void shouldCreateAnAnimalWithRegistrationDate() {
+        LocalDateTime registrationDate = LocalDateTime.now();
+        Animal animal = AnimalBuilder.random().withRegistrationDate(registrationDate).build();
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
+        assertThat(jpaAnimalToAnimal.getRegistrationDate(), is(registrationDate));
     }
 
     @Test

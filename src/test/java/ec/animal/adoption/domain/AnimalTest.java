@@ -113,10 +113,12 @@ public class AnimalTest {
 
     @Test
     public void shouldSerializeAnimal() throws JsonProcessingException {
-        Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).
-                withRegistrationDate(LocalDateTime.now()).build();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).withPrimaryLinkPicture(primaryLinkPicture)
+                .withRegistrationDate(LocalDateTime.now()).build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
+        String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
@@ -128,20 +130,7 @@ public class AnimalTest {
         assertThat(serializedAnimal, containsString(animal.getEstimatedAge().name()));
         assertThat(serializedAnimal, containsString(animal.getSex().name()));
         assertThat(serializedAnimal, containsString(expectedSerializedState));
-    }
-
-    @Test
-    public void shouldSerializeAnimalWithoutPrimaryLinkPicture() throws JsonProcessingException {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
-        String primaryLinkPictureAsJson = objectMapper.writeValueAsString(primaryLinkPicture);
-
-        String serializedAnimal = objectMapper.writeValueAsString(animal);
-
-        assertThat(
-                serializedAnimal,
-                not(containsString(String.format("\"primaryLinkPicture\":\"%s\"", primaryLinkPictureAsJson)))
-        );
+        assertThat(serializedAnimal, containsString(expectedPrimaryLinkPicture));
     }
 
     @Test

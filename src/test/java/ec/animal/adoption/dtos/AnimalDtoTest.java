@@ -41,6 +41,6 @@ public class AnimalDtoTest {
                 getRandomSex()
         );
 
-        assertThat(animalDto.getAnimalUuid(), is(expectedAnimalUuid));
+        assertThat(animalDto.getUuid(), is(expectedAnimalUuid));
     }
 }

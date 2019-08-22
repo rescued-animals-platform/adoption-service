@@ -33,15 +33,16 @@ import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PictureServiceTest {
@@ -62,23 +63,40 @@ public class PictureServiceTest {
 
     @Test
     public void shouldCreateAPicture() {
-        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
+        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         when(mediaStorageClient.save(imagePicture)).thenReturn(primaryLinkPicture);
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
-        when(animalRepository.save(animal)).thenReturn(animal);
+        Animal animal = AnimalBuilder.random().withUuid(imagePicture.getAnimalUuid())
+                .withRegistrationDate(LocalDateTime.now()).build();
+        when(animalRepository.getBy(imagePicture.getAnimalUuid())).thenReturn(animal);
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture)
+                .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
+                .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
+                .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+        when(animalRepository.save(any(Animal.class))).thenReturn(animalWithPrimaryLinkPicture);
 
-        LinkPicture createdPicture = pictureService.createPrimaryPicture(imagePicture, animal);
+        LinkPicture createdPicture = pictureService.createPrimaryPicture(imagePicture);
 
+        verify(animalRepository).save(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().getPrimaryLinkPicture(), is(primaryLinkPicture));
         assertThat(createdPicture, is(primaryLinkPicture));
+    }
+
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimary() {
+        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
+
+        pictureService.createPrimaryPicture(imagePicture);
     }
 
     @Test(expected = InvalidPictureException.class)
     public void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalid() {
         ImagePicture imagePicture = mock(ImagePicture.class);
+        when(imagePicture.getPictureType()).thenReturn(PictureType.PRIMARY);
         when(imagePicture.isValid()).thenReturn(false);
 
-        pictureService.createPrimaryPicture(imagePicture, mock(Animal.class));
+        pictureService.createPrimaryPicture(imagePicture);
     }
 
     @Test

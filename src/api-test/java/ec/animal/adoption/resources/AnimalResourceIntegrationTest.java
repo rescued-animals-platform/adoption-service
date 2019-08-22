@@ -67,7 +67,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSend() {
+    public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSent() {
         Animal animal = AnimalBuilder.random().withState(null).build();
 
         webTestClient.post()
@@ -161,7 +161,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+    public void shouldReturn404NotFoundWhenAnimalDoesNotExist() {
         webTestClient.get()
                 .uri(ANIMALS_URL + "/{uuid}", UUID.randomUUID())
                 .exchange()

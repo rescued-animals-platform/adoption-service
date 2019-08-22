@@ -23,6 +23,7 @@ import ec.animal.adoption.clients.MediaStorageClient;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.exceptions.InvalidPictureException;
 import ec.animal.adoption.repositories.AnimalRepository;
@@ -38,16 +39,20 @@ public class PictureService {
     private final AnimalRepository animalRepository;
 
     @Autowired
-    public PictureService(final MediaStorageClient mediaStorageClient, final AnimalRepository animalRepository) {
+    public PictureService(
+            final MediaStorageClient mediaStorageClient,
+            final AnimalRepository animalRepository
+    ) {
         this.mediaStorageClient = mediaStorageClient;
         this.animalRepository = animalRepository;
     }
 
-    public LinkPicture createPrimaryPicture(final ImagePicture imagePicture, final Animal animal) {
-        if (!imagePicture.isValid()) {
+    public LinkPicture createPrimaryPicture(final ImagePicture imagePicture) {
+        if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
             throw new InvalidPictureException();
         }
 
+        Animal animal = animalRepository.getBy(imagePicture.getAnimalUuid());
         LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
         animal.setPrimaryLinkPicture(linkPicture);
 

@@ -30,8 +30,8 @@ import java.util.UUID;
 @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 public class AnimalDto {
 
-    @JsonProperty("animalUuid")
-    private final UUID animalUuid;
+    @JsonProperty("uuid")
+    private final UUID uuid;
 
     @JsonProperty("name")
     private final String name;
@@ -47,20 +47,20 @@ public class AnimalDto {
 
     @JsonCreator
     public AnimalDto(
-            @JsonProperty("animalUuid") final UUID animalUuid,
+            @JsonProperty("uuid") final UUID uuid,
             @JsonProperty("name") final String name,
             @JsonProperty("species") final Species species,
             @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
             @JsonProperty("sex") final Sex sex
     ) {
-        this.animalUuid = animalUuid;
+        this.uuid = uuid;
         this.name = name;
         this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
     }
 
-    public UUID getAnimalUuid() {
-        return animalUuid;
+    public UUID getUuid() {
+        return uuid;
     }
 }
