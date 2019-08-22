@@ -19,14 +19,15 @@
 
 package ec.animal.adoption.domain;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -37,7 +38,7 @@ public class PagedEntity<T> extends PageImpl<T> {
 
     @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.UnusedFormalParameter"})
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public PagedEntity(
+    private PagedEntity(
             final @JsonProperty("content") List<T> content,
             final @JsonProperty("number") int number,
             final @JsonProperty("size") int size,
@@ -51,16 +52,12 @@ public class PagedEntity<T> extends PageImpl<T> {
         super(content, PageRequest.of(number, size), totalElements);
     }
 
-    public PagedEntity(final List<T> content, final Pageable pageable, final long total) {
+    private PagedEntity(final List<T> content, final Pageable pageable, final long total) {
         super(content, pageable, total);
     }
 
     public PagedEntity(final List<T> content) {
         super(content);
-    }
-
-    public PagedEntity() {
-        super(new ArrayList<>());
     }
 
     public PagedEntity(final Page<T> page) {

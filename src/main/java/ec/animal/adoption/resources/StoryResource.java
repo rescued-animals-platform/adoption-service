@@ -42,8 +42,7 @@ public class StoryResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Story create(@PathVariable("animalUuid") final UUID animalUuid, @RequestBody @Valid final Story story) {
-        story.setAnimalUuid(animalUuid);
-        return storyService.create(story);
+        return storyService.create(animalUuid, story);
     }
 
     @GetMapping

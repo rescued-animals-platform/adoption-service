@@ -20,10 +20,7 @@
 package ec.animal.adoption.models.jpa;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.*;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
@@ -31,6 +28,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -79,6 +77,9 @@ public class JpaAnimal implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaCharacteristics jpaCharacteristics;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
+    private JpaStory jpaStory;
+
     private JpaAnimal() {
         // Required by jpa
     }
@@ -96,6 +97,7 @@ public class JpaAnimal implements Serializable {
         this.state = animal.getState();
         this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture());
         this.setJpaCharacteristics(animal.getCharacteristics());
+        this.setJpaStory(animal.getStory());
     }
 
     private void setUuid(final UUID uuid) {
@@ -116,6 +118,10 @@ public class JpaAnimal implements Serializable {
                 new JpaCharacteristics(characteristics, this);
     }
 
+    private void setJpaStory(final Story story) {
+        this.jpaStory = story == null ? null : new JpaStory(story, this);
+    }
+
     public Animal toAnimal() {
         Animal animal = new Animal(
                 uuid,
@@ -134,6 +140,10 @@ public class JpaAnimal implements Serializable {
 
         if (jpaCharacteristics != null) {
             animal.setCharacteristics(jpaCharacteristics.toCharacteristics());
+        }
+
+        if (jpaStory != null) {
+            animal.setStory(jpaStory.toStory());
         }
 
         return animal;

@@ -26,21 +26,19 @@ import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class JpaStoryTest {
 
     @Test
     public void shouldCreateJpaStoryFromStory() {
-        UUID animalUuid = UUID.randomUUID();
         String text = randomAlphabetic(100);
         Story story = new Story(text);
-        story.setAnimalUuid(animalUuid);
-        JpaStory jpaStory = new JpaStory(story);
+        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         assertThat(jpaStory.toStory(), is(story));
     }
@@ -52,6 +50,7 @@ public class JpaStoryTest {
                 Timestamp.class,
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now().minusDays(2))
-        ).suppress(Warning.NONFINAL_FIELDS).verify();
+        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                .suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

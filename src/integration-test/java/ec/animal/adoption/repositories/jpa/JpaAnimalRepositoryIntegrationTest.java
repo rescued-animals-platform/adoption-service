@@ -23,6 +23,7 @@ import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
@@ -88,6 +89,21 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithCharacteristics = jpaAnimal.toAnimal();
 
         assertReflectionEquals(characteristics, animalWithCharacteristics.getCharacteristics());
+    }
+
+    @Test
+    public void shouldSaveStoryForAnimal() {
+        JpaAnimal jpaAnimalWithNoStory = createAndSaveJpaAnimal();
+        Animal animalWithNoStory = jpaAnimalWithNoStory.toAnimal();
+        assertThat(animalWithNoStory.getStory(), is(nullValue()));
+        Story story = new Story(randomAlphabetic(10));
+        animalWithNoStory.setStory(story);
+        JpaAnimal entity = new JpaAnimal(animalWithNoStory);
+
+        JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
+        Animal animalWithStory = jpaAnimal.toAnimal();
+
+        assertReflectionEquals(story, animalWithStory.getStory());
     }
 
     @Test

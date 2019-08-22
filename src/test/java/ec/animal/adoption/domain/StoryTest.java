@@ -22,14 +22,12 @@ package ec.animal.adoption.domain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.util.Set;
-import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -55,17 +53,9 @@ public class StoryTest {
     }
 
     @Test
-    public void shouldSetAnimalUuid() {
-        UUID animalUuid = UUID.randomUUID();
-        story.setAnimalUuid(animalUuid);
-
-        assertThat(story.getAnimalUuid(), is(animalUuid));
-    }
-
-    @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Story.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(Story.class).usingGetClass().verify();
     }
 
     @Test

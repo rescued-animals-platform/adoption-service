@@ -110,6 +110,16 @@ public class AnimalTest {
     }
 
     @Test
+    public void shouldSetStory() {
+        Story story = new Story(randomAlphabetic(10));
+        Animal animal = AnimalBuilder.random().build();
+
+        animal.setStory(story);
+
+        assertThat(animal.getStory(), is(story));
+    }
+
+    @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Animal.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
@@ -119,12 +129,14 @@ public class AnimalTest {
     public void shouldSerializeAnimal() throws JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
+        Story story = new Story(randomAlphabetic(10));
         Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).withPrimaryLinkPicture(primaryLinkPicture)
-                .withCharacteristics(characteristics).withRegistrationDate(LocalDateTime.now()).build();
+                .withCharacteristics(characteristics).withStory(story).withRegistrationDate(LocalDateTime.now()).build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
         String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
         String expectedCharacteristics = objectMapper.writeValueAsString(characteristics);
+        String expectedStory = objectMapper.writeValueAsString(story);
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
@@ -138,6 +150,7 @@ public class AnimalTest {
         assertThat(serializedAnimal, containsString(expectedSerializedState));
         assertThat(serializedAnimal, containsString(expectedPrimaryLinkPicture));
         assertThat(serializedAnimal, containsString(expectedCharacteristics));
+        assertThat(serializedAnimal, containsString(expectedStory));
     }
 
     @Test
@@ -168,6 +181,21 @@ public class AnimalTest {
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithCharacteristics, Animal.class);
 
         assertThat(deserializedAnimal.getCharacteristics(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldDeserializeAnimalWithoutStory() throws IOException {
+        Animal animal = AnimalBuilder.random().build();
+        Story story = new Story(randomAlphabetic(10));
+        String storyAsJson = objectMapper.writeValueAsString(story);
+        String serializedAnimalWithStory = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
+                animal.getSex().name() + "\",\"story\":" + storyAsJson + "}";
+
+        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithStory, Animal.class);
+
+        assertThat(deserializedAnimal.getStory(), is(nullValue()));
     }
 
     @Test

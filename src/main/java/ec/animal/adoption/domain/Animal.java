@@ -65,6 +65,9 @@ public class Animal extends Entity {
     @JsonProperty(value = "characteristics", access = JsonProperty.Access.READ_ONLY)
     private Characteristics characteristics;
 
+    @JsonProperty(value = "story", access = JsonProperty.Access.READ_ONLY)
+    private Story story;
+
     @JsonCreator
     private Animal(
             @JsonProperty("clinicalRecord") final String clinicalRecord,
@@ -156,6 +159,14 @@ public class Animal extends Entity {
         return characteristics;
     }
 
+    public void setStory(final Story story) {
+        this.story = story;
+    }
+
+    public Story getStory() {
+        return story;
+    }
+
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
@@ -174,7 +185,9 @@ public class Animal extends Entity {
         if (state != null ? !state.equals(animal.state) : animal.state != null) return false;
         if (primaryLinkPicture != null ? !primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture != null)
             return false;
-        return characteristics != null ? characteristics.equals(animal.characteristics) : animal.characteristics == null;
+        if (characteristics != null ? !characteristics.equals(animal.characteristics) : animal.characteristics != null)
+            return false;
+        return story != null ? story.equals(animal.story) : animal.story == null;
     }
 
     @Override
@@ -189,6 +202,7 @@ public class Animal extends Entity {
         result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (primaryLinkPicture != null ? primaryLinkPicture.hashCode() : 0);
         result = 31 * result + (characteristics != null ? characteristics.hashCode() : 0);
+        result = 31 * result + (story != null ? story.hashCode() : 0);
         return result;
     }
 }

@@ -20,16 +20,11 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.Story;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity(name = "story")
 public class JpaStory implements Serializable {
@@ -44,8 +39,9 @@ public class JpaStory implements Serializable {
     private LocalDateTime creationDate;
 
     @NotNull
-    @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID animalUuid;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "animal_uuid", nullable = false)
+    private JpaAnimal jpaAnimal;
 
     @NotNull
     private String text;
@@ -54,18 +50,16 @@ public class JpaStory implements Serializable {
         // Required by jpa
     }
 
-    public JpaStory(final Story story) {
+    public JpaStory(final Story story, final JpaAnimal jpaAnimal) {
         this();
         this.creationDate = LocalDateTime.now();
-        this.animalUuid = story.getAnimalUuid();
         this.text = story.getText();
+        this.jpaAnimal = jpaAnimal;
 
     }
 
     public Story toStory() {
-        final Story story = new Story(text);
-        story.setAnimalUuid(animalUuid);
-        return story;
+        return new Story(text);
     }
 
     @Override
@@ -79,7 +73,7 @@ public class JpaStory implements Serializable {
         if (id != null ? !id.equals(jpaStory.id) : jpaStory.id != null) return false;
         if (creationDate != null ? !creationDate.equals(jpaStory.creationDate) : jpaStory.creationDate != null)
             return false;
-        if (animalUuid != null ? !animalUuid.equals(jpaStory.animalUuid) : jpaStory.animalUuid != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(jpaStory.jpaAnimal) : jpaStory.jpaAnimal != null) return false;
         return text != null ? text.equals(jpaStory.text) : jpaStory.text == null;
     }
 
@@ -88,7 +82,7 @@ public class JpaStory implements Serializable {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (animalUuid != null ? animalUuid.hashCode() : 0);
+        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         return result;
     }

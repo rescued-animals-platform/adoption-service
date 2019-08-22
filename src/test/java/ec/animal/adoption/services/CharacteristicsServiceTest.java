@@ -87,7 +87,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPCharacteristicsForAnimal() {
+    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoCharacteristicsForAnimal() {
         UUID animalUuid = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
