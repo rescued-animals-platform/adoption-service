@@ -23,12 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.UUID;
-
 public class LinkPicture {
-
-    @JsonIgnore
-    private final UUID animalUuid;
 
     @JsonProperty("name")
     private final String name;
@@ -44,21 +39,15 @@ public class LinkPicture {
 
     @JsonCreator
     public LinkPicture(
-            @JsonProperty("animalUuid") final UUID animalUuid,
             @JsonProperty("name") final String name,
             @JsonProperty("pictureType") final PictureType pictureType,
             @JsonProperty("largeImageMediaLink") final MediaLink largeImageMediaLink,
             @JsonProperty("smallImageMediaLink") final MediaLink smallImageMediaLink
     ) {
-        this.animalUuid = animalUuid;
         this.name = name;
         this.pictureType = pictureType;
         this.largeImageMediaLink = largeImageMediaLink;
         this.smallImageMediaLink = smallImageMediaLink;
-    }
-
-    public UUID getAnimalUuid() {
-        return animalUuid;
     }
 
     public String getName() {
@@ -87,7 +76,6 @@ public class LinkPicture {
 
         LinkPicture that = (LinkPicture) o;
 
-        if (animalUuid != null ? !animalUuid.equals(that.animalUuid) : that.animalUuid != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (pictureType != that.pictureType) return false;
         if (largeImageMediaLink != null ? !largeImageMediaLink.equals(that.largeImageMediaLink) : that.largeImageMediaLink != null)
@@ -98,8 +86,7 @@ public class LinkPicture {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = animalUuid != null ? animalUuid.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);
         result = 31 * result + (largeImageMediaLink != null ? largeImageMediaLink.hashCode() : 0);
         result = 31 * result + (smallImageMediaLink != null ? smallImageMediaLink.hashCode() : 0);

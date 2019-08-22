@@ -23,12 +23,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -45,6 +51,9 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 @SuppressWarnings("PMD.TooManyMethods")
 public class AnimalTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
     private static final String ANIMAL_CLINICAL_RECORD_IS_REQUIRED = "Animal clinical record is required";
@@ -68,9 +77,38 @@ public class AnimalTest {
     }
 
     @Test
+    public void shouldReturnPrimaryLinkPicture() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
+
+        assertThat(animal.getPrimaryLinkPicture(), is(primaryLinkPicture));
+    }
+
+    @Test
+    public void shouldSetPrimaryLinkPicture() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animal = AnimalBuilder.random().build();
+
+        animal.setPrimaryLinkPicture(primaryLinkPicture);
+
+        assertThat(animal.getPrimaryLinkPicture(), is(primaryLinkPicture));
+    }
+
+    @Test
+    public void shouldThrowIllegalArgumentExceptionWhenSettingAnAlternateLinkPicture() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Picture type should be PRIMARY");
+
+        Animal animal = AnimalBuilder.random().build();
+        LinkPicture alternateLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
+
+        animal.setPrimaryLinkPicture(alternateLinkPicture);
+    }
+
+    @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
+        EqualsVerifier.forClass(Animal.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
     }
 
     @Test
@@ -90,6 +128,45 @@ public class AnimalTest {
         assertThat(serializedAnimal, containsString(animal.getEstimatedAge().name()));
         assertThat(serializedAnimal, containsString(animal.getSex().name()));
         assertThat(serializedAnimal, containsString(expectedSerializedState));
+    }
+
+    @Test
+    public void shouldSerializeAnimalWithoutPrimaryLinkPicture() throws JsonProcessingException {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
+        String primaryLinkPictureAsJson = objectMapper.writeValueAsString(primaryLinkPicture);
+
+        String serializedAnimal = objectMapper.writeValueAsString(animal);
+
+        assertThat(
+                serializedAnimal,
+                not(containsString(String.format("\"primaryLinkPicture\":\"%s\"", primaryLinkPictureAsJson)))
+        );
+    }
+
+    @Test
+    public void shouldDeserializeAnimalWithoutPrimaryLinkPicture() throws IOException {
+        Animal animal = AnimalBuilder.random().build();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        String primaryLinkPictureAsJson = objectMapper.writeValueAsString(primaryLinkPicture);
+        String serializedAnimalWithoutState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
+                NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
+                ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
+                animal.getSex().name() + "\",\"primaryLinkPicture\":" + primaryLinkPictureAsJson + "}";
+
+        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithoutState, Animal.class);
+
+        assertThat(deserializedAnimal.getPrimaryLinkPicture(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldSerializeAnimalWithoutStateName() throws JsonProcessingException {
+        State state = getRandomState();
+        Animal animal = AnimalBuilder.random().withState(state).build();
+
+        String serializedAnimal = objectMapper.writeValueAsString(animal);
+
+        assertThat(serializedAnimal, not(containsString(String.format("\"stateName\":\"%s\"", state.getStateName()))));
     }
 
     @Test

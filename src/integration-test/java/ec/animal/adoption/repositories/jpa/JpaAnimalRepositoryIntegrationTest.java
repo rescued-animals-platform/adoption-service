@@ -20,6 +20,9 @@
 package ec.animal.adoption.repositories.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
@@ -40,6 +43,7 @@ import java.util.stream.IntStream;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
@@ -51,6 +55,24 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
         assertReflectionEquals(jpaAnimal, entity);
+    }
+
+    @Test
+    public void shouldSavePrimaryLinkPictureForAnimal() {
+        JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = jpaAnimalRepository.save(
+                new JpaAnimal(AnimalBuilder.random().build())
+        );
+        Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
+        assertThat(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), is(nullValue()));
+        animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(
+                LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build()
+        );
+        JpaAnimal entity = new JpaAnimal(animalWithNoPrimaryLinkPicture);
+
+        JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
+        Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
+
+        assertReflectionEquals(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), animalWithPrimaryLinkPicture.getPrimaryLinkPicture());
     }
 
     @Test

@@ -23,14 +23,11 @@ import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 
-import java.util.UUID;
-
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class LinkPictureBuilder {
 
-    private UUID animalUuid;
     private String name;
     private PictureType pictureType;
     private MediaLink largeImageMediaLink;
@@ -38,17 +35,11 @@ public class LinkPictureBuilder {
 
     public static LinkPictureBuilder random() {
         final LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
-        linkPictureBuilder.animalUuid = UUID.randomUUID();
         linkPictureBuilder.name = randomAlphabetic(10);
         linkPictureBuilder.pictureType = getRandomPictureType();
         linkPictureBuilder.largeImageMediaLink = new MediaLink(randomAlphabetic(30));
         linkPictureBuilder.smallImageMediaLink = new MediaLink(randomAlphabetic(30));
         return linkPictureBuilder;
-    }
-
-    public LinkPictureBuilder withAnimalUuid(final UUID animalUuid) {
-        this.animalUuid = animalUuid;
-        return this;
     }
 
     public LinkPictureBuilder withName(final String name) {
@@ -73,7 +64,7 @@ public class LinkPictureBuilder {
 
     public LinkPicture build() {
         return new LinkPicture(
-                this.animalUuid, this.name, this.pictureType, this.largeImageMediaLink, this.smallImageMediaLink
+                this.name, this.pictureType, this.largeImageMediaLink, this.smallImageMediaLink
         );
     }
 }

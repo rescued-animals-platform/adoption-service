@@ -23,6 +23,7 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class AnimalBuilder {
 
     private UUID uuid;
@@ -41,6 +43,7 @@ public class AnimalBuilder {
     private Sex sex;
     private State state;
     private LocalDateTime registrationDate;
+    private LinkPicture primaryLinkPicture;
 
     public static AnimalBuilder random() {
         final AnimalBuilder animalBuilder = new AnimalBuilder();
@@ -93,6 +96,11 @@ public class AnimalBuilder {
         return this;
     }
 
+    public AnimalBuilder withPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
+        this.primaryLinkPicture = primaryLinkPicture;
+        return this;
+    }
+
     public Animal build() {
         return new Animal(
                 this.uuid,
@@ -102,7 +110,8 @@ public class AnimalBuilder {
                 this.species,
                 this.estimatedAge,
                 this.sex,
-                this.state
+                this.state,
+                primaryLinkPicture
         );
     }
 }

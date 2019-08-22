@@ -23,9 +23,6 @@ public abstract class AbstractJpaRepositoryIntegrationTest {
     @Autowired
     private JpaCharacteristicsRepository jpaCharacteristicsRepository;
 
-    @Autowired
-    private JpaLinkPictureRepository jpaLinkPictureRepository;
-
     JpaAnimal createAndSaveJpaAnimal() {
         return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build()));
     }
@@ -33,7 +30,6 @@ public abstract class AbstractJpaRepositoryIntegrationTest {
     void deleteAllJpaAnimals() {
         jpaStoryRepository.deleteAll();
         jpaCharacteristicsRepository.deleteAll();
-        jpaLinkPictureRepository.deleteAll();
         jpaAnimalRepository.deleteAll();
     }
 }

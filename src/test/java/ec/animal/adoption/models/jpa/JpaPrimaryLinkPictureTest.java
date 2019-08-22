@@ -21,6 +21,7 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -30,24 +31,29 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class JpaLinkPictureTest {
+public class JpaPrimaryLinkPictureTest {
 
     @Test
-    public void shouldCreateJpaLinkPictureFromLinkPicture() {
-        LinkPicture linkPicture = LinkPictureBuilder.random().build();
-        JpaLinkPicture jpaLinkPicture = new JpaLinkPicture(linkPicture);
+    public void shouldCreateJpaPrimaryLinkPictureFromPrimaryLinkPicture() {
+        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(linkPicture, mock(JpaAnimal.class));
 
-        assertThat(jpaLinkPicture.toLinkPicture(), is(linkPicture));
+        assertThat(jpaPrimaryLinkPicture.toLinkPicture(), is(linkPicture));
     }
 
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaLinkPicture.class).usingGetClass().withPrefabValues(
+        EqualsVerifier.forClass(JpaPrimaryLinkPicture.class).usingGetClass().withPrefabValues(
                 Timestamp.class,
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now().minusDays(2))
+        ).withPrefabValues(
+                JpaAnimal.class,
+                mock(JpaAnimal.class),
+                mock(JpaAnimal.class)
         ).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

@@ -27,7 +27,6 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
@@ -37,16 +36,14 @@ public class LinkPictureTest {
 
     @Test
     public void shouldCreateALinkPicture() {
-        UUID animalUuid = UUID.randomUUID();
         String name = randomAlphabetic(10);
         PictureType pictureType = TestUtils.getRandomPictureType();
         String largeImageUrl = randomAlphabetic(30);
         String smallImageUrl = randomAlphabetic(30);
-        LinkPicture linkPicture = LinkPictureBuilder.random().withAnimalUuid(animalUuid).withName(name).
-        withPictureType(pictureType). withLargeImageMediaLink(new MediaLink(largeImageUrl)).
-                withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+        LinkPicture linkPicture = LinkPictureBuilder.random().withName(name).withPictureType(pictureType)
+                .withLargeImageMediaLink(new MediaLink(largeImageUrl))
+                .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
-        assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
         assertThat(linkPicture.getName(), is(name));
         assertThat(linkPicture.getPictureType(), is(pictureType));
         assertThat(linkPicture.getLargeImageUrl(), is(largeImageUrl));

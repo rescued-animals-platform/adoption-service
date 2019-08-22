@@ -24,14 +24,14 @@ import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.springframework.lang.Nullable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -73,13 +73,17 @@ public class JpaAnimal implements Serializable {
     @Column(columnDefinition = "jsonb", nullable = false)
     private State state;
 
+    @Nullable
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
+    private JpaPrimaryLinkPicture jpaPrimaryLinkPicture;
+
     private JpaAnimal() {
         // Required by jpa
     }
 
     public JpaAnimal(final Animal animal) {
         this();
-        this.uuid = UUID.randomUUID();
+        this.uuid = animal.getUuid() == null ? UUID.randomUUID() : animal.getUuid();
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
         this.registrationDate = LocalDateTime.now();
@@ -88,6 +92,9 @@ public class JpaAnimal implements Serializable {
         this.sex = animal.getSex().name();
         this.stateName = animal.getStateName();
         this.state = animal.getState();
+        LinkPicture primaryLinkPicture = animal.getPrimaryLinkPicture();
+        this.jpaPrimaryLinkPicture = primaryLinkPicture == null ? null :
+                new JpaPrimaryLinkPicture(primaryLinkPicture, this);
     }
 
     public Animal toAnimal() {
@@ -99,7 +106,8 @@ public class JpaAnimal implements Serializable {
                 Species.valueOf(animalSpecies),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
-                state
+                state,
+                jpaPrimaryLinkPicture == null ? null : jpaPrimaryLinkPicture.toLinkPicture()
         );
     }
 }

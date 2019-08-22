@@ -68,7 +68,6 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
         );
 
         return new LinkPicture(
-                imagePicture.getAnimalUuid(),
                 imagePicture.getName(),
                 imagePicture.getPictureType(),
                 new MediaLink(largeImageUrl),

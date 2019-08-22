@@ -20,29 +20,84 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class JpaAnimalTest {
 
     @Test
-    public void shouldCreateAJpaAnimalFromAnAnimal() {
-        Animal animal = AnimalBuilder.random().build();
-
+    public void shouldGenerateAnUuidWhenCreatingAJpaAnimalForAnAnimalWithNoUuid() {
+        Animal animal = AnimalBuilder.random().withUuid(null).build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
         assertNotNull(jpaAnimalToAnimal.getUuid());
+    }
+
+    @Test
+    public void shouldCreateAnAnimalWithUuid() {
+        UUID uuid = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withUuid(uuid).build();
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
+        assertThat(jpaAnimalToAnimal.getUuid(), is(uuid));
+    }
+
+    @Test
+    public void shouldGenerateARegistrationDateWhenCreatingAJpaAnimal() {
+        Animal animal = AnimalBuilder.random().build();
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
         assertNotNull(jpaAnimalToAnimal.getRegistrationDate());
+    }
+
+    @Test
+    public void shouldCreateAJpaAnimalFromAnAnimal() {
+        Animal animal = AnimalBuilder.random().build();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        animal.setPrimaryLinkPicture(primaryLinkPicture);
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
         assertThat(jpaAnimalToAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
         assertThat(jpaAnimalToAnimal.getName(), is(animal.getName()));
         assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
         assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
         assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
         assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
+        assertThat(jpaAnimalToAnimal.getPrimaryLinkPicture(), is(primaryLinkPicture));
+    }
+
+    @Test
+    public void shouldCreateAJpaAnimalWithNoJpaPrimaryLinkPicture() {
+        Animal animal = AnimalBuilder.random().build();
+
+        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+
+        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+
+        assertThat(jpaAnimalToAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
+        assertThat(jpaAnimalToAnimal.getName(), is(animal.getName()));
+        assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
+        assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
+        assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
+        assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
+        assertThat(jpaAnimalToAnimal.getPrimaryLinkPicture(), is(nullValue()));
     }
 }

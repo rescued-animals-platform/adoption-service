@@ -39,6 +39,11 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class PictureResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
+    private static final String NAME = "name";
+    private static final String PICTURE_TYPE = "pictureType";
+    private static final String LARGE_IMAGE = "largeImage";
+    private static final String SMALL_IMAGE = "smallImage";
+
     private UUID animalUuid;
     private String name;
     private PictureType pictureType;
@@ -51,10 +56,10 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        validMultipartPicturesFormData.add("name", name);
-        validMultipartPicturesFormData.add("pictureType", pictureType.name());
-        validMultipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        validMultipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+        validMultipartPicturesFormData.add(NAME, name);
+        validMultipartPicturesFormData.add(PICTURE_TYPE, pictureType.name());
+        validMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        validMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
     }
 
     @Test
@@ -69,7 +74,6 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
                 .consumeWith(linkPictureEntityExchangeResult -> {
                     LinkPicture linkPicture = linkPictureEntityExchangeResult.getResponseBody();
                     assertNotNull(linkPicture);
-                    assertThat(linkPicture.getAnimalUuid(), is(animalUuid));
                     assertThat(linkPicture.getName(), is(name));
                     assertThat(linkPicture.getPictureType(), is(pictureType));
                 });
@@ -105,12 +109,29 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
     }
 
     @Test
+    public void shouldReturn400BadRequestWhenCreatingAPictureThatIsNotPrimary() {
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.ALTERNATE.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+
+        webTestClient.post()
+                .uri(PICTURES_URL, animalUuid)
+                .syncBody(invalidMultipartPicturesFormData)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
+    }
+
+    @Test
     public void shouldReturn400BadRequestForInvalidLargeImageFile() {
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add("name", name);
-        invalidMultipartPicturesFormData.add("pictureType", PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("invalid-image-file.txt"));
-        invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)
@@ -124,10 +145,10 @@ public class PictureResourceIntegrationTest extends AbstractResourceIntegrationT
     @Test
     public void shouldReturn400BadRequestForInvalidSmallImageFile() {
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add("name", name);
-        invalidMultipartPicturesFormData.add("pictureType", PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        invalidMultipartPicturesFormData.add("smallImage", new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
 
         webTestClient.post()
                 .uri(PICTURES_URL, animalUuid)

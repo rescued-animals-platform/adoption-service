@@ -19,13 +19,17 @@
 
 package ec.animal.adoption.services;
 
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.clients.MediaStorageClient;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.exceptions.InvalidPictureException;
-import ec.animal.adoption.repositories.LinkPictureRepository;
+import ec.animal.adoption.repositories.AnimalRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +47,7 @@ import static org.mockito.Mockito.when;
 public class PictureServiceTest {
 
     @Mock
-    private LinkPictureRepository linkPictureRepository;
+    private AnimalRepository animalRepository;
 
     @Mock
     private MediaStorageClient mediaStorageClient;
@@ -53,19 +57,20 @@ public class PictureServiceTest {
 
     @Before
     public void setUp() {
-        pictureService = new PictureService(mediaStorageClient, linkPictureRepository);
+        pictureService = new PictureService(mediaStorageClient, animalRepository);
     }
 
     @Test
     public void shouldCreateAPicture() {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
-        LinkPicture linkPicture = LinkPictureBuilder.random().build();
-        when(mediaStorageClient.save(imagePicture)).thenReturn(linkPicture);
-        when(linkPictureRepository.save(linkPicture)).thenReturn(linkPicture);
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        when(mediaStorageClient.save(imagePicture)).thenReturn(primaryLinkPicture);
+        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
+        when(animalRepository.save(animal)).thenReturn(animal);
 
-        LinkPicture createdPicture = pictureService.create(imagePicture);
+        LinkPicture createdPicture = pictureService.createPrimaryPicture(imagePicture, animal);
 
-        assertThat(createdPicture, is(linkPicture));
+        assertThat(createdPicture, is(primaryLinkPicture));
     }
 
     @Test(expected = InvalidPictureException.class)
@@ -73,17 +78,29 @@ public class PictureServiceTest {
         ImagePicture imagePicture = mock(ImagePicture.class);
         when(imagePicture.isValid()).thenReturn(false);
 
-        pictureService.create(imagePicture);
+        pictureService.createPrimaryPicture(imagePicture, mock(Animal.class));
     }
 
     @Test
-    public void shouldGetPrimaryPictureByAnimalUuid() {
-        LinkPicture expectedLinkPicture = mock(LinkPicture.class);
+    public void shouldGetPrimaryLinkPictureByAnimalUuid() {
+        LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
+                .withPictureType(PictureType.PRIMARY).build();
         UUID animalUuid = UUID.randomUUID();
-        when(linkPictureRepository.getBy(animalUuid)).thenReturn(expectedLinkPicture);
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid)
+                .withPrimaryLinkPicture(expectedPrimaryLinkPicture).build();
+        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
 
         LinkPicture linkPicture = pictureService.getBy(animalUuid);
 
-        assertThat(linkPicture, is(expectedLinkPicture));
+        assertThat(linkPicture, is(expectedPrimaryLinkPicture));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPrimaryLinkPictureForAnimal() {
+        UUID animalUuid = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().build();
+        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+
+        pictureService.getBy(animalUuid);
     }
 }

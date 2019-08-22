@@ -20,10 +20,12 @@
 package ec.animal.adoption.services;
 
 import ec.animal.adoption.clients.MediaStorageClient;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.exceptions.InvalidPictureException;
-import ec.animal.adoption.repositories.LinkPictureRepository;
+import ec.animal.adoption.repositories.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,27 +35,32 @@ import java.util.UUID;
 public class PictureService {
 
     private final MediaStorageClient mediaStorageClient;
-    private final LinkPictureRepository linkPictureRepository;
+    private final AnimalRepository animalRepository;
 
     @Autowired
-    public PictureService(
-            final MediaStorageClient mediaStorageClient,
-            final LinkPictureRepository linkPictureRepository
-    ) {
+    public PictureService(final MediaStorageClient mediaStorageClient, final AnimalRepository animalRepository) {
         this.mediaStorageClient = mediaStorageClient;
-        this.linkPictureRepository = linkPictureRepository;
+        this.animalRepository = animalRepository;
     }
 
-    public LinkPicture create(final ImagePicture imagePicture) {
-        if(!imagePicture.isValid()) {
+    public LinkPicture createPrimaryPicture(final ImagePicture imagePicture, final Animal animal) {
+        if (!imagePicture.isValid()) {
             throw new InvalidPictureException();
         }
 
-        final LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
-        return linkPictureRepository.save(linkPicture);
+        LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
+        animal.setPrimaryLinkPicture(linkPicture);
+
+        return animalRepository.save(animal).getPrimaryLinkPicture();
     }
 
     public LinkPicture getBy(final UUID animalUuid) {
-        return linkPictureRepository.getBy(animalUuid);
+        Animal animal = animalRepository.getBy(animalUuid);
+
+        if (animal.getPrimaryLinkPicture() == null) {
+            throw new EntityNotFoundException();
+        }
+
+        return animal.getPrimaryLinkPicture();
     }
 }

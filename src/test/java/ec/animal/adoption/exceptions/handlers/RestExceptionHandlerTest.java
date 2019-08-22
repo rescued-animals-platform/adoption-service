@@ -178,7 +178,8 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
         String invalidMessage = "The image(s) could not be processed. Check they meet the " +
-                "minimum requirements: Supported extensions: %s. Maximum size: 1MB";
+                "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
+                "Only PRIMARY picture type is supported.";
         InvalidPictureException invalidPictureException = new InvalidPictureException();
         ApiError expectedApiError = new ApiError(
                 HttpStatus.BAD_REQUEST,

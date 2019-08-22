@@ -22,19 +22,14 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity(name = "link_picture")
-public class JpaLinkPicture implements Serializable {
+@Entity(name = "primary_link_picture")
+public class JpaPrimaryLinkPicture implements Serializable {
 
     private transient static final long serialVersionUID = -832433659194420810L;
 
@@ -46,38 +41,34 @@ public class JpaLinkPicture implements Serializable {
     private LocalDateTime creationDate;
 
     @NotNull
-    @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID animalUuid;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "animal_uuid", nullable = false)
+    private JpaAnimal jpaAnimal;
 
     @NotNull
     private String name;
-
-    @NotNull
-    private String pictureType;
 
     private String largeImageUrl;
 
     private String smallImageUrl;
 
-    private JpaLinkPicture() {
+    private JpaPrimaryLinkPicture() {
         // Required by jpa
     }
 
-    public JpaLinkPicture(final LinkPicture linkPicture) {
+    public JpaPrimaryLinkPicture(final LinkPicture linkPicture, final JpaAnimal jpaAnimal) {
         this();
         this.creationDate = LocalDateTime.now();
-        this.animalUuid = linkPicture.getAnimalUuid();
         this.name = linkPicture.getName();
-        this.pictureType = linkPicture.getPictureType().name();
         this.largeImageUrl = linkPicture.getLargeImageUrl();
         this.smallImageUrl = linkPicture.getSmallImageUrl();
+        this.jpaAnimal = jpaAnimal;
     }
 
     public LinkPicture toLinkPicture() {
         return new LinkPicture(
-                this.animalUuid,
                 this.name,
-                PictureType.valueOf(this.pictureType),
+                PictureType.PRIMARY,
                 new MediaLink(this.largeImageUrl),
                 new MediaLink(this.smallImageUrl)
         );
@@ -89,13 +80,12 @@ public class JpaLinkPicture implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JpaLinkPicture that = (JpaLinkPicture) o;
+        JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
-        if (animalUuid != null ? !animalUuid.equals(that.animalUuid) : that.animalUuid != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (pictureType != null ? !pictureType.equals(that.pictureType) : that.pictureType != null) return false;
         if (largeImageUrl != null ? !largeImageUrl.equals(that.largeImageUrl) : that.largeImageUrl != null)
             return false;
         return smallImageUrl != null ? smallImageUrl.equals(that.smallImageUrl) : that.smallImageUrl == null;
@@ -106,9 +96,8 @@ public class JpaLinkPicture implements Serializable {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (animalUuid != null ? animalUuid.hashCode() : 0);
+        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);
         result = 31 * result + (largeImageUrl != null ? largeImageUrl.hashCode() : 0);
         result = 31 * result + (smallImageUrl != null ? smallImageUrl.hashCode() : 0);
         return result;

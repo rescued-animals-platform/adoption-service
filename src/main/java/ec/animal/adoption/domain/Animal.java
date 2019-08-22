@@ -22,6 +22,8 @@ package ec.animal.adoption.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 
@@ -56,6 +58,9 @@ public class Animal extends Entity {
     @JsonProperty("state")
     private final State state;
 
+    @JsonIgnore
+    private LinkPicture primaryLinkPicture;
+
     @JsonCreator
     private Animal(
             @JsonProperty("clinicalRecord") final String clinicalRecord,
@@ -87,7 +92,8 @@ public class Animal extends Entity {
             final Species species,
             final EstimatedAge estimatedAge,
             final Sex sex,
-            final State state
+            final State state,
+            final LinkPicture primaryLinkpicture
     ) {
         super(uuid, registrationDate);
         this.clinicalRecord = clinicalRecord;
@@ -96,6 +102,7 @@ public class Animal extends Entity {
         this.estimatedAge = estimatedAge;
         this.sex = sex;
         this.state = state;
+        this.primaryLinkPicture = primaryLinkpicture;
     }
 
     public String getClinicalRecord() {
@@ -127,9 +134,21 @@ public class Animal extends Entity {
         return state.getStateName();
     }
 
+    public void setPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
+        if (!PictureType.PRIMARY.equals(primaryLinkPicture.getPictureType())) {
+            throw new IllegalArgumentException("Picture type should be PRIMARY");
+        }
+
+        this.primaryLinkPicture = primaryLinkPicture;
+    }
+
+    public LinkPicture getPrimaryLinkPicture() {
+        return primaryLinkPicture;
+    }
+
     @Override
     @SuppressWarnings("PMD")
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -142,7 +161,8 @@ public class Animal extends Entity {
         if (species != animal.species) return false;
         if (estimatedAge != animal.estimatedAge) return false;
         if (sex != animal.sex) return false;
-        return state != null ? state.equals(animal.state) : animal.state == null;
+        if (state != null ? !state.equals(animal.state) : animal.state != null) return false;
+        return primaryLinkPicture != null ? primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture == null;
     }
 
     @Override
@@ -155,6 +175,7 @@ public class Animal extends Entity {
         result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (primaryLinkPicture != null ? primaryLinkPicture.hashCode() : 0);
         return result;
     }
 }

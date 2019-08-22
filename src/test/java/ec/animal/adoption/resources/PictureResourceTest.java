@@ -19,13 +19,17 @@
 
 package ec.animal.adoption.resources;
 
+import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.ImageBuilder;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exceptions.InvalidPictureException;
+import ec.animal.adoption.services.AnimalService;
 import ec.animal.adoption.services.PictureService;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +59,9 @@ public class PictureResourceTest {
     @Mock
     private PictureService pictureService;
 
+    @Mock
+    private AnimalService animalService;
+
     private ImagePicture imagePicture;
     private PictureResource pictureResource;
 
@@ -62,7 +69,8 @@ public class PictureResourceTest {
     public void setUp() throws IOException {
         Image largeImage = ImageBuilder.random().build();
         Image smallImage = ImageBuilder.random().build();
-        imagePicture = ImagePictureBuilder.random().withLargeImage(largeImage).withSmallImage(smallImage).build();
+        imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY)
+                .withLargeImage(largeImage).withSmallImage(smallImage).build();
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(
                 randomAlphabetic(10) + "." + largeImage.getExtension()
         );
@@ -74,17 +82,31 @@ public class PictureResourceTest {
         when(smallImageMultipartFile.getBytes()).thenReturn(smallImage.getContent());
         when(smallImageMultipartFile.getSize()).thenReturn(smallImage.getSizeInBytes());
 
-        pictureResource = new PictureResource(pictureService);
+        pictureResource = new PictureResource(pictureService, animalService);
+    }
+
+    @Test(expected = InvalidPictureException.class)
+    public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimary() {
+        pictureResource.createPrimaryPicture(
+                imagePicture.getAnimalUuid(),
+                imagePicture.getName(),
+                PictureType.ALTERNATE,
+                largeImageMultipartFile,
+                smallImageMultipartFile
+        );
     }
 
     @Test
     public void shouldCreateAPicture() {
-        LinkPicture expectedLinkPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
-                withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).build();
-        when(pictureService.create(imagePicture)).thenReturn(expectedLinkPicture);
+        UUID animalUuid = imagePicture.getAnimalUuid();
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid).build();
+        when(animalService.getBy(animalUuid)).thenReturn(animal);
+        LinkPicture expectedLinkPicture = LinkPictureBuilder.random().withName(imagePicture.getName())
+                .withPictureType(imagePicture.getPictureType()).build();
+        when(pictureService.createPrimaryPicture(imagePicture, animal)).thenReturn(expectedLinkPicture);
 
-        LinkPicture linkPicture = pictureResource.create(
-                imagePicture.getAnimalUuid(),
+        LinkPicture linkPicture = pictureResource.createPrimaryPicture(
+                animalUuid,
                 imagePicture.getName(),
                 imagePicture.getPictureType(),
                 largeImageMultipartFile,
@@ -99,7 +121,7 @@ public class PictureResourceTest {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(largeImageMultipartFile.getBytes()).thenThrow(IOException.class);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),
@@ -113,7 +135,7 @@ public class PictureResourceTest {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(smallImageMultipartFile.getBytes()).thenThrow(IOException.class);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),
@@ -126,7 +148,7 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInLargeImage() {
         when(largeImageMultipartFile.isEmpty()).thenReturn(true);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),
@@ -139,7 +161,7 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInSmallImage() {
         when(smallImageMultipartFile.isEmpty()).thenReturn(true);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),
@@ -152,7 +174,7 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInLargeImage() {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(null);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),
@@ -165,7 +187,7 @@ public class PictureResourceTest {
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInSmallImage() {
         when(smallImageMultipartFile.getOriginalFilename()).thenReturn(null);
 
-        pictureResource.create(
+        pictureResource.createPrimaryPicture(
                 imagePicture.getAnimalUuid(),
                 randomAlphabetic(10),
                 imagePicture.getPictureType(),

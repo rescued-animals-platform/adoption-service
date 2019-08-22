@@ -85,10 +85,9 @@ public class MediaStorageClientGoogleCloudStorageTest {
         when(storage.create(any(BlobInfo.class), eq(imagePicture.getSmallImageContent())))
                 .thenReturn(smallImageBlob);
 
-        LinkPicture expectedPicture = LinkPictureBuilder.random().withAnimalUuid(imagePicture.getAnimalUuid()).
-                withName(imagePicture.getName()).withPictureType(imagePicture.getPictureType()).
-                withLargeImageMediaLink(new MediaLink(largeImageUrl)).
-                withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+        LinkPicture expectedPicture = LinkPictureBuilder.random().withName(imagePicture.getName())
+                .withPictureType(imagePicture.getPictureType()).withLargeImageMediaLink(new MediaLink(largeImageUrl))
+                .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
         LinkPicture storedPicture = mediaStorageClientGoogleCloudStorage.save(imagePicture);
 
