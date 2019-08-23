@@ -25,6 +25,7 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
@@ -51,7 +52,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 public class AnimalTest {
 
     @Rule
@@ -111,7 +112,7 @@ public class AnimalTest {
 
     @Test
     public void shouldSetStory() {
-        Story story = new Story(randomAlphabetic(10));
+        Story story = StoryBuilder.random().build();
         Animal animal = AnimalBuilder.random().build();
 
         animal.setStory(story);
@@ -129,7 +130,7 @@ public class AnimalTest {
     public void shouldSerializeAnimal() throws JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
-        Story story = new Story(randomAlphabetic(10));
+        Story story = StoryBuilder.random().build();
         Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).withPrimaryLinkPicture(primaryLinkPicture)
                 .withCharacteristics(characteristics).withStory(story).withRegistrationDate(LocalDateTime.now()).build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
@@ -186,7 +187,7 @@ public class AnimalTest {
     @Test
     public void shouldDeserializeAnimalWithoutStory() throws IOException {
         Animal animal = AnimalBuilder.random().build();
-        Story story = new Story(randomAlphabetic(10));
+        Story story = StoryBuilder.random().build();
         String storyAsJson = objectMapper.writeValueAsString(story);
         String serializedAnimalWithStory = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +

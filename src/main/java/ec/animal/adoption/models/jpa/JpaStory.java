@@ -20,11 +20,13 @@
 package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.Story;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity(name = "story")
 public class JpaStory implements Serializable {
@@ -32,11 +34,10 @@ public class JpaStory implements Serializable {
     private transient static final long serialVersionUID = -242532859161428810L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SuppressWarnings("PMD.ShortVariable")
-    private Long id;
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    private UUID uuid;
 
-    private LocalDateTime creationDate;
+    private LocalDateTime registrationDate;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -52,14 +53,22 @@ public class JpaStory implements Serializable {
 
     public JpaStory(final Story story, final JpaAnimal jpaAnimal) {
         this();
-        this.creationDate = LocalDateTime.now();
+        this.setUuid(story.getUuid());
+        this.setRegistrationDate(story.getRegistrationDate());
         this.text = story.getText();
         this.jpaAnimal = jpaAnimal;
+    }
 
+    private void setUuid(final UUID uuid) {
+        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    }
+
+    private void setRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
     }
 
     public Story toStory() {
-        return new Story(text);
+        return new Story(this.uuid, this.registrationDate, this.text);
     }
 
     @Override
@@ -70,8 +79,8 @@ public class JpaStory implements Serializable {
 
         JpaStory jpaStory = (JpaStory) o;
 
-        if (id != null ? !id.equals(jpaStory.id) : jpaStory.id != null) return false;
-        if (creationDate != null ? !creationDate.equals(jpaStory.creationDate) : jpaStory.creationDate != null)
+        if (uuid != null ? !uuid.equals(jpaStory.uuid) : jpaStory.uuid != null) return false;
+        if (registrationDate != null ? !registrationDate.equals(jpaStory.registrationDate) : jpaStory.registrationDate != null)
             return false;
         if (jpaAnimal != null ? !jpaAnimal.equals(jpaStory.jpaAnimal) : jpaStory.jpaAnimal != null) return false;
         return text != null ? text.equals(jpaStory.text) : jpaStory.text == null;
@@ -80,8 +89,8 @@ public class JpaStory implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         return result;

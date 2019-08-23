@@ -22,20 +22,18 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class JpaFriendlyWithTest {
 
     @Test
-    public void shouldCreateJpaFriendlyWithFromFriendlyWithAndJpaCharacteristics() {
+    public void shouldCreateJpaFriendlyWithFromFriendlyWith() {
         FriendlyWith friendlyWith = TestUtils.getRandomFriendlyWith();
 
-        JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith, mock(JpaCharacteristics.class));
+        JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith);
 
         assertThat(jpaFriendlyWith.toFriendlyWith(), is(friendlyWith));
     }
@@ -43,10 +41,6 @@ public class JpaFriendlyWithTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().withPrefabValues(
-                JpaCharacteristics.class,
-                mock(JpaCharacteristics.class),
-                mock(JpaCharacteristics.class)
-        ).suppress(Warning.REFERENCE_EQUALITY).verify();
+        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().verify();
     }
 }

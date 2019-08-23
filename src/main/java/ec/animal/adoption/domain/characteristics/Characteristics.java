@@ -20,15 +20,19 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.validators.ValidTemperaments;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.*;
 
+@JsonIgnoreProperties({"uuid", "registrationDate"})
 @SuppressWarnings("PMD.DataClass")
-public class Characteristics {
+public class Characteristics extends Entity {
 
     @NotNull(message = "Size is required")
     @JsonProperty("size")
@@ -46,12 +50,28 @@ public class Characteristics {
     private final Set<FriendlyWith> friendlyWith;
 
     @JsonCreator
-    public Characteristics(
+    private Characteristics(
             @JsonProperty("size") final Size size,
             @JsonProperty("physicalActivity") final PhysicalActivity physicalActivity,
             @JsonProperty("temperaments") final Temperaments temperaments,
             @JsonProperty("friendlyWith") final FriendlyWith... friendlyWith
     ) {
+        super(null, null);
+        this.size = size;
+        this.physicalActivity = physicalActivity;
+        this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
+        this.temperaments = temperaments;
+    }
+
+    public Characteristics(
+            final UUID uuid,
+            final LocalDateTime registrationDate,
+            final Size size,
+            final PhysicalActivity physicalActivity,
+            final Temperaments temperaments,
+            final FriendlyWith... friendlyWith
+    ) {
+        super(uuid, registrationDate);
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
@@ -79,6 +99,7 @@ public class Characteristics {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Characteristics that = (Characteristics) o;
 
@@ -91,10 +112,12 @@ public class Characteristics {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = size != null ? size.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
         result = 31 * result + (temperaments != null ? temperaments.hashCode() : 0);
         result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
         return result;
     }
 }
+

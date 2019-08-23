@@ -21,7 +21,8 @@ package ec.animal.adoption.models.jpa;
 
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -30,27 +31,21 @@ public class JpaFriendlyWith implements Serializable {
 
     private transient static final long serialVersionUID = -412422759164428810L;
 
-    @EmbeddedId
-    private JpaFriendlyWithId jpaFriendlyWithId;
-
+    @Id
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "characteristics_id", nullable = false)
-    @MapsId("characteristicsId")
-    private JpaCharacteristics jpaCharacteristics;
+    private String friendlyWith;
 
     private JpaFriendlyWith() {
         // Required by jpa
     }
 
-    public JpaFriendlyWith(final FriendlyWith friendlyWith, final JpaCharacteristics jpaCharacteristics) {
+    public JpaFriendlyWith(final FriendlyWith friendlyWith) {
         this();
-        this.jpaFriendlyWithId = new JpaFriendlyWithId(friendlyWith.name());
-        this.jpaCharacteristics = jpaCharacteristics;
+        this.friendlyWith = friendlyWith.name();
     }
 
     public FriendlyWith toFriendlyWith() {
-        return FriendlyWith.valueOf(this.jpaFriendlyWithId.getFriendlyWith());
+        return FriendlyWith.valueOf(this.friendlyWith);
     }
 
     @Override
@@ -61,16 +56,12 @@ public class JpaFriendlyWith implements Serializable {
 
         JpaFriendlyWith that = (JpaFriendlyWith) o;
 
-        if (jpaFriendlyWithId != null ? !jpaFriendlyWithId.equals(that.jpaFriendlyWithId) : that.jpaFriendlyWithId != null)
-            return false;
-        return jpaCharacteristics != null ? jpaCharacteristics.equals(that.jpaCharacteristics) : that.jpaCharacteristics == null;
+        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = jpaFriendlyWithId != null ? jpaFriendlyWithId.hashCode() : 0;
-        result = 31 * result + (jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0);
-        return result;
+        return friendlyWith != null ? friendlyWith.hashCode() : 0;
     }
 }

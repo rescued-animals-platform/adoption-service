@@ -34,19 +34,19 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 public class AnimalBuilder {
 
     private UUID uuid;
+    private LocalDateTime registrationDate;
     private String clinicalRecord;
     private String name;
     private Species species;
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
-    private LocalDateTime registrationDate;
     private LinkPicture primaryLinkPicture;
     private Characteristics characteristics;
     private Story story;
 
     public static AnimalBuilder random() {
-        final AnimalBuilder animalBuilder = new AnimalBuilder();
+        AnimalBuilder animalBuilder = new AnimalBuilder();
         animalBuilder.clinicalRecord = randomAlphabetic(10);
         animalBuilder.name = randomAlphabetic(10);
         animalBuilder.species = getRandomSpecies();
@@ -61,6 +61,11 @@ public class AnimalBuilder {
         return this;
     }
 
+    public AnimalBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+        return this;
+    }
+
     public AnimalBuilder withClinicalRecord(final String clinicalRecord) {
         this.clinicalRecord = clinicalRecord;
         return this;
@@ -68,11 +73,6 @@ public class AnimalBuilder {
 
     public AnimalBuilder withName(final String name) {
         this.name = name;
-        return this;
-    }
-
-    public AnimalBuilder withRegistrationDate(final LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate;
         return this;
     }
 
@@ -122,17 +122,11 @@ public class AnimalBuilder {
                 this.sex,
                 this.state
         );
+        animal.setCharacteristics(characteristics);
+        animal.setStory(story);
 
         if (primaryLinkPicture != null) {
             animal.setPrimaryLinkPicture(primaryLinkPicture);
-        }
-
-        if (characteristics != null) {
-            animal.setCharacteristics(characteristics);
-        }
-
-        if (story != null) {
-            animal.setStory(story);
         }
 
         return animal;

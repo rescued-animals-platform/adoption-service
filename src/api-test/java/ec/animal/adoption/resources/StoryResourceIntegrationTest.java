@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.resources;
 
+import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.domain.error.ApiError;
@@ -38,7 +39,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     @Test
     public void shouldReturn201CreatedWithStory() {
         Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
-        Story story = new Story(randomAlphabetic(300));
+        Story story = StoryBuilder.random().build();
 
         webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
@@ -85,7 +86,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
         webTestClient.post()
                 .uri(STORY_URL, UUID.randomUUID())
-                .syncBody(new Story(randomAlphabetic(300)))
+                .syncBody(StoryBuilder.random().build())
                 .exchange()
                 .expectStatus()
                 .isNotFound()
@@ -95,7 +96,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
         Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
-        Story story = new Story(randomAlphabetic(300));
+        Story story = StoryBuilder.random().build();
         webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
                 .syncBody(story)
@@ -117,7 +118,7 @@ public class StoryResourceIntegrationTest extends AbstractResourceIntegrationTes
         Animal animal = createAndSaveAnimalWithDefaultLookingForHumanState();
         Story createdStory = webTestClient.post()
                 .uri(STORY_URL, animal.getUuid())
-                .syncBody(new Story(randomAlphabetic(100)))
+                .syncBody(StoryBuilder.random().build())
                 .exchange()
                 .expectStatus()
                 .isCreated()

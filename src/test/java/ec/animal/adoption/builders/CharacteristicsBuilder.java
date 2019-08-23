@@ -25,12 +25,16 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
 
 public class CharacteristicsBuilder {
 
+    private UUID uuid;
+    private LocalDateTime registrationDate;
     private Size size;
     private PhysicalActivity physicalActivity;
     private Temperaments temperaments;
@@ -43,6 +47,16 @@ public class CharacteristicsBuilder {
         characteristicsBuilder.temperaments = TemperamentsBuilder.random().build();
         characteristicsBuilder.friendlyWith = new FriendlyWith[]{getRandomFriendlyWith()};
         return characteristicsBuilder;
+    }
+
+    public CharacteristicsBuilder withUuid(final UUID uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public CharacteristicsBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+        return this;
     }
 
     public CharacteristicsBuilder withSize(final Size size) {
@@ -66,6 +80,13 @@ public class CharacteristicsBuilder {
     }
 
     public Characteristics build() {
-        return new Characteristics(this.size, this.physicalActivity, this.temperaments, this.friendlyWith);
+        return new Characteristics(
+                this.uuid,
+                this.registrationDate,
+                this.size,
+                this.physicalActivity,
+                this.temperaments,
+                this.friendlyWith
+        );
     }
 }

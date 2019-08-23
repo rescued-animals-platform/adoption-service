@@ -22,11 +22,13 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity(name = "primary_link_picture")
 public class JpaPrimaryLinkPicture implements Serializable {
@@ -34,11 +36,10 @@ public class JpaPrimaryLinkPicture implements Serializable {
     private transient static final long serialVersionUID = -832433659194420810L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SuppressWarnings("PMD.ShortVariable")
-    private Long id;
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    private UUID uuid;
 
-    private LocalDateTime creationDate;
+    private LocalDateTime registrationDate;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -58,15 +59,26 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     public JpaPrimaryLinkPicture(final LinkPicture linkPicture, final JpaAnimal jpaAnimal) {
         this();
-        this.creationDate = LocalDateTime.now();
+        this.setUuid(linkPicture.getUuid());
+        this.setRegistrationDate(linkPicture.getRegistrationDate());
         this.name = linkPicture.getName();
         this.largeImageUrl = linkPicture.getLargeImageUrl();
         this.smallImageUrl = linkPicture.getSmallImageUrl();
         this.jpaAnimal = jpaAnimal;
     }
 
+    private void setUuid(final UUID uuid) {
+        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    }
+
+    private void setRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
+    }
+
     public LinkPicture toLinkPicture() {
         return new LinkPicture(
+                this.uuid,
+                this.registrationDate,
                 this.name,
                 PictureType.PRIMARY,
                 new MediaLink(this.largeImageUrl),
@@ -82,8 +94,9 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
         JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
+            return false;
         if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (largeImageUrl != null ? !largeImageUrl.equals(that.largeImageUrl) : that.largeImageUrl != null)
@@ -94,8 +107,8 @@ public class JpaPrimaryLinkPicture implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (largeImageUrl != null ? largeImageUrl.hashCode() : 0);

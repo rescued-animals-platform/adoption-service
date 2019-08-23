@@ -22,6 +22,7 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.domain.characteristics.Characteristics;
@@ -32,7 +33,6 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -84,7 +84,7 @@ public class JpaAnimalTest {
     public void shouldCreateAJpaAnimalFromAnAnimal() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
-        Story story = new Story(randomAlphabetic(10));
+        Story story = StoryBuilder.random().build();
         Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture)
                 .withCharacteristics(characteristics).withStory(story).build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -97,9 +97,27 @@ public class JpaAnimalTest {
         assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
         assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
         assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
-        assertThat(jpaAnimalToAnimal.getPrimaryLinkPicture(), is(primaryLinkPicture));
-        assertThat(jpaAnimalToAnimal.getCharacteristics(), is(characteristics));
-        assertThat(jpaAnimalToAnimal.getStory(), is(story));
+        assertEqualsPrimaryLinkPicture(jpaAnimalToAnimal.getPrimaryLinkPicture(), animal.getPrimaryLinkPicture());
+        assertEqualsCharacteristics(jpaAnimalToAnimal.getCharacteristics(), animal.getCharacteristics());
+        assertThat(jpaAnimalToAnimal.getStory().getText(), is(animal.getStory().getText()));
+    }
+
+    private void assertEqualsPrimaryLinkPicture(
+            final LinkPicture primaryLinkPicture, final LinkPicture expectedPrimaryLinkPicture
+    ) {
+        assertThat(primaryLinkPicture.getName(), is(expectedPrimaryLinkPicture.getName()));
+        assertThat(primaryLinkPicture.getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
+        assertThat(primaryLinkPicture.getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
+        assertThat(primaryLinkPicture.getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
+    }
+
+    private void assertEqualsCharacteristics(
+            final Characteristics characteristics, final Characteristics expectedCharacteristics
+    ) {
+        assertThat(characteristics.getSize(), is(expectedCharacteristics.getSize()));
+        assertThat(characteristics.getTemperaments(), is(expectedCharacteristics.getTemperaments()));
+        assertThat(characteristics.getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
+        assertThat(characteristics.getPhysicalActivity(), is(expectedCharacteristics.getPhysicalActivity()));
     }
 
     @Test

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.media;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.LinkPictureBuilder;
@@ -27,9 +28,12 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class LinkPictureTest {
@@ -64,5 +68,36 @@ public class LinkPictureTest {
         LinkPicture deserializedLinkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
 
         assertThat(deserializedLinkPicture, is(linkPicture));
+    }
+
+    @Test
+    public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        LinkPicture linkPicture = LinkPictureBuilder.random().withUuid(UUID.randomUUID())
+                .withRegistrationDate(LocalDateTime.now()).build();
+
+        String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
+
+        assertThat(serializedLinkPicture, not(containsString("uuid")));
+        assertThat(serializedLinkPicture, not(containsString("registrationDate")));
+    }
+
+    @Test
+    public void shouldNotIncludeUuidAndRegistrationDateInDeserialization() throws IOException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        String uuidAsJson = String.format("\"uuid\":\"%s\"", UUID.randomUUID());
+        String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
+        String serializedLinkPicture = String.format(
+                "{%s,%s,\"name\":\"anyName\",\"pictureType\":\"PRIMARY\"," +
+                        "\"largeImageMediaLink\":{\"url\":\"anyLargeUrl\"}," +
+                        "\"smallImageMediaLink\":{\"url\":\"anySmallUrl\"}}",
+                uuidAsJson,
+                registrationDateAsJson
+        );
+
+        LinkPicture linkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
+
+        assertNull(linkPicture.getUuid());
+        assertNull(linkPicture.getRegistrationDate());
     }
 }

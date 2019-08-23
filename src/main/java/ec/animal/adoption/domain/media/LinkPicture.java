@@ -21,9 +21,15 @@ package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.Entity;
 
-public class LinkPicture {
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@JsonIgnoreProperties({"uuid", "registrationDate"})
+public class LinkPicture extends Entity {
 
     @JsonProperty("name")
     private final String name;
@@ -44,6 +50,22 @@ public class LinkPicture {
             @JsonProperty("largeImageMediaLink") final MediaLink largeImageMediaLink,
             @JsonProperty("smallImageMediaLink") final MediaLink smallImageMediaLink
     ) {
+        super(null, null);
+        this.name = name;
+        this.pictureType = pictureType;
+        this.largeImageMediaLink = largeImageMediaLink;
+        this.smallImageMediaLink = smallImageMediaLink;
+    }
+
+    public LinkPicture(
+            final UUID uuid,
+            final LocalDateTime registrationDate,
+            final String name,
+            final PictureType pictureType,
+            final MediaLink largeImageMediaLink,
+            final MediaLink smallImageMediaLink
+    ) {
+        super(uuid, registrationDate);
         this.name = name;
         this.pictureType = pictureType;
         this.largeImageMediaLink = largeImageMediaLink;
@@ -73,6 +95,7 @@ public class LinkPicture {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         LinkPicture that = (LinkPicture) o;
 
@@ -86,7 +109,8 @@ public class LinkPicture {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);
         result = 31 * result + (largeImageMediaLink != null ? largeImageMediaLink.hashCode() : 0);
         result = 31 * result + (smallImageMediaLink != null ? smallImageMediaLink.hashCode() : 0);

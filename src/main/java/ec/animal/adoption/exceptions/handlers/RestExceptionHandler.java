@@ -43,7 +43,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityAlreadyExistsException.class)
     protected ResponseEntity<Object> handleEntityAlreadyExists(final EntityAlreadyExistsException exception) {
         final HttpStatus conflict = HttpStatus.CONFLICT;
-        return buildResponseEntity(new ApiError(conflict, exception.getMessage()), conflict);
+        return buildResponseEntity(
+                new ApiError(conflict, exception.getMessage(), exception.getCause().getLocalizedMessage()), conflict
+        );
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -55,13 +57,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidPictureException.class)
     public ResponseEntity<Object> handleImageMediaProcessingError(final InvalidPictureException exception) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, exception.getMessage()), badRequest);
+        Throwable cause = exception.getCause();
+        ApiError apiError = cause == null ? new ApiError(badRequest, exception.getMessage()) :
+                new ApiError(badRequest, exception.getMessage(), cause.getLocalizedMessage());
+
+        return buildResponseEntity(apiError, badRequest);
     }
 
     @ExceptionHandler(ImageStorageException.class)
     public ResponseEntity<Object> handleImageStorageException(final ImageStorageException exception) {
         final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
-        return buildResponseEntity(new ApiError(internalServerError, exception.getMessage()), internalServerError);
+        return buildResponseEntity(
+                new ApiError(internalServerError, exception.getMessage(), exception.getCause().getLocalizedMessage()),
+                internalServerError
+        );
     }
 
     @ExceptionHandler(GoogleCloudStorageException.class)
@@ -85,7 +94,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         final String error = "Malformed JSON request";
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, error, exception.getLocalizedMessage()), badRequest);
+        return buildResponseEntity(new ApiError(badRequest, error, exception.getMessage()), badRequest);
     }
 
     @Override
@@ -103,7 +112,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         return buildResponseEntity(
-                new ApiError(badRequest, error, exception.getLocalizedMessage()).setSubErrors(apiSubErrors), badRequest
+                new ApiError(badRequest, error, exception.getMessage()).setSubErrors(apiSubErrors), badRequest
         );
     }
 

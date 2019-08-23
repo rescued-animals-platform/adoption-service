@@ -20,18 +20,28 @@
 package ec.animal.adoption.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-public class Story {
+@JsonIgnoreProperties({"uuid", "registrationDate"})
+public class Story extends Entity {
 
     @NotEmpty(message = "Story text is required")
     @JsonProperty("text")
     private final String text;
 
     @JsonCreator
-    public Story(@JsonProperty("text") final String text) {
+    private Story(@JsonProperty("text") final String text) {
+        super(null, null);
+        this.text = text;
+    }
+
+    public Story(final UUID uuid, final LocalDateTime registrationDate, final String text) {
+        super(uuid, registrationDate);
         this.text = text;
     }
 
@@ -44,6 +54,7 @@ public class Story {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Story story = (Story) o;
 
@@ -53,6 +64,8 @@ public class Story {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return text != null ? text.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
     }
 }

@@ -29,12 +29,14 @@ import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity(name = "characteristics")
@@ -43,11 +45,10 @@ public class JpaCharacteristics implements Serializable {
     private transient static final long serialVersionUID = -132432659169428820L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SuppressWarnings("PMD.ShortVariable")
-    private Long id;
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    private UUID uuid;
 
-    private LocalDateTime creationDate;
+    private LocalDateTime registrationDate;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid", nullable = false)
@@ -65,8 +66,9 @@ public class JpaCharacteristics implements Serializable {
 
     private String balance;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaCharacteristics")
+    @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "characteristics_uuid", nullable = false)
     private List<JpaFriendlyWith> friendlyWith;
 
     private JpaCharacteristics() {
@@ -75,21 +77,34 @@ public class JpaCharacteristics implements Serializable {
 
     public JpaCharacteristics(final Characteristics characteristics, final JpaAnimal jpaAnimal) {
         this();
-        this.creationDate = LocalDateTime.now();
+        this.setUuid(characteristics.getUuid());
+        this.setRegistrationDate(characteristics.getRegistrationDate());
+        this.jpaAnimal = jpaAnimal;
         this.size = characteristics.getSize().name();
         this.physicalActivity = characteristics.getPhysicalActivity().name();
-        Temperaments temperaments = characteristics.getTemperaments();
+        this.setTemperaments(characteristics.getTemperaments());
+        this.friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new)
+                .collect(Collectors.toList());
+    }
+
+    private void setUuid(final UUID uuid) {
+        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    }
+
+    private void setRegistrationDate(final LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
+    }
+
+    private void setTemperaments(final Temperaments temperaments) {
         this.sociability = temperaments.getSociability() == null ? null : temperaments.getSociability().name();
         this.docility = temperaments.getDocility() == null ? null : temperaments.getDocility().name();
         this.balance = temperaments.getBalance() == null ? null : temperaments.getBalance().name();
-        this.friendlyWith = characteristics.getFriendlyWith().stream()
-                .map(friendlyWith -> new JpaFriendlyWith(friendlyWith, this))
-                .collect(Collectors.toList());
-        this.jpaAnimal = jpaAnimal;
     }
 
     public Characteristics toCharacteristics() {
         return new Characteristics(
+                this.uuid,
+                this.registrationDate,
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
                 new Temperaments(
@@ -109,8 +124,9 @@ public class JpaCharacteristics implements Serializable {
 
         JpaCharacteristics that = (JpaCharacteristics) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
+            return false;
         if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
@@ -124,8 +140,8 @@ public class JpaCharacteristics implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
         result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);

@@ -28,19 +28,80 @@ import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class JpaPrimaryLinkPictureTest {
 
     @Test
-    public void shouldCreateJpaPrimaryLinkPictureFromPrimaryLinkPicture() {
-        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(linkPicture, mock(JpaAnimal.class));
+    public void shouldGenerateAnUuidWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoUuid() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(null)
+                .withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
+                primaryLinkPicture, mock(JpaAnimal.class)
+        );
 
-        assertThat(jpaPrimaryLinkPicture.toLinkPicture(), is(linkPicture));
+        LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
+
+        assertNotNull(jpaPrimaryLinkPictureToLinkPicture.getUuid());
+    }
+
+    @Test
+    public void shouldGenerateARegistrationDateWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoRegistrationDate() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(null)
+                .withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
+                primaryLinkPicture, mock(JpaAnimal.class)
+        );
+
+        LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
+
+        assertNotNull(jpaPrimaryLinkPictureToLinkPicture.getRegistrationDate());
+    }
+
+    @Test
+    public void shouldCreateAPrimaryLinkPictureWithUuid() {
+        UUID uuid = UUID.randomUUID();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(uuid)
+                .withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
+                primaryLinkPicture, mock(JpaAnimal.class)
+        );
+
+        LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
+
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getUuid(), is(uuid));
+    }
+
+    @Test
+    public void shouldCreateAPrimaryLinkPictureWithRegistrationDate() {
+        LocalDateTime registrationDate = LocalDateTime.now();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(registrationDate)
+                .withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
+                primaryLinkPicture, mock(JpaAnimal.class)
+        );
+
+        LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
+
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getRegistrationDate(), is(registrationDate));
+    }
+
+    @Test
+    public void shouldCreateJpaPrimaryLinkPictureFromPrimaryLinkPicture() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(primaryLinkPicture, mock(JpaAnimal.class));
+
+        LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
+
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getName(), is(primaryLinkPicture.getName()));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getPictureType(), is(primaryLinkPicture.getPictureType()));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getLargeImageUrl(), is(primaryLinkPicture.getLargeImageUrl()));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getSmallImageUrl(), is(primaryLinkPicture.getSmallImageUrl()));
     }
 
     @Test

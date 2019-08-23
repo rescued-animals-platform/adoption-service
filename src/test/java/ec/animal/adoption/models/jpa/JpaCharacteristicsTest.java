@@ -28,20 +28,68 @@ import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class JpaCharacteristicsTest {
+
+    @Test
+    public void shouldGenerateAnUuidWhenCreatingJpaCharacteristicsForCharacteristicsWithNoUuid() {
+        Characteristics characteristics = CharacteristicsBuilder.random().withUuid(null).build();
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+
+        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertNotNull(jpaCharacteristicsToCharacteristics.getUuid());
+    }
+
+    @Test
+    public void shouldGenerateARegistrationDateWhenCreatingJpaCharacteristicsForCharacteristicsWithNoRegistrationDate() {
+        Characteristics characteristics = CharacteristicsBuilder.random().withRegistrationDate(null).build();
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+
+        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertNotNull(jpaCharacteristicsToCharacteristics.getRegistrationDate());
+    }
+
+    @Test
+    public void shouldCreateCharacteristicsWithUuid() {
+        UUID uuid = UUID.randomUUID();
+        Characteristics characteristics = CharacteristicsBuilder.random().withUuid(uuid).build();
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+
+        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertThat(jpaCharacteristicsToCharacteristics.getUuid(), is(uuid));
+    }
+
+    @Test
+    public void shouldCreateCharacteristicsWithRegistrationDate() {
+        LocalDateTime registrationDate = LocalDateTime.now();
+        Characteristics characteristics = CharacteristicsBuilder.random().withRegistrationDate(registrationDate)
+                .build();
+        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
+
+        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertThat(jpaCharacteristicsToCharacteristics.getRegistrationDate(), is(registrationDate));
+    }
 
     @Test
     public void shouldCreateJpaCharacteristicsFromCharacteristics() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
-        assertThat(jpaCharacteristics.toCharacteristics(), is(characteristics));
+        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
+
+        assertThat(jpaCharacteristicsToCharacteristics.getSize(), is(characteristics.getSize()));
+        assertThat(jpaCharacteristicsToCharacteristics.getTemperaments(), is(characteristics.getTemperaments()));
+        assertThat(jpaCharacteristicsToCharacteristics.getFriendlyWith(), is(characteristics.getFriendlyWith()));
+        assertThat(jpaCharacteristicsToCharacteristics.getPhysicalActivity(), is(characteristics.getPhysicalActivity()));
     }
 
     @Test

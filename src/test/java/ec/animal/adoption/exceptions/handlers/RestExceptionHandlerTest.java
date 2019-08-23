@@ -35,6 +35,10 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 public class RestExceptionHandlerTest {
 
+    private static final String INVALID_PICTURE_EXCEPTION_MESSAGE = "The image(s) could not be processed. Check they meet the " +
+            "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
+            "Only PRIMARY picture type is supported.";
+
     @Mock
     private WebRequest webRequest;
 
@@ -70,7 +74,7 @@ public class RestExceptionHandlerTest {
     public void shouldReturnAResponseEntityWithApiErrorForHttpMessageNotReadableException() {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
         String debugMessage = randomAlphabetic(10);
-        when(httpMessageNotReadableException.getLocalizedMessage()).thenReturn(debugMessage);
+        when(httpMessageNotReadableException.getMessage()).thenReturn(debugMessage);
         ApiError expectedApiError = new ApiError(
                 HttpStatus.BAD_REQUEST, "Malformed JSON request", debugMessage
         );
@@ -86,17 +90,26 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithHttpStatusConflictForEntityAlreadyExistsException() {
-        EntityAlreadyExistsException entityAlreadyExistsException = mock(EntityAlreadyExistsException.class);
+        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(
+                mock(Throwable.class)
+        );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExists(entityAlreadyExistsException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExists(
+                entityAlreadyExistsException
+        );
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.CONFLICT));
     }
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForEntityAlreadyExistsException() {
-        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException();
-        ApiError expectedApiError = new ApiError(HttpStatus.CONFLICT, "The resource already exists");
+        Throwable throwable = mock(Throwable.class);
+        String localizedMessage = randomAlphabetic(10);
+        when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
+        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(throwable);
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.CONFLICT, "The resource already exists", localizedMessage
+        );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExists(entityAlreadyExistsException);
 
@@ -126,7 +139,7 @@ public class RestExceptionHandlerTest {
         List<FieldError> fieldErrors = createFieldErrors();
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         String debugMessage = randomAlphabetic(10);
-        when(methodArgumentNotValidException.getLocalizedMessage()).thenReturn(debugMessage);
+        when(methodArgumentNotValidException.getMessage()).thenReturn(debugMessage);
         ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
                 .setSubErrors(
                         fieldErrors.stream()
@@ -177,13 +190,10 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
-        String invalidMessage = "The image(s) could not be processed. Check they meet the " +
-                "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
-                "Only PRIMARY picture type is supported.";
         InvalidPictureException invalidPictureException = new InvalidPictureException();
         ApiError expectedApiError = new ApiError(
                 HttpStatus.BAD_REQUEST,
-                String.format(invalidMessage, Arrays.stream(SupportedImageExtension.values()).
+                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
                         map(SupportedImageExtension::getExtension).
                         collect(Collectors.joining(", ")))
         );
@@ -198,8 +208,32 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
+    public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureExceptionWithThrowableCause() {
+        Throwable throwable = mock(Throwable.class);
+        String localizedMessage = randomAlphabetic(10);
+        when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
+        InvalidPictureException invalidPictureException = new InvalidPictureException(throwable);
+        ApiError expectedApiError = new ApiError(
+                HttpStatus.BAD_REQUEST,
+                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
+                        map(SupportedImageExtension::getExtension).
+                        collect(Collectors.joining(", "))),
+                localizedMessage
+        );
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
+                invalidPictureException
+        );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
     public void shouldReturnAResponseEntityWithHttpStatusInternalServerErrorForImageStorageException() {
         ImageStorageException imageStorageException = mock(ImageStorageException.class);
+        when(imageStorageException.getCause()).thenReturn(mock(Throwable.class));
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
 
@@ -208,9 +242,12 @@ public class RestExceptionHandlerTest {
 
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForImageStorageException() {
-        ImageStorageException imageStorageException = new ImageStorageException(mock(Throwable.class));
+        Throwable throwable = mock(Throwable.class);
+        String localizedMessage = randomAlphabetic(10);
+        when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
+        ImageStorageException imageStorageException = new ImageStorageException(throwable);
         ApiError expectedApiError = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR, "The image could not be stored"
+                HttpStatus.INTERNAL_SERVER_ERROR, "The image could not be stored", localizedMessage
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);

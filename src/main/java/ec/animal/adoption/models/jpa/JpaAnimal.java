@@ -45,6 +45,8 @@ public class JpaAnimal implements Serializable {
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
+    private LocalDateTime registrationDate;
+
     @NotNull
     private String clinicalRecord;
 
@@ -59,8 +61,6 @@ public class JpaAnimal implements Serializable {
 
     @NotNull
     private String sex;
-
-    private LocalDateTime registrationDate;
 
     @NotNull
     @SuppressWarnings({"PMD.SingularField", "PMD.UnusedPrivateField"})
@@ -87,9 +87,9 @@ public class JpaAnimal implements Serializable {
     public JpaAnimal(final Animal animal) {
         this();
         this.setUuid(animal.getUuid());
+        this.setRegistrationDate(animal.getRegistrationDate());
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
-        this.setRegistrationDate(animal.getRegistrationDate());
         this.animalSpecies = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
