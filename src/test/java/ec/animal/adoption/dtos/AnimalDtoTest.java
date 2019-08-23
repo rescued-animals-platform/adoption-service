@@ -19,28 +19,54 @@
 
 package ec.animal.adoption.dtos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.domain.Species;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
 public class AnimalDtoTest {
 
     @Test
-    public void shouldReturnAnimalUuid() {
-        UUID expectedAnimalUuid = UUID.randomUUID();
-        AnimalDto animalDto = new AnimalDto(
-                expectedAnimalUuid,
-                randomAlphabetic(10),
-                getRandomSpecies(),
-                getRandomEstimatedAge(),
-                getRandomSex()
-        );
+    public void shouldSerializeAnimalDto() throws JsonProcessingException {
+        ObjectMapper objectMapper = getObjectMapper();
+        UUID uuid = UUID.randomUUID();
+        String name = randomAlphabetic(10);
+        Species species = getRandomSpecies();
+        EstimatedAge estimatedAge = getRandomEstimatedAge();
+        Sex sex = getRandomSex();
+        String smallPrimaryPictureUrl = randomAlphabetic(10);
+        AnimalDto animalDto = new AnimalDto(uuid, name, species, estimatedAge, sex, smallPrimaryPictureUrl);
 
-        assertThat(animalDto.getUuid(), is(expectedAnimalUuid));
+        String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
+
+        assertThat(serializedAnimalDto, containsString(String.format("\"uuid\":\"%s\"", uuid.toString())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", name)));
+        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", species.name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"", estimatedAge.name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", sex.name())));
+        assertThat(serializedAnimalDto, containsString(String.format(
+                "\"smallPrimaryPictureUrl\":\"%s\"", smallPrimaryPictureUrl
+        )));
+    }
+
+    @Test(expected = InvalidDefinitionException.class)
+    public void shouldNotBeDeserializable() throws IOException {
+        ObjectMapper objectMapper = getObjectMapper();
+        String animalDtoAsJson = "{\"uuid\":\"32bb12fb-6545-4cba-b439-49bf75b32369\",\"name\":\"LUjMtOrKfE\"," +
+                "\"species\":\"CAT\",\"estimatedAge\":\"YOUNG\",\"sex\":\"FEMALE\"," +
+                "\"smallPrimaryPictureUrl\":\"TznABoDYFF\"}";
+
+        objectMapper.readValue(animalDtoAsJson, AnimalDto.class);
     }
 }

@@ -21,8 +21,11 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.exceptions.InvalidStateException;
@@ -90,18 +93,41 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsByStateWithPagination() {
-        State randomState = TestUtils.getRandomState();
-        String stateName = randomState.getStateName();
+    public void shouldReturnAllAnimalsByStateWithPaginationWithSmallPrimaryPictureUrl() {
+        State state = TestUtils.getRandomState();
+        String stateName = state.getStateName();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         List<Animal> animals = newArrayList(
-                AnimalBuilder.random().withState(randomState).build(),
-                AnimalBuilder.random().withState(randomState).build(),
-                AnimalBuilder.random().withState(randomState).build()
+                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build(),
+                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build(),
+                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build()
         );
         Pageable pageable = mock(Pageable.class);
-        when(animalRepository.getAllBy(randomState.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
+        when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
         PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream()
-                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()))
+                .map(animal -> new AnimalDto(animal.getUuid(), animal.getName(), animal.getSpecies(),
+                        animal.getEstimatedAge(), animal.getSex(), animal.getPrimaryLinkPicture().getSmallImageUrl()))
+                .collect(Collectors.toList()));
+
+        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);
+
+        assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
+    }
+
+    @Test
+    public void shouldReturnAllAnimalsByStateWithPaginationWithNoSmallPrimaryPictureUrl() {
+        State state = TestUtils.getRandomState();
+        String stateName = state.getStateName();
+        List<Animal> animals = newArrayList(
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build()
+        );
+        Pageable pageable = mock(Pageable.class);
+        when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream()
+                .map(animal -> new AnimalDto(animal.getUuid(), animal.getName(), animal.getSpecies(),
+                        animal.getEstimatedAge(), animal.getSex(), null))
                 .collect(Collectors.toList()));
 
         PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);

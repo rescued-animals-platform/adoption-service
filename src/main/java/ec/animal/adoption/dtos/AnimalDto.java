@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.dtos;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
@@ -45,22 +44,22 @@ public class AnimalDto {
     @JsonProperty("sex")
     private final Sex sex;
 
-    @JsonCreator
+    @JsonProperty("smallPrimaryPictureUrl")
+    private final String smallPrimaryPictureUrl;
+
     public AnimalDto(
-            @JsonProperty("uuid") final UUID uuid,
-            @JsonProperty("name") final String name,
-            @JsonProperty("species") final Species species,
-            @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-            @JsonProperty("sex") final Sex sex
+            final UUID uuid,
+            final String name,
+            final Species species,
+            final EstimatedAge estimatedAge,
+            final Sex sex,
+            final String smallPrimaryPictureUrl
     ) {
         this.uuid = uuid;
         this.name = name;
         this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
-    }
-
-    public UUID getUuid() {
-        return uuid;
+        this.smallPrimaryPictureUrl = smallPrimaryPictureUrl;
     }
 }

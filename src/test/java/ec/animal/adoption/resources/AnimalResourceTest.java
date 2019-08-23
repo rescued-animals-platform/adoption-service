@@ -20,7 +20,6 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.state.State;
@@ -34,9 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -50,6 +47,9 @@ public class AnimalResourceTest {
 
     @Mock
     private Animal expectedAnimal;
+
+    @Mock
+    private PagedEntity<AnimalDto> expectedPageOfAnimalDtos;
 
     private AnimalResource animalResource;
 
@@ -80,16 +80,8 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldReturnAllAnimalsByStateWithPagination() {
-        State randomState = TestUtils.getRandomState();
-        String stateName = randomState.getStateName();
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
-                newArrayList(
-                        AnimalBuilder.random().withState(randomState).build(),
-                        AnimalBuilder.random().withState(randomState).build(),
-                        AnimalBuilder.random().withState(randomState).build()
-                ).stream().map(a -> new AnimalDto(
-                        a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex())
-                ).collect(Collectors.toList()));
+        State state = TestUtils.getRandomState();
+        String stateName = state.getStateName();
         Pageable pageable = mock(Pageable.class);
         when(animalService.listAllByStateWithPagination(stateName, pageable)).thenReturn(expectedPageOfAnimalDtos);
 

@@ -171,10 +171,10 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturn200OkWithAnimalsFilteredByStateAndPagination() {
-        createAndSaveAnimalWithDefaultLookingForHumanState();
-        createAndSaveAnimalWithDefaultLookingForHumanState();
-        createAndSaveAnimalWithDefaultLookingForHumanState();
+    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimals() {
+        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
+        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
+        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
         String stateName = new LookingForHuman(LocalDateTime.now()).getStateName();
 
         webTestClient.get()
@@ -191,7 +191,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                     assertThat(pagedEntity.getSize(), is(3));
                     assertThat(pagedEntity.isFirst(), is(true));
                     assertThat(pagedEntity.getContent().size(), is(3));
-                }).returnResult().getResponseBody();
+                });
     }
 
     @Test

@@ -55,6 +55,14 @@ public class AnimalService {
         }
 
         return animalRepository.getAllBy(stateName, pageable)
-                .map(a -> new AnimalDto(a.getUuid(), a.getName(), a.getSpecies(), a.getEstimatedAge(), a.getSex()));
+                .map(animal -> new AnimalDto(
+                        animal.getUuid(),
+                        animal.getName(),
+                        animal.getSpecies(),
+                        animal.getEstimatedAge(),
+                        animal.getSex(),
+                        animal.getPrimaryLinkPicture() == null ? null :
+                                animal.getPrimaryLinkPicture().getSmallImageUrl()
+                ));
     }
 }
