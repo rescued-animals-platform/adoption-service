@@ -22,42 +22,62 @@ package ec.animal.adoption.dtos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.media.MediaLink;
+import ec.animal.adoption.domain.media.PictureType;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getObjectMapper;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 public class AnimalDtoTest {
 
     @Test
-    public void shouldSerializeAnimalDto() throws JsonProcessingException {
+    public void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
         ObjectMapper objectMapper = getObjectMapper();
         UUID uuid = UUID.randomUUID();
-        String name = randomAlphabetic(10);
-        Species species = getRandomSpecies();
-        EstimatedAge estimatedAge = getRandomEstimatedAge();
-        Sex sex = getRandomSex();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
-        AnimalDto animalDto = new AnimalDto(uuid, name, species, estimatedAge, sex, smallPrimaryPictureUrl);
+        Animal animal = AnimalBuilder.random().withUuid(uuid).withPrimaryLinkPicture(LinkPictureBuilder.random()
+                .withPictureType(PictureType.PRIMARY).withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
+                .build()).build();
+        AnimalDto animalDto = new AnimalDto(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
 
         assertThat(serializedAnimalDto, containsString(String.format("\"uuid\":\"%s\"", uuid.toString())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", name)));
-        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", species.name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"", estimatedAge.name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", sex.name())));
-        assertThat(serializedAnimalDto, containsString(String.format(
-                "\"smallPrimaryPictureUrl\":\"%s\"", smallPrimaryPictureUrl
-        )));
+        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
+                animal.getEstimatedAge().name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"smallPrimaryPictureUrl\":\"%s\"",
+                smallPrimaryPictureUrl)));
+    }
+
+    @Test
+    public void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
+        ObjectMapper objectMapper = getObjectMapper();
+        UUID uuid = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withUuid(uuid).build();
+        AnimalDto animalDto = new AnimalDto(animal);
+
+        String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
+
+        assertThat(serializedAnimalDto, containsString(String.format("\"uuid\":\"%s\"", uuid.toString())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
+                animal.getEstimatedAge().name())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
+        assertThat(serializedAnimalDto, not(containsString("smallPrimaryPictureUrl")));
     }
 
     @Test(expected = InvalidDefinitionException.class)

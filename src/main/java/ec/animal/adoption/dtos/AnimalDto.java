@@ -20,6 +20,7 @@
 package ec.animal.adoption.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.EstimatedAge;
 import ec.animal.adoption.domain.Sex;
 import ec.animal.adoption.domain.Species;
@@ -47,19 +48,13 @@ public class AnimalDto {
     @JsonProperty("smallPrimaryPictureUrl")
     private final String smallPrimaryPictureUrl;
 
-    public AnimalDto(
-            final UUID uuid,
-            final String name,
-            final Species species,
-            final EstimatedAge estimatedAge,
-            final Sex sex,
-            final String smallPrimaryPictureUrl
-    ) {
-        this.uuid = uuid;
-        this.name = name;
-        this.species = species;
-        this.estimatedAge = estimatedAge;
-        this.sex = sex;
-        this.smallPrimaryPictureUrl = smallPrimaryPictureUrl;
+    public AnimalDto(final Animal animal) {
+        this.uuid = animal.getUuid();
+        this.name = animal.getName();
+        this.species = animal.getSpecies();
+        this.estimatedAge = animal.getEstimatedAge();
+        this.sex = animal.getSex();
+        this.smallPrimaryPictureUrl = animal.getPrimaryLinkPicture() == null ? null :
+                animal.getPrimaryLinkPicture().getSmallImageUrl();
     }
 }

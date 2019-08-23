@@ -90,13 +90,13 @@ public class AnimalRepositoryPsqlTest {
 
     @Test
     public void shouldReturnAllAnimalsByStateWithPagination() {
-        State randomState = getRandomState();
-        String stateName = randomState.getStateName();
+        State state = getRandomState();
+        String stateName = state.getStateName();
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> listOfJpaAnimals = newArrayList(
-                AnimalBuilder.random().withState(randomState).build(),
-                AnimalBuilder.random().withState(randomState).build(),
-                AnimalBuilder.random().withState(randomState).build()
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build()
         ).stream().map(JpaAnimal::new).collect(Collectors.toList());
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
                 listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
@@ -110,18 +110,18 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldReturnTrueIfThereIsAnAnimalWithCorrespondingUuid() {
-        UUID animalUuid = UUID.randomUUID();
-        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.of(mock(JpaAnimal.class)));
+    public void shouldReturnAllAnimalsWithPagination() {
+        Pageable pageable = mock(Pageable.class);
+        List<JpaAnimal> listOfJpaAnimals = newArrayList(
+                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+        ).stream().map(JpaAnimal::new).collect(Collectors.toList());
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
+                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+        );
+        when(jpaAnimalRepository.findAll(pageable)).thenReturn(new PageImpl<>(listOfJpaAnimals));
 
-        assertThat(animalRepositoryPsql.animalExists(animalUuid), is(true));
-    }
+        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAll(pageable);
 
-    @Test
-    public void shouldReturnFalseIfThereIsNoAnimalWithUuid() {
-        UUID animalUuid = UUID.randomUUID();
-        when(jpaAnimalRepository.findById(animalUuid)).thenReturn(Optional.empty());
-
-        assertThat(animalRepositoryPsql.animalExists(animalUuid), is(false));
+        assertReflectionEquals(expectedPageOfAnimals, pageOfAnimals);
     }
 }

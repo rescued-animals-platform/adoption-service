@@ -54,15 +54,10 @@ public class AnimalService {
             throw new InvalidStateException(stateName);
         }
 
-        return animalRepository.getAllBy(stateName, pageable)
-                .map(animal -> new AnimalDto(
-                        animal.getUuid(),
-                        animal.getName(),
-                        animal.getSpecies(),
-                        animal.getEstimatedAge(),
-                        animal.getSex(),
-                        animal.getPrimaryLinkPicture() == null ? null :
-                                animal.getPrimaryLinkPicture().getSmallImageUrl()
-                ));
+        return animalRepository.getAllBy(stateName, pageable).map(AnimalDto::new);
+    }
+
+    public PagedEntity<Animal> listAll(final Pageable pageable) {
+        return animalRepository.getAll(pageable);
     }
 }

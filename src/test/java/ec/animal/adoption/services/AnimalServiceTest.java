@@ -104,9 +104,7 @@ public class AnimalServiceTest {
         );
         Pageable pageable = mock(Pageable.class);
         when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream()
-                .map(animal -> new AnimalDto(animal.getUuid(), animal.getName(), animal.getSpecies(),
-                        animal.getEstimatedAge(), animal.getSex(), animal.getPrimaryLinkPicture().getSmallImageUrl()))
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream().map(AnimalDto::new)
                 .collect(Collectors.toList()));
 
         PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);
@@ -125,13 +123,24 @@ public class AnimalServiceTest {
         );
         Pageable pageable = mock(Pageable.class);
         when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream()
-                .map(animal -> new AnimalDto(animal.getUuid(), animal.getName(), animal.getSpecies(),
-                        animal.getEstimatedAge(), animal.getSex(), null))
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream().map(AnimalDto::new)
                 .collect(Collectors.toList()));
 
         PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);
 
         assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
+    }
+
+    @Test
+    public void shouldReturnAllAnimals() {
+        Pageable pageable = mock(Pageable.class);
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
+                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+        ));
+        when(animalRepository.getAll(pageable)).thenReturn(expectedPageOfAnimals);
+
+        PagedEntity<Animal> pageOfAnimals = animalService.listAll(pageable);
+
+        assertThat(pageOfAnimals, is(expectedPageOfAnimals));
     }
 }

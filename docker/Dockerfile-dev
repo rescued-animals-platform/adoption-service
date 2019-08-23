@@ -5,14 +5,11 @@ ENV LANG C.UTF-8
 EXPOSE 8080
 
 RUN apk update && apk add postgresql
-
 RUN psql --version
-
-COPY build/libs/*.jar /api/AdoptionService.jar
 COPY scripts/wait-for-postgres.sh /api/wait-for-postgres.sh
 
+COPY build/libs/*.jar /api/AdoptionService.jar
 RUN ls /api
-
 WORKDIR /api
 
 CMD java -jar -Dspring.profiles.active=$SPRING_PROFILE -d64 -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -XX:+UseTLAB AdoptionService.jar

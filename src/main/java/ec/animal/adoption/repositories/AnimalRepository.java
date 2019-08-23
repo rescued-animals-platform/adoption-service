@@ -27,11 +27,11 @@ import java.util.UUID;
 
 public interface AnimalRepository {
 
-    Animal save(Animal animal);
+    Animal save(final Animal animal);
 
-    Animal getBy(UUID uuid);
+    Animal getBy(final UUID uuid);
 
-    PagedEntity<Animal> getAllBy(String stateName, Pageable pageable);
+    PagedEntity<Animal> getAllBy(final String stateName, Pageable pageable);
 
-    boolean animalExists(UUID animalUuid);
+    PagedEntity<Animal> getAll(final Pageable pageable);
 }

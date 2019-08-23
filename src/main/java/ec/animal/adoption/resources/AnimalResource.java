@@ -53,10 +53,15 @@ public class AnimalResource {
         return animalService.getBy(uuid);
     }
 
-    @GetMapping
+    @GetMapping(params = "state")
     public PagedEntity<AnimalDto> listAllByStateWithPagination(
             @RequestParam("state") final String stateName, final Pageable pageable
     ) {
         return animalService.listAllByStateWithPagination(stateName, pageable);
+    }
+
+    @GetMapping
+    public PagedEntity<Animal> listAll(final Pageable pageable) {
+        return animalService.listAll(pageable);
     }
 }

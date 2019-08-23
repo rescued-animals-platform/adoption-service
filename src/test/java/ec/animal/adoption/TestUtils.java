@@ -19,6 +19,7 @@
 
 package ec.animal.adoption;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ec.animal.adoption.domain.EstimatedAge;
@@ -120,6 +121,7 @@ public class TestUtils {
 
     public static ObjectMapper getObjectMapper() {
         return Jackson2ObjectMapperBuilder.json()
+                .serializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .featuresToDisable(
                         SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
                 ).build();

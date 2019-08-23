@@ -39,7 +39,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -131,15 +130,18 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
-    public void shouldFindAllAnimals() {
+    public void shouldReturnPageWithAllAnimals() {
         deleteAllJpaAnimals();
         JpaAnimal firstJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
         JpaAnimal secondJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
         JpaAnimal thirdJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
-        ArrayList<JpaAnimal> expectedJpaAnimals = newArrayList(firstJpaAnimal, secondJpaAnimal, thirdJpaAnimal);
-        expectedJpaAnimals.forEach(jpaAnimal -> jpaAnimalRepository.save(jpaAnimal));
+        JpaAnimal fourthJpaAnimal = new JpaAnimal(AnimalBuilder.random().build());
+        List<JpaAnimal> jpaAnimals = newArrayList(firstJpaAnimal, secondJpaAnimal, thirdJpaAnimal, fourthJpaAnimal);
+        jpaAnimals.forEach(jpaAnimal -> jpaAnimalRepository.save(jpaAnimal));
+        Pageable pageable = PageRequest.of(0, 4);
+        Page<JpaAnimal> expectedPageOfJpaAnimals = new PageImpl<>(jpaAnimals, pageable, 4);
 
-        assertReflectionEquals(expectedJpaAnimals, jpaAnimalRepository.findAll());
+        assertReflectionEquals(expectedPageOfJpaAnimals, jpaAnimalRepository.findAll(pageable));
     }
 
     @Test

@@ -51,6 +51,9 @@ public class AnimalResourceTest {
     @Mock
     private PagedEntity<AnimalDto> expectedPageOfAnimalDtos;
 
+    @Mock
+    private PagedEntity<Animal> expectedPageOfAnimals;
+
     private AnimalResource animalResource;
 
     @Before
@@ -90,5 +93,15 @@ public class AnimalResourceTest {
         );
 
         assertThat(animalsByStateWithPagination, is(expectedPageOfAnimalDtos));
+    }
+
+    @Test
+    public void shouldReturnAllAnimalsWithPagination() {
+        Pageable pageable = mock(Pageable.class);
+        when(animalService.listAll(pageable)).thenReturn(expectedPageOfAnimals);
+
+        PagedEntity<Animal> pageOfAnimals = animalResource.listAll(pageable);
+
+        assertThat(pageOfAnimals, is(expectedPageOfAnimals));
     }
 }

@@ -171,7 +171,7 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     }
 
     @Test
-    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimals() {
+    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimalsFilteredByState() {
         createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
         createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
         createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
@@ -204,5 +204,27 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
                 .expectStatus()
                 .isBadRequest()
                 .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndTwoAnimals() {
+        createAndSaveAnimalWithDefaultLookingForHumanState();
+        createAndSaveAnimalWithDefaultLookingForHumanState();
+
+        webTestClient.get()
+                .uri(ANIMALS_URL + "?page=0&size=2")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(PagedEntity.class)
+                .consumeWith(animalsEntityExchangeResult -> {
+                    PagedEntity pagedEntity = animalsEntityExchangeResult.getResponseBody();
+                    assertNotNull(pagedEntity);
+                    assertThat(pagedEntity.isEmpty(), is(false));
+                    assertThat(pagedEntity.getNumberOfElements(), is(2));
+                    assertThat(pagedEntity.getSize(), is(2));
+                    assertThat(pagedEntity.isFirst(), is(true));
+                    assertThat(pagedEntity.getContent().size(), is(2));
+                });
     }
 }

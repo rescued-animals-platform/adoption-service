@@ -70,7 +70,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public boolean animalExists(final UUID animalUuid) {
-        return jpaAnimalRepository.findById(animalUuid).isPresent();
+    public PagedEntity<Animal> getAll(final Pageable pageable) {
+        return new PagedEntity<>(jpaAnimalRepository.findAll(pageable).map(JpaAnimal::toAnimal));
     }
 }
