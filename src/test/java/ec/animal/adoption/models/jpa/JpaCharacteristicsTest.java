@@ -24,6 +24,7 @@ import ec.animal.adoption.builders.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.sql.Timestamp;
@@ -134,8 +135,7 @@ public class JpaCharacteristicsTest {
                 Timestamp.valueOf(LocalDateTime.now().minusDays(2))
         ).withPrefabValues(
                 JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)
-        ).withPrefabValues(
-                JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class)
-        ).verify();
+        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
     }
 }

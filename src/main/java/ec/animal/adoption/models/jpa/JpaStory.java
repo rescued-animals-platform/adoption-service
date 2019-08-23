@@ -37,12 +37,11 @@ public class JpaStory implements Serializable {
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
-    private LocalDateTime registrationDate;
-
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid", nullable = false)
     private JpaAnimal jpaAnimal;
+
+    private LocalDateTime registrationDate;
 
     @NotNull
     private String text;
@@ -54,9 +53,9 @@ public class JpaStory implements Serializable {
     public JpaStory(final Story story, final JpaAnimal jpaAnimal) {
         this();
         this.setUuid(story.getUuid());
+        this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(story.getRegistrationDate());
         this.text = story.getText();
-        this.jpaAnimal = jpaAnimal;
     }
 
     private void setUuid(final UUID uuid) {
@@ -80,9 +79,9 @@ public class JpaStory implements Serializable {
         JpaStory jpaStory = (JpaStory) o;
 
         if (uuid != null ? !uuid.equals(jpaStory.uuid) : jpaStory.uuid != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(jpaStory.jpaAnimal) : jpaStory.jpaAnimal != null) return false;
         if (registrationDate != null ? !registrationDate.equals(jpaStory.registrationDate) : jpaStory.registrationDate != null)
             return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(jpaStory.jpaAnimal) : jpaStory.jpaAnimal != null) return false;
         return text != null ? text.equals(jpaStory.text) : jpaStory.text == null;
     }
 
@@ -90,8 +89,8 @@ public class JpaStory implements Serializable {
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         return result;
     }

@@ -21,6 +21,9 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -31,7 +34,13 @@ public interface AnimalRepository {
 
     Animal getBy(final UUID uuid);
 
-    PagedEntity<Animal> getAllBy(final String stateName, Pageable pageable);
+    PagedEntity<Animal> getAllBy(
+            final String stateName,
+            final Species species,
+            final PhysicalActivity physicalActivity,
+            final Size size,
+            final Pageable pageable
+    );
 
     PagedEntity<Animal> getAll(final Pageable pageable);
 }

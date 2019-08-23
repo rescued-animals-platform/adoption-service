@@ -21,6 +21,9 @@ package ec.animal.adoption.services;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.exceptions.InvalidStateException;
@@ -49,15 +52,21 @@ public class AnimalService {
         return animalRepository.getBy(uuid);
     }
 
-    public PagedEntity<AnimalDto> listAllByStateWithPagination(final String stateName, final Pageable pageable) {
+    public PagedEntity<Animal> listAll(final Pageable pageable) {
+        return animalRepository.getAll(pageable);
+    }
+
+    public PagedEntity<AnimalDto> listAllWithFilters(
+            final String stateName,
+            final Species species,
+            final PhysicalActivity physicalActivity,
+            final Size size,
+            final Pageable pageable
+    ) {
         if (!State.isValidStateName(stateName)) {
             throw new InvalidStateException(stateName);
         }
 
-        return animalRepository.getAllBy(stateName, pageable).map(AnimalDto::new);
-    }
-
-    public PagedEntity<Animal> listAll(final Pageable pageable) {
-        return animalRepository.getAll(pageable);
+        return animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable).map(AnimalDto::new);
     }
 }

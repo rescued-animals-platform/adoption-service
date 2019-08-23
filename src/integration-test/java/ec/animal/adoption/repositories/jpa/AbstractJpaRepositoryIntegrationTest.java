@@ -20,8 +20,4 @@ public abstract class AbstractJpaRepositoryIntegrationTest {
     JpaAnimal createAndSaveJpaAnimal() {
         return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build()));
     }
-
-    void deleteAllJpaAnimals() {
-        jpaAnimalRepository.deleteAll();
-    }
 }

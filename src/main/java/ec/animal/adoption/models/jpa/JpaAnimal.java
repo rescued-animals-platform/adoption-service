@@ -54,7 +54,7 @@ public class JpaAnimal implements Serializable {
     private String name;
 
     @NotNull
-    private String animalSpecies;
+    private String species;
 
     @NotNull
     private String estimatedAge;
@@ -90,7 +90,7 @@ public class JpaAnimal implements Serializable {
         this.setRegistrationDate(animal.getRegistrationDate());
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
-        this.animalSpecies = animal.getSpecies().name();
+        this.species = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
         this.stateName = animal.getStateName();
@@ -119,7 +119,8 @@ public class JpaAnimal implements Serializable {
     }
 
     private void setJpaStory(final Story story) {
-        this.jpaStory = story == null ? null : new JpaStory(story, this);
+        this.jpaStory = story == null ? null :
+                new JpaStory(story, this);
     }
 
     public Animal toAnimal() {
@@ -128,7 +129,7 @@ public class JpaAnimal implements Serializable {
                 registrationDate,
                 clinicalRecord,
                 name,
-                Species.valueOf(animalSpecies),
+                Species.valueOf(species),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
                 state
@@ -147,5 +148,51 @@ public class JpaAnimal implements Serializable {
         }
 
         return animal;
+    }
+
+    @Override
+    @SuppressWarnings("PMD")
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JpaAnimal jpaAnimal = (JpaAnimal) o;
+
+        if (uuid != null ? !uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid != null) return false;
+        if (registrationDate != null ? !registrationDate.equals(jpaAnimal.registrationDate) : jpaAnimal.registrationDate != null)
+            return false;
+        if (clinicalRecord != null ? !clinicalRecord.equals(jpaAnimal.clinicalRecord) : jpaAnimal.clinicalRecord != null)
+            return false;
+        if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
+        if (species != null ? !species.equals(jpaAnimal.species) : jpaAnimal.species != null)
+            return false;
+        if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
+            return false;
+        if (sex != null ? !sex.equals(jpaAnimal.sex) : jpaAnimal.sex != null) return false;
+        if (stateName != null ? !stateName.equals(jpaAnimal.stateName) : jpaAnimal.stateName != null) return false;
+        if (state != null ? !state.equals(jpaAnimal.state) : jpaAnimal.state != null) return false;
+        if (jpaPrimaryLinkPicture != null ? !jpaPrimaryLinkPicture.equals(jpaAnimal.jpaPrimaryLinkPicture) : jpaAnimal.jpaPrimaryLinkPicture != null)
+            return false;
+        if (jpaCharacteristics != null ? !jpaCharacteristics.equals(jpaAnimal.jpaCharacteristics) : jpaAnimal.jpaCharacteristics != null)
+            return false;
+        return jpaStory != null ? jpaStory.equals(jpaAnimal.jpaStory) : jpaAnimal.jpaStory == null;
+    }
+
+    @Override
+    @SuppressWarnings("PMD")
+    public int hashCode() {
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
+        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (sex != null ? sex.hashCode() : 0);
+        result = 31 * result + (stateName != null ? stateName.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (jpaPrimaryLinkPicture != null ? jpaPrimaryLinkPicture.hashCode() : 0);
+        result = 31 * result + (jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0);
+        result = 31 * result + (jpaStory != null ? jpaStory.hashCode() : 0);
+        return result;
     }
 }

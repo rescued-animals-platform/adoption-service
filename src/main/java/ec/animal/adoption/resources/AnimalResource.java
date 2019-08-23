@@ -21,6 +21,9 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,15 +56,19 @@ public class AnimalResource {
         return animalService.getBy(uuid);
     }
 
-    @GetMapping(params = "state")
-    public PagedEntity<AnimalDto> listAllByStateWithPagination(
-            @RequestParam("state") final String stateName, final Pageable pageable
-    ) {
-        return animalService.listAllByStateWithPagination(stateName, pageable);
-    }
-
     @GetMapping
     public PagedEntity<Animal> listAll(final Pageable pageable) {
         return animalService.listAll(pageable);
+    }
+
+    @GetMapping(params = {"state", "species", "physicalActivity", "animalSize"})
+    public PagedEntity<AnimalDto> listAllWithFilters(
+            @RequestParam("state") final String stateName,
+            @RequestParam("species") final Species species,
+            @RequestParam("physicalActivity") final PhysicalActivity physicalActivity,
+            @RequestParam("animalSize") final Size size,
+            final Pageable pageable
+    ) {
+        return animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable);
     }
 }

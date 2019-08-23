@@ -21,6 +21,9 @@ package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
 import ec.animal.adoption.models.jpa.JpaAnimal;
@@ -65,8 +68,17 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public PagedEntity<Animal> getAllBy(final String stateName, final Pageable pageable) {
-        return new PagedEntity<>(jpaAnimalRepository.findAllByStateName(stateName, pageable).map(JpaAnimal::toAnimal));
+    public PagedEntity<Animal> getAllBy(
+            final String stateName,
+            final Species species,
+            final PhysicalActivity physicalActivity,
+            final Size size,
+            final Pageable pageable
+    ) {
+        return new PagedEntity<>(jpaAnimalRepository
+                .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
+                        stateName, species.name(), physicalActivity.name(), size.name(), pageable
+                ).map(JpaAnimal::toAnimal));
     }
 
     @Override

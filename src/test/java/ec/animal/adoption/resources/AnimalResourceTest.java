@@ -19,9 +19,11 @@
 
 package ec.animal.adoption.resources;
 
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
 import ec.animal.adoption.services.AnimalService;
@@ -34,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -49,7 +52,7 @@ public class AnimalResourceTest {
     private Animal expectedAnimal;
 
     @Mock
-    private PagedEntity<AnimalDto> expectedPageOfAnimalDtos;
+    private PagedEntity<AnimalDto> expectedPageOfAnimalDtosFiltered;
 
     @Mock
     private PagedEntity<Animal> expectedPageOfAnimals;
@@ -82,20 +85,6 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsByStateWithPagination() {
-        State state = TestUtils.getRandomState();
-        String stateName = state.getStateName();
-        Pageable pageable = mock(Pageable.class);
-        when(animalService.listAllByStateWithPagination(stateName, pageable)).thenReturn(expectedPageOfAnimalDtos);
-
-        PagedEntity<AnimalDto> animalsByStateWithPagination = animalResource.listAllByStateWithPagination(
-                stateName, pageable
-        );
-
-        assertThat(animalsByStateWithPagination, is(expectedPageOfAnimalDtos));
-    }
-
-    @Test
     public void shouldReturnAllAnimalsWithPagination() {
         Pageable pageable = mock(Pageable.class);
         when(animalService.listAll(pageable)).thenReturn(expectedPageOfAnimals);
@@ -103,5 +92,23 @@ public class AnimalResourceTest {
         PagedEntity<Animal> pageOfAnimals = animalResource.listAll(pageable);
 
         assertThat(pageOfAnimals, is(expectedPageOfAnimals));
+    }
+
+    @Test
+    public void shouldReturnAllAnimalsWithFiltersAndPagination() {
+        State state = getRandomState();
+        String stateName = state.getStateName();
+        Species species = getRandomSpecies();
+        PhysicalActivity physicalActivity = getRandomPhysicalActivity();
+        Size size = getRandomSize();
+        Pageable pageable = mock(Pageable.class);
+        when(animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable))
+                .thenReturn(expectedPageOfAnimalDtosFiltered);
+
+        PagedEntity<AnimalDto> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
+                stateName, species, physicalActivity, size, pageable
+        );
+
+        assertThat(pageOfAnimalDtosFiltered, is(expectedPageOfAnimalDtosFiltered));
     }
 }

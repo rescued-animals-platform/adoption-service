@@ -39,12 +39,11 @@ public class JpaPrimaryLinkPicture implements Serializable {
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
-    private LocalDateTime registrationDate;
-
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid", nullable = false)
     private JpaAnimal jpaAnimal;
+
+    private LocalDateTime registrationDate;
 
     @NotNull
     private String name;
@@ -60,11 +59,11 @@ public class JpaPrimaryLinkPicture implements Serializable {
     public JpaPrimaryLinkPicture(final LinkPicture linkPicture, final JpaAnimal jpaAnimal) {
         this();
         this.setUuid(linkPicture.getUuid());
+        this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(linkPicture.getRegistrationDate());
         this.name = linkPicture.getName();
         this.largeImageUrl = linkPicture.getLargeImageUrl();
         this.smallImageUrl = linkPicture.getSmallImageUrl();
-        this.jpaAnimal = jpaAnimal;
     }
 
     private void setUuid(final UUID uuid) {
@@ -95,9 +94,9 @@ public class JpaPrimaryLinkPicture implements Serializable {
         JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
 
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
             return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (largeImageUrl != null ? !largeImageUrl.equals(that.largeImageUrl) : that.largeImageUrl != null)
             return false;
@@ -108,8 +107,8 @@ public class JpaPrimaryLinkPicture implements Serializable {
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (largeImageUrl != null ? largeImageUrl.hashCode() : 0);
         result = 31 * result + (smallImageUrl != null ? smallImageUrl.hashCode() : 0);

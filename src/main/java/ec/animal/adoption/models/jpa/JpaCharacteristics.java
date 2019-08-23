@@ -48,11 +48,11 @@ public class JpaCharacteristics implements Serializable {
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID uuid;
 
-    private LocalDateTime registrationDate;
-
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "animal_uuid", nullable = false)
+    @JoinColumn(name = "animal_uuid")
     private JpaAnimal jpaAnimal;
+
+    private LocalDateTime registrationDate;
 
     @NotNull
     private String size;
@@ -78,8 +78,8 @@ public class JpaCharacteristics implements Serializable {
     public JpaCharacteristics(final Characteristics characteristics, final JpaAnimal jpaAnimal) {
         this();
         this.setUuid(characteristics.getUuid());
-        this.setRegistrationDate(characteristics.getRegistrationDate());
         this.jpaAnimal = jpaAnimal;
+        this.setRegistrationDate(characteristics.getRegistrationDate());
         this.size = characteristics.getSize().name();
         this.physicalActivity = characteristics.getPhysicalActivity().name();
         this.setTemperaments(characteristics.getTemperaments());
@@ -125,9 +125,9 @@ public class JpaCharacteristics implements Serializable {
         JpaCharacteristics that = (JpaCharacteristics) o;
 
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
             return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
             return false;
@@ -141,8 +141,8 @@ public class JpaCharacteristics implements Serializable {
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
+        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
         result = 31 * result + (sociability != null ? sociability.hashCode() : 0);

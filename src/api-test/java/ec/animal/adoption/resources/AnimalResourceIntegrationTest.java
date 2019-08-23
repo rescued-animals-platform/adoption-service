@@ -20,17 +20,25 @@
 package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.error.ApiError;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -172,13 +180,20 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
 
     @Test
     public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimalsFilteredByState() {
-        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
-        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
-        createAndSavePrimaryLinkPictureForAnimal(createAndSaveAnimalWithDefaultLookingForHumanState().getUuid());
-        String stateName = new LookingForHuman(LocalDateTime.now()).getStateName();
+        State state = getRandomState();
+        Species species = getRandomSpecies();
+        PhysicalActivity physicalActivity = getRandomPhysicalActivity();
+        Size size = getRandomSize();
+        IntStream.rangeClosed(1, 3).forEach(n -> createAndSaveAnimal(AnimalBuilder.random().withState(state)
+                .withSpecies(species).withCharacteristics(
+                        CharacteristicsBuilder.random().withPhysicalActivity(physicalActivity).withSize(size).build())
+                .withPrimaryLinkPicture(LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build())
+                .build()));
+        String uri = ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
+                "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                .uri(ANIMALS_URL + "?state={state}&page=0&size=3", stateName)
+                .uri(uri, state.getStateName(), species, physicalActivity, size)
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -197,9 +212,51 @@ public class AnimalResourceIntegrationTest extends AbstractResourceIntegrationTe
     @Test
     public void shouldReturn400BadRequestWhenStateIsInvalid() {
         String invalidStateName = randomAlphabetic(10);
+        String uri = ANIMALS_URL + "?state={state}&species=DOG&physicalActivity=LOW&animalSize=TINY&page=0&size=3";
 
         webTestClient.get()
-                .uri(ANIMALS_URL + "?state={state}", invalidStateName)
+                .uri(uri, invalidStateName)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenSpeciesIsInvalid() {
+        String invalidSpecies = randomAlphabetic(10);
+        String uri = ANIMALS_URL + "?state=adopted&species={species}&physicalActivity=LOW&animalSize=TINY&page=0&size=3";
+
+        webTestClient.get()
+                .uri(uri, invalidSpecies)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenPhysicalActivityIsInvalid() {
+        String invalidPhysicalActivity = randomAlphabetic(10);
+        String uri = ANIMALS_URL + "?state=adopted&species=CAT&physicalActivity={physicalActivity}" +
+                "&animalSize=TINY&page=0&size=3";
+
+        webTestClient.get()
+                .uri(uri, invalidPhysicalActivity)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenAnimalSizeIsInvalid() {
+        String invalidAnimalSize = randomAlphabetic(10);
+        String uri = ANIMALS_URL + "?state=adopted&species=CAT&physicalActivity=LOW&animalSize={animalSize}" +
+                "&page=0&size=3";
+
+        webTestClient.get()
+                .uri(uri, invalidAnimalSize)
                 .exchange()
                 .expectStatus()
                 .isBadRequest()

@@ -19,12 +19,13 @@
 
 package ec.animal.adoption.services;
 
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.dtos.AnimalDto;
@@ -42,6 +43,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -58,10 +60,27 @@ public class AnimalServiceTest {
     @Mock
     private Animal expectedAnimal;
 
+    @Mock
+    private Pageable pageable;
+
+    private State state;
+    private List<Animal> animalsFilteredByState;
+    private Species species;
+    private PhysicalActivity physicalActivity;
+    private Size size;
     private AnimalService animalService;
 
     @Before
     public void setUp() {
+        state = getRandomState();
+        animalsFilteredByState = newArrayList(
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build()
+        );
+        species = getRandomSpecies();
+        physicalActivity = getRandomPhysicalActivity();
+        size = getRandomSize();
         animalService = new AnimalService(animalRepository);
     }
 
@@ -89,51 +108,46 @@ public class AnimalServiceTest {
     public void shouldThrowInvalidStateExceptionWhenStateNameIsNotValid() {
         String invalidStateName = randomAlphabetic(10);
 
-        animalService.listAllByStateWithPagination(invalidStateName, mock(Pageable.class));
+        animalService.listAllWithFilters(invalidStateName, species, physicalActivity, size, mock(Pageable.class));
     }
 
     @Test
-    public void shouldReturnAllAnimalsByStateWithPaginationWithSmallPrimaryPictureUrl() {
-        State state = TestUtils.getRandomState();
+    public void shouldReturnAllAnimalDtosWithFiltersAndSmallPrimaryPictureUrl() {
         String stateName = state.getStateName();
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        List<Animal> animals = newArrayList(
-                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build(),
-                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build(),
-                AnimalBuilder.random().withState(state).withPrimaryLinkPicture(primaryLinkPicture).build()
+        animalsFilteredByState.forEach(animal -> animal.setPrimaryLinkPicture(
+                LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build()
+        ));
+        when(animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable))
+                .thenReturn(new PagedEntity<>(animalsFilteredByState));
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
+                animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
         );
-        Pageable pageable = mock(Pageable.class);
-        when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream().map(AnimalDto::new)
-                .collect(Collectors.toList()));
 
-        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);
+        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
+                stateName, species, physicalActivity, size, pageable
+        );
 
         assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
     }
 
     @Test
-    public void shouldReturnAllAnimalsByStateWithPaginationWithNoSmallPrimaryPictureUrl() {
-        State state = TestUtils.getRandomState();
+    public void shouldReturnAllAnimalDtosWithFiltersAndNoSmallPrimaryPictureUrl() {
         String stateName = state.getStateName();
-        List<Animal> animals = newArrayList(
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build()
+        when(animalRepository.getAllBy(state.getStateName(), species, physicalActivity, size, pageable))
+                .thenReturn(new PagedEntity<>(animalsFilteredByState));
+        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
+                animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
         );
-        Pageable pageable = mock(Pageable.class);
-        when(animalRepository.getAllBy(state.getStateName(), pageable)).thenReturn(new PagedEntity<>(animals));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(animals.stream().map(AnimalDto::new)
-                .collect(Collectors.toList()));
 
-        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllByStateWithPagination(stateName, pageable);
+        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
+                stateName, species, physicalActivity, size, pageable
+        );
 
         assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
     }
 
     @Test
     public void shouldReturnAllAnimals() {
-        Pageable pageable = mock(Pageable.class);
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
                 AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
         ));

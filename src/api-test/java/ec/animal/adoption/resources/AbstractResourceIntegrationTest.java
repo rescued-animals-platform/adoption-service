@@ -21,20 +21,14 @@ package ec.animal.adoption.resources;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import org.junit.BeforeClass;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static java.lang.System.getenv;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractResourceIntegrationTest {
@@ -64,20 +58,14 @@ public abstract class AbstractResourceIntegrationTest {
                 .getResponseBody();
     }
 
-    LinkPicture createAndSavePrimaryLinkPictureForAnimal(final UUID animalUuid) {
-        LinkedMultiValueMap<String, Object> multipartPicturesFormData = new LinkedMultiValueMap<>();
-        multipartPicturesFormData.add("name", randomAlphabetic(10));
-        multipartPicturesFormData.add("pictureType", PictureType.PRIMARY.name());
-        multipartPicturesFormData.add("largeImage", new ClassPathResource("test-image-large.jpeg"));
-        multipartPicturesFormData.add("smallImage", new ClassPathResource("test-image-small.jpeg"));
-
+    Animal createAndSaveAnimal(final Animal animal) {
         return webTestClient.post()
-                .uri(PICTURES_URL, animalUuid)
-                .syncBody(multipartPicturesFormData)
+                .uri(ANIMALS_URL)
+                .syncBody(animal)
                 .exchange()
                 .expectStatus()
                 .isCreated()
-                .expectBody(LinkPicture.class)
+                .expectBody(Animal.class)
                 .returnResult()
                 .getResponseBody();
     }

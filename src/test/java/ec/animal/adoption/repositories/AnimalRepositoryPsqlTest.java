@@ -1,8 +1,13 @@
 package ec.animal.adoption.repositories;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.exceptions.EntityAlreadyExistsException;
 import ec.animal.adoption.exceptions.EntityNotFoundException;
@@ -18,13 +23,15 @@ import org.postgresql.util.PSQLException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -33,6 +40,7 @@ import static org.mockito.Mockito.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("PMD.ExcessiveImports")
 public class AnimalRepositoryPsqlTest {
 
     @Mock
@@ -90,21 +98,30 @@ public class AnimalRepositoryPsqlTest {
 
     @Test
     public void shouldReturnAllAnimalsByStateWithPagination() {
-        State state = getRandomState();
-        String stateName = state.getStateName();
+        State lookingForHuman = new LookingForHuman(LocalDateTime.now());
+        Species dog = Species.DOG;
+        PhysicalActivity high = PhysicalActivity.HIGH;
+        Size tiny = Size.TINY;
         Pageable pageable = mock(Pageable.class);
-        List<JpaAnimal> listOfJpaAnimals = newArrayList(
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build()
-        ).stream().map(JpaAnimal::new).collect(Collectors.toList());
+        List<JpaAnimal> jpaAnimals = new ArrayList<>();
+        IntStream.rangeClosed(1, 10).forEach(i -> jpaAnimals.add(
+                new JpaAnimal(AnimalBuilder.random().withState(lookingForHuman).withSpecies(dog).withCharacteristics(
+                        CharacteristicsBuilder.random().withPhysicalActivity(high).withSize(tiny).build()
+                ).build())
+        ));
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
-                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+                jpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
-        when(jpaAnimalRepository.findAllByStateName(stateName, pageable))
-                .thenReturn(new PageImpl<>(listOfJpaAnimals));
+        when(
+                jpaAnimalRepository
+                        .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
+                                lookingForHuman.getStateName(), dog.name(), high.name(), tiny.name(), pageable
+                        )
+        ).thenReturn(new PageImpl<>(jpaAnimals));
 
-        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(stateName, pageable);
+        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(
+                lookingForHuman.getStateName(), dog, high, tiny, pageable
+        );
 
         assertReflectionEquals(expectedPageOfAnimals, pageOfAnimals);
     }

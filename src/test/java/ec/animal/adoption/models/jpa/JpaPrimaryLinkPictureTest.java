@@ -94,7 +94,9 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     public void shouldCreateJpaPrimaryLinkPictureFromPrimaryLinkPicture() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(primaryLinkPicture, mock(JpaAnimal.class));
+        JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
+                primaryLinkPicture, mock(JpaAnimal.class)
+        );
 
         LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
 
@@ -107,14 +109,10 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaPrimaryLinkPicture.class).usingGetClass().withPrefabValues(
-                Timestamp.class,
-                Timestamp.valueOf(LocalDateTime.now()),
-                Timestamp.valueOf(LocalDateTime.now().minusDays(2))
-        ).withPrefabValues(
-                JpaAnimal.class,
-                mock(JpaAnimal.class),
-                mock(JpaAnimal.class)
-        ).suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(JpaPrimaryLinkPicture.class).usingGetClass()
+                .withPrefabValues(Timestamp.class, Timestamp.valueOf(LocalDateTime.now()),
+                        Timestamp.valueOf(LocalDateTime.now().minusDays(2)))
+                .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
     }
 }

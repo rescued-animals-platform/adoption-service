@@ -93,11 +93,10 @@ public class JpaStoryTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaStory.class).usingGetClass().withPrefabValues(
-                Timestamp.class,
-                Timestamp.valueOf(LocalDateTime.now()),
-                Timestamp.valueOf(LocalDateTime.now().minusDays(2))
-        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
-                .suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(JpaStory.class).usingGetClass()
+                .withPrefabValues(Timestamp.class, Timestamp.valueOf(LocalDateTime.now()),
+                        Timestamp.valueOf(LocalDateTime.now().minusDays(2)))
+                .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
     }
 }
