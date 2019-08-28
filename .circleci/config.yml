@@ -375,21 +375,36 @@ jobs:
 
 workflows:
   version: 2
-  adoption-service:
+  adoption-service-master:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: master
       - pitest:
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - style-check:
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - integration-test:
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - api-test:
           requires:
             - build
+          filters:
+            branches:
+              only: master
       - ci-infra-deploy:
           requires:
             - build
@@ -455,3 +470,33 @@ workflows:
           filters:
             branches:
               only: master
+  adoption-service-for-branches:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - pitest:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
+      - style-check:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
+      - integration-test:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
+      - api-test:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
