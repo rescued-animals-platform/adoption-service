@@ -377,34 +377,19 @@ workflows:
   version: 2
   adoption-service:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: master
+      - build
       - pitest:
           requires:
             - build
-          filters:
-            branches:
-              only: master
       - style-check:
           requires:
             - build
-          filters:
-            branches:
-              only: master
       - integration-test:
           requires:
             - build
-          filters:
-            branches:
-              only: master
       - api-test:
           requires:
             - build
-          filters:
-            branches:
-              only: master
       - ci-infra-deploy:
           requires:
             - build
