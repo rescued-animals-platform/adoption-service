@@ -227,7 +227,7 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  build-and-publish-image:
+  publish-image:
     executor: docker-publisher
 
     steps:
@@ -430,7 +430,7 @@ workflows:
           filters:
             branches:
               only: master
-      - build-and-publish-image:
+      - publish-image:
           requires:
             - pitest
             - style-check
