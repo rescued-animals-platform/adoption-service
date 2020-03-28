@@ -12,8 +12,8 @@ services:
     depends_on:
       - adoption-service-db
     command: ["./wait-for-postgres.sh", "adoption-service-db", "java", "-jar",
-              "-Dspring.profiles.active=${SPRING_PROFILE}", "-d64", "-server",
-              "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m", "-XX:+UseParNewGC",
+              "-Dspring.profiles.active=${SPRING_PROFILE}", "-server",
+              "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m",
               "-XX:+UseConcMarkSweepGC", "-XX:CMSInitiatingOccupancyFraction=75",
               "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:+HeapDumpOnOutOfMemoryError",
               "-XX:+DisableExplicitGC", "-XX:+UseTLAB", "AdoptionService.jar"]

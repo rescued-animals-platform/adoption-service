@@ -3,14 +3,14 @@
 [![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service.svg?style=shield)](https://circleci.com/gh/rescued-animals-platform/adoption-service)
 
 
-Tech stack: Java 8, Gradle 6.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Terraform v0.12.4, Google Cloud Platform.
+Tech stack: Java 11, Gradle 6.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Terraform v0.12.4, Google Cloud Platform.
 
 # Setting up your development environment (Linux, macOS)
 
 Follow the next steps in the order they appear. After completing them, you would be able to start contributing to the project. Good luck and thanks!
 
 - Make sure you have installed the following:
-    - Java 8
+    - Java 11
     - Docker
     
 - Login to docker with your credentials. If you don't have an account, create one in the [Docker Hub site](https://hub.docker.com/)

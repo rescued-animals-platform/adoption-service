@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8:jre8u212-b04-alpine
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 
 ENV LANG C.UTF-8
 

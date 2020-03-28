@@ -1,4 +1,4 @@
-FROM gradle:6.3.0-jdk8
+FROM gradle:6.3.0-jdk11
 
 RUN mkdir /app
 ADD . /app
