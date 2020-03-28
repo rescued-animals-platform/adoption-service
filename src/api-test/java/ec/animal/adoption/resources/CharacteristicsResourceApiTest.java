@@ -35,10 +35,11 @@ import org.springframework.http.MediaType;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-public class CharacteristicsResourceIntegrationTest extends AbstractResourceIntegrationTest {
+public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     private UUID animalUuid;
 
@@ -53,13 +54,13 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .syncBody(characteristics)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Characteristics.class)
-                .isEqualTo(characteristics);
+                     .uri(CHARACTERISTICS_URL, animalUuid)
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated()
+                     .expectBody(Characteristics.class)
+                     .isEqualTo(characteristics);
     }
 
     @Test
@@ -70,13 +71,13 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                .syncBody(characteristicsWithWrongData)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                     .bodyValue(characteristicsWithWrongData)
+                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -86,13 +87,13 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                .syncBody(characteristicsWithMissingData)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                     .bodyValue(characteristicsWithMissingData)
+                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -100,12 +101,12 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                .syncBody(characteristics)
-                .exchange()
-                .expectStatus()
-                .isNotFound()
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -113,59 +114,61 @@ public class CharacteristicsResourceIntegrationTest extends AbstractResourceInte
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .syncBody(characteristics)
-                .exchange()
-                .expectStatus()
-                .isCreated();
+                     .uri(CHARACTERISTICS_URL, animalUuid)
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated();
 
         webTestClient.post()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .syncBody(characteristics)
-                .exchange()
-                .expectStatus()
-                .isEqualTo(CONFLICT)
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, animalUuid)
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isEqualTo(CONFLICT)
+                     .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithCharacteristics() {
         Characteristics createdCharacteristics = webTestClient.post()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .syncBody(CharacteristicsBuilder.random().build())
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Characteristics.class)
-                .returnResult()
-                .getResponseBody();
+                                                              .uri(CHARACTERISTICS_URL, animalUuid)
+                                                              .bodyValue(CharacteristicsBuilder.random().build())
+                                                              .exchange()
+                                                              .expectStatus()
+                                                              .isCreated()
+                                                              .expectBody(Characteristics.class)
+                                                              .returnResult()
+                                                              .getResponseBody();
+
+        assertNotNull(createdCharacteristics);
 
         webTestClient.get()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(Characteristics.class)
-                .isEqualTo(createdCharacteristics);
+                     .uri(CHARACTERISTICS_URL, animalUuid)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(Characteristics.class)
+                     .isEqualTo(createdCharacteristics);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
         webTestClient.get()
-                .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                .exchange()
-                .expectStatus()
-                .isNotFound()
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                .uri(CHARACTERISTICS_URL, animalUuid)
-                .exchange()
-                .expectStatus()
-                .isNotFound()
-                .expectBody(ApiError.class);
+                     .uri(CHARACTERISTICS_URL, animalUuid)
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody(ApiError.class);
     }
 }

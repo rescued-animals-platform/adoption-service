@@ -30,7 +30,7 @@ import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
 
 public class ImageBuilder {
 
-    private static final int ONE_MEGA_BYTE_IN_BYTES = 1048576;
+    private static final int ONE_MEGA_BYTE_IN_BYTES = 1_048_576;
 
     private String extension;
     private byte[] content;

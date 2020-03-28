@@ -50,9 +50,6 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    @Value("${spring.profiles}")
-    private String environment;
-
     @Autowired
     private GoogleCloudStorageFactory googleCloudStorageFactory;
 
@@ -94,7 +91,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
 
     public void deleteMedia(final String mediaPath) {
         Storage storage = googleCloudStorageFactory.get();
-        BlobId blobId = BlobId.of(bucketName, mediaPath);
+        BlobId blobId = BlobId.of(this.bucketName, mediaPath);
 
         storage.delete(blobId);
     }

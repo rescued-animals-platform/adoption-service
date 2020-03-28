@@ -31,7 +31,13 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -50,6 +56,7 @@ public class JpaCharacteristics implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid")
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
     private LocalDateTime registrationDate;
@@ -84,7 +91,7 @@ public class JpaCharacteristics implements Serializable {
         this.physicalActivity = characteristics.getPhysicalActivity().name();
         this.setTemperaments(characteristics.getTemperaments());
         this.friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new)
-                .collect(Collectors.toList());
+                                           .collect(Collectors.toList());
     }
 
     private void setUuid(final UUID uuid) {
@@ -119,36 +126,21 @@ public class JpaCharacteristics implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JpaCharacteristics that = (JpaCharacteristics) o;
 
-        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
-            return false;
-        if (size != null ? !size.equals(that.size) : that.size != null) return false;
-        if (physicalActivity != null ? !physicalActivity.equals(that.physicalActivity) : that.physicalActivity != null)
-            return false;
-        if (sociability != null ? !sociability.equals(that.sociability) : that.sociability != null) return false;
-        if (docility != null ? !docility.equals(that.docility) : that.docility != null) return false;
-        if (balance != null ? !balance.equals(that.balance) : that.balance != null) return false;
-        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
+        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (size != null ? size.hashCode() : 0);
-        result = 31 * result + (physicalActivity != null ? physicalActivity.hashCode() : 0);
-        result = 31 * result + (sociability != null ? sociability.hashCode() : 0);
-        result = 31 * result + (docility != null ? docility.hashCode() : 0);
-        result = 31 * result + (balance != null ? balance.hashCode() : 0);
-        result = 31 * result + (friendlyWith != null ? friendlyWith.hashCode() : 0);
-        return result;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

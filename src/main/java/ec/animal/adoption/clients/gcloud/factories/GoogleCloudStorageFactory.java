@@ -25,16 +25,19 @@ import com.google.cloud.storage.contrib.nio.testing.LocalStorageHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class GoogleCloudStorageFactory {
 
     @Value("${spring.profiles}")
     private String environment;
 
-    private static final String DEV_ENVIRONMENT = "dev";
+    private static final List<String> DEV_ENVIRONMENTS = Arrays.asList("local", "docker");
 
     public Storage get() {
-        if (DEV_ENVIRONMENT.equals(environment)) {
+        if (DEV_ENVIRONMENTS.contains(environment)) {
             return LocalStorageHelper.getOptions().getService();
         }
 

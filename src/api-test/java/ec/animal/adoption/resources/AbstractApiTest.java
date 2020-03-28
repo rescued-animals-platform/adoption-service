@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 import static java.lang.System.getenv;
 
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
-public abstract class AbstractResourceIntegrationTest {
+public abstract class AbstractApiTest {
 
     static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
@@ -48,25 +48,25 @@ public abstract class AbstractResourceIntegrationTest {
 
     Animal createAndSaveAnimalWithDefaultLookingForHumanState() {
         return webTestClient.post()
-                .uri(ANIMALS_URL)
-                .syncBody(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Animal.class)
-                .returnResult()
-                .getResponseBody();
+                            .uri(ANIMALS_URL)
+                            .bodyValue(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
+                            .exchange()
+                            .expectStatus()
+                            .isCreated()
+                            .expectBody(Animal.class)
+                            .returnResult()
+                            .getResponseBody();
     }
 
     Animal createAndSaveAnimal(final Animal animal) {
         return webTestClient.post()
-                .uri(ANIMALS_URL)
-                .syncBody(animal)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Animal.class)
-                .returnResult()
-                .getResponseBody();
+                            .uri(ANIMALS_URL)
+                            .bodyValue(animal)
+                            .exchange()
+                            .expectStatus()
+                            .isCreated()
+                            .expectBody(Animal.class)
+                            .returnResult()
+                            .getResponseBody();
     }
 }

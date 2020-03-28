@@ -1,4 +1,5 @@
 pmd {
+    toolVersion = "6.21.0"
     ruleSets = []
     ruleSetConfig = resources.text.fromFile("pmd/ruleset.xml")
 }

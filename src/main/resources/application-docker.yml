@@ -1,0 +1,26 @@
+spring:
+  profiles: docker
+  cloud:
+    gcp:
+      config.enabled: false
+      storage.enabled: false
+      logging.enabled: false
+  datasource:
+    url: jdbc:postgresql://adoption-service-db:5432/animal_adoption_db
+    username: adoption_service
+    password: adoption_service
+    test-on-borrow: true
+    test-while-idle: true
+    validation-query: select 1;
+    maxActive: 50
+    master:
+      username: admin
+      password: admin
+  jpa:
+    show-sql: false
+    generate-ddl: false
+
+google.cloud.storage.bucket: adoption-service-testing
+
+logging:
+  config: classpath:logback-spring-docker.xml

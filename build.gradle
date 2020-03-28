@@ -1,8 +1,6 @@
-import com.github.spotbugs.SpotBugsTask
-
 buildscript {
     ext {
-        springBootVersion = "2.1.6.RELEASE"
+        springBootVersion = "2.2.6.RELEASE"
     }
 }
 
@@ -10,17 +8,18 @@ plugins {
     id "java"
     id "idea"
     id "pmd"
-    id "io.spring.dependency-management" version "1.0.8.RELEASE"
-    id "org.springframework.boot" version "2.1.6.RELEASE"
-    id "info.solidsoft.pitest" version "1.4.0"
-    id "com.github.spotbugs" version "2.0.0"
+    id "info.solidsoft.pitest" version "1.4.6"
+    id  'com.github.spotbugs' version '4.0.4'
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "org.springframework.boot" version "2.2.6.RELEASE"
 }
 
+apply from: "gradle/idea.gradle"
 apply from: "gradle/dependencies.gradle"
+apply from: "gradle/sourceset.gradle"
 apply from: "gradle/pitest.gradle"
 apply from: "gradle/pmd.gradle"
-apply from: "gradle/sourceset.gradle"
-apply from: "gradle/idea.gradle"
+apply from: "gradle/spotbugs.gradle"
 
 
 group "ec.animal.adoption"
@@ -39,16 +38,25 @@ configurations {
     integrationTestRuntime.extendsFrom(testRuntime)
     apiTestCompile.extendsFrom(testCompile)
     apiTestRuntime.extendsFrom(testRuntime)
+
+    integrationTestImplementation.extendsFrom(testImplementation)
+    apiTestImplementation.extendsFrom(testImplementation)
+    integrationTestCompileOnly.extendsFrom(testCompileOnly)
+    apiTestCompileOnly.extendsFrom(testCompileOnly)
+    integrationTestRuntimeOnly.extendsFrom(testRuntimeOnly)
+    apiTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 }
 
 task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
+    maxParallelForks = 5
 }
 
 task apiTest(type: Test) {
     testClassesDirs = sourceSets.apiTest.output.classesDirs
     classpath = sourceSets.apiTest.runtimeClasspath
+    maxParallelForks = 5
 }
 
 tasks.withType(Test) {
@@ -61,15 +69,7 @@ tasks.withType(Test) {
     }
 }
 
-spotbugs {
-    spotbugsTest.enabled = false
-    spotbugsIntegrationTest.enabled = false
-    spotbugsApiTest.enabled = false
-}
-
-tasks.withType(SpotBugsTask) {
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
 }

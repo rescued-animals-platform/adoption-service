@@ -26,7 +26,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,7 +39,7 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     public void shouldGenerateAnUuidWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoUuid() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(null)
-                .withPictureType(PictureType.PRIMARY).build();
+                                                           .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
         );
@@ -53,7 +52,7 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     public void shouldGenerateARegistrationDateWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoRegistrationDate() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(null)
-                .withPictureType(PictureType.PRIMARY).build();
+                                                           .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
         );
@@ -67,7 +66,7 @@ public class JpaPrimaryLinkPictureTest {
     public void shouldCreateAPrimaryLinkPictureWithUuid() {
         UUID uuid = UUID.randomUUID();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(uuid)
-                .withPictureType(PictureType.PRIMARY).build();
+                                                           .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
         );
@@ -81,7 +80,7 @@ public class JpaPrimaryLinkPictureTest {
     public void shouldCreateAPrimaryLinkPictureWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(registrationDate)
-                .withPictureType(PictureType.PRIMARY).build();
+                                                           .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
         );
@@ -110,9 +109,7 @@ public class JpaPrimaryLinkPictureTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaPrimaryLinkPicture.class).usingGetClass()
-                .withPrefabValues(Timestamp.class, Timestamp.valueOf(LocalDateTime.now()),
-                        Timestamp.valueOf(LocalDateTime.now().minusDays(2)))
-                .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
-                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
+                      .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                      .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY, Warning.SURROGATE_KEY).verify();
     }
 }

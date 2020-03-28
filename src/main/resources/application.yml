@@ -15,6 +15,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        ddl-auto: validate
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         temp:
           use_jdbc_metadata_defaults: false

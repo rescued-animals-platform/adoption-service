@@ -40,7 +40,7 @@ public class ImageTest {
 
     @Test
     public void shouldBeValidForValidImageContentAndExtensionAndSizeEqualToOneMb() {
-        int oneMegaByteInBytes = 1048576;
+        int oneMegaByteInBytes = 1_048_576;
         Image image = ImageBuilder.random().withSizeInBytes(oneMegaByteInBytes).build();
 
         assertThat(image.isValid(), is(true));
@@ -48,7 +48,7 @@ public class ImageTest {
 
     @Test
     public void shouldBeInvalidForSizeGreaterThanOneMb() {
-        int oneMegaByteInBytes = 1048576;
+        int oneMegaByteInBytes = 1_048_576;
         int size = oneMegaByteInBytes + 1 + new Random().nextInt(100);
         Image image = ImageBuilder.random().withSizeInBytes(size).build();
 

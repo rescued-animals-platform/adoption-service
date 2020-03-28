@@ -6,7 +6,7 @@ builder-build:
 deploy:
 	./gradlew clean bootJar
 	@docker-compose build adoption-service
-	@docker-compose up -d adoption-service adoption-service-db
+	SPRING_PROFILE=docker; docker-compose up -d
 
 deploy-adoption-service-db:
 	@docker-compose up -d adoption-service-db
@@ -24,7 +24,7 @@ style-check:
 	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest
 
 integration-test: deploy-adoption-service-db
-	$(docker_compose_builder) gradle integrationTest
+	SPRING_PROFILE=docker; $(docker_compose_builder) gradle integrationTest
 	make undeploy
 
 api-test: deploy
@@ -32,5 +32,5 @@ api-test: deploy
 	make undeploy
 
 all-test: unit-test pitest deploy builder-build
-	$(docker_compose_builder) gradle integrationTest apiTest
+	SPRING_PROFILE=docker; $(docker_compose_builder) gradle integrationTest apiTest
 	make undeploy

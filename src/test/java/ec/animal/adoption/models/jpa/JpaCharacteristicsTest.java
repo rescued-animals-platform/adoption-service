@@ -27,12 +27,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class JpaCharacteristicsTest {
@@ -72,7 +73,7 @@ public class JpaCharacteristicsTest {
     public void shouldCreateCharacteristicsWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
         Characteristics characteristics = CharacteristicsBuilder.random().withRegistrationDate(registrationDate)
-                .build();
+                                                                .build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -129,13 +130,10 @@ public class JpaCharacteristicsTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaCharacteristics.class).usingGetClass().withPrefabValues(
-                Timestamp.class,
-                Timestamp.valueOf(LocalDateTime.now()),
-                Timestamp.valueOf(LocalDateTime.now().minusDays(2))
-        ).withPrefabValues(
-                JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)
-        ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
-                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
+        EqualsVerifier.forClass(JpaCharacteristics.class).usingGetClass()
+                      .withPrefabValues(
+                              JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)
+                      ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                      .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY, Warning.SURROGATE_KEY).verify();
     }
 }

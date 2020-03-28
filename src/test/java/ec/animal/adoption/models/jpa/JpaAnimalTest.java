@@ -28,14 +28,20 @@ import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class JpaAnimalTest {
 
     @Test
@@ -86,7 +92,7 @@ public class JpaAnimalTest {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         Story story = StoryBuilder.random().build();
         Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture)
-                .withCharacteristics(characteristics).withStory(story).build();
+                                     .withCharacteristics(characteristics).withStory(story).build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
@@ -151,5 +157,16 @@ public class JpaAnimalTest {
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
         assertNull(jpaAnimalToAnimal.getStory());
+    }
+
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void shouldVerifyEqualsAndHashCodeMethods() {
+        EqualsVerifier.forClass(JpaAnimal.class).usingGetClass()
+                      .withPrefabValues(JpaPrimaryLinkPicture.class, mock(JpaPrimaryLinkPicture.class), mock(JpaPrimaryLinkPicture.class))
+                      .withPrefabValues(JpaCharacteristics.class, mock(JpaCharacteristics.class), mock(JpaCharacteristics.class))
+                      .withPrefabValues(JpaStory.class, mock(JpaStory.class), mock(JpaStory.class))
+                      .suppress(Warning.SURROGATE_KEY)
+                      .verify();
     }
 }

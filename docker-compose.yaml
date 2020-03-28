@@ -11,7 +11,12 @@ services:
       SPRING_PROFILE:
     depends_on:
       - adoption-service-db
-    command: ["./wait-for-postgres.sh", "adoption-service-db", "java", "-jar", "-Dspring.profiles.active=$${SPRING_PROFILE}", "-d64", "-server", "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m", "-XX:+UseParNewGC", "-XX:+UseConcMarkSweepGC", "-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:+DisableExplicitGC", "-XX:+UseTLAB", "AdoptionService.jar"]
+    command: ["./wait-for-postgres.sh", "adoption-service-db", "java", "-jar",
+              "-Dspring.profiles.active=${SPRING_PROFILE}", "-d64", "-server",
+              "-Xms256m", "-Xmx512m", "-XX:MaxMetaspaceSize=512m", "-XX:+UseParNewGC",
+              "-XX:+UseConcMarkSweepGC", "-XX:CMSInitiatingOccupancyFraction=75",
+              "-XX:+UseCMSInitiatingOccupancyOnly", "-XX:+HeapDumpOnOutOfMemoryError",
+              "-XX:+DisableExplicitGC", "-XX:+UseTLAB", "AdoptionService.jar"]
     # TODO: Add health check for adoption service
 
   adoption-service-builder:
@@ -26,14 +31,16 @@ services:
       - ~/.gradle/caches:/home/gradle/.gradle/caches:rw
 
   adoption-service-db:
-    image: postgres:10
-    container_name: adoption-service-db
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-db
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: animal-adoption-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     healthcheck:
-      test: ["CMD", "psql", "-U", "postgres", "-d", "animal-adoption-db"]
+      test: ["CMD", "psql", "-U", "admin", "-d", "postgres"]
       interval: 10s
       timeout: 10s
       retries: 3

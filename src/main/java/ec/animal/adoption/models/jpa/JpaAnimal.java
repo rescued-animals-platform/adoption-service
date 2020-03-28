@@ -20,7 +20,11 @@
 package ec.animal.adoption.models.jpa;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import ec.animal.adoption.domain.*;
+import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.EstimatedAge;
+import ec.animal.adoption.domain.Sex;
+import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.Story;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
@@ -28,8 +32,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.*;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -153,46 +160,21 @@ public class JpaAnimal implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JpaAnimal jpaAnimal = (JpaAnimal) o;
 
-        if (uuid != null ? !uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(jpaAnimal.registrationDate) : jpaAnimal.registrationDate != null)
-            return false;
-        if (clinicalRecord != null ? !clinicalRecord.equals(jpaAnimal.clinicalRecord) : jpaAnimal.clinicalRecord != null)
-            return false;
-        if (name != null ? !name.equals(jpaAnimal.name) : jpaAnimal.name != null) return false;
-        if (species != null ? !species.equals(jpaAnimal.species) : jpaAnimal.species != null)
-            return false;
-        if (estimatedAge != null ? !estimatedAge.equals(jpaAnimal.estimatedAge) : jpaAnimal.estimatedAge != null)
-            return false;
-        if (sex != null ? !sex.equals(jpaAnimal.sex) : jpaAnimal.sex != null) return false;
-        if (stateName != null ? !stateName.equals(jpaAnimal.stateName) : jpaAnimal.stateName != null) return false;
-        if (state != null ? !state.equals(jpaAnimal.state) : jpaAnimal.state != null) return false;
-        if (jpaPrimaryLinkPicture != null ? !jpaPrimaryLinkPicture.equals(jpaAnimal.jpaPrimaryLinkPicture) : jpaAnimal.jpaPrimaryLinkPicture != null)
-            return false;
-        if (jpaCharacteristics != null ? !jpaCharacteristics.equals(jpaAnimal.jpaCharacteristics) : jpaAnimal.jpaCharacteristics != null)
-            return false;
-        return jpaStory != null ? jpaStory.equals(jpaAnimal.jpaStory) : jpaAnimal.jpaStory == null;
+        return uuid != null ? uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
-        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
-        result = 31 * result + (sex != null ? sex.hashCode() : 0);
-        result = 31 * result + (stateName != null ? stateName.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (jpaPrimaryLinkPicture != null ? jpaPrimaryLinkPicture.hashCode() : 0);
-        result = 31 * result + (jpaCharacteristics != null ? jpaCharacteristics.hashCode() : 0);
-        result = 31 * result + (jpaStory != null ? jpaStory.hashCode() : 0);
-        return result;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

@@ -25,7 +25,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -94,9 +93,7 @@ public class JpaStoryTest {
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaStory.class).usingGetClass()
-                .withPrefabValues(Timestamp.class, Timestamp.valueOf(LocalDateTime.now()),
-                        Timestamp.valueOf(LocalDateTime.now().minusDays(2)))
-                .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
-                .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY).verify();
+                      .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
+                      .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY, Warning.SURROGATE_KEY).verify();
     }
 }

@@ -22,7 +22,11 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.domain.Story;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -39,6 +43,7 @@ public class JpaStory implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid", nullable = false)
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
     private LocalDateTime registrationDate;
@@ -73,25 +78,21 @@ public class JpaStory implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JpaStory jpaStory = (JpaStory) o;
 
-        if (uuid != null ? !uuid.equals(jpaStory.uuid) : jpaStory.uuid != null) return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(jpaStory.jpaAnimal) : jpaStory.jpaAnimal != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(jpaStory.registrationDate) : jpaStory.registrationDate != null)
-            return false;
-        return text != null ? text.equals(jpaStory.text) : jpaStory.text == null;
+        return uuid != null ? uuid.equals(jpaStory.uuid) : jpaStory.uuid == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        return result;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

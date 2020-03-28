@@ -22,6 +22,7 @@ package ec.animal.adoption.models.jpa;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -41,6 +42,6 @@ public class JpaFriendlyWithTest {
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().verify();
+        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().suppress(Warning.SURROGATE_KEY).verify();
     }
 }

@@ -1,0 +1,12 @@
+spotbugs {
+    toolVersion = '4.0.1'
+    spotbugsApiTest.enabled(false)
+    spotbugsIntegrationTest.enabled(false)
+    spotbugsTest.enabled(false)
+    spotbugsMain {
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
+}

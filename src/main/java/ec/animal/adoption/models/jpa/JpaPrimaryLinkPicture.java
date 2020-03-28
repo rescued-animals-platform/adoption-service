@@ -24,7 +24,11 @@ import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -41,6 +45,7 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_uuid", nullable = false)
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
     private LocalDateTime registrationDate;
@@ -88,30 +93,21 @@ public class JpaPrimaryLinkPicture implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
 
-        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
-        if (jpaAnimal != null ? !jpaAnimal.equals(that.jpaAnimal) : that.jpaAnimal != null) return false;
-        if (registrationDate != null ? !registrationDate.equals(that.registrationDate) : that.registrationDate != null)
-            return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (largeImageUrl != null ? !largeImageUrl.equals(that.largeImageUrl) : that.largeImageUrl != null)
-            return false;
-        return smallImageUrl != null ? smallImageUrl.equals(that.smallImageUrl) : that.smallImageUrl == null;
+        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (jpaAnimal != null ? jpaAnimal.hashCode() : 0);
-        result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (largeImageUrl != null ? largeImageUrl.hashCode() : 0);
-        result = 31 * result + (smallImageUrl != null ? smallImageUrl.hashCode() : 0);
-        return result;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

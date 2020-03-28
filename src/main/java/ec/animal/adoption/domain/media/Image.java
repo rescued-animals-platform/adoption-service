@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 public class Image {
 
-    private static final int ONE_MEGA_BYTE = 1048576;
+    private static final int ONE_MEGA_BYTE = 1_048_576;
 
     private final String extension;
     private final byte[] content;

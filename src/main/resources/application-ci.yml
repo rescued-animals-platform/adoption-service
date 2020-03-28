@@ -9,6 +9,9 @@ spring:
     url: jdbc:postgresql://${DB_HOST}
     username: ${CI_SQL_CLOUD_MASTER_USERNAME}
     password: ${CI_SQL_CLOUD_MASTER_PASSWORD}
+    master:
+      username: ${CI_SQL_CLOUD_MASTER_USERNAME}
+      password: ${CI_SQL_CLOUD_MASTER_PASSWORD}
 
 
 google.cloud.storage.bucket: ${CI_ANIMAL_PICTURES_BUCKET}
