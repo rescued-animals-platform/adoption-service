@@ -1,9 +1,17 @@
-####################
-# Jobs
-####################
-
-
 version: 2.1
+
+####################
+# Parameters
+####################
+
+parameters:
+  start-deployment:
+    type: boolean
+    default: false
+
+####################
+# Executors
+####################
 
 executors:
   docker-publisher:
@@ -37,6 +45,10 @@ executors:
       - image: circleci/openjdk:11-jdk
     working_directory: ~/repo
 
+####################
+# Jobs
+####################
+
 jobs:
   build:
     executor: code-builder
@@ -50,8 +62,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v2-dependencies-{{ checksum "build.gradle" }}
-          - v2-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run: ./gradlew dependencies
 
@@ -105,8 +117,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v2-dependencies-{{ checksum "build.gradle" }}
-          - v2-dependencies-
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
 
       - run: ./gradlew clean pitest
 
@@ -215,24 +227,56 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  build-and-publish-image:
+    executor: docker-publisher
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - setup_remote_docker
+
+      - run:
+          name: Build and Publish Docker image
+          command: |
+            docker build -t $IMAGE_NAME:latest .
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:$CIRCLE_SHA1;
+
   ci-infra-deploy:
-      docker:
-        - image: emmeblm/adoption-service-deployer:latest
+    docker:
+      - image: emmeblm/adoption-service-deployer:latest
 
-      working_directory: ~/repo
+    working_directory: ~/repo
 
-      steps:
-        - attach_workspace:
-            at: ~/repo
+    steps:
+      - checkout
 
-        - run:
-            name: Deploy CI Infrastructure
-            command: ./scripts/ci-infra-deploy.sh;
+      - run:
+          name: Deploy CI Infrastructure
+          command: ./scripts/ci-infra-deploy.sh;
 
-        - persist_to_workspace:
-            root: ~/repo
-            paths:
-              - env.properties
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - src
+            - build
+            - migrations
+            - terraform
+            - pmd
+            - scripts
+            - docker
+            - gradle
+            - build.gradle
+            - settings.gradle
+            - gradlew
+            - gradlew.bat
+            - Dockerfile
+            - docker-compose.yaml
+            - Makefile
+            - env.properties
 
   ci-integration-test:
     executor: ci-integration-tester
@@ -268,27 +312,9 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  build-and-publish-image:
-    executor: docker-publisher
-
-    steps:
-      - attach_workspace:
-            at: ~/repo
-
-      - setup_remote_docker
-
-      - run:
-          name: Build and Publish Docker image
-          command: |
-            docker build -t $IMAGE_NAME:latest .
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_WORKFLOW_ID
-            docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:$CIRCLE_WORKFLOW_ID;
-
   ci-service-deploy:
     docker:
-    - image: emmeblm/adoption-service-deployer:latest
+      - image: emmeblm/adoption-service-deployer:latest
 
     working_directory: ~/repo
 
@@ -372,10 +398,9 @@ jobs:
 # Workflows
 ####################
 
-
 workflows:
   version: 2
-  adoption-service-master:
+  adoption-service-pipeline:
     jobs:
       - build:
           filters:
@@ -402,22 +427,6 @@ workflows:
       - api-test:
           requires:
             - build
-          filters:
-            branches:
-              only: master
-      - ci-infra-deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - ci-integration-test:
-          requires:
-            - pitest
-            - style-check
-            - integration-test
-            - api-test
-            - ci-infra-deploy
           filters:
             branches:
               only: master
@@ -427,13 +436,25 @@ workflows:
             - style-check
             - integration-test
             - api-test
+          filters:
+            branches:
+              only: master
+  adoption-service-deployment-pipeline:
+    when: << pipeline.parameters.start-deployment >>
+    jobs:
+      - ci-infra-deploy:
+          filters:
+            branches:
+              only: master
+      - ci-integration-test:
+          requires:
             - ci-infra-deploy
           filters:
             branches:
               only: master
       - ci-service-deploy:
           requires:
-            - build-and-publish-image
+            - ci-infra-deploy
           filters:
             branches:
               only: master
@@ -443,7 +464,7 @@ workflows:
           filters:
             branches:
               only: master
-      - destroy-ci-service:
+      - should-undeploy-ci-service:
           type: approval
           requires:
             - ci-api-test
@@ -453,11 +474,11 @@ workflows:
               only: master
       - ci-service-undeploy:
           requires:
-            - destroy-ci-service
+            - should-undeploy-ci-service
           filters:
             branches:
               only: master
-      - destroy-ci-infra:
+      - should-undeploy-ci-infra:
           type: approval
           requires:
             - ci-service-undeploy
@@ -466,37 +487,7 @@ workflows:
               only: master
       - ci-infra-undeploy:
           requires:
-            - destroy-ci-infra
+            - should-undeploy-ci-infra
           filters:
             branches:
               only: master
-  adoption-service-for-branches:
-    jobs:
-      - build:
-          filters:
-            branches:
-              ignore: master
-      - pitest:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
-      - style-check:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
-      - integration-test:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
-      - api-test:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
