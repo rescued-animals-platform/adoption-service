@@ -59,7 +59,6 @@ public class AnimalResourceApiTest extends AbstractApiTest {
 
         webTestClient.post()
                      .uri(ANIMALS_URL)
-                     .header("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik5rVTROMFl4TVRVd09UY3dSRFZFTkRNd09EQkNNREEzT1RVNVEwWkNRa1pCTUVVNFFUQTJNZyJ9.eyJpc3MiOiJodHRwczovL2VtbWVibG0uYXV0aDAuY29tLyIsInN1YiI6ImltRGZVbW1NbXcwV1ZYRExLQndKVUU5MDJ5WG5VSGFNQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2FuaW1hbGVzLXJlc2NhdGFkb3Mvc2VydmljaW8tYWRvcGNpb25lcy5lYyIsImlhdCI6MTU4NjYzNzA0MiwiZXhwIjoxNTg2NzIzNDQyLCJhenAiOiJpbURmVW1tTW13MFdWWERMS0J3SlVFOTAyeVhuVUhhTSIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.MkfRTG6pKefIgS57MEpEGe7n5L39FuFae3dn8NokxtytALruSf2VzrXOwq6w77uFMgJapPVVl_7F4lCZqsE071w7yqKxwVwLiC-lMoyRYvwp54vRM91h8mRbS1X0g4vUPDcgxc3NpbGnP25wWOgD1vksvuvon3GlavCbMbSCCneN6J39SsYQ8rTiAGYw0T-rdXKCkAW7O6DwVuxwMHNrqQ6gNRn1wgGk_mqH5oN7foeefdlWs1bZ5JVmVs648yiZcQYpRg5i7_yIYA0HV8JZjcaTEP4k52bH0WUKr-zgNgzJ_ePxttH65xGnsNCYP9Bon3Z3YEg8vTUSFIGZKbK8cg")
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()
