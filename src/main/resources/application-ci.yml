@@ -12,7 +12,14 @@ spring:
     master:
       username: ${CI_SQL_CLOUD_MASTER_USERNAME}
       password: ${CI_SQL_CLOUD_MASTER_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://emmeblm.auth0.com/
 
+auth0:
+  audience: https://animales-rescatados/servicio-adopciones.ec
 
 google.cloud.storage.bucket: ${CI_ANIMAL_PICTURES_BUCKET}
 

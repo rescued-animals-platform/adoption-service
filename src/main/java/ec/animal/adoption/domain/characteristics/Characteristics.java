@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.validators.ValidTemperaments;
+import ec.animal.adoption.validator.ValidTemperaments;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

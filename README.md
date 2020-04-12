@@ -44,7 +44,7 @@ Without this steps, you would be able to run all tests from a terminal. Only if 
 
 _**(Only for the first time)**_
         
-- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `ADOPTION_SERVICE_URL=http://localhost:8080` and `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
+- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variables `ADOPTION_SERVICE_URL=http://localhost:8080` and `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
 
 _**(Always, before running the api tests)**_
 

@@ -6,13 +6,13 @@ builder-build:
 deploy:
 	./gradlew clean bootJar
 	@docker-compose build adoption-service
-	SPRING_PROFILE=docker; docker-compose up -d
+	docker-compose up -d --scale adoption-service-builder=0
 
 deploy-adoption-service-db:
 	@docker-compose up -d adoption-service-db
 
 undeploy:
-	@docker-compose down
+	@docker-compose down --remove-orphans -v
 
 unit-test:
 	./gradlew clean check
@@ -24,7 +24,7 @@ style-check:
 	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest
 
 integration-test: deploy-adoption-service-db
-	SPRING_PROFILE=docker; $(docker_compose_builder) gradle integrationTest
+	$(docker_compose_builder) gradle integrationTest
 	make undeploy
 
 api-test: deploy
@@ -32,5 +32,5 @@ api-test: deploy
 	make undeploy
 
 all-test: unit-test pitest deploy builder-build
-	SPRING_PROFILE=docker; $(docker_compose_builder) gradle integrationTest apiTest
+	$(docker_compose_builder) gradle integrationTest apiTest
 	make undeploy

@@ -21,15 +21,11 @@ package ec.animal.adoption;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @EnableCircuitBreaker
 @SpringBootApplication
-@EnableAutoConfiguration
-@EnableSpringDataWebSupport
 @SuppressWarnings("PMD")
 public class AdoptionServiceApplication {
 

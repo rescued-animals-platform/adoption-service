@@ -28,8 +28,6 @@ executors:
 
   integration-tester:
     environment:
-      SPRING_PROFILE: dev
-      ADOPTION_SERVICE_URL: http://adoption-service:8080
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
