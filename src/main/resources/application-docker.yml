@@ -23,10 +23,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://emmeblm.auth0.com/
-
-auth0:
-  audience: https://animales-rescatados/servicio-adopciones.ec
+          issuer-uri: http://wiremock:8080/
 
 google.cloud.storage.bucket: adoption-service-testing
 

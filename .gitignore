@@ -3,6 +3,7 @@ build
 logs
 .idea
 .gradle
+.docker-gradle-build-cache
 .terraform
 *.iml
 *.ipr

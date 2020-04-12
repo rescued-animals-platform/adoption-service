@@ -53,14 +53,14 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     public void shouldReturn201CreatedWithCharacteristics() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, animalUuid)
-                     .bodyValue(characteristics)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated()
-                     .expectBody(Characteristics.class)
-                     .isEqualTo(characteristics);
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, animalUuid)
+                          .bodyValue(characteristics)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated()
+                          .expectBody(Characteristics.class)
+                          .isEqualTo(characteristics);
     }
 
     @Test
@@ -70,14 +70,14 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                 "\",\"temperaments\":{\"sociability\":\"" + randomAlphabetic(10) +
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                     .bodyValue(characteristicsWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                          .bodyValue(characteristicsWithWrongData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
@@ -86,60 +86,60 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                 "\",\"temperaments\":{\"balance\":\"" + Balance.BALANCED +
                 "\"},\"friendlyWith\":[\"" + FriendlyWith.CATS + "\"]}";
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                     .bodyValue(characteristicsWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                          .bodyValue(characteristicsWithMissingData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingCharacteristicsForNonExistentAnimal() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
-                     .bodyValue(characteristics)
-                     .exchange()
-                     .expectStatus()
-                     .isNotFound()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, UUID.randomUUID())
+                          .bodyValue(characteristics)
+                          .exchange()
+                          .expectStatus()
+                          .isNotFound()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, animalUuid)
-                     .bodyValue(characteristics)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated();
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, animalUuid)
+                          .bodyValue(characteristics)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated();
 
-        webTestClient.post()
-                     .uri(CHARACTERISTICS_URL, animalUuid)
-                     .bodyValue(characteristics)
-                     .exchange()
-                     .expectStatus()
-                     .isEqualTo(CONFLICT)
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(CHARACTERISTICS_URL, animalUuid)
+                          .bodyValue(characteristics)
+                          .exchange()
+                          .expectStatus()
+                          .isEqualTo(CONFLICT)
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithCharacteristics() {
-        Characteristics createdCharacteristics = webTestClient.post()
-                                                              .uri(CHARACTERISTICS_URL, animalUuid)
-                                                              .bodyValue(CharacteristicsBuilder.random().build())
-                                                              .exchange()
-                                                              .expectStatus()
-                                                              .isCreated()
-                                                              .expectBody(Characteristics.class)
-                                                              .returnResult()
-                                                              .getResponseBody();
+        Characteristics createdCharacteristics = adminWebTestClient.post()
+                                                                   .uri(CHARACTERISTICS_URL, animalUuid)
+                                                                   .bodyValue(CharacteristicsBuilder.random().build())
+                                                                   .exchange()
+                                                                   .expectStatus()
+                                                                   .isCreated()
+                                                                   .expectBody(Characteristics.class)
+                                                                   .returnResult()
+                                                                   .getResponseBody();
 
         assertNotNull(createdCharacteristics);
 

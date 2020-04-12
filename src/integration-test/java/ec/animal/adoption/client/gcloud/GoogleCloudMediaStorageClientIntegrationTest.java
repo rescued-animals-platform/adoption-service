@@ -21,7 +21,6 @@ package ec.animal.adoption.client.gcloud;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
-import ec.animal.adoption.client.gcloud.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -45,16 +44,16 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MediaStorageClientGoogleCloudStorageIntegrationTest {
+public class GoogleCloudMediaStorageClientIntegrationTest {
 
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
     @Autowired
-    private GoogleCloudStorageFactory googleCloudStorageFactory;
+    private Storage storage;
 
     @Autowired
-    private MediaStorageClientGoogleCloudStorage mediaStorageClientGoogleCloudStorage;
+    private GoogleCloudMediaStorageClient googleCloudMediaStorageClient;
 
     private String largeImagePath;
     private String smallImagePath;
@@ -78,7 +77,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
                 new Image(".jpeg", smallImageContent, smallImageContent.length)
         );
 
-        LinkPicture linkPicture = mediaStorageClientGoogleCloudStorage.save(imagePicture);
+        LinkPicture linkPicture = googleCloudMediaStorageClient.save(imagePicture);
 
         assertNotNull(linkPicture);
     }
@@ -90,9 +89,7 @@ public class MediaStorageClientGoogleCloudStorageIntegrationTest {
     }
 
     public void deleteMedia(final String mediaPath) {
-        Storage storage = googleCloudStorageFactory.get();
         BlobId blobId = BlobId.of(this.bucketName, mediaPath);
-
         storage.delete(blobId);
     }
 }

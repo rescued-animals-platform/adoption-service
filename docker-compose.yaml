@@ -9,20 +9,14 @@ services:
       - "8080:8080"
     depends_on:
       - adoption-service-db
-    environment:
-      SPRING_PROFILE: docker
     # TODO: Add health check for adoption service
 
   adoption-service-builder:
     build:
       context: .
       dockerfile: docker/Dockerfile-builder
-    environment:
-      SPRING_PROFILE: docker
-      ADOPTION_SERVICE_URL: http://adoption-service:8080
-      ADMIN_JWT:
     volumes:
-      - ~/.gradle/caches:/home/gradle/.gradle/caches:rw
+      - ./.docker-gradle-build-cache:/home/gradle/.gradle:rw
 
   adoption-service-db:
     build:
@@ -38,3 +32,13 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
+
+  wiremock:
+    image: rodolpheche/wiremock:latest
+    ports:
+      - "8123:8080"
+    volumes:
+      - ./docker/wiremock/stubs:/home/wiremock:ro
+    command: ["java", "-cp", "/var/wiremock/lib/*:/var/wiremock/extensions/*",
+              "com.github.tomakehurst.wiremock.standalone.WireMockServerRunner",
+              "--global-response-templating"]

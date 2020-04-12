@@ -44,16 +44,15 @@ configurations {
 task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
-    maxParallelForks = 5
 }
 
 task apiTest(type: Test) {
     testClassesDirs = sourceSets.apiTest.output.classesDirs
     classpath = sourceSets.apiTest.runtimeClasspath
-    maxParallelForks = 5
 }
 
 tasks.withType(Test) {
+    maxParallelForks = 5
     testLogging {
         exceptionFormat "full"
         events "passed", "skipped", "failed"

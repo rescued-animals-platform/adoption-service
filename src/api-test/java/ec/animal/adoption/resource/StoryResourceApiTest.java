@@ -42,90 +42,90 @@ public class StoryResourceApiTest extends AbstractApiTest {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story story = StoryBuilder.random().build();
 
-        webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
-                     .bodyValue(story)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated()
-                     .expectBody(Story.class)
-                     .consumeWith(storyEntityExchangeResult -> {
-                         Story createdStory = storyEntityExchangeResult.getResponseBody();
-                         assertReflectionEquals(story, createdStory);
-                     });
+        adminWebTestClient.post()
+                          .uri(STORY_URL, animal.getUuid())
+                          .bodyValue(story)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated()
+                          .expectBody(Story.class)
+                          .consumeWith(storyEntityExchangeResult -> {
+                              Story createdStory = storyEntityExchangeResult.getResponseBody();
+                              assertReflectionEquals(story, createdStory);
+                          });
     }
 
     @Test
     public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
 
-        webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
-                     .bodyValue(storyWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(STORY_URL, UUID.randomUUID())
+                          .bodyValue(storyWithWrongData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
         String storyWithMissingData = "{\"text\":\"\"}";
 
-        webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
-                     .bodyValue(storyWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(STORY_URL, UUID.randomUUID())
+                          .bodyValue(storyWithMissingData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
-        webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
-                     .bodyValue(StoryBuilder.random().build())
-                     .exchange()
-                     .expectStatus()
-                     .isNotFound()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(STORY_URL, UUID.randomUUID())
+                          .bodyValue(StoryBuilder.random().build())
+                          .exchange()
+                          .expectStatus()
+                          .isNotFound()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story story = StoryBuilder.random().build();
-        webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
-                     .bodyValue(story)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated();
+        adminWebTestClient.post()
+                          .uri(STORY_URL, animal.getUuid())
+                          .bodyValue(story)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated();
 
-        webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
-                     .bodyValue(story)
-                     .exchange()
-                     .expectStatus()
-                     .isEqualTo(CONFLICT)
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(STORY_URL, animal.getUuid())
+                          .bodyValue(story)
+                          .exchange()
+                          .expectStatus()
+                          .isEqualTo(CONFLICT)
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithStory() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        Story createdStory = webTestClient.post()
-                                          .uri(STORY_URL, animal.getUuid())
-                                          .bodyValue(StoryBuilder.random().build())
-                                          .exchange()
-                                          .expectStatus()
-                                          .isCreated()
-                                          .expectBody(Story.class)
-                                          .returnResult()
-                                          .getResponseBody();
+        Story createdStory = adminWebTestClient.post()
+                                               .uri(STORY_URL, animal.getUuid())
+                                               .bodyValue(StoryBuilder.random().build())
+                                               .exchange()
+                                               .expectStatus()
+                                               .isCreated()
+                                               .expectBody(Story.class)
+                                               .returnResult()
+                                               .getResponseBody();
 
         assertNotNull(createdStory);
 

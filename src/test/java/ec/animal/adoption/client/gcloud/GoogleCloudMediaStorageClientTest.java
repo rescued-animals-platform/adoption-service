@@ -26,7 +26,6 @@ import com.google.cloud.storage.StorageException;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.client.MediaStorageClient;
-import ec.animal.adoption.client.gcloud.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -49,24 +48,22 @@ import static org.mockito.Mockito.when;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MediaStorageClientGoogleCloudStorageTest {
+public class GoogleCloudMediaStorageClientTest {
 
     @Mock
     private Storage storage;
 
-    private MediaStorageClientGoogleCloudStorage mediaStorageClientGoogleCloudStorage;
+    private GoogleCloudMediaStorageClient googleCloudMediaStorageClient;
 
     @Before
     public void setUp() {
-        GoogleCloudStorageFactory googleCloudStorageFactory = mock(GoogleCloudStorageFactory.class);
-        when(googleCloudStorageFactory.get()).thenReturn(storage);
-        mediaStorageClientGoogleCloudStorage = new MediaStorageClientGoogleCloudStorage(googleCloudStorageFactory);
-        ReflectionTestUtils.setField(mediaStorageClientGoogleCloudStorage, "bucketName", randomAlphabetic(10));
+        googleCloudMediaStorageClient = new GoogleCloudMediaStorageClient(storage);
+        ReflectionTestUtils.setField(googleCloudMediaStorageClient, "bucketName", randomAlphabetic(10));
     }
 
     @Test
     public void shouldBeAnInstanceOgMediaStorageClient() {
-        assertThat(mediaStorageClientGoogleCloudStorage, is(instanceOf(MediaStorageClient.class)));
+        assertThat(googleCloudMediaStorageClient, is(instanceOf(MediaStorageClient.class)));
     }
 
     @Test
@@ -86,10 +83,10 @@ public class MediaStorageClientGoogleCloudStorageTest {
                 .thenReturn(smallImageBlob);
 
         LinkPicture expectedPicture = LinkPictureBuilder.random().withName(imagePicture.getName())
-                .withPictureType(imagePicture.getPictureType()).withLargeImageMediaLink(new MediaLink(largeImageUrl))
-                .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+                                                        .withPictureType(imagePicture.getPictureType()).withLargeImageMediaLink(new MediaLink(largeImageUrl))
+                                                        .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
-        LinkPicture storedPicture = mediaStorageClientGoogleCloudStorage.save(imagePicture);
+        LinkPicture storedPicture = googleCloudMediaStorageClient.save(imagePicture);
 
         assertReflectionEquals(expectedPicture, storedPicture);
     }
@@ -100,7 +97,7 @@ public class MediaStorageClientGoogleCloudStorageTest {
         when(storage.create(any(BlobInfo.class), eq(imagePicture.getLargeImageContent())))
                 .thenThrow(StorageException.class);
 
-        mediaStorageClientGoogleCloudStorage.save(imagePicture);
+        googleCloudMediaStorageClient.save(imagePicture);
     }
 
     @Test(expected = ImageStorageException.class)
@@ -111,6 +108,6 @@ public class MediaStorageClientGoogleCloudStorageTest {
         when(storage.create(any(BlobInfo.class), eq(imagePicture.getSmallImageContent())))
                 .thenThrow(StorageException.class);
 
-        mediaStorageClientGoogleCloudStorage.save(imagePicture);
+        googleCloudMediaStorageClient.save(imagePicture);
     }
 }

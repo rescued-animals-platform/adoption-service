@@ -24,7 +24,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import ec.animal.adoption.client.MediaStorageClient;
-import ec.animal.adoption.client.gcloud.factories.GoogleCloudStorageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -35,16 +34,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient {
+public class GoogleCloudMediaStorageClient implements MediaStorageClient {
 
     @Value("${google.cloud.storage.bucket}")
     private String bucketName;
 
-    private final GoogleCloudStorageFactory googleCloudStorageFactory;
+    private final Storage storage;
 
     @Autowired
-    public MediaStorageClientGoogleCloudStorage(final GoogleCloudStorageFactory googleCloudStorageFactory) {
-        this.googleCloudStorageFactory = googleCloudStorageFactory;
+    public GoogleCloudMediaStorageClient(final Storage storage) {
+        this.storage = storage;
     }
 
     @Override
@@ -76,7 +75,6 @@ public class MediaStorageClientGoogleCloudStorage implements MediaStorageClient 
     }
 
     private String storeMediaAndGetLink(final String mediaPath, final byte[] content) {
-        Storage storage = googleCloudStorageFactory.get();
         BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, mediaPath).build();
 
         return storage.create(blobInfo, content).getMediaLink();

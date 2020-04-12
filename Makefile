@@ -8,8 +8,8 @@ deploy:
 	@docker-compose build adoption-service
 	docker-compose up -d --scale adoption-service-builder=0
 
-deploy-adoption-service-db:
-	@docker-compose up -d adoption-service-db
+deploy-dependencies-only:
+	@docker-compose up -d adoption-service-db wiremock
 
 undeploy:
 	@docker-compose down --remove-orphans -v
@@ -23,11 +23,11 @@ pitest:
 style-check:
 	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest
 
-integration-test: deploy-adoption-service-db
+integration-test: builder-build deploy-dependencies-only
 	$(docker_compose_builder) gradle integrationTest
 	make undeploy
 
-api-test: deploy
+api-test: deploy builder-build
 	$(docker_compose_builder) gradle apiTest
 	make undeploy
 

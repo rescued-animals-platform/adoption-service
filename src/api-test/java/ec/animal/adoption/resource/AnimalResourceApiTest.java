@@ -57,48 +57,48 @@ public class AnimalResourceApiTest extends AbstractApiTest {
     public void shouldReturn201Created() {
         Animal animal = AnimalBuilder.random().build();
 
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated()
-                     .expectBody(Animal.class)
-                     .consumeWith(animalEntityExchangeResult -> {
-                         Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
-                         assertNotNull(createdAnimal);
-                         assertNotNull(createdAnimal.getUuid());
-                         assertNotNull(createdAnimal.getRegistrationDate());
-                         assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-                         assertThat(createdAnimal.getName(), is(animal.getName()));
-                         assertThat(createdAnimal.getSpecies(), is(animal.getSpecies()));
-                         assertThat(createdAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-                         assertThat(createdAnimal.getState(), is(instanceOf(animal.getState().getClass())));
-                     });
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animal)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated()
+                          .expectBody(Animal.class)
+                          .consumeWith(animalEntityExchangeResult -> {
+                              Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
+                              assertNotNull(createdAnimal);
+                              assertNotNull(createdAnimal.getUuid());
+                              assertNotNull(createdAnimal.getRegistrationDate());
+                              assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
+                              assertThat(createdAnimal.getName(), is(animal.getName()));
+                              assertThat(createdAnimal.getSpecies(), is(animal.getSpecies()));
+                              assertThat(createdAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
+                              assertThat(createdAnimal.getState(), is(instanceOf(animal.getState().getClass())));
+                          });
     }
 
     @Test
     public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSent() {
         Animal animal = AnimalBuilder.random().withState(null).build();
 
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated()
-                     .expectBody(Animal.class)
-                     .consumeWith(animalEntityExchangeResult -> {
-                         Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
-                         assertNotNull(createdAnimal);
-                         assertNotNull(createdAnimal.getUuid());
-                         assertNotNull(createdAnimal.getRegistrationDate());
-                         assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-                         assertThat(createdAnimal.getName(), is(animal.getName()));
-                         assertThat(createdAnimal.getSpecies(), is(animal.getSpecies()));
-                         assertThat(createdAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-                         assertThat(createdAnimal.getState(), is(instanceOf(LookingForHuman.class)));
-                     });
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animal)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated()
+                          .expectBody(Animal.class)
+                          .consumeWith(animalEntityExchangeResult -> {
+                              Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
+                              assertNotNull(createdAnimal);
+                              assertNotNull(createdAnimal.getUuid());
+                              assertNotNull(createdAnimal.getRegistrationDate());
+                              assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
+                              assertThat(createdAnimal.getName(), is(animal.getName()));
+                              assertThat(createdAnimal.getSpecies(), is(animal.getSpecies()));
+                              assertThat(createdAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
+                              assertThat(createdAnimal.getState(), is(instanceOf(LookingForHuman.class)));
+                          });
     }
 
     @Test
@@ -110,14 +110,14 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 "\",\"species\":\"" + animal.getSpecies() + "\",\"estimatedAge\":\"" + animal.getEstimatedAge() +
                 "\",\"sex\":\"12345\"}";
 
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animalWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animalWithWrongData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
@@ -126,33 +126,33 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         String animalWithMissingData = "{\"clinicalRecord\":\"\",\"name\":\"" + animal.getName() +
                 "\",\"species\":\"" + animal.getSpecies() + "\"}";
 
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animalWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animalWithMissingData)
+                          .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                          .exchange()
+                          .expectStatus()
+                          .isBadRequest()
+                          .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         Animal animal = AnimalBuilder.random().build();
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated();
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animal)
+                          .exchange()
+                          .expectStatus()
+                          .isCreated();
 
-        webTestClient.post()
-                     .uri(ANIMALS_URL)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isEqualTo(CONFLICT)
-                     .expectBody(ApiError.class);
+        adminWebTestClient.post()
+                          .uri(ANIMALS_URL)
+                          .bodyValue(animal)
+                          .exchange()
+                          .expectStatus()
+                          .isEqualTo(CONFLICT)
+                          .expectBody(ApiError.class);
     }
 
     @Test

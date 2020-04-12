@@ -18,9 +18,6 @@ spring:
         jwt:
           issuer-uri: https://emmeblm.auth0.com/
 
-auth0:
-  audience: https://animales-rescatados/servicio-adopciones.ec
-
 google.cloud.storage.bucket: ${CI_ANIMAL_PICTURES_BUCKET}
 
 logging:

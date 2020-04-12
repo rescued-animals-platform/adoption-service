@@ -29,6 +29,9 @@ spring:
     basic:
       enabled: false
 
+auth0:
+  audience: https://animales-rescatados/servicio-adopciones.ec
+
 hystrix:
   command:
     default:

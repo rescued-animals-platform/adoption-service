@@ -16,41 +16,38 @@ Follow the next steps in the order they appear. After completing them, you would
 - Login to docker with your credentials. If you don't have an account, create one in the [Docker Hub site](https://hub.docker.com/)
 
         docker login
-
-- Set the following environment variables to be active in your project root directory:
-
-        export SPRING_PROFILE=local
-        export ADOPTION_SERVICE_URL=http://localhost:8080 (needed only if you want to execute the application from your IDE)
  
 - Run: `make all-test` to run all tests and verify everything works as expected.
 
 ## [Important] If you want to run integration tests from the IDE
 
-Without this steps, you would be able to run all tests from a terminal. Only if you want to be able to run integration tests from your IDE, you can do the following:
+Without these steps, you would be able to run all tests from a terminal. Only if you want to be able to run integration tests from your IDE, you can do the following:
         
 - Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
 
 _**(Always, before running the integration tests)**_
 
-- Verify that the adoption-service-db container is running:
+- Verify that the dependencies (wiremock and adoption-service-db) are running:
 
         docker ps -a    
   
-  If it is not, run: `make deploy-adoption-service-db`
+  If they're not, run: `make deploy-dependencies-only`
   
 ## [Important] If you want to run api tests from the IDE
 
-Without this steps, you would be able to run all tests from a terminal. Only if you want to be able to run api tests from your IDE, you can do the following:
+Without these steps, you would be able to run all tests from a terminal. Only if you want to be able to run api tests from your IDE, you can do the following:
 
 _**(Only for the first time)**_
         
-- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variables `ADOPTION_SERVICE_URL=http://localhost:8080` and `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
+- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the following environment variables to it. (e.g. add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA):
+
+        SPRING_PROFILE=local
+        ADOPTION_SERVICE_URL=http://localhost:8080
+        ADMIN_JWT=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNrc2hkYjgydHUzYm5pb3NodWprbnNraGRiYmprc2JvM3UifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxMjMvIiwic3ViIjoiMTIzNDU2Nzg5MCIsImF1ZCI6Imh0dHBzOi8vYW5pbWFsZXMtcmVzY2F0YWRvcy9zZXJ2aWNpby1hZG9wY2lvbmVzLmVjIiwiaWF0IjoxNTg2NjM3MDQyLCJleHAiOjkwODY3MjM0NDJ9.EhSIUrmjMay16APD1JtyuTLynWZFfnX8EjIciDKShrNJjfwo9nbIBf_zgfNLKoQmZ2uNWLgWCrzpsutFw7KJJCh1j6G64NvdJyWFDbNiOXCrYyjVJoizXWDKVgcQKJGVoLfCOw_NrT4kRyKT8aqwRE-wMEKzp6MPeaTM8zi_bHZa87Deu_QvOsnknNZFFyUU7qyMByOqmyWfXjgtZ0FKBR1pM62pMBHuMC9sawya8b9tqfcfVF_p4_a70mtQttuXqKjg7hobELr8SPs3tGQUiEATRsPREvaI7Hziv1dvLBIIZd-YCzIVJ9USrm7rZV2G48q_HdG9hVLUa-N5dRrs4Q
 
 _**(Always, before running the api tests)**_
 
-- Deploy the application with:
-
-        make deploy
+- Deploy the application in a docker container with `make deploy` or run the application from your IDE (remember to set up the SPRING_PROFILE env variable if running from the IDE and verify dependencies are running).
         
 ## Useful commands
 
@@ -80,15 +77,15 @@ _**(Always, before running the api tests)**_
 
         make all-test
 
-6. Deploy the adoption service database (useful when running integration tests from the IDE) with:
+6. Deploy only the application dependencies (useful when running integration/api tests from the IDE) with:
 
-        make deploy-adoption-service-db
+        make deploy-dependencies-only
         
 7. Local deployment of the adoption service (useful when running api tests from the IDE and for manual local testing):
 
         make deploy
         
-   Un deploy with `make undeploy`
+   Un-deploy all containers with `make undeploy`
         
 
 Check the **Makefile** file to discover more tasks.
