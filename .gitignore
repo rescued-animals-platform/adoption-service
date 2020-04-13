@@ -8,5 +8,4 @@ logs
 *.iml
 *.ipr
 *.iws
-*.json
 .DS_Store

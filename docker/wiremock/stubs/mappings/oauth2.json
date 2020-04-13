@@ -1,0 +1,30 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/.well-known/openid-configuration"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "bodyFileName": "{{request.requestLine.host}}-openid-configuration.json"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/.well-known/jwks.json"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "bodyFileName": "jwks.json"
+      }
+    }
+  ]
+}
