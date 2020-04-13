@@ -34,11 +34,8 @@ services:
       retries: 3
 
   wiremock:
-    image: rodolpheche/wiremock:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-wiremock
     ports:
       - "8123:8080"
-    volumes:
-      - ./docker/wiremock/stubs:/home/wiremock:ro
-    command: ["java", "-cp", "/var/wiremock/lib/*:/var/wiremock/extensions/*",
-              "com.github.tomakehurst.wiremock.standalone.WireMockServerRunner",
-              "--global-response-templating"]

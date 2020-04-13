@@ -1,7 +1,9 @@
-FROM adoptopenjdk/openjdk8:jre8u212-b04-alpine
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 
 MAINTAINER Luisa Emme "emmeblm@gmail.com"
 
+ARG spring_profile=production
+ENV SPRING_PROFILE=$spring_profile
 ENV LANG C.UTF-8
 
 EXPOSE 8080
