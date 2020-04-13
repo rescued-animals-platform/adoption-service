@@ -169,7 +169,7 @@ jobs:
 
       - run:
           name: Running integration tests
-          command: make builder-build integration-test
+          command: make integration-test
 
       - save_cache:
           paths:
@@ -205,7 +205,7 @@ jobs:
 
       - run:
           name: Running api tests
-          command: make builder-build api-test
+          command: make api-test
 
       - save_cache:
           paths:
