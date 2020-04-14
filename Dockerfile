@@ -2,7 +2,7 @@ FROM gradle:6.3.0-jdk11 AS builder
 
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
-RUN gradle build
+RUN gradle build --no-daemon
 
 
 FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine AS live
