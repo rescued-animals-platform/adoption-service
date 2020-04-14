@@ -12,6 +12,7 @@ spring:
       connectionTimeout: 20000
       maximumPoolSize: 10
   jpa:
+    open-in-view: false
     properties:
       hibernate:
         ddl-auto: validate

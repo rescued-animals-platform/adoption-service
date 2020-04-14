@@ -1,5 +1,5 @@
 spring:
-  profiles: production
+  profiles: live
   datasource:
     url: ${JDBC_DATABASE_URL}
     username: ${JDBC_DATABASE_USERNAME}
