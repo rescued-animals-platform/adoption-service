@@ -111,7 +111,8 @@ jobs:
             - Dockerfile
             - docker-compose.yaml
             - Makefile
-            - heroku.yml
+            - Procfile
+            - system.properties
 
   pitest:
     executor: code-builder
