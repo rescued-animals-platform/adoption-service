@@ -275,6 +275,7 @@ jobs:
       - run:
           name: Running api tests in uat environment
           command: |
+            CLOUDINARY_URL="$(heroku config:get CLOUDINARY_URL -a servicio-adopciones-uat)";
             {
               CLOUDINARY_URL="$(heroku config:get CLOUDINARY_URL -a servicio-adopciones-uat)";
               SPRING_DATASOURCE_USERNAME="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_USERNAME)";
