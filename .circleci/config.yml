@@ -113,6 +113,7 @@ jobs:
             - Makefile
             - Procfile
             - system.properties
+            - .git
 
   pitest:
     executor: code-builder
