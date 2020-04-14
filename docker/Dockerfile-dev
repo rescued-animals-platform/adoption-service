@@ -12,4 +12,4 @@ COPY build/libs/*.jar /api/AdoptionService.jar
 RUN ls /api
 WORKDIR /api
 
-CMD ./wait-for-postgres.sh adoption-service-db && java -jar -Dspring.profiles.active=docker -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+UseTLAB AdoptionService.jar
+CMD ./wait-for-postgres.sh adoption-service-db && java -jar -Dspring.profiles.active=docker -Dhibernate.types.print.banner=false -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+UseTLAB AdoptionService.jar
