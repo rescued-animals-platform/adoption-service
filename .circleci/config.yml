@@ -98,7 +98,7 @@ jobs:
           root: ~/repo
           paths:
             - src
-            - build
+            - build/libs/*.jar
             - migrations
             - terraform
             - pmd
@@ -112,7 +112,6 @@ jobs:
             - Dockerfile
             - docker-compose.yaml
             - Makefile
-            - .git
 
   pitest:
     executor: code-builder
