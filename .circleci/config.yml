@@ -209,6 +209,12 @@ jobs:
       - heroku/deploy-via-git:
           app-name: servicio-adopciones-uat
 
+      - heroku/install
+
+      - run:
+          name: Scaling worker
+          command: heroku ps:scale --app servicio-adopciones-uat worker=1
+
   uat-integration-test:
     executor: builder
 
