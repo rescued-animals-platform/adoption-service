@@ -112,6 +112,7 @@ jobs:
             - Dockerfile
             - docker-compose.yaml
             - Makefile
+            - .git
 
   pitest:
     executor: code-builder
