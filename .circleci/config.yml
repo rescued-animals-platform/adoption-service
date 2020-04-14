@@ -1,33 +1,14 @@
 version: 2.1
 
 ####################
-# Orbs
+# Orbs & Executors
 ####################
 
 orbs:
   heroku: circleci/heroku@1.0.1
 
-####################
-# Executors
-####################
-
 executors:
-  docker-publisher:
-    environment:
-      IMAGE_NAME: emmeblm/adoption-service
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    working_directory: ~/repo
-
-  code-builder:
-    docker:
-      - image: circleci/openjdk:11-jdk
-    working_directory: ~/repo
-
-  integration-tester:
-    environment:
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
+  builder:
     docker:
       - image: circleci/openjdk:11-jdk
     working_directory: ~/repo
@@ -38,7 +19,7 @@ executors:
 
 jobs:
   build:
-    executor: code-builder
+    executor: builder
 
     environment:
       JVM_OPTS: -Xmx3200m
@@ -98,7 +79,7 @@ jobs:
             - .git
 
   pitest:
-    executor: code-builder
+    executor: builder
 
     steps:
       - attach_workspace:
@@ -120,7 +101,7 @@ jobs:
           path: build/reports/pitest
 
   style-check:
-    executor: code-builder
+    executor: builder
 
     steps:
       - attach_workspace:
@@ -145,7 +126,7 @@ jobs:
           path: build/reports/spotbugs
 
   integration-test:
-    executor: integration-tester
+    executor: builder
 
     steps:
       - attach_workspace:
@@ -181,7 +162,7 @@ jobs:
           path: ~/junit
 
   api-test:
-    executor: integration-tester
+    executor: builder
 
     steps:
       - attach_workspace:
@@ -229,7 +210,7 @@ jobs:
           app-name: servicio-adopciones-uat
 
   uat-integration-test:
-    executor: integration-tester
+    executor: builder
 
     steps:
       - attach_workspace:
@@ -244,7 +225,69 @@ jobs:
 
       - run:
           name: Running integration tests in uat environment
-          command: ./scripts/uat-integration-test.sh;
+          command: |
+            {
+              CLOUDINARY_URL="$(heroku config:get CLOUDINARY_URL -a servicio-adopciones-uat)";
+              SPRING_DATASOURCE_USERNAME="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_USERNAME)";
+              SPRING_DATASOURCE_PASSWORD="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_PASSWORD)";
+              SPRING_DATASOURCE_URL="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_URL)";
+            } &> /dev/null
+            export CLOUDINARY_URL;
+            export SPRING_DATASOURCE_URL;
+            export SPRING_DATASOURCE_USERNAME;
+            export SPRING_DATASOURCE_PASSWORD;
+            export SPRING_PROFILE=live;
+            export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
+            ./gradlew integrationTest --rerun-tasks
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v2-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit
+            find . -type f -regex ".*/build/test-results/integrationTest/.*xml" -exec cp {} ~/junit \;
+          when: always
+
+      - store_test_results:
+          path: ~/junit
+
+      - store_artifacts:
+          path: ~/junit
+
+  uat-api-test:
+    executor: builder
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - heroku/install
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
+
+      - run:
+          name: Running api tests in uat environment
+          command: |
+            {
+              CLOUDINARY_URL="$(heroku config:get CLOUDINARY_URL -a servicio-adopciones-uat)";
+              SPRING_DATASOURCE_USERNAME="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_USERNAME)";
+              SPRING_DATASOURCE_PASSWORD="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_PASSWORD)";
+              SPRING_DATASOURCE_URL="$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_URL)";
+            } &> /dev/null
+            export CLOUDINARY_URL;
+            export SPRING_DATASOURCE_URL;
+            export SPRING_DATASOURCE_USERNAME;
+            export SPRING_DATASOURCE_PASSWORD;
+            export SPRING_PROFILE=live;
+            export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
+            ./gradlew apiTest --rerun-tasks
 
       - save_cache:
           paths:
@@ -310,6 +353,12 @@ workflows:
             branches:
               only: master
       - uat-integration-test:
+          requires:
+            - deploy-uat
+          filters:
+            branches:
+              only: master
+      - uat-api-test:
           requires:
             - deploy-uat
           filters:
