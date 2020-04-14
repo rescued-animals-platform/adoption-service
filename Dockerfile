@@ -1,4 +1,4 @@
-FROM FROM gradle:6.3.0-jdk11 AS builder
+FROM gradle:6.3.0-jdk11 AS builder
 RUN gradle clean bootJar
 
 
