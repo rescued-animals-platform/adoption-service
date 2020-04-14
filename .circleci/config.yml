@@ -34,9 +34,9 @@ executors:
       - image: circleci/openjdk:11-jdk
     working_directory: ~/repo
 
-  ci-integration-tester:
+  uat-integration-tester:
     environment:
-      SPRING_PROFILE: ci
+      SPRING_PROFILE: live
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
@@ -225,6 +225,18 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  deploy-uat:
+    executor: code-builder
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Deploy Master to Heroku Uat
+          command: |
+            git push https://uat:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+
   publish-image:
     executor: docker-publisher
 
@@ -242,6 +254,8 @@ jobs:
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$CIRCLE_SHA1;
+
+
 
   ci-infra-deploy:
     docker:
@@ -277,7 +291,7 @@ jobs:
             - env.properties
 
   ci-integration-test:
-    executor: ci-integration-tester
+    executor: uat-integration-tester
 
     steps:
       - attach_workspace:
@@ -330,7 +344,7 @@ jobs:
             - env.properties
 
   ci-api-test:
-    executor: ci-integration-tester
+    executor: uat-integration-tester
 
     steps:
       - attach_workspace:
@@ -428,7 +442,7 @@ workflows:
           filters:
             branches:
               only: master
-      - publish-image:
+      - deploy-uat:
           requires:
             - pitest
             - style-check

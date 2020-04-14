@@ -4,7 +4,4 @@ setup:
     - plan: cloudinary:starter
 build:
   docker:
-    release:
-      dockerfile: Dockerfile
-      target: builder
     web: Dockerfile
