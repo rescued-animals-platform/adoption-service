@@ -10,4 +10,4 @@ ENV LANG C.UTF-8
 EXPOSE 8080
 COPY --from=builder /app/build/libs/*.jar /api/AdoptionService.jar
 WORKDIR /api
-CMD java -jar -Dspring.profiles.active=docker -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -XX:+UseTLAB AdoptionService.jar
+CMD java -jar -Dspring.profiles.active=live -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -XX:+UseTLAB AdoptionService.jar
