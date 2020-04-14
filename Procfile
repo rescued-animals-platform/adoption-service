@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar build/libs/adoption-service.jar -Dspring.profiles.active=live -Dhibernate.types.print.banner=false
+web: java -jar $JAVA_OPTS -Dserver.port=$PORT -Dspring.profiles.active=live -Dhibernate.types.print.banner=false build/libs/adoption-service.jar
