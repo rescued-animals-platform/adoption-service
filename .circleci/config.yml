@@ -235,8 +235,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      - setup_remote_docker
-
       - heroku/install
 
       - restore_cache:
@@ -245,16 +243,15 @@ jobs:
             - v2-dependencies-
 
       - run:
-          name: Running integration tests in ci environment
+          name: Running integration tests in uat environment
           command: |
             export CLOUDINARY_URL=$(heroku config:get CLOUDINARY_URL -a servicio-adopciones-uat)
             export SPRING_DATASOURCE_URL=$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_URL)
             export SPRING_DATASOURCE_USERNAME=$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_USERNAME)
             export SPRING_DATASOURCE_PASSWORD=$(heroku run -a servicio-adopciones-uat echo \$SPRING_DATASOURCE_PASSWORD)
-            docker-compose build --build-arg arg_spring_profile=live --build-arg arg_adoption_service_url=https://servicio-adopciones-uat.herokuapp.com/ adoption-service-builder
-            docker-compose run -e ADMIN_JWT=${ADMIN_JWT} -e CLOUDINARY_URL=${CLOUDINARY_URL} \
-              -e SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL} -e SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME} \
-              -e SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD} adoption-service-builder gradle integrationTest
+            export SPRING_PROFILE=live
+            export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com
+            ./gradlew integrationTest
 
       - save_cache:
           paths:
