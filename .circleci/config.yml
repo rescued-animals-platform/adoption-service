@@ -212,8 +212,8 @@ jobs:
       - heroku/install
 
       - run:
-          name: Scaling worker
-          command: heroku ps:scale --app servicio-adopciones-uat worker=1
+          name: Scaling app
+          command: heroku ps:scale --app servicio-adopciones-uat web=1
 
   uat-integration-test:
     executor: builder
