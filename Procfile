@@ -1,1 +1,1 @@
-web: java -jar -Dspring.profiles.active=live -Dhibernate.types.print.banner=false build/libs/adoption-service.jar
+worker: java -jar -Dspring.profiles.active=live -Dhibernate.types.print.banner=false build/libs/adoption-service.jar
