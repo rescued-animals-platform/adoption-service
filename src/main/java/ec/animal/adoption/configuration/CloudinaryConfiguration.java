@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
@@ -39,7 +38,7 @@ public class CloudinaryConfiguration {
         config.put("cloud_name", cloudName);
         config.put("api_key", apiKey);
         config.put("api_secret", apiSecret);
-        Optional.ofNullable(uploadPrefix).ifPresent(uploadPrefix -> config.put("upload_prefix", uploadPrefix));
+        config.put("upload_prefix", uploadPrefix);
         return new Cloudinary(config);
     }
 }

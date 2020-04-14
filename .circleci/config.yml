@@ -1,15 +1,6 @@
 version: 2.1
 
 ####################
-# Parameters
-####################
-
-parameters:
-  start-deployment:
-    type: boolean
-    default: false
-
-####################
 # Orbs
 ####################
 
@@ -35,15 +26,6 @@ executors:
 
   integration-tester:
     environment:
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
-    docker:
-      - image: circleci/openjdk:11-jdk
-    working_directory: ~/repo
-
-  uat-integration-tester:
-    environment:
-      SPRING_PROFILE: live
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     docker:
@@ -246,65 +228,14 @@ jobs:
       - heroku/deploy-via-git:
           app-name: servicio-adopciones-uat
 
-  publish-image:
-    executor: docker-publisher
+  uat-integration-test:
+    executor: integration-tester
 
     steps:
       - attach_workspace:
           at: ~/repo
 
       - setup_remote_docker
-
-      - run:
-          name: Build and Publish Docker image for Production
-          command: |
-            docker build -t $IMAGE_NAME:latest .
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
-            docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:$CIRCLE_SHA1;
-
-
-
-  ci-infra-deploy:
-    docker:
-      - image: emmeblm/adoption-service-deployer:latest
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - run:
-          name: Deploy CI Infrastructure
-          command: ./scripts/ci-infra-deploy.sh;
-
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - src
-            - build
-            - migrations
-            - terraform
-            - pmd
-            - scripts
-            - docker
-            - gradle
-            - build.gradle
-            - settings.gradle
-            - gradlew
-            - gradlew.bat
-            - Dockerfile
-            - docker-compose.yaml
-            - Makefile
-            - env.properties
-
-  ci-integration-test:
-    executor: uat-integration-tester
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
 
       - restore_cache:
           keys:
@@ -313,7 +244,9 @@ jobs:
 
       - run:
           name: Running integration tests in ci environment
-          command: ./scripts/ci-integration-test.sh
+          command: |
+            docker-compose build --build-arg arg_spring_profile=live --build-arg arg_adoption_service_url=https://servicio-adopciones-uat.herokuapp.com/ adoption-service-builder
+            docker-compose run -e ADMIN_JWT=${ADMIN_JWT} adoption-service-builder gradle integrationTest
 
       - save_cache:
           paths:
@@ -332,88 +265,6 @@ jobs:
 
       - store_artifacts:
           path: ~/junit
-
-  ci-service-deploy:
-    docker:
-      - image: emmeblm/adoption-service-deployer:latest
-
-    working_directory: ~/repo
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - run:
-          name: Deploy service to CI
-          command: ./scripts/ci-service-deploy.sh
-
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - env.properties
-
-  ci-api-test:
-    executor: uat-integration-tester
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ checksum "build.gradle" }}
-            - v2-dependencies-
-
-      - run:
-          name: Running api tests in ci environment
-          command: ./scripts/ci-api-test.sh
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v2-dependencies-{{ checksum "build.gradle" }}
-
-      - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/junit
-            find . -type f -regex ".*/build/test-results/apiTest/.*xml" -exec cp {} ~/junit \;
-          when: always
-
-      - store_test_results:
-          path: ~/junit
-
-      - store_artifacts:
-          path: ~/junit
-
-  ci-service-undeploy:
-    docker:
-      - image: emmeblm/adoption-service-deployer:latest
-
-    working_directory: ~/repo
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - run:
-          name: Un deploying service in CI
-          command: ./scripts/ci-service-undeploy.sh
-
-  ci-infra-undeploy:
-    docker:
-      - image: emmeblm/adoption-service-deployer:latest
-
-    working_directory: ~/repo
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - run:
-          name: Un deploying CI Infrastructure
-          command: ./scripts/ci-infra-undeploy.sh;
-
 
 ####################
 # Workflows
@@ -460,55 +311,9 @@ workflows:
           filters:
             branches:
               only: master
-  adoption-service-deployment-pipeline:
-    when: << pipeline.parameters.start-deployment >>
-    jobs:
-      - ci-infra-deploy:
-          filters:
-            branches:
-              only: master
-      - ci-integration-test:
+      - uat-integration-test:
           requires:
-            - ci-infra-deploy
-          filters:
-            branches:
-              only: master
-      - ci-service-deploy:
-          requires:
-            - ci-infra-deploy
-          filters:
-            branches:
-              only: master
-      - ci-api-test:
-          requires:
-            - ci-service-deploy
-          filters:
-            branches:
-              only: master
-      - should-undeploy-ci-service:
-          type: approval
-          requires:
-            - ci-api-test
-            - ci-integration-test
-          filters:
-            branches:
-              only: master
-      - ci-service-undeploy:
-          requires:
-            - should-undeploy-ci-service
-          filters:
-            branches:
-              only: master
-      - should-undeploy-ci-infra:
-          type: approval
-          requires:
-            - ci-service-undeploy
-          filters:
-            branches:
-              only: master
-      - ci-infra-undeploy:
-          requires:
-            - should-undeploy-ci-infra
+            - deploy-uat
           filters:
             branches:
               only: master
