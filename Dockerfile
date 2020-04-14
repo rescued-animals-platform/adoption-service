@@ -11,5 +11,5 @@ MAINTAINER Luisa Emme emmeblm@gmail.com
 ENV LANG C.UTF-8
 EXPOSE 8080
 WORKDIR /api
-RUN ls /api
+RUN echo | ls /api
 CMD java -jar -Dspring.profiles.active=docker -server -Xms256m -Xmx512m -XX:MaxMetaspaceSize=512m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -XX:+UseTLAB AdoptionService.jar
