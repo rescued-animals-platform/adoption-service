@@ -1,8 +1,9 @@
-FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine AS live
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 
 MAINTAINER Luisa Emme "emmeblm@gmail.com"
 ENV LANG C.UTF-8
 EXPOSE 8080
+RUN echo | ls build/libs
 COPY build/libs/*.jar /api/AdoptionService.jar
 RUN ls /api
 WORKDIR /api
