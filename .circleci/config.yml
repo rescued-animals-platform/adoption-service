@@ -235,7 +235,7 @@ jobs:
 
   deploy-uat:
     executor: heroku/default
-    
+
     working_directory: ~/repo
 
     steps:
@@ -243,7 +243,7 @@ jobs:
           at: ~/repo
 
       - heroku/deploy-via-git:
-          app-name: servicio-adoptiones-uat
+          app-name: servicio-adopciones-uat
 
   publish-image:
     executor: docker-publisher
