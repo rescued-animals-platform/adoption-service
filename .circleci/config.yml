@@ -235,6 +235,8 @@ jobs:
 
   deploy-uat:
     executor: heroku/default
+    
+    working_directory: ~/repo
 
     steps:
       - attach_workspace:
