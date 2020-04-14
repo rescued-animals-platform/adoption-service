@@ -55,13 +55,21 @@ public class Image {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Image image = (Image) o;
 
-        if (sizeInBytes != image.sizeInBytes) return false;
-        if (extension != null ? !extension.equals(image.extension) : image.extension != null) return false;
+        if (sizeInBytes != image.sizeInBytes) {
+            return false;
+        }
+        if (extension != null ? !extension.equals(image.extension) : image.extension != null) {
+            return false;
+        }
         return Arrays.equals(content, image.content);
     }
 

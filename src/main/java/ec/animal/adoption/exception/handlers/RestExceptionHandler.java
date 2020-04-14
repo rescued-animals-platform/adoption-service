@@ -73,8 +73,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(GoogleCloudStorageException.class)
-    public ResponseEntity<Object> handleGoogleCloudStorageException(final GoogleCloudStorageException exception) {
+    @ExceptionHandler(MediaStorageException.class)
+    public ResponseEntity<Object> handleMediaStorageException(final MediaStorageException exception) {
         final HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
         return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }

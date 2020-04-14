@@ -1,0 +1,7 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+    - plan: cloudinary:starter
+build:
+  docker:
+    web: Dockerfile

@@ -1,10 +1,5 @@
 spring:
   profiles: local
-  cloud:
-    gcp:
-      config.enabled: false
-      storage.enabled: false
-      logging.enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/animal_adoption_db
     username: adoption_service
@@ -25,7 +20,11 @@ spring:
         jwt:
           issuer-uri: http://localhost:8123/
 
-google.cloud.storage.bucket: adoption-service-testing
+cloudinary:
+  cloud-name: cloudinary-dummy-cloud-name
+  api-key: cloudinary-dummy-api-key
+  api-secret: cloudinary-dummy-secret
+  upload-prefix: http://localhost:8123/
 
 logging:
   config: classpath:logback-spring-local.xml

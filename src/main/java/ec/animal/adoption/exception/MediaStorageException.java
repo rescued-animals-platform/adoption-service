@@ -19,19 +19,11 @@
 
 package ec.animal.adoption.exception;
 
-import org.junit.Test;
+public class MediaStorageException extends RuntimeException {
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+    private transient static final long serialVersionUID = -232426153813421923L;
 
-public class GoogleCloudStorageExceptionTest {
-
-    @Test
-    public void shouldReturnMessage() {
-        String expectedMessage = "Can not fulfill the request now. Please, retry later (client unavailable)";
-
-        GoogleCloudStorageException googleCloudStorageException = new GoogleCloudStorageException();
-
-        assertThat(googleCloudStorageException.getMessage(), is(expectedMessage));
+    public MediaStorageException() {
+        super("Can not fulfill the request now. Please, retry later (client unavailable)");
     }
 }

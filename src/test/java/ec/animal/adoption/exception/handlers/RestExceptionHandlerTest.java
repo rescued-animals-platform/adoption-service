@@ -3,7 +3,12 @@ package ec.animal.adoption.exception.handlers;
 import ec.animal.adoption.domain.error.ApiError;
 import ec.animal.adoption.domain.error.ValidationApiSubError;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
-import ec.animal.adoption.exception.*;
+import ec.animal.adoption.exception.EntityAlreadyExistsException;
+import ec.animal.adoption.exception.EntityNotFoundException;
+import ec.animal.adoption.exception.ImageStorageException;
+import ec.animal.adoption.exception.InvalidPictureException;
+import ec.animal.adoption.exception.InvalidStateException;
+import ec.animal.adoption.exception.MediaStorageException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -143,8 +148,8 @@ public class RestExceptionHandlerTest {
         ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
                 .setSubErrors(
                         fieldErrors.stream()
-                                .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
-                                .collect(Collectors.toList())
+                                   .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
+                                   .collect(Collectors.toList())
                 );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
@@ -195,7 +200,7 @@ public class RestExceptionHandlerTest {
                 HttpStatus.BAD_REQUEST,
                 String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
                         map(SupportedImageExtension::getExtension).
-                        collect(Collectors.joining(", ")))
+                                                                               collect(Collectors.joining(", ")))
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingError(
@@ -217,7 +222,7 @@ public class RestExceptionHandlerTest {
                 HttpStatus.BAD_REQUEST,
                 String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
                         map(SupportedImageExtension::getExtension).
-                        collect(Collectors.joining(", "))),
+                                                                               collect(Collectors.joining(", "))),
                 localizedMessage
         );
 
@@ -258,25 +263,23 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableErrorForGoogleCloudStorageException() {
-        GoogleCloudStorageException googleCloudStorageException = mock(GoogleCloudStorageException.class);
+    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableErrorForMediaStorageException() {
+        MediaStorageException mediaStorageException = mock(MediaStorageException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler
-                .handleGoogleCloudStorageException(googleCloudStorageException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMediaStorageException(mediaStorageException);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.SERVICE_UNAVAILABLE));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForGoogleCloudStorageException() {
-        GoogleCloudStorageException googleCloudStorageException = new GoogleCloudStorageException();
+    public void shouldReturnAResponseEntityWithApiErrorForMediaStorageException() {
+        MediaStorageException mediaStorageException = new MediaStorageException();
         ApiError expectedApiError = new ApiError(
                 HttpStatus.SERVICE_UNAVAILABLE,
                 "Can not fulfill the request now. Please, retry later (client unavailable)"
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler
-                .handleGoogleCloudStorageException(googleCloudStorageException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMediaStorageException(mediaStorageException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();

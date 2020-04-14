@@ -1,0 +1,49 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "POST",
+        "url": "/v1_1/cloudinary-dummy-cloud-name/image/upload"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "url": "dummy-url"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/v1_1/cloudinary-dummy-cloud-name/resources/image/upload"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPattern": "/v1_1/cloudinary-dummy-cloud-name/folders/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": "ok"
+        }
+      }
+    }
+  ]
+}

@@ -235,7 +235,7 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: Build and Publish Docker image
+          name: Build and Publish Docker image for Production
           command: |
             docker build -t $IMAGE_NAME:latest .
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin

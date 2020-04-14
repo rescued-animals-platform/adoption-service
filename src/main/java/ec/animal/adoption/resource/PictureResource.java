@@ -19,13 +19,13 @@
 
 package ec.animal.adoption.resource;
 
-import com.google.common.io.Files;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.exception.InvalidPictureException;
 import ec.animal.adoption.service.PictureService;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,9 +81,9 @@ public class PictureResource {
         }
 
         try {
-            return new Image(
-                    Files.getFileExtension(originalFilename), multipartFile.getBytes(), multipartFile.getSize()
-            );
+            return new Image(FilenameUtils.getExtension(originalFilename),
+                             multipartFile.getBytes(),
+                             multipartFile.getSize());
         } catch (IOException exception) {
             throw new InvalidPictureException(exception);
         }

@@ -2,17 +2,16 @@ server:
   port: 8080
 
 spring:
-  cloud:
-    gcp:
-      sql.enabled: false
   mvc:
     servlet:
       path: /adoption
   datasource:
     driver-class-name: org.postgresql.Driver
     platform: postgres
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 10
   jpa:
-    open-in-view: false
     properties:
       hibernate:
         ddl-auto: validate

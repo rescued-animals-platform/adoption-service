@@ -1,10 +1,5 @@
 spring:
   profiles: docker
-  cloud:
-    gcp:
-      config.enabled: false
-      storage.enabled: false
-      logging.enabled: false
   datasource:
     url: jdbc:postgresql://adoption-service-db:5432/animal_adoption_db
     username: adoption_service
@@ -25,7 +20,11 @@ spring:
         jwt:
           issuer-uri: http://wiremock:8080/
 
-google.cloud.storage.bucket: adoption-service-testing
+cloudinary:
+  cloud-name: cloudinary-dummy-cloud-name
+  api-key: cloudinary-dummy-api-key
+  api-secret: cloudinary-dummy-secret
+  upload-prefix: http://wiremock:8080/
 
 logging:
   config: classpath:logback-spring-docker.xml
