@@ -10,6 +10,13 @@ parameters:
     default: false
 
 ####################
+# Orbs
+####################
+
+orbs:
+  heroku: circleci/heroku@1.0.1
+
+####################
 # Executors
 ####################
 
@@ -226,7 +233,7 @@ jobs:
           path: ~/junit
 
   deploy-uat:
-    executor: code-builder
+    executor: heroku/default
 
     steps:
       - attach_workspace:
