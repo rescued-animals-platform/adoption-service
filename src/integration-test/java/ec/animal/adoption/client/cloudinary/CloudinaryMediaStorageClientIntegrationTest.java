@@ -71,6 +71,5 @@ public class CloudinaryMediaStorageClientIntegrationTest {
     @After
     public void tearDown() throws Exception {
         cloudinary.api().deleteAllResources(Collections.emptyMap());
-        cloudinary.api().deleteFolder("default-organization", Collections.emptyMap());
     }
 }
