@@ -239,10 +239,8 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      - run:
-          name: Deploy Master to Heroku Uat
-          command: |
-            git push https://uat:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+      - heroku/deploy-via-git:
+          app-name: servicio-adoptiones-uat
 
   publish-image:
     executor: docker-publisher
