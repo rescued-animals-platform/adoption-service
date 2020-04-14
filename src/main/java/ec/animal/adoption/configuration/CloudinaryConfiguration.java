@@ -25,15 +25,21 @@ public class CloudinaryConfiguration {
     @Value("${cloudinary.upload-prefix}")
     private String uploadPrefix;
 
+    @Value("${cloudinary.url}")
+    private String url;
+
     @Bean
     @Primary
     public Cloudinary storage() {
+        if(url != null) {
+            return new Cloudinary(url);
+        }
+
         Map<String, String> config = new ConcurrentHashMap<>();
         config.put("cloud_name", cloudName);
         config.put("api_key", apiKey);
         config.put("api_secret", apiSecret);
         Optional.ofNullable(uploadPrefix).ifPresent(uploadPrefix -> config.put("upload_prefix", uploadPrefix));
-
         return new Cloudinary(config);
     }
 }
