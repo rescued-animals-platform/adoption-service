@@ -10,8 +10,5 @@ spring:
         jwt:
           issuer-uri: https://emmeblm.auth0.com/
 
-cloudinary:
-  url: ${CLOUDINARY_URL}
-
 logging:
   config: classpath:logback-spring-live.xml
