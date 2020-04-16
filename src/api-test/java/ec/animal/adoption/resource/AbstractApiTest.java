@@ -43,9 +43,9 @@ public abstract class AbstractApiTest {
     @BeforeClass
     public static void setUpClass() {
         String host = getenv("ADOPTION_SERVICE_URL");
-        String dummyJwt = getenv("DUMMY_JWT");
+        String jwtAccessToken = getenv("JWT_ACCESS_TOKEN");
         webTestClient = WebTestClient.bindToServer()
-                                     .defaultHeader("Authorization", "Bearer " + dummyJwt)
+                                     .defaultHeader("Authorization", "Bearer " + jwtAccessToken)
                                      .baseUrl(host)
                                      .responseTimeout(Duration.ofSeconds(10))
                                      .build();
