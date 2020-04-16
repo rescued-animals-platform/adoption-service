@@ -42,7 +42,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldSaveJpaAnimalWithJpaPrimaryLinkPicture() {
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
-                .withPictureType(PictureType.PRIMARY).build();
+                                                                   .withPictureType(PictureType.PRIMARY).build();
         Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(expectedPrimaryLinkPicture).build();
         JpaAnimal entity = new JpaAnimal(animal);
 
@@ -118,7 +117,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
         assertThat(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), is(nullValue()));
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
-                .withPictureType(PictureType.PRIMARY).build();
+                                                                   .withPictureType(PictureType.PRIMARY).build();
         animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(expectedPrimaryLinkPicture);
         JpaAnimal entity = new JpaAnimal(animalWithNoPrimaryLinkPicture);
 
@@ -180,11 +179,8 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
-    public void shouldReturnPageWithAllJpaAnimals() {
-        List<JpaAnimal> expectedJpaAnimals = new ArrayList<>();
-        IntStream.rangeClosed(1, 4).forEach(n -> {
-            expectedJpaAnimals.add(jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build())));
-        });
+    public void shouldReturnPageWithFourJpaAnimals() {
+        IntStream.rangeClosed(1, 4).forEach(n -> jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build())));
         Pageable pageable = PageRequest.of(0, 4);
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAll(pageable);
@@ -192,19 +188,15 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
         assertThat(jpaAnimals.size(), is(4));
-        assertThat(jpaAnimals.containsAll(expectedJpaAnimals), is(true));
     }
 
     @Test
-    public void shouldReturnPageWithAllJpaAnimalsWithMatchingStateAndSpeciesAndMatchingAllFilters() {
+    public void shouldReturnPageWithEightJpaAnimalsWithMatchingStateAndSpeciesAndMatchingAllFilters() {
         State lookingForHuman = new LookingForHuman(LocalDateTime.now());
         Species dog = Species.DOG;
         PhysicalActivity high = PhysicalActivity.HIGH;
         Size tiny = Size.TINY;
-        List<JpaAnimal> expectedJpaAnimals = new ArrayList<>();
-        IntStream.rangeClosed(1, 8).forEach(i -> expectedJpaAnimals.add(
-                jpaAnimalRepository.save(getJpaAnimalWith(lookingForHuman, dog, high, tiny))
-        ));
+        IntStream.rangeClosed(1, 8).forEach(i -> jpaAnimalRepository.save(getJpaAnimalWith(lookingForHuman, dog, high, tiny)));
         saveOtherJpaAnimalsWithDifferentState(new Adopted(LocalDateTime.now(), randomAlphabetic(10)));
         Pageable pageable = PageRequest.of(0, 8);
 
@@ -216,25 +208,19 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
         assertThat(jpaAnimals.size(), is(8));
-        assertThat(jpaAnimals.containsAll(expectedJpaAnimals), is(true));
     }
 
     @Test
-    public void shouldReturnPageWithAllJpaAnimalsWithMatchingStateAndSpeciesAndMatchingSomeOrAllFilters() {
+    public void shouldReturnPageWithTwentyJpaAnimalsWithMatchingStateAndSpeciesAndMatchingSomeOrAllFilters() {
         State adopted = new Adopted(LocalDateTime.now(), randomAlphabetic(10));
         Species cat = Species.CAT;
         PhysicalActivity low = PhysicalActivity.LOW;
         Size medium = Size.MEDIUM;
-        List<JpaAnimal> expectedJpaAnimals = new ArrayList<>();
         IntStream.rangeClosed(1, 5).forEach(i -> {
-            expectedJpaAnimals.add(jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, low, medium)));
-            expectedJpaAnimals.add(jpaAnimalRepository.save(
-                    getJpaAnimalWith(adopted, cat, PhysicalActivity.HIGH, medium)
-            ));
-            expectedJpaAnimals.add(jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, low, Size.OUTSIZE)));
-            expectedJpaAnimals.add(jpaAnimalRepository.save(
-                    getJpaAnimalWith(adopted, cat, PhysicalActivity.MEDIUM, Size.SMALL)
-            ));
+            jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, low, medium));
+            jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, PhysicalActivity.HIGH, medium));
+            jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, low, Size.OUTSIZE));
+            jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, PhysicalActivity.MEDIUM, Size.SMALL));
         });
         saveOtherJpaAnimalsWithDifferentState(new Unavailable(LocalDateTime.now(), randomAlphabetic(10)));
         Pageable pageable = PageRequest.of(0, 20);
@@ -247,12 +233,12 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
         assertThat(jpaAnimals.size(), is(20));
-        assertThat(jpaAnimals.containsAll(expectedJpaAnimals), is(true));
     }
 
-    private JpaAnimal getJpaAnimalWith(
-            final State state, final Species species, final PhysicalActivity physicalActivity, final Size size
-    ) {
+    private JpaAnimal getJpaAnimalWith(final State state,
+                                       final Species species,
+                                       final PhysicalActivity physicalActivity,
+                                       final Size size) {
         return new JpaAnimal(
                 AnimalBuilder.random().withState(state).withSpecies(species).withCharacteristics(
                         CharacteristicsBuilder.random().withPhysicalActivity(physicalActivity).withSize(size).build()
