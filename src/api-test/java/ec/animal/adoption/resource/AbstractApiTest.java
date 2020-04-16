@@ -39,45 +39,39 @@ public abstract class AbstractApiTest {
     static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
 
     static WebTestClient webTestClient;
-    static WebTestClient adminWebTestClient;
 
     @BeforeClass
     public static void setUpClass() {
         String host = getenv("ADOPTION_SERVICE_URL");
+        String dummyJwt = getenv("DUMMY_JWT");
         webTestClient = WebTestClient.bindToServer()
+                                     .defaultHeader("Authorization", "Bearer " + dummyJwt)
                                      .baseUrl(host)
                                      .responseTimeout(Duration.ofSeconds(10))
                                      .build();
-
-        String adminJwt = getenv("ADMIN_JWT");
-        adminWebTestClient = WebTestClient.bindToServer()
-                                          .defaultHeader("Authorization", "Bearer " + adminJwt)
-                                          .baseUrl(host)
-                                          .responseTimeout(Duration.ofSeconds(10))
-                                          .build();
     }
 
     Animal createRandomAnimalWithDefaultLookingForHumanState() {
-        return adminWebTestClient.post()
-                                 .uri(ANIMALS_URL)
-                                 .bodyValue(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
-                                 .exchange()
-                                 .expectStatus()
-                                 .isCreated()
-                                 .expectBody(Animal.class)
-                                 .returnResult()
-                                 .getResponseBody();
+        return webTestClient.post()
+                            .uri(ANIMALS_URL)
+                            .bodyValue(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
+                            .exchange()
+                            .expectStatus()
+                            .isCreated()
+                            .expectBody(Animal.class)
+                            .returnResult()
+                            .getResponseBody();
     }
 
     void createAnimal(final Animal animal) {
-        adminWebTestClient.post()
-                          .uri(ANIMALS_URL)
-                          .bodyValue(animal)
-                          .exchange()
-                          .expectStatus()
-                          .isCreated()
-                          .expectBody(Animal.class)
-                          .returnResult()
-                          .getResponseBody();
+        webTestClient.post()
+                     .uri(ANIMALS_URL)
+                     .bodyValue(animal)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated()
+                     .expectBody(Animal.class)
+                     .returnResult()
+                     .getResponseBody();
     }
 }

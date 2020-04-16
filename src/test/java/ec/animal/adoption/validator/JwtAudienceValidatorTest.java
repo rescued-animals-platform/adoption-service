@@ -12,27 +12,27 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AudienceValidatorTest {
+public class JwtAudienceValidatorTest {
 
     @Test
     public void shouldReturnValidatorResultWithNoErrorsWhenAudienceInTokenMatchAudienceInValidator() {
         String audience = randomAlphabetic(10);
-        AudienceValidator audienceValidator = new AudienceValidator(audience);
+        JwtAudienceValidator jwtAudienceValidator = new JwtAudienceValidator(audience);
         Jwt token = mock(Jwt.class);
         when(token.getAudience()).thenReturn(Collections.singletonList(audience));
 
-        OAuth2TokenValidatorResult tokenValidatorResult = audienceValidator.validate(token);
+        OAuth2TokenValidatorResult tokenValidatorResult = jwtAudienceValidator.validate(token);
 
         assertFalse(tokenValidatorResult.hasErrors());
     }
 
     @Test
     public void shouldReturnValidatorResultWithErrorWhenAudienceInTokenIsDifferentThanAudienceInValidator() {
-        AudienceValidator audienceValidator = new AudienceValidator(randomAlphabetic(10));
+        JwtAudienceValidator jwtAudienceValidator = new JwtAudienceValidator(randomAlphabetic(10));
         Jwt token = mock(Jwt.class);
         when(token.getAudience()).thenReturn(Collections.singletonList(randomAlphabetic(10)));
 
-        OAuth2TokenValidatorResult tokenValidatorResult = audienceValidator.validate(token);
+        OAuth2TokenValidatorResult tokenValidatorResult = jwtAudienceValidator.validate(token);
 
         assertTrue(tokenValidatorResult.hasErrors());
     }

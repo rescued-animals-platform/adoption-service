@@ -64,48 +64,48 @@ public class PictureResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn201CreatedWithLinkPicture() {
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(validMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isCreated()
-                          .expectBody(LinkPicture.class)
-                          .consumeWith(linkPictureEntityExchangeResult -> {
-                              LinkPicture linkPicture = linkPictureEntityExchangeResult.getResponseBody();
-                              assertNotNull(linkPicture);
-                              assertThat(linkPicture.getName(), is(name));
-                              assertThat(linkPicture.getPictureType(), is(pictureType));
-                          });
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(validMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated()
+                     .expectBody(LinkPicture.class)
+                     .consumeWith(linkPictureEntityExchangeResult -> {
+                         LinkPicture linkPicture = linkPictureEntityExchangeResult.getResponseBody();
+                         assertNotNull(linkPicture);
+                         assertThat(linkPicture.getName(), is(name));
+                         assertThat(linkPicture.getPictureType(), is(pictureType));
+                     });
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingPictureForNonExistentAnimal() {
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, UUID.randomUUID())
-                          .bodyValue(validMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isNotFound()
-                          .expectBody(ApiError.class);
+        webTestClient.post()
+                     .uri(PICTURES_URL, UUID.randomUUID())
+                     .bodyValue(validMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingPrimaryPictureThatAlreadyExist() {
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(validMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isCreated();
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(validMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated();
 
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(validMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isEqualTo(CONFLICT)
-                          .expectBody(ApiError.class);
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(validMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isEqualTo(CONFLICT)
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -116,13 +116,13 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(invalidMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isBadRequest()
-                          .expectBody(ApiError.class);
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -133,13 +133,13 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(invalidMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isBadRequest()
-                          .expectBody(ApiError.class);
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
     }
 
     @Test
@@ -150,26 +150,26 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
 
-        adminWebTestClient.post()
-                          .uri(PICTURES_URL, animalUuid)
-                          .bodyValue(invalidMultipartPicturesFormData)
-                          .exchange()
-                          .expectStatus()
-                          .isBadRequest()
-                          .expectBody(ApiError.class);
+        webTestClient.post()
+                     .uri(PICTURES_URL, animalUuid)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
     }
 
     @Test
     public void shouldReturn200OkWithPrimaryPicture() {
-        LinkPicture createdLinkPicture = adminWebTestClient.post()
-                                                           .uri(PICTURES_URL, animalUuid)
-                                                           .bodyValue(validMultipartPicturesFormData)
-                                                           .exchange()
-                                                           .expectStatus()
-                                                           .isCreated()
-                                                           .expectBody(LinkPicture.class)
-                                                           .returnResult()
-                                                           .getResponseBody();
+        LinkPicture createdLinkPicture = webTestClient.post()
+                                                      .uri(PICTURES_URL, animalUuid)
+                                                      .bodyValue(validMultipartPicturesFormData)
+                                                      .exchange()
+                                                      .expectStatus()
+                                                      .isCreated()
+                                                      .expectBody(LinkPicture.class)
+                                                      .returnResult()
+                                                      .getResponseBody();
 
         assertNotNull(createdLinkPicture);
 

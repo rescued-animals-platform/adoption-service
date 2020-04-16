@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service.svg?style=shield)](https://circleci.com/gh/rescued-animals-platform/adoption-service)
 
 
-Tech stack: Java 11, Gradle 6.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Terraform v0.12.4, Google Cloud Platform.
+Tech stack: Java 11, Gradle 6.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Heroku.
 
 # Setting up your development environment (Linux, macOS)
 
@@ -43,7 +43,7 @@ _**(Only for the first time)**_
 
         SPRING_PROFILE=local
         ADOPTION_SERVICE_URL=http://localhost:8080
-        ADMIN_JWT=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNrc2hkYjgydHUzYm5pb3NodWprbnNraGRiYmprc2JvM3UifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxMjMvIiwic3ViIjoiMTIzNDU2Nzg5MCIsImF1ZCI6Imh0dHBzOi8vYW5pbWFsZXMtcmVzY2F0YWRvcy9zZXJ2aWNpby1hZG9wY2lvbmVzLmVjIiwiaWF0IjoxNTg2NjM3MDQyLCJleHAiOjkwODY3MjM0NDJ9.EhSIUrmjMay16APD1JtyuTLynWZFfnX8EjIciDKShrNJjfwo9nbIBf_zgfNLKoQmZ2uNWLgWCrzpsutFw7KJJCh1j6G64NvdJyWFDbNiOXCrYyjVJoizXWDKVgcQKJGVoLfCOw_NrT4kRyKT8aqwRE-wMEKzp6MPeaTM8zi_bHZa87Deu_QvOsnknNZFFyUU7qyMByOqmyWfXjgtZ0FKBR1pM62pMBHuMC9sawya8b9tqfcfVF_p4_a70mtQttuXqKjg7hobELr8SPs3tGQUiEATRsPREvaI7Hziv1dvLBIIZd-YCzIVJ9USrm7rZV2G48q_HdG9hVLUa-N5dRrs4Q
+        DUMMY_JWT=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNrc2hkYjgydHUzYm5pb3NodWprbnNraGRiYmprc2JvM3UifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxMjMvIiwic3ViIjoiMTIzNDU2Nzg5MCIsImF1ZCI6Imh0dHBzOi8vYW5pbWFsZXMtcmVzY2F0YWRvcy9zZXJ2aWNpby1hZG9wY2lvbmVzLmVjIiwiaWF0IjoxNTg2NjM3MDQyLCJleHAiOjkwODY3MjM0NDIsInBlcm1pc3Npb25zIjpbInJlYWQ6YW5pbWFscyIsImNyZWF0ZTphbmltYWxzIiwidXBkYXRlOm9yZ2FuaXphdGlvbiJdfQ.bDGWWfgkZ_OqtKzltBfWFe321fRHlkpvBbMDEHy4vGk3U22Eb2SRNHJGxKZNw7oRVfUHPN7TKPFHvn3vr5zOMjptGUWbtXg9O1C9b_KpMfHEOHEV87aW2kpMJct5UY0h_cpKEI2bl10JD2Q49Qo1pnCmlauf4Gekgnb0BkhCaX4GZdlc5x3qQCfk_kaNhhI7_f52eRuACr3kWhR1mYrtKfHPpplm8PauWtG1Vt4AoheMLzqef8pW1gXNwJxUzi6VM2qqATV6j_Yxl4AxenqcV9SYrhn5EjFSypTW0kb_R56p9sc7MCIi_e-RAEZzQIkcFH_Rmj0_Aau88i7XKSpgAg
 
 _**(Always, before running the api tests)**_
 
