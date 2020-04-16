@@ -23,12 +23,14 @@ import ec.animal.adoption.model.jpa.JpaAnimal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface JpaAnimalRepository extends PagingAndSortingRepository<JpaAnimal, UUID> {
 
+    @Transactional(readOnly = true)
     Page<JpaAnimal> findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
             String stateName, String species, String physicalActivity, String size, Pageable pageable
     );

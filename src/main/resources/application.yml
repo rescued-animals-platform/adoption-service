@@ -9,8 +9,11 @@ spring:
     driver-class-name: org.postgresql.Driver
     platform: postgres
     hikari:
-      connectionTimeout: 20000
-      maximumPoolSize: 10
+      connection-timeout: 10000
+      validation-timeout: 5000
+      leak-detection-threshold: 2000
+      max-lifetime: 300000
+      maximum-pool-size: 10
   jpa:
     open-in-view: false
     properties:
