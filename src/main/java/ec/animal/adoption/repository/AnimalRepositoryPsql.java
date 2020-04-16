@@ -31,12 +31,10 @@ import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Transactional
 @Repository
 public class AnimalRepositoryPsql implements AnimalRepository {
 
