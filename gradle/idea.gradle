@@ -1,26 +1,8 @@
 idea {
     module {
-
         testSourceDirs += file('src/integration-test/java')
-        sourceDirs += file('src/integration-test/resources')
+        testResourceDirs += file('src/integration-test/resources')
         testSourceDirs += file('src/api-test/java')
-        sourceDirs += file('src/api-test/resources')
-
-        iml {
-            withXml {
-                def testResourceFolders = it.asNode().component.content.sourceFolder
-                        .findAll { it.@url in ['file://$MODULE_DIR$/src/integration-test/resources', 'file://$MODULE_DIR$/src/test/resources','file://$MODULE_DIR$/src/api-test/resources'] }
-                testResourceFolders.each { resourceFolder ->
-                    def atts = resourceFolder.attributes()
-                    atts.remove('isTestSource')
-                    atts.put('type', 'java-test-resource')
-                }
-                def mainResource = it.asNode().component.content.sourceFolder
-                        .find { it.@url == 'file://$MODULE_DIR$/src/main/resources' }
-                        .attributes()
-                mainResource.remove('isSource')
-                mainResource.put('type', 'java-resource')
-            }
-        }
+        testResourceDirs += file('src/api-test/resources')
     }
 }
