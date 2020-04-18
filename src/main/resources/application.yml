@@ -11,9 +11,9 @@ spring:
     hikari:
       connection-timeout: 10000
       validation-timeout: 5000
-      leak-detection-threshold: 2000
+      leak-detection-threshold: 30000
       max-lifetime: 300000
-      maximum-pool-size: 10
+      maximum-pool-size: 8
   jpa:
     open-in-view: false
     properties:
