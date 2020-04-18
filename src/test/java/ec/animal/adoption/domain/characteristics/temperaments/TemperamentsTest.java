@@ -8,7 +8,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getObjectMapper;
+import static ec.animal.adoption.TestUtils.getRandomBalance;
+import static ec.animal.adoption.TestUtils.getRandomDocility;
+import static ec.animal.adoption.TestUtils.getRandomSociability;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 

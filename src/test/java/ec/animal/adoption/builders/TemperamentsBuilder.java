@@ -24,7 +24,9 @@ import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomBalance;
+import static ec.animal.adoption.TestUtils.getRandomDocility;
+import static ec.animal.adoption.TestUtils.getRandomSociability;
 
 public class TemperamentsBuilder {
 

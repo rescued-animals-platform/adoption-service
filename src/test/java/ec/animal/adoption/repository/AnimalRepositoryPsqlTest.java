@@ -2,17 +2,18 @@ package ec.animal.adoption.repository;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
+import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.exception.EntityNotFoundException;
-import ec.animal.adoption.model.jpa.JpaAnimal;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
+import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @RunWith(MockitoJUnitRunner.class)

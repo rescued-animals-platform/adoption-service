@@ -19,15 +19,16 @@
 
 package ec.animal.adoption.repository;
 
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.exception.EntityNotFoundException;
-import ec.animal.adoption.model.jpa.JpaAnimal;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
+import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
+import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;

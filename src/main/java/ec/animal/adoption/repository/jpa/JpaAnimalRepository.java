@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa;
 
-import ec.animal.adoption.model.jpa.JpaAnimal;
+import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
