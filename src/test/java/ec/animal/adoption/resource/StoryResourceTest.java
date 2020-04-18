@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.resource;
 
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.service.StoryService;
 import org.junit.Before;
 import org.junit.Test;

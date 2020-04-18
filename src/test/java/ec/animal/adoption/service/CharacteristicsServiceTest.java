@@ -21,7 +21,7 @@ package ec.animal.adoption.service;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.exception.EntityNotFoundException;
 import ec.animal.adoption.repository.AnimalRepository;

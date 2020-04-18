@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.resource;
 
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.error.ApiError;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;

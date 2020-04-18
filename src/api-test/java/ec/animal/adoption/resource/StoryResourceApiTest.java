@@ -20,8 +20,8 @@
 package ec.animal.adoption.resource;
 
 import ec.animal.adoption.builders.StoryBuilder;
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.error.ApiError;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;

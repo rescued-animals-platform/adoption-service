@@ -20,7 +20,7 @@
 package ec.animal.adoption.resource;
 
 import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;

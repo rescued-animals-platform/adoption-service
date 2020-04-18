@@ -20,7 +20,7 @@
 package ec.animal.adoption.service;
 
 import ec.animal.adoption.client.MediaStorageClient;
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;

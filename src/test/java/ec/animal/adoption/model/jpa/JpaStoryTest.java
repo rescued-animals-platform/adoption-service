@@ -20,7 +20,7 @@
 package ec.animal.adoption.model.jpa;
 
 import ec.animal.adoption.builders.StoryBuilder;
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.story.Story;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;

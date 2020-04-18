@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.resource;
 
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

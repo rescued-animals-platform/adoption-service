@@ -20,7 +20,7 @@
 package ec.animal.adoption.resource;
 
 import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.domain.Animal;
+import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import org.junit.BeforeClass;
 import org.springframework.test.web.reactive.server.WebTestClient;

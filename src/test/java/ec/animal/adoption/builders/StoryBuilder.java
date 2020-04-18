@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.builders;
 
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.story.Story;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

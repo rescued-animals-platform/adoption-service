@@ -1,10 +1,10 @@
 sourceSets {
     main {
         resources {
-            srcDirs = ['migrations/','src/main/resources']
+            srcDirs = ['migrations/', 'src/main/resources']
         }
     }
-    
+
     integrationTest {
         java {
             srcDir file('src/integration-test/java')
@@ -15,7 +15,7 @@ sourceSets {
             srcDir file('src/integration-test/resources')
         }
     }
-    
+
     apiTest {
         java {
             srcDir file('src/api-test/java')

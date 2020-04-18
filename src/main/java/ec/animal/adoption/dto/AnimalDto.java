@@ -20,10 +20,10 @@
 package ec.animal.adoption.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.EstimatedAge;
-import ec.animal.adoption.domain.Sex;
-import ec.animal.adoption.domain.Species;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.EstimatedAge;
+import ec.animal.adoption.domain.animal.Sex;
+import ec.animal.adoption.domain.animal.Species;
 
 import java.util.UUID;
 

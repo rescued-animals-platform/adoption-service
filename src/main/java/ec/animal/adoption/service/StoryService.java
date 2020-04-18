@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.service;
 
-import ec.animal.adoption.domain.Animal;
-import ec.animal.adoption.domain.Story;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.exception.EntityNotFoundException;
 import ec.animal.adoption.repository.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,10 +19,14 @@
 
 package ec.animal.adoption.builders;
 
-import ec.animal.adoption.domain.*;
+import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.EstimatedAge;
+import ec.animal.adoption.domain.animal.Sex;
+import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.story.Story;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
