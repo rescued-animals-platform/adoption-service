@@ -36,7 +36,7 @@ import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,27 +49,28 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
 public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
     @Test
     public void shouldSaveAJpaAnimal() {
-        JpaAnimal entity = new JpaAnimal(AnimalBuilder.random().build());
+        JpaAnimal entity = new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build());
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
-        assertReflectionEquals(jpaAnimal, entity);
+        assertEquals(jpaAnimal, entity);
     }
 
     @Test
     public void shouldSaveJpaAnimalWithJpaPrimaryLinkPicture() {
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
                                                                    .withPictureType(PictureType.PRIMARY).build();
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(expectedPrimaryLinkPicture).build();
+        Animal animal = AnimalBuilder.randomWithDefaultOrganization()
+                                     .withPrimaryLinkPicture(expectedPrimaryLinkPicture)
+                                     .build();
         JpaAnimal entity = new JpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -85,7 +86,9 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldSaveJpaAnimalWithJpaCharacteristics() {
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withCharacteristics(expectedCharacteristics).build();
+        Animal animal = AnimalBuilder.randomWithDefaultOrganization()
+                                     .withCharacteristics(expectedCharacteristics)
+                                     .build();
         JpaAnimal entity = new JpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -101,7 +104,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldSaveJpaAnimalWithJpaStory() {
         Story expectedStory = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withStory(expectedStory).build();
+        Animal animal = AnimalBuilder.randomWithDefaultOrganization().withStory(expectedStory).build();
         JpaAnimal entity = new JpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -168,8 +171,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldFindJpaAnimalByAnimalUuid() {
-        JpaAnimal entity = new JpaAnimal(AnimalBuilder.random().build());
-        JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
+        JpaAnimal jpaAnimal = createAndSaveJpaAnimal();
         UUID animalUuid = jpaAnimal.toAnimal().getUuid();
 
         Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findById(animalUuid);
@@ -180,7 +182,9 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldReturnPageWithFourJpaAnimals() {
-        IntStream.rangeClosed(1, 4).forEach(n -> jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.random().build())));
+        IntStream.rangeClosed(1, 4).forEach(n -> jpaAnimalRepository.save(
+                new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build()))
+        );
         Pageable pageable = PageRequest.of(0, 4);
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAll(pageable);
@@ -239,15 +243,20 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
                                        final Species species,
                                        final PhysicalActivity physicalActivity,
                                        final Size size) {
-        return new JpaAnimal(
-                AnimalBuilder.random().withState(state).withSpecies(species).withCharacteristics(
-                        CharacteristicsBuilder.random().withPhysicalActivity(physicalActivity).withSize(size).build()
-                ).build());
+        Characteristics characteristics = CharacteristicsBuilder.random()
+                                                                .withPhysicalActivity(physicalActivity)
+                                                                .withSize(size)
+                                                                .build();
+        return new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization()
+                                          .withState(state)
+                                          .withSpecies(species)
+                                          .withCharacteristics(characteristics)
+                                          .build());
     }
 
     private void saveOtherJpaAnimalsWithDifferentState(final State state) {
         IntStream.rangeClosed(1, 10).forEach(n -> jpaAnimalRepository.save(
-                new JpaAnimal(AnimalBuilder.random().withState(state).build())
+                new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().withState(state).build())
         ));
     }
 }

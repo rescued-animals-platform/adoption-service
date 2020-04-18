@@ -20,22 +20,22 @@
 package ec.animal.adoption.validator;
 
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TemperamentsValidatorTest {
 
     @Mock
@@ -43,7 +43,7 @@ public class TemperamentsValidatorTest {
 
     private TemperamentsValidator temperamentsValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         temperamentsValidator = new TemperamentsValidator();
     }

@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.StoryBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -35,11 +35,11 @@ import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StoryTest {
 
@@ -48,7 +48,7 @@ public class StoryTest {
     private Story story;
     private String text;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         text = randomAlphabetic(100);
         story = StoryBuilder.random().withText(text).build();
@@ -60,7 +60,6 @@ public class StoryTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Story.class).usingGetClass().verify();
     }
@@ -79,7 +78,7 @@ public class StoryTest {
     public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
         Story story = StoryBuilder.random().withUuid(UUID.randomUUID()).withRegistrationDate(LocalDateTime.now())
-                .build();
+                                  .build();
 
         String serializedStory = objectMapper.writeValueAsString(story);
 

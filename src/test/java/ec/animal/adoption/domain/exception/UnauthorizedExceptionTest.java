@@ -17,12 +17,21 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.client;
+package ec.animal.adoption.domain.exception;
 
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.LinkPicture;
+import org.junit.jupiter.api.Test;
 
-public interface MediaStorageClient {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-    LinkPicture save(ImagePicture imagePicture);
+class UnauthorizedExceptionTest {
+
+    @Test
+    public void shouldReturnMessage() {
+        String expectedMessage = "Unauthorized";
+
+        UnauthorizedException unauthorizedException = new UnauthorizedException();
+
+        assertThat(unauthorizedException.getMessage(), is(expectedMessage));
+    }
 }

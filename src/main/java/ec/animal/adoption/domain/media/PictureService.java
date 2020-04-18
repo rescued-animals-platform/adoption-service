@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.domain.media;
 
-import ec.animal.adoption.client.MediaStorageClient;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
@@ -32,15 +31,15 @@ import java.util.UUID;
 @Service
 public class PictureService {
 
-    private final MediaStorageClient mediaStorageClient;
+    private final MediaRepository mediaRepository;
     private final AnimalRepository animalRepository;
 
     @Autowired
     public PictureService(
-            final MediaStorageClient mediaStorageClient,
+            final MediaRepository mediaRepository,
             final AnimalRepository animalRepository
     ) {
-        this.mediaStorageClient = mediaStorageClient;
+        this.mediaRepository = mediaRepository;
         this.animalRepository = animalRepository;
     }
 
@@ -50,7 +49,7 @@ public class PictureService {
         }
 
         Animal animal = animalRepository.getBy(imagePicture.getAnimalUuid());
-        LinkPicture linkPicture = mediaStorageClient.save(imagePicture);
+        LinkPicture linkPicture = mediaRepository.save(imagePicture);
         animal.setPrimaryLinkPicture(linkPicture);
 
         return animalRepository.save(animal).getPrimaryLinkPicture();

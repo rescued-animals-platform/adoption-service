@@ -121,10 +121,10 @@ public class TestUtils {
 
     public static ObjectMapper getObjectMapper() {
         return Jackson2ObjectMapperBuilder.json()
-                .serializationInclusion(JsonInclude.Include.NON_EMPTY)
-                .featuresToDisable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
-                ).build();
+                                          .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+                                          .featuresToDisable(
+                                                  SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+                                          ).build();
     }
 
     private static int getRandomIndex(final int bound) {

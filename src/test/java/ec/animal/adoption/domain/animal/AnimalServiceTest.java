@@ -21,18 +21,23 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.domain.state.State;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -45,14 +50,19 @@ import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AnimalServiceTest {
+
+    @Mock
+    private OrganizationRepository organizationRepository;
 
     @Mock
     private AnimalRepository animalRepository;
@@ -70,7 +80,7 @@ public class AnimalServiceTest {
     private Size size;
     private AnimalService animalService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         state = getRandomState();
         animalsFilteredByState = newArrayList(
@@ -81,17 +91,23 @@ public class AnimalServiceTest {
         species = getRandomSpecies();
         physicalActivity = getRandomPhysicalActivity();
         size = getRandomSize();
-        animalService = new AnimalService(animalRepository);
+        animalService = new AnimalService(animalRepository, organizationRepository);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
+        UUID organizationUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        when(organizationRepository.getBy(organizationUuid)).thenReturn(organization);
         Animal animal = AnimalBuilder.random().build();
         when(animalRepository.save(animal)).thenReturn(expectedAnimal);
+        ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
 
-        Animal createdAnimal = animalService.create(animal);
+        Animal createdAnimal = animalService.create(animal, organizationUuid);
 
         assertThat(createdAnimal, is(expectedAnimal));
+        verify(animalRepository).save(animalArgumentCaptor.capture());
+        assertEquals(organization, animalArgumentCaptor.getValue().getOrganization());
     }
 
     @Test
@@ -104,11 +120,13 @@ public class AnimalServiceTest {
         assertThat(animal, is(expectedAnimal));
     }
 
-    @Test(expected = InvalidStateException.class)
+    @Test
     public void shouldThrowInvalidStateExceptionWhenStateNameIsNotValid() {
         String invalidStateName = randomAlphabetic(10);
 
-        animalService.listAllWithFilters(invalidStateName, species, physicalActivity, size, mock(Pageable.class));
+        assertThrows(InvalidStateException.class, () -> {
+            animalService.listAllWithFilters(invalidStateName, species, physicalActivity, size, mock(Pageable.class));
+        });
     }
 
     @Test
@@ -127,14 +145,17 @@ public class AnimalServiceTest {
                 stateName, species, physicalActivity, size, pageable
         );
 
-        assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
+        Assertions.assertThat(pageOfAnimalDtos)
+                  .usingRecursiveFieldByFieldElementComparator()
+                  .isEqualTo(expectedPageOfAnimalDtos);
     }
 
     @Test
-    public void shouldReturnAllAnimalDtosWithFiltersAndNoSmallPrimaryPictureUrl() {
+    public void shouldReturnAllAnimalDataTransferObjectsWithFiltersAndNoSmallPrimaryPictureUrl() {
         String stateName = state.getStateName();
         when(animalRepository.getAllBy(state.getStateName(), species, physicalActivity, size, pageable))
                 .thenReturn(new PagedEntity<>(animalsFilteredByState));
+
         PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
                 animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
         );
@@ -143,7 +164,9 @@ public class AnimalServiceTest {
                 stateName, species, physicalActivity, size, pageable
         );
 
-        assertReflectionEquals(expectedPageOfAnimalDtos, pageOfAnimalDtos);
+        Assertions.assertThat(pageOfAnimalDtos)
+                  .usingRecursiveFieldByFieldElementComparator()
+                  .isEqualTo(expectedPageOfAnimalDtos);
     }
 
     @Test

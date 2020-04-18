@@ -102,15 +102,27 @@ public class Characteristics extends Entity {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Characteristics that = (Characteristics) o;
 
-        if (size != that.size) return false;
-        if (physicalActivity != that.physicalActivity) return false;
-        if (temperaments != null ? !temperaments.equals(that.temperaments) : that.temperaments != null) return false;
+        if (size != that.size) {
+            return false;
+        }
+        if (physicalActivity != that.physicalActivity) {
+            return false;
+        }
+        if (temperaments != null ? !temperaments.equals(that.temperaments) : that.temperaments != null) {
+            return false;
+        }
         return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
     }
 

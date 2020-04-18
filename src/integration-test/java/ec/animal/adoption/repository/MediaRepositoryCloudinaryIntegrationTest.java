@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.client.cloudinary;
+package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import ec.animal.adoption.domain.media.Image;
@@ -25,30 +25,30 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class CloudinaryMediaStorageClientIntegrationTest {
+public class MediaRepositoryCloudinaryIntegrationTest {
 
     @Autowired
     private Cloudinary cloudinary;
 
     @Autowired
-    private CloudinaryMediaStorageClient cloudinaryMediaStorageClient;
+    private MediaRepositoryCloudinary cloudinaryMediaStorageClient;
 
     @Test
     public void shouldSaveAnImagePicture() throws IOException {
@@ -68,7 +68,7 @@ public class CloudinaryMediaStorageClientIntegrationTest {
         assertNotNull(linkPicture);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         cloudinary.api().deleteAllResources(Collections.emptyMap());
     }

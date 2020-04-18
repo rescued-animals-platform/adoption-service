@@ -69,15 +69,24 @@ public class ApiError {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ApiError apiError = (ApiError) o;
 
-        if (status != apiError.status) return false;
-        if (message != null ? !message.equals(apiError.message) : apiError.message != null) return false;
-        if (debugMessage != null ? !debugMessage.equals(apiError.debugMessage) : apiError.debugMessage != null)
+        if (status != apiError.status) {
             return false;
+        }
+        if (message != null ? !message.equals(apiError.message) : apiError.message != null) {
+            return false;
+        }
+        if (debugMessage != null ? !debugMessage.equals(apiError.debugMessage) : apiError.debugMessage != null) {
+            return false;
+        }
         return subErrors != null ? subErrors.equals(apiError.subErrors) : apiError.subErrors == null;
     }
 

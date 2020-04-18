@@ -24,6 +24,8 @@ import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.InvalidStateException;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.domain.state.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -35,13 +37,17 @@ import java.util.UUID;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final OrganizationRepository organizationRepository;
 
     @Autowired
-    public AnimalService(final AnimalRepository animalRepository) {
+    public AnimalService(final AnimalRepository animalRepository, final OrganizationRepository organizationRepository) {
         this.animalRepository = animalRepository;
+        this.organizationRepository = organizationRepository;
     }
 
-    public Animal create(final Animal animal) {
+    public Animal create(final Animal animal, final UUID organizationId) {
+        Organization organization = organizationRepository.getBy(organizationId);
+        animal.setOrganization(organization);
         return animalRepository.save(animal);
     }
 

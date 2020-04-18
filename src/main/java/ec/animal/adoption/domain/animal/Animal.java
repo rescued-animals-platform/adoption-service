@@ -26,6 +26,7 @@ import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
@@ -33,6 +34,7 @@ import ec.animal.adoption.domain.story.Story;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("PMD.DataClass")
@@ -70,6 +72,9 @@ public class Animal extends Entity {
     @JsonProperty(value = "story", access = JsonProperty.Access.READ_ONLY)
     private Story story;
 
+    @JsonIgnore
+    private Organization organization;
+
     @JsonCreator
     private Animal(
             @JsonProperty("clinicalRecord") final String clinicalRecord,
@@ -85,12 +90,7 @@ public class Animal extends Entity {
         this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
-
-        if (state == null) {
-            this.state = new LookingForHuman(LocalDateTime.now());
-        } else {
-            this.state = state;
-        }
+        this.state = Objects.requireNonNullElseGet(state, () -> new LookingForHuman(LocalDateTime.now()));
     }
 
     public Animal(
@@ -169,42 +169,73 @@ public class Animal extends Entity {
         return story;
     }
 
+    public void setOrganization(final Organization organization) {
+        this.organization = organization;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Animal animal = (Animal) o;
 
-        if (clinicalRecord != null ? !clinicalRecord.equals(animal.clinicalRecord) : animal.clinicalRecord != null)
+        if (!clinicalRecord.equals(animal.clinicalRecord)) {
             return false;
-        if (name != null ? !name.equals(animal.name) : animal.name != null) return false;
-        if (species != animal.species) return false;
-        if (estimatedAge != animal.estimatedAge) return false;
-        if (sex != animal.sex) return false;
-        if (state != null ? !state.equals(animal.state) : animal.state != null) return false;
-        if (primaryLinkPicture != null ? !primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture != null)
+        }
+        if (!name.equals(animal.name)) {
             return false;
-        if (characteristics != null ? !characteristics.equals(animal.characteristics) : animal.characteristics != null)
+        }
+        if (species != animal.species) {
             return false;
-        return story != null ? story.equals(animal.story) : animal.story == null;
+        }
+        if (estimatedAge != animal.estimatedAge) {
+            return false;
+        }
+        if (sex != animal.sex) {
+            return false;
+        }
+        if (!state.equals(animal.state)) {
+            return false;
+        }
+        if (primaryLinkPicture != null ? !primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture != null) {
+            return false;
+        }
+        if (characteristics != null ? !characteristics.equals(animal.characteristics) : animal.characteristics != null) {
+            return false;
+        }
+        if (story != null ? !story.equals(animal.story) : animal.story != null) {
+            return false;
+        }
+        return organization != null ? organization.equals(animal.organization) : animal.organization == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
-        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
-        result = 31 * result + (sex != null ? sex.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + clinicalRecord.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + species.hashCode();
+        result = 31 * result + estimatedAge.hashCode();
+        result = 31 * result + sex.hashCode();
+        result = 31 * result + state.hashCode();
         result = 31 * result + (primaryLinkPicture != null ? primaryLinkPicture.hashCode() : 0);
         result = 31 * result + (characteristics != null ? characteristics.hashCode() : 0);
         result = 31 * result + (story != null ? story.hashCode() : 0);
+        result = 31 * result + (organization != null ? organization.hashCode() : 0);
         return result;
     }
 }

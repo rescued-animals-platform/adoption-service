@@ -23,20 +23,19 @@ import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class PictureResourceApiTest extends AbstractApiTest {
 
     private static final String NAME = "name";
@@ -49,7 +48,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     private PictureType pictureType;
     private LinkedMultiValueMap<String, Object> validMultipartPicturesFormData;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         animalUuid = animal.getUuid();

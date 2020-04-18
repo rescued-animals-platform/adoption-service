@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
@@ -33,13 +33,13 @@ import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ApiErrorTest {
 
     private ApiError apiError;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         String debugMessage = randomAlphabetic(10);
         HttpStatus status = HttpStatus.BAD_GATEWAY;
@@ -52,13 +52,12 @@ public class ApiErrorTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ApiError.class)
-                .usingGetClass()
-                .withIgnoredFields("timestamp")
-                .suppress(Warning.NONFINAL_FIELDS)
-                .verify();
+                      .usingGetClass()
+                      .withIgnoredFields("timestamp")
+                      .suppress(Warning.NONFINAL_FIELDS)
+                      .verify();
     }
 
     @Test

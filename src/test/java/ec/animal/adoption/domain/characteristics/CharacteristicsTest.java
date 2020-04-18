@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,8 +26,7 @@ import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -21,7 +39,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CharacteristicsTest {
 
@@ -44,7 +62,6 @@ public class CharacteristicsTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Characteristics.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
@@ -66,12 +83,12 @@ public class CharacteristicsTest {
     public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
         Characteristics characteristics = CharacteristicsBuilder.random().withUuid(UUID.randomUUID())
-                .withRegistrationDate(LocalDateTime.now()).build();
+                                                                .withRegistrationDate(LocalDateTime.now()).build();
 
         String serializedCharacteristics = objectMapper.writeValueAsString(characteristics);
 
-        Assert.assertThat(serializedCharacteristics, not(containsString("uuid")));
-        Assert.assertThat(serializedCharacteristics, not(containsString("registrationDate")));
+        assertThat(serializedCharacteristics, not(containsString("uuid")));
+        assertThat(serializedCharacteristics, not(containsString("registrationDate")));
     }
 
     @Test

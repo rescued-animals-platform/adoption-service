@@ -24,22 +24,23 @@ import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CharacteristicsServiceTest {
 
     @Mock
@@ -47,7 +48,7 @@ public class CharacteristicsServiceTest {
 
     private CharacteristicsService characteristicsService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         characteristicsService = new CharacteristicsService(animalRepository);
     }
@@ -60,9 +61,9 @@ public class CharacteristicsServiceTest {
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
         Animal animalWithCharacteristics = AnimalBuilder.random().withCharacteristics(expectedCharacteristics)
-                .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
-                .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
-                .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+                                                        .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
+                                                        .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
+                                                        .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithCharacteristics);
 
         Characteristics createdCharacteristics = characteristicsService.create(animalUuid, expectedCharacteristics);
@@ -77,7 +78,7 @@ public class CharacteristicsServiceTest {
         UUID animalUuid = UUID.randomUUID();
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
         Animal animal = AnimalBuilder.random().withUuid(animalUuid).withCharacteristics(expectedCharacteristics)
-                .build();
+                                     .build();
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
 
         Characteristics characteristics = characteristicsService.getBy(animalUuid);
@@ -85,12 +86,14 @@ public class CharacteristicsServiceTest {
         assertThat(characteristics, is(expectedCharacteristics));
     }
 
-    @Test(expected = EntityNotFoundException.class)
+    @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereIsNoCharacteristicsForAnimal() {
         UUID animalUuid = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
 
-        characteristicsService.getBy(animalUuid);
+        assertThrows(EntityNotFoundException.class, () -> {
+            characteristicsService.getBy(animalUuid);
+        });
     }
 }

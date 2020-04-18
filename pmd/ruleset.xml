@@ -13,6 +13,7 @@
     <rule ref="category/java/bestpractices.xml">
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
         <exclude name="JUnitTestContainsTooManyAsserts"/>
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml">
@@ -31,6 +32,8 @@
         <exclude name="LoosePackageCoupling"/>
         <exclude name="UseUtilityClass"/>
         <exclude name="LawOfDemeter"/>
+        <exclude name="ExcessiveImports"/>
+        <exclude name="TooManyMethods"/>
     </rule>
 
     <rule ref="category/java/errorprone.xml">

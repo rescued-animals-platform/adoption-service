@@ -93,16 +93,27 @@ public class LinkPicture extends Entity {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         LinkPicture that = (LinkPicture) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (pictureType != that.pictureType) return false;
-        if (largeImageMediaLink != null ? !largeImageMediaLink.equals(that.largeImageMediaLink) : that.largeImageMediaLink != null)
+        if (name != null ? !name.equals(that.name) : that.name != null) {
             return false;
+        }
+        if (pictureType != that.pictureType) {
+            return false;
+        }
+        if (largeImageMediaLink != null ? !largeImageMediaLink.equals(that.largeImageMediaLink) : that.largeImageMediaLink != null) {
+            return false;
+        }
         return smallImageMediaLink != null ? smallImageMediaLink.equals(that.smallImageMediaLink) : that.smallImageMediaLink == null;
     }
 

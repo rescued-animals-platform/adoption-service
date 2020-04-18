@@ -27,23 +27,22 @@ import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     private UUID animalUuid;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         animalUuid = animal.getUuid();

@@ -27,11 +27,11 @@ import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.State;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -40,12 +40,12 @@ import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AnimalResourceTest {
 
     @Mock
@@ -62,7 +62,7 @@ public class AnimalResourceTest {
 
     private AnimalResource animalResource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         animalResource = new AnimalResource(animalService);
     }
@@ -70,9 +70,10 @@ public class AnimalResourceTest {
     @Test
     public void shouldCreateAnAnimal() {
         Animal animal = mock(Animal.class);
-        when(animalService.create(animal)).thenReturn(expectedAnimal);
+        UUID organizationId = UUID.randomUUID();
+        when(animalService.create(animal, organizationId)).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalResource.create(animal);
+        Animal createdAnimal = animalResource.create(animal, organizationId);
 
         assertThat(createdAnimal, is(expectedAnimal));
     }

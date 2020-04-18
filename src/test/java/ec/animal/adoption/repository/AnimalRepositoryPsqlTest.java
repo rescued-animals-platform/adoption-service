@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.repository;
 
 import ec.animal.adoption.builders.AnimalBuilder;
@@ -14,11 +33,11 @@ import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.postgresql.util.PSQLException;
 import org.springframework.data.domain.PageImpl;
@@ -34,16 +53,16 @@ import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("PMD.ExcessiveImports")
+@ExtendWith(MockitoExtension.class)
 public class AnimalRepositoryPsqlTest {
 
     @Mock
@@ -52,9 +71,9 @@ public class AnimalRepositoryPsqlTest {
     private AnimalRepositoryPsql animalRepositoryPsql;
     private Animal animal;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        animal = AnimalBuilder.random().build();
+        animal = AnimalBuilder.randomWithDefaultOrganization().build();
         animalRepositoryPsql = new AnimalRepositoryPsql(jpaAnimalRepository);
     }
 
@@ -71,16 +90,18 @@ public class AnimalRepositoryPsqlTest {
 
         Animal savedAnimal = animalRepositoryPsql.save(animal);
 
-        assertReflectionEquals(expectedAnimal, savedAnimal);
+        assertEquals(expectedAnimal, savedAnimal);
     }
 
-    @Test(expected = EntityAlreadyExistsException.class)
+    @Test
     public void shouldThrowEntityAlreadyExistException() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
-        animalRepositoryPsql.save(animal);
+        assertThrows(EntityAlreadyExistsException.class, () -> {
+            animalRepositoryPsql.save(animal);
+        });
     }
 
     @Test
@@ -91,12 +112,14 @@ public class AnimalRepositoryPsqlTest {
 
         Animal animalFound = animalRepositoryPsql.getBy(uuid);
 
-        assertReflectionEquals(expectedJpaAnimal.toAnimal(), animalFound);
+        assertEquals(expectedJpaAnimal.toAnimal(), animalFound);
     }
 
-    @Test(expected = EntityNotFoundException.class)
+    @Test
     public void shouldThrowEntityNotFoundException() {
-        animalRepositoryPsql.getBy(UUID.randomUUID());
+        assertThrows(EntityNotFoundException.class, () -> {
+            animalRepositoryPsql.getBy(UUID.randomUUID());
+        });
     }
 
     @Test
@@ -108,25 +131,27 @@ public class AnimalRepositoryPsqlTest {
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> jpaAnimals = new ArrayList<>();
         IntStream.rangeClosed(1, 10).forEach(i -> jpaAnimals.add(
-                new JpaAnimal(AnimalBuilder.random().withState(lookingForHuman).withSpecies(dog).withCharacteristics(
-                        CharacteristicsBuilder.random().withPhysicalActivity(high).withSize(tiny).build()
-                ).build())
+                new JpaAnimal(AnimalBuilder.random()
+                                           .withState(lookingForHuman)
+                                           .withSpecies(dog)
+                                           .withCharacteristics(CharacteristicsBuilder.random()
+                                                                                      .withPhysicalActivity(high)
+                                                                                      .withSize(tiny)
+                                                                                      .build())
+                                           .build())
         ));
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
                 jpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
-        when(
-                jpaAnimalRepository
-                        .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                                lookingForHuman.getStateName(), dog.name(), high.name(), tiny.name(), pageable
-                        )
+        when(jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
+                lookingForHuman.getStateName(), dog.name(), high.name(), tiny.name(), pageable)
         ).thenReturn(new PageImpl<>(jpaAnimals));
 
         PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(
                 lookingForHuman.getStateName(), dog, high, tiny, pageable
         );
 
-        assertReflectionEquals(expectedPageOfAnimals, pageOfAnimals);
+        assertEquals(expectedPageOfAnimals, pageOfAnimals);
     }
 
     @Test
@@ -142,6 +167,6 @@ public class AnimalRepositoryPsqlTest {
 
         PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAll(pageable);
 
-        assertReflectionEquals(expectedPageOfAnimals, pageOfAnimals);
+        assertEquals(expectedPageOfAnimals, pageOfAnimals);
     }
 }

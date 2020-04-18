@@ -21,20 +21,20 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CharacteristicsResourceTest {
 
     @Mock
@@ -46,7 +46,7 @@ public class CharacteristicsResourceTest {
     private UUID animalUuid;
     private CharacteristicsResource characteristicsResource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         animalUuid = UUID.randomUUID();
         characteristicsResource = new CharacteristicsResource(characteristicsService);

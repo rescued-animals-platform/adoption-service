@@ -22,7 +22,7 @@ package ec.animal.adoption.api.resource;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.state.LookingForHuman;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
@@ -33,14 +33,16 @@ import static java.lang.System.getenv;
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractApiTest {
 
-    static final String ANIMALS_URL = "/adoption/animals";
-    static final String CHARACTERISTICS_URL = ANIMALS_URL + "/{animalUuid}/characteristics";
-    static final String PICTURES_URL = ANIMALS_URL + "/{animalUuid}/pictures";
-    static final String STORY_URL = ANIMALS_URL + "/{animalUuid}/story";
+    static final String CREATE_ANIMAL_URL = "/adoption/animals?organizationId={organizationId}";
+    static final String GET_ANIMAL_URL = "/adoption/animals/{uuid}";
+    static final String GET_ANIMALS_URL = "/adoption/animals";
+    static final String CHARACTERISTICS_URL = "/adoption/animals/{animalUuid}/characteristics";
+    static final String PICTURES_URL = "/adoption/animals/{animalUuid}/pictures";
+    static final String STORY_URL = "/adoption/animals/{animalUuid}/story";
 
     static WebTestClient webTestClient;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         String host = getenv("ADOPTION_SERVICE_URL");
         String jwtAccessToken = getenv("JWT_ACCESS_TOKEN");
@@ -53,7 +55,7 @@ public abstract class AbstractApiTest {
 
     Animal createRandomAnimalWithDefaultLookingForHumanState() {
         return webTestClient.post()
-                            .uri(ANIMALS_URL)
+                            .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
                             .bodyValue(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
                             .exchange()
                             .expectStatus()
@@ -65,7 +67,7 @@ public abstract class AbstractApiTest {
 
     void createAnimal(final Animal animal) {
         webTestClient.post()
-                     .uri(ANIMALS_URL)
+                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()

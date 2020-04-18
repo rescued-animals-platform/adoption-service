@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.configuration;
 
 import ec.animal.adoption.validator.JwtAudienceValidator;
@@ -31,6 +50,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("PMD.MethodArgumentCouldBeFinal")
     private String issuer;
 
+    @Override
+    public void configure(final HttpSecurity http) throws Exception {
+        http.cors()
+            .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/adoption/animals/**").hasAuthority("SCOPE_read:animals")
+            .antMatchers(HttpMethod.POST, "/adoption/animals/**").hasAuthority("SCOPE_create:animals")
+            .and()
+            .oauth2ResourceServer().jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+    }
+
     @Bean
     JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(this.issuer);
@@ -50,17 +80,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 registry.addMapping("/adoption/animals/**");
             }
         };
-    }
-
-    @Override
-    public void configure(final HttpSecurity http) throws Exception {
-        http.cors()
-            .and()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/adoption/animals/**").hasAuthority("SCOPE_read:animals")
-            .antMatchers(HttpMethod.POST, "/adoption/animals/**").hasAuthority("SCOPE_create:animals")
-            .and()
-            .oauth2ResourceServer().jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {

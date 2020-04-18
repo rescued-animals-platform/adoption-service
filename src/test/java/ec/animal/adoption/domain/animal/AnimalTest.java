@@ -25,10 +25,12 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.Adopted;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
@@ -36,9 +38,8 @@ import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.domain.story.Story;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -49,19 +50,16 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 public class AnimalTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
     private static final String ANIMAL_CLINICAL_RECORD_IS_REQUIRED = "Animal clinical record is required";
@@ -96,13 +94,13 @@ public class AnimalTest {
 
     @Test
     public void shouldThrowIllegalArgumentExceptionWhenSettingAnAlternateLinkPicture() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Picture type should be PRIMARY");
-
         Animal animal = AnimalBuilder.random().build();
         LinkPicture alternateLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
 
-        animal.setPrimaryLinkPicture(alternateLinkPicture);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            animal.setPrimaryLinkPicture(alternateLinkPicture);
+        });
+        assertEquals("Picture type should be PRIMARY", exception.getMessage());
     }
 
     @Test
@@ -126,9 +124,22 @@ public class AnimalTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    public void shouldSetOrganization() {
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animal = AnimalBuilder.random().withOrganization(null).build();
+
+        animal.setOrganization(organization);
+
+        assertThat(animal.getOrganization(), is(organization));
+    }
+
+    @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Animal.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
+        EqualsVerifier.forClass(Animal.class)
+                      .suppress(Warning.NONFINAL_FIELDS)
+                      .usingGetClass()
+                      .withNonnullFields("clinicalRecord", "name", "species", "estimatedAge", "sex", "state")
+                      .verify();
     }
 
     @Test
@@ -136,8 +147,13 @@ public class AnimalTest {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         Story story = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withUuid(UUID.randomUUID()).withPrimaryLinkPicture(primaryLinkPicture)
-                .withCharacteristics(characteristics).withStory(story).withRegistrationDate(LocalDateTime.now()).build();
+        Animal animal = AnimalBuilder.random()
+                                     .withUuid(UUID.randomUUID())
+                                     .withPrimaryLinkPicture(primaryLinkPicture)
+                                     .withCharacteristics(characteristics)
+                                     .withStory(story)
+                                     .withRegistrationDate(LocalDateTime.now())
+                                     .build();
         String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
         String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
@@ -146,17 +162,17 @@ public class AnimalTest {
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
-        assertThat(serializedAnimal, containsString(animal.getUuid().toString()));
-        assertThat(serializedAnimal, containsString(expectedRegistrationDate));
-        assertThat(serializedAnimal, containsString(animal.getClinicalRecord()));
-        assertThat(serializedAnimal, containsString(animal.getName()));
-        assertThat(serializedAnimal, containsString(animal.getSpecies().name()));
-        assertThat(serializedAnimal, containsString(animal.getEstimatedAge().name()));
-        assertThat(serializedAnimal, containsString(animal.getSex().name()));
-        assertThat(serializedAnimal, containsString(expectedSerializedState));
-        assertThat(serializedAnimal, containsString(expectedPrimaryLinkPicture));
-        assertThat(serializedAnimal, containsString(expectedCharacteristics));
-        assertThat(serializedAnimal, containsString(expectedStory));
+        assertThat(serializedAnimal, containsString(String.format("\"uuid\":\"%s\"", animal.getUuid().toString())));
+        assertThat(serializedAnimal, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
+        assertThat(serializedAnimal, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
+        assertThat(serializedAnimal, containsString(String.format("\"name\":\"%s\"", animal.getName())));
+        assertThat(serializedAnimal, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
+        assertThat(serializedAnimal, containsString(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().name())));
+        assertThat(serializedAnimal, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
+        assertThat(serializedAnimal, containsString(String.format("\"state\":%s", expectedSerializedState)));
+        assertThat(serializedAnimal, containsString(String.format("\"primaryLinkPicture\":%s", expectedPrimaryLinkPicture)));
+        assertThat(serializedAnimal, containsString(String.format("\"characteristics\":%s", expectedCharacteristics)));
+        assertThat(serializedAnimal, containsString(String.format("\"story\":%s", expectedStory)));
     }
 
     @Test
@@ -236,7 +252,10 @@ public class AnimalTest {
     public void shouldDeserializeAnimalWithLookingForHumanState() throws IOException {
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        Animal animal = AnimalBuilder.random().withState(new LookingForHuman(localDateTime)).build();
+        Animal animal = AnimalBuilder.random()
+                                     .withOrganization(null)
+                                     .withState(new LookingForHuman(localDateTime))
+                                     .build();
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
@@ -244,7 +263,9 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
-        assertReflectionEquals(animal, deserializedAnimal);
+        Assertions.assertThat(deserializedAnimal)
+                  .usingRecursiveComparison()
+                  .isEqualTo(animal);
     }
 
     @Test
@@ -252,7 +273,10 @@ public class AnimalTest {
         String notes = randomAlphabetic(20);
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        Animal animal = AnimalBuilder.random().withState(new Unavailable(localDateTime, notes)).build();
+        Animal animal = AnimalBuilder.random()
+                                     .withOrganization(null)
+                                     .withState(new Unavailable(localDateTime, notes))
+                                     .build();
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
@@ -261,7 +285,9 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
-        assertReflectionEquals(animal, deserializedAnimal);
+        Assertions.assertThat(deserializedAnimal)
+                  .usingRecursiveComparison()
+                  .isEqualTo(animal);
     }
 
     @Test
@@ -269,7 +295,10 @@ public class AnimalTest {
         String adoptionFormId = randomAlphabetic(10);
         LocalDateTime localDateTime = LocalDateTime.now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        Animal animal = AnimalBuilder.random().withState(new Adopted(localDateTime, adoptionFormId)).build();
+        Animal animal = AnimalBuilder.random()
+                                     .withOrganization(null)
+                                     .withState(new Adopted(localDateTime, adoptionFormId))
+                                     .build();
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
@@ -278,7 +307,9 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
-        assertReflectionEquals(animal, deserializedAnimal);
+        Assertions.assertThat(deserializedAnimal)
+                  .usingRecursiveComparison()
+                  .isEqualTo(animal);
     }
 
     @Test

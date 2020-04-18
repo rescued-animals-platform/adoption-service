@@ -39,12 +39,18 @@ public class ValidationApiSubError implements ApiSubError {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ValidationApiSubError that = (ValidationApiSubError) o;
 
-        if (field != null ? !field.equals(that.field) : that.field != null) return false;
+        if (field != null ? !field.equals(that.field) : that.field != null) {
+            return false;
+        }
         return message != null ? message.equals(that.message) : that.message == null;
     }
 

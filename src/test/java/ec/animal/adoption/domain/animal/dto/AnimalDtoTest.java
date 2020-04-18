@@ -27,16 +27,16 @@ import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getObjectMapper;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnimalDtoTest {
 
@@ -46,8 +46,8 @@ public class AnimalDtoTest {
         UUID uuid = UUID.randomUUID();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
         Animal animal = AnimalBuilder.random().withUuid(uuid).withPrimaryLinkPicture(LinkPictureBuilder.random()
-                .withPictureType(PictureType.PRIMARY).withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
-                .build()).build();
+                                                                                                       .withPictureType(PictureType.PRIMARY).withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
+                                                                                                       .build()).build();
         AnimalDto animalDto = new AnimalDto(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
@@ -56,10 +56,10 @@ public class AnimalDtoTest {
         assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
         assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
-                animal.getEstimatedAge().name())));
+                                                                     animal.getEstimatedAge().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"smallPrimaryPictureUrl\":\"%s\"",
-                smallPrimaryPictureUrl)));
+                                                                     smallPrimaryPictureUrl)));
     }
 
     @Test
@@ -75,18 +75,20 @@ public class AnimalDtoTest {
         assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
         assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
-                animal.getEstimatedAge().name())));
+                                                                     animal.getEstimatedAge().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
         assertThat(serializedAnimalDto, not(containsString("smallPrimaryPictureUrl")));
     }
 
-    @Test(expected = InvalidDefinitionException.class)
-    public void shouldNotBeDeserializable() throws IOException {
+    @Test
+    public void shouldNotBeDeserializable() {
         ObjectMapper objectMapper = getObjectMapper();
         String animalDtoAsJson = "{\"uuid\":\"32bb12fb-6545-4cba-b439-49bf75b32369\",\"name\":\"LUjMtOrKfE\"," +
                 "\"species\":\"CAT\",\"estimatedAge\":\"YOUNG\",\"sex\":\"FEMALE\"," +
                 "\"smallPrimaryPictureUrl\":\"TznABoDYFF\"}";
 
-        objectMapper.readValue(animalDtoAsJson, AnimalDto.class);
+        assertThrows(InvalidDefinitionException.class, () -> {
+            objectMapper.readValue(animalDtoAsJson, AnimalDto.class);
+        });
     }
 }

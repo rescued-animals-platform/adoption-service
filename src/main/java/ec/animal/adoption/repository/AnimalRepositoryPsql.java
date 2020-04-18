@@ -60,12 +60,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @Override
     public Animal getBy(final UUID uuid) {
         Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
-
-        if (!jpaAnimal.isPresent()) {
-            throw new EntityNotFoundException();
-        }
-
-        return jpaAnimal.get().toAnimal();
+        return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

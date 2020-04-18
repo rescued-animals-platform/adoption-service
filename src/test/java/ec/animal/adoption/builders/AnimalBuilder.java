@@ -25,6 +25,7 @@ import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
 
@@ -37,8 +38,9 @@ import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-@SuppressWarnings("PMD.TooManyMethods")
 public class AnimalBuilder {
+
+    public static final UUID DEFAULT_ORGANIZATION_UUID = UUID.fromString("56009119-44bd-469a-a59b-401ab23d19ca");
 
     private UUID uuid;
     private LocalDateTime registrationDate;
@@ -51,6 +53,7 @@ public class AnimalBuilder {
     private LinkPicture primaryLinkPicture;
     private Characteristics characteristics;
     private Story story;
+    private Organization organization;
 
     public static AnimalBuilder random() {
         AnimalBuilder animalBuilder = new AnimalBuilder();
@@ -60,6 +63,13 @@ public class AnimalBuilder {
         animalBuilder.estimatedAge = getRandomEstimatedAge();
         animalBuilder.sex = getRandomSex();
         animalBuilder.state = getRandomState();
+        animalBuilder.organization = OrganizationBuilder.random().build();
+        return animalBuilder;
+    }
+
+    public static AnimalBuilder randomWithDefaultOrganization() {
+        AnimalBuilder animalBuilder = random();
+        animalBuilder.organization = OrganizationBuilder.random().withUuid(DEFAULT_ORGANIZATION_UUID).build();
         return animalBuilder;
     }
 
@@ -118,22 +128,26 @@ public class AnimalBuilder {
         return this;
     }
 
-    public Animal build() {
-        Animal animal = new Animal(
-                this.uuid,
-                this.registrationDate,
-                this.clinicalRecord,
-                this.name,
-                this.species,
-                this.estimatedAge,
-                this.sex,
-                this.state
-        );
-        animal.setCharacteristics(characteristics);
-        animal.setStory(story);
+    public AnimalBuilder withOrganization(final Organization organization) {
+        this.organization = organization;
+        return this;
+    }
 
-        if (primaryLinkPicture != null) {
-            animal.setPrimaryLinkPicture(primaryLinkPicture);
+    public Animal build() {
+        Animal animal = new Animal(this.uuid,
+                                   this.registrationDate,
+                                   this.clinicalRecord,
+                                   this.name,
+                                   this.species,
+                                   this.estimatedAge,
+                                   this.sex,
+                                   this.state);
+        animal.setCharacteristics(this.characteristics);
+        animal.setStory(this.story);
+        animal.setOrganization(this.organization);
+
+        if (this.primaryLinkPicture != null) {
+            animal.setPrimaryLinkPicture(this.primaryLinkPicture);
         }
 
         return animal;

@@ -36,6 +36,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -87,6 +88,10 @@ public class JpaAnimal implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaStory jpaStory;
 
+    @OneToOne
+    @JoinColumn(name = "organization_uuid", updatable = false)
+    private JpaOrganization jpaOrganization;
+
     private JpaAnimal() {
         // Required by jpa
     }
@@ -105,6 +110,7 @@ public class JpaAnimal implements Serializable {
         this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture());
         this.setJpaCharacteristics(animal.getCharacteristics());
         this.setJpaStory(animal.getStory());
+        this.jpaOrganization = new JpaOrganization(animal.getOrganization());
     }
 
     private void setUuid(final UUID uuid) {
@@ -141,6 +147,7 @@ public class JpaAnimal implements Serializable {
                 Sex.valueOf(sex),
                 state
         );
+        animal.setOrganization(this.jpaOrganization.toOrganization());
 
         if (jpaPrimaryLinkPicture != null) {
             animal.setPrimaryLinkPicture(jpaPrimaryLinkPicture.toLinkPicture());

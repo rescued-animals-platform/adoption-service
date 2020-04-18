@@ -41,7 +41,7 @@ public class InvalidPictureException extends RuntimeException {
 
     private static String formatMessage() {
         return String.format(MESSAGE, Arrays.stream(SupportedImageExtension.values())
-                .map(SupportedImageExtension::getExtension)
-                .collect(Collectors.joining(", ")));
+                                            .map(SupportedImageExtension::getExtension)
+                                            .collect(Collectors.joining(", ")));
     }
 }

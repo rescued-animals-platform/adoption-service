@@ -1,12 +1,12 @@
 pitest {
+    testPlugin = "junit5"
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [
             'ec.animal.adoption.AdoptionServiceApplication',
-            'ec.animal.adoption.clients.gcloud.*',
             'ec.animal.adoption.configuration.*'
     ]
     excludedMethods = ['equals', 'hashCode']
-    threads = 4
+    threads = 5
     timestampedReports = false
     outputFormats = ['XML', 'HTML']
     coverageThreshold = 95

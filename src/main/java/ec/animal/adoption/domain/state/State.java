@@ -31,10 +31,10 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = LookingForHuman.class, name = "lookingForHuman"),
-        @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
-        @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
-})
+                      @JsonSubTypes.Type(value = LookingForHuman.class, name = "lookingForHuman"),
+                      @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
+                      @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
+              })
 public abstract class State implements Serializable {
 
     private transient static final long serialVersionUID = -312436659134428610L;

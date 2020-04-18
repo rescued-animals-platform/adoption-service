@@ -28,23 +28,24 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureService;
 import ec.animal.adoption.domain.media.PictureType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PictureResourceTest {
 
     @Mock
@@ -57,14 +58,22 @@ public class PictureResourceTest {
     private PictureService pictureService;
 
     private ImagePicture imagePicture;
+    private Image largeImage;
+    private Image smallImage;
     private PictureResource pictureResource;
 
-    @Before
-    public void setUp() throws IOException {
-        Image largeImage = ImageBuilder.random().build();
-        Image smallImage = ImageBuilder.random().build();
+    @BeforeEach
+    public void setUp() {
+        largeImage = ImageBuilder.random().build();
+        smallImage = ImageBuilder.random().build();
         imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY)
-                .withLargeImage(largeImage).withSmallImage(smallImage).build();
+                                          .withLargeImage(largeImage).withSmallImage(smallImage).build();
+
+        pictureResource = new PictureResource(pictureService);
+    }
+
+    @Test
+    public void shouldCreateAPicture() throws IOException {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(
                 randomAlphabetic(10) + "." + largeImage.getExtension()
         );
@@ -76,13 +85,10 @@ public class PictureResourceTest {
         when(smallImageMultipartFile.getBytes()).thenReturn(smallImage.getContent());
         when(smallImageMultipartFile.getSize()).thenReturn(smallImage.getSizeInBytes());
 
-        pictureResource = new PictureResource(pictureService);
-    }
-
-    @Test
-    public void shouldCreateAPicture() {
-        LinkPicture expectedLinkPicture = LinkPictureBuilder.random().withName(imagePicture.getName())
-                .withPictureType(imagePicture.getPictureType()).build();
+        LinkPicture expectedLinkPicture = LinkPictureBuilder.random()
+                                                            .withName(imagePicture.getName())
+                                                            .withPictureType(imagePicture.getPictureType())
+                                                            .build();
         when(pictureService.createPrimaryPicture(imagePicture)).thenReturn(expectedLinkPicture);
 
         LinkPicture linkPicture = pictureResource.createPrimaryPicture(
@@ -96,84 +102,89 @@ public class PictureResourceTest {
         assertThat(linkPicture, is(expectedLinkPicture));
     }
 
-    @Test(expected = InvalidPictureException.class)
+    @Test
     public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInLargeImage() throws IOException {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
         when(largeImageMultipartFile.getBytes()).thenThrow(IOException.class);
 
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
-    @Test(expected = InvalidPictureException.class)
-    public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInSmallImage() throws IOException {
-        when(smallImageMultipartFile.getOriginalFilename()).thenReturn(randomAlphabetic(10));
-        when(smallImageMultipartFile.getBytes()).thenThrow(IOException.class);
-
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+    @Test
+    public void shouldThrowInvalidPictureExceptionWhenInputStreamCanNotBeAccessedInSmallImage() {
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
-    @Test(expected = InvalidPictureException.class)
+    @Test
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInLargeImage() {
         when(largeImageMultipartFile.isEmpty()).thenReturn(true);
 
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
-    @Test(expected = InvalidPictureException.class)
+    @Test
     public void shouldThrowInvalidPictureExceptionWhenMultipartFileIsEmptyInSmallImage() {
-        when(smallImageMultipartFile.isEmpty()).thenReturn(true);
-
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
-    @Test(expected = InvalidPictureException.class)
+    @Test
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInLargeImage() {
         when(largeImageMultipartFile.getOriginalFilename()).thenReturn(null);
 
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
-    @Test(expected = InvalidPictureException.class)
+    @Test
     public void shouldThrowInvalidPictureExceptionWhenOriginalFilenameIsNullInSmallImage() {
-        when(smallImageMultipartFile.getOriginalFilename()).thenReturn(null);
-
-        pictureResource.createPrimaryPicture(
-                imagePicture.getAnimalUuid(),
-                randomAlphabetic(10),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile
-        );
+        assertThrows(InvalidPictureException.class, () -> {
+            pictureResource.createPrimaryPicture(
+                    imagePicture.getAnimalUuid(),
+                    randomAlphabetic(10),
+                    imagePicture.getPictureType(),
+                    largeImageMultipartFile,
+                    smallImageMultipartFile
+            );
+        });
     }
 
     @Test

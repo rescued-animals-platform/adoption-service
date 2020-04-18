@@ -51,8 +51,12 @@ public class JpaFriendlyWith implements Serializable {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         JpaFriendlyWith that = (JpaFriendlyWith) o;
 

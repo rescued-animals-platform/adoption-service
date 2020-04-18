@@ -64,13 +64,21 @@ public class Temperaments {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Temperaments that = (Temperaments) o;
 
-        if (sociability != that.sociability) return false;
-        if (docility != that.docility) return false;
+        if (sociability != that.sociability) {
+            return false;
+        }
+        if (docility != that.docility) {
+            return false;
+        }
         return balance == that.balance;
     }
 

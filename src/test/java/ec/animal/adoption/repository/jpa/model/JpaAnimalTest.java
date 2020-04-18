@@ -22,26 +22,29 @@ package ec.animal.adoption.repository.jpa.model;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.story.Story;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings("PMD.TooManyMethods")
 public class JpaAnimalTest {
 
     @Test
@@ -91,35 +94,39 @@ public class JpaAnimalTest {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         Story story = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture)
-                                     .withCharacteristics(characteristics).withStory(story).build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+        Organization organization = OrganizationBuilder.random().build();
+        Animal expectedAnimal = AnimalBuilder.random()
+                                             .withOrganization(organization)
+                                             .withPrimaryLinkPicture(primaryLinkPicture)
+                                             .withCharacteristics(characteristics)
+                                             .withStory(story)
+                                             .build();
+        JpaAnimal jpaAnimal = new JpaAnimal(expectedAnimal);
 
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+        Animal actualAnimal = jpaAnimal.toAnimal();
 
-        assertThat(jpaAnimalToAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-        assertThat(jpaAnimalToAnimal.getName(), is(animal.getName()));
-        assertThat(jpaAnimalToAnimal.getSpecies(), is(animal.getSpecies()));
-        assertThat(jpaAnimalToAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-        assertThat(jpaAnimalToAnimal.getSex(), is(animal.getSex()));
-        assertThat(jpaAnimalToAnimal.getState(), is(animal.getState()));
-        assertEqualsPrimaryLinkPicture(jpaAnimalToAnimal.getPrimaryLinkPicture(), animal.getPrimaryLinkPicture());
-        assertEqualsCharacteristics(jpaAnimalToAnimal.getCharacteristics(), animal.getCharacteristics());
-        assertThat(jpaAnimalToAnimal.getStory().getText(), is(animal.getStory().getText()));
+        assertAll(() -> assertEquals(expectedAnimal.getClinicalRecord(), actualAnimal.getClinicalRecord()),
+                  () -> assertEquals(expectedAnimal.getName(), actualAnimal.getName()),
+                  () -> assertEquals(expectedAnimal.getSpecies(), actualAnimal.getSpecies()),
+                  () -> assertEquals(expectedAnimal.getEstimatedAge(), actualAnimal.getEstimatedAge()),
+                  () -> assertEquals(expectedAnimal.getSex(), actualAnimal.getSex()),
+                  () -> assertEquals(expectedAnimal.getState(), actualAnimal.getState()),
+                  () -> assertEqualsPrimaryLinkPicture(expectedAnimal.getPrimaryLinkPicture(), actualAnimal.getPrimaryLinkPicture()),
+                  () -> assertEqualsCharacteristics(expectedAnimal.getCharacteristics(), actualAnimal.getCharacteristics()),
+                  () -> assertEquals(expectedAnimal.getStory().getText(), actualAnimal.getStory().getText()),
+                  () -> assertEquals(expectedAnimal.getOrganization(), actualAnimal.getOrganization()));
     }
 
-    private void assertEqualsPrimaryLinkPicture(
-            final LinkPicture primaryLinkPicture, final LinkPicture expectedPrimaryLinkPicture
-    ) {
+    private void assertEqualsPrimaryLinkPicture(final LinkPicture expectedPrimaryLinkPicture,
+                                                final LinkPicture primaryLinkPicture) {
         assertThat(primaryLinkPicture.getName(), is(expectedPrimaryLinkPicture.getName()));
         assertThat(primaryLinkPicture.getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
         assertThat(primaryLinkPicture.getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
         assertThat(primaryLinkPicture.getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
     }
 
-    private void assertEqualsCharacteristics(
-            final Characteristics characteristics, final Characteristics expectedCharacteristics
-    ) {
+    private void assertEqualsCharacteristics(final Characteristics expectedCharacteristics,
+                                             final Characteristics characteristics) {
         assertThat(characteristics.getSize(), is(expectedCharacteristics.getSize()));
         assertThat(characteristics.getTemperaments(), is(expectedCharacteristics.getTemperaments()));
         assertThat(characteristics.getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
@@ -160,7 +167,6 @@ public class JpaAnimalTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaAnimal.class).usingGetClass()
                       .withPrefabValues(JpaPrimaryLinkPicture.class, mock(JpaPrimaryLinkPicture.class), mock(JpaPrimaryLinkPicture.class))

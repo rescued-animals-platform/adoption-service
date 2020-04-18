@@ -23,23 +23,24 @@ import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StoryServiceTest {
 
     @Mock
@@ -47,7 +48,7 @@ public class StoryServiceTest {
 
     private StoryService storyService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         storyService = new StoryService(animalRepository);
     }
@@ -60,9 +61,9 @@ public class StoryServiceTest {
         Story expectedStory = mock(Story.class);
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
         Animal animalWithStory = AnimalBuilder.random().withStory(expectedStory)
-                .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
-                .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
-                .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+                                              .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
+                                              .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
+                                              .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithStory);
 
         Story createdStory = storyService.create(animalUuid, expectedStory);
@@ -84,12 +85,14 @@ public class StoryServiceTest {
         assertThat(story, is(expectedStory));
     }
 
-    @Test(expected = EntityNotFoundException.class)
+    @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereIsNoStoryForAnimal() {
         UUID animalUuid = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
         when(animalRepository.getBy(animalUuid)).thenReturn(animal);
 
-        storyService.getBy(animalUuid);
+        assertThrows(EntityNotFoundException.class, () -> {
+            storyService.getBy(animalUuid);
+        });
     }
 }

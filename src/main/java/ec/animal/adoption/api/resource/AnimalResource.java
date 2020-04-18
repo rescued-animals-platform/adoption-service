@@ -29,6 +29,7 @@ import ec.animal.adoption.domain.characteristics.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,9 +40,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @RestController
+@Validated
 @RequestMapping("/animals")
 public class AnimalResource {
 
@@ -54,8 +57,9 @@ public class AnimalResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Animal create(@RequestBody @Valid final Animal animal) {
-        return animalService.create(animal);
+    public Animal create(@RequestBody @Valid final Animal animal,
+                         @RequestParam("organizationId") @NotNull(message = "Organization id is required") final UUID organizationId) {
+        return animalService.create(animal, organizationId);
     }
 
     @GetMapping("/{uuid}")

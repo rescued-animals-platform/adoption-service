@@ -17,52 +17,53 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.client.cloudinary;
+package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.client.MediaStorageClient;
 import ec.animal.adoption.domain.exception.ImageStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import ec.animal.adoption.domain.media.MediaRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CloudinaryMediaStorageClientTest {
+@ExtendWith(MockitoExtension.class)
+public class MediaRepositoryCloudinaryTest {
 
     @Mock
     private Cloudinary cloudinary;
 
-    private CloudinaryMediaStorageClient cloudinaryMediaStorageClient;
+    private MediaRepositoryCloudinary cloudinaryMediaStorageClient;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        cloudinaryMediaStorageClient = new CloudinaryMediaStorageClient(cloudinary);
+        cloudinaryMediaStorageClient = new MediaRepositoryCloudinary(cloudinary);
     }
 
     @Test
     public void shouldBeAnInstanceOfMediaStorageClient() {
-        assertThat(cloudinaryMediaStorageClient, is(instanceOf(MediaStorageClient.class)));
+        assertThat(cloudinaryMediaStorageClient, is(instanceOf(MediaRepository.class)));
     }
 
     @Test
@@ -87,10 +88,10 @@ public class CloudinaryMediaStorageClientTest {
 
         LinkPicture storedPicture = cloudinaryMediaStorageClient.save(imagePicture);
 
-        assertReflectionEquals(expectedPicture, storedPicture);
+        assertEquals(expectedPicture, storedPicture);
     }
 
-    @Test(expected = ImageStorageException.class)
+    @Test
     public void shouldThrowImageStorageExceptionWhenStoringLargeImage() throws IOException {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
         Uploader uploader = mock(Uploader.class);
@@ -98,10 +99,12 @@ public class CloudinaryMediaStorageClientTest {
         when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
                 .thenThrow(IOException.class);
 
-        cloudinaryMediaStorageClient.save(imagePicture);
+        assertThrows(ImageStorageException.class, () -> {
+            cloudinaryMediaStorageClient.save(imagePicture);
+        });
     }
 
-    @Test(expected = ImageStorageException.class)
+    @Test
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() throws IOException {
         ImagePicture imagePicture = ImagePictureBuilder.random().build();
         Uploader uploader = mock(Uploader.class);
@@ -111,6 +114,8 @@ public class CloudinaryMediaStorageClientTest {
         when(uploader.upload(eq(imagePicture.getSmallImageContent()), anyMap()))
                 .thenThrow(IOException.class);
 
-        cloudinaryMediaStorageClient.save(imagePicture);
+        assertThrows(ImageStorageException.class, () -> {
+            cloudinaryMediaStorageClient.save(imagePicture);
+        });
     }
 }

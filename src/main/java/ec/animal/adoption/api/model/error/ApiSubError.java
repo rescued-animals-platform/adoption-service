@@ -27,8 +27,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ValidationApiSubError.class, name = "validationError")
-})
+                      @JsonSubTypes.Type(value = ValidationApiSubError.class, name = "validationError")
+              })
 public interface ApiSubError {
 
 }

@@ -25,18 +25,18 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LinkPictureTest {
 
@@ -47,8 +47,8 @@ public class LinkPictureTest {
         String largeImageUrl = randomAlphabetic(30);
         String smallImageUrl = randomAlphabetic(30);
         LinkPicture linkPicture = LinkPictureBuilder.random().withName(name).withPictureType(pictureType)
-                .withLargeImageMediaLink(new MediaLink(largeImageUrl))
-                .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+                                                    .withLargeImageMediaLink(new MediaLink(largeImageUrl))
+                                                    .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
         assertThat(linkPicture.getName(), is(name));
         assertThat(linkPicture.getPictureType(), is(pictureType));
@@ -57,7 +57,6 @@ public class LinkPictureTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(LinkPicture.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
@@ -76,7 +75,7 @@ public class LinkPictureTest {
     public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
         LinkPicture linkPicture = LinkPictureBuilder.random().withUuid(UUID.randomUUID())
-                .withRegistrationDate(LocalDateTime.now()).build();
+                                                    .withRegistrationDate(LocalDateTime.now()).build();
 
         String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
 

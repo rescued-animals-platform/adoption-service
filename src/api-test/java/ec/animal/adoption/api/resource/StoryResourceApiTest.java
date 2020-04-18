@@ -23,18 +23,17 @@ import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.story.Story;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
@@ -51,7 +50,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .expectBody(Story.class)
                      .consumeWith(storyEntityExchangeResult -> {
                          Story createdStory = storyEntityExchangeResult.getResponseBody();
-                         assertReflectionEquals(story, createdStory);
+                         assertEquals(story, createdStory);
                      });
     }
 

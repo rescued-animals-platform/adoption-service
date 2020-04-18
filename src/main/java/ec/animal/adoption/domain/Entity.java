@@ -48,12 +48,18 @@ public class Entity {
     @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Entity entity = (Entity) o;
 
-        if (uuid != null ? !uuid.equals(entity.uuid) : entity.uuid != null) return false;
+        if (uuid != null ? !uuid.equals(entity.uuid) : entity.uuid != null) {
+            return false;
+        }
         return registrationDate != null ? registrationDate.equals(entity.registrationDate) : entity.registrationDate == null;
     }
 
