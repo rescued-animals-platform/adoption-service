@@ -243,7 +243,7 @@ jobs:
             export SPRING_DATASOURCE_URL;
             export SPRING_DATASOURCE_USERNAME;
             export SPRING_DATASOURCE_PASSWORD;
-            export SPRING_PROFILE=live;
+            export SPRING_PROFILE=uat;
             export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
             ./gradlew integrationTest --rerun-tasks
 
@@ -292,7 +292,7 @@ jobs:
             export SPRING_DATASOURCE_URL;
             export SPRING_DATASOURCE_USERNAME;
             export SPRING_DATASOURCE_PASSWORD;
-            export SPRING_PROFILE=live;
+            export SPRING_PROFILE=uat;
             export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
             ./gradlew apiTest --rerun-tasks
 
