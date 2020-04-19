@@ -1,9 +1,11 @@
 spring:
-  profiles: live
+  profiles: uat
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+  flyway:
+    locations: classpath:db/migration,classpath:db/testdata
   security:
     oauth2:
       resourceserver:
@@ -11,4 +13,4 @@ spring:
           issuer-uri: https://emmeblm.auth0.com/
 
 logging:
-  config: classpath:logback-spring-live.xml
+  config: classpath:logback-spring-heroku.xml
