@@ -107,7 +107,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      });
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "should return 400 bad request when organizationId is \"{0}\"")
     @MethodSource("invalidOrganizationIds")
     public void shouldReturn400BadRequestWhenOrganizationIdIsNullOrEmpty(final String organizationId) {
         Animal animal = AnimalBuilder.random().build();

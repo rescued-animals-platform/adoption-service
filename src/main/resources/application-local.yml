@@ -15,7 +15,7 @@ spring:
     show-sql: false
     generate-ddl: false
   flyway:
-    locations: classpath:db/migration,classpath:/db/testdata
+    locations: classpath:db/migration,classpath:db/testdata
   security:
     oauth2:
       resourceserver:

@@ -1,1 +1,0 @@
-INSERT INTO organization (uuid, name, city, reception_address, email, adoption_form_pdf_url) VALUES ('56009119-44bd-469a-a59b-401ab23d19ca', 'My Test Organization', 'QUITO', 'Av. Orellana E23-54', 'mytestorg@mail.com', 'http://www.mytestorg.com/adoption-form') ON CONFLICT DO NOTHING;

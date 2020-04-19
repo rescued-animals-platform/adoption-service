@@ -76,6 +76,7 @@ jobs:
             - Makefile
             - Procfile
             - system.properties
+            - .gitignore
             - .git
 
   pitest:
