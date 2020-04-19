@@ -13,7 +13,7 @@ spring:
       validation-timeout: 5000
       leak-detection-threshold: 30000
       max-lifetime: 300000
-      maximum-pool-size: 8
+      maximum-pool-size: 15
   jpa:
     open-in-view: false
     properties:
