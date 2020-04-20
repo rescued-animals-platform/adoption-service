@@ -34,6 +34,8 @@ spring:
 
 auth0:
   audience: https://animales-rescatados/servicio-adopciones.ec
+  custom-claims:
+    organization-id: https://adoption-service/organization_id
 
 hystrix:
   command:

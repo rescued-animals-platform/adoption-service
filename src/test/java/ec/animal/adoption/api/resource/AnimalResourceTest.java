@@ -19,6 +19,8 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
@@ -26,10 +28,13 @@ import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +47,10 @@ import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +58,9 @@ public class AnimalResourceTest {
 
     @Mock
     private AnimalService animalService;
+
+    @Mock
+    private OrganizationService organizationService;
 
     @Mock
     private Animal expectedAnimal;
@@ -64,22 +75,27 @@ public class AnimalResourceTest {
 
     @BeforeEach
     public void setUp() {
-        animalResource = new AnimalResource(animalService);
+        animalResource = new AnimalResource(animalService, organizationService);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
-        Animal animal = mock(Animal.class);
+        Animal animal = AnimalBuilder.random().withOrganization(null).build();
         UUID organizationId = UUID.randomUUID();
-        when(animalService.create(animal, organizationId)).thenReturn(expectedAnimal);
+        Organization organization = OrganizationBuilder.random().withUuid(organizationId).build();
+        ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
+        when(animalService.create(any(Animal.class))).thenReturn(expectedAnimal);
 
         Animal createdAnimal = animalResource.create(animal, organizationId);
 
         assertThat(createdAnimal, is(expectedAnimal));
+        verify(animalService).create(animalArgumentCaptor.capture());
+        assertEquals(organization, animalArgumentCaptor.getValue().getOrganization());
     }
 
     @Test
-    public void shouldGetAnAnimalByItsUuid() {
+    public void shouldGetAnAnimalByItsIdentifier() {
         UUID uuid = UUID.randomUUID();
         when(animalService.getBy(uuid)).thenReturn(expectedAnimal);
 

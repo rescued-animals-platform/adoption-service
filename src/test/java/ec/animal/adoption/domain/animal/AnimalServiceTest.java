@@ -21,21 +21,17 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
@@ -52,17 +48,12 @@ import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AnimalServiceTest {
-
-    @Mock
-    private OrganizationRepository organizationRepository;
 
     @Mock
     private AnimalRepository animalRepository;
@@ -91,23 +82,17 @@ public class AnimalServiceTest {
         species = getRandomSpecies();
         physicalActivity = getRandomPhysicalActivity();
         size = getRandomSize();
-        animalService = new AnimalService(animalRepository, organizationRepository);
+        animalService = new AnimalService(animalRepository);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
-        UUID organizationUuid = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        when(organizationRepository.getBy(organizationUuid)).thenReturn(organization);
         Animal animal = AnimalBuilder.random().build();
         when(animalRepository.save(animal)).thenReturn(expectedAnimal);
-        ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
 
-        Animal createdAnimal = animalService.create(animal, organizationUuid);
+        Animal createdAnimal = animalService.create(animal);
 
         assertThat(createdAnimal, is(expectedAnimal));
-        verify(animalRepository).save(animalArgumentCaptor.capture());
-        assertEquals(organization, animalArgumentCaptor.getValue().getOrganization());
     }
 
     @Test

@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.repository;
 
-import ec.animal.adoption.domain.exception.UnauthorizedException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.repository.jpa.JpaOrganizationRepository;
@@ -39,8 +38,8 @@ public class OrganizationRepositoryPsql implements OrganizationRepository {
     }
 
     @Override
-    public Organization getBy(final UUID uuid) {
+    public Optional<Organization> getBy(final UUID uuid) {
         Optional<JpaOrganization> jpaOrganization = jpaOrganizationRepository.findById(uuid);
-        return jpaOrganization.map(JpaOrganization::toOrganization).orElseThrow(UnauthorizedException::new);
+        return jpaOrganization.map(JpaOrganization::toOrganization);
     }
 }

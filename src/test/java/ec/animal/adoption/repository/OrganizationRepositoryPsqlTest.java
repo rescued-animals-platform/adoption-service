@@ -20,7 +20,6 @@
 package ec.animal.adoption.repository;
 
 import ec.animal.adoption.builders.OrganizationBuilder;
-import ec.animal.adoption.domain.exception.UnauthorizedException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.repository.jpa.JpaOrganizationRepository;
@@ -31,14 +30,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,20 +61,23 @@ class OrganizationRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetAnimalByItsUuid() {
+    public void shouldGetOrganizationByItsIdentifier() {
         Organization organization = OrganizationBuilder.random().build();
         UUID organizationUuid = organization.getOrganizationUuid();
         when(jpaOrganizationRepository.findById(organizationUuid)).thenReturn(of(new JpaOrganization(organization)));
 
-        Organization organizationFound = organizationRepositoryPsql.getBy(organizationUuid);
+        Optional<Organization> organizationFound = organizationRepositoryPsql.getBy(organizationUuid);
 
-        assertEquals(organization, organizationFound);
+        assertTrue(organizationFound.isPresent());
+        assertEquals(organization, organizationFound.get());
     }
 
     @Test
-    public void shouldThrowUnauthorizedException() {
-        assertThrows(UnauthorizedException.class, () -> {
-            organizationRepositoryPsql.getBy(UUID.randomUUID());
-        });
+    public void shouldReturnEmptyOrganization() {
+        UUID organizationUuid = UUID.randomUUID();
+        when(jpaOrganizationRepository.findById(organizationUuid)).thenReturn(empty());
+        Optional<Organization> organization = organizationRepositoryPsql.getBy(organizationUuid);
+
+        assertTrue(organization.isEmpty());
     }
 }

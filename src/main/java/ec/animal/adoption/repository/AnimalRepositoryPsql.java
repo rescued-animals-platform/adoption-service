@@ -71,10 +71,11 @@ public class AnimalRepositoryPsql implements AnimalRepository {
             final Size size,
             final Pageable pageable
     ) {
-        return new PagedEntity<>(jpaAnimalRepository
-                                         .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                                                 stateName, species.name(), physicalActivity.name(), size.name(), pageable
-                                         ).map(JpaAnimal::toAnimal));
+        return new PagedEntity<>(
+                jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
+                        stateName, species.name(), physicalActivity.name(), size.name(), pageable
+                ).map(JpaAnimal::toAnimal)
+        );
     }
 
     @Override

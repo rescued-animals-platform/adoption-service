@@ -26,6 +26,8 @@ import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,17 +51,21 @@ import java.util.UUID;
 public class AnimalResource {
 
     private final AnimalService animalService;
+    private final OrganizationService organizationService;
 
     @Autowired
-    public AnimalResource(final AnimalService animalService) {
+    public AnimalResource(final AnimalService animalService, final OrganizationService organizationService) {
         this.animalService = animalService;
+        this.organizationService = organizationService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Animal create(@RequestBody @Valid final Animal animal,
                          @RequestParam("organizationId") @NotNull(message = "Organization id is required") final UUID organizationId) {
-        return animalService.create(animal, organizationId);
+        Organization organization = organizationService.getBy(organizationId);
+        animal.setOrganization(organization);
+        return animalService.create(animal);
     }
 
     @GetMapping("/{uuid}")

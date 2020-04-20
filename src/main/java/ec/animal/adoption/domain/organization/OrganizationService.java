@@ -15,14 +15,27 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 
 package ec.animal.adoption.domain.organization;
 
-import java.util.Optional;
+import ec.animal.adoption.domain.exception.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.UUID;
 
-public interface OrganizationRepository {
+@Service
+public class OrganizationService {
 
-    Optional<Organization> getBy(final UUID uuid);
+    private final OrganizationRepository organizationRepository;
+
+    @Autowired
+    public OrganizationService(final OrganizationRepository organizationRepository) {
+        this.organizationRepository = organizationRepository;
+    }
+
+    public Organization getBy(final UUID organizationUuid) {
+        return organizationRepository.getBy(organizationUuid).orElseThrow(UnauthorizedException::new);
+    }
 }
