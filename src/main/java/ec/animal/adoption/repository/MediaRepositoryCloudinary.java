@@ -21,12 +21,12 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import ec.animal.adoption.domain.exception.ImageStorageException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.MediaRepository;
+import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
     }
 
     @Override
-    @HystrixCommand(defaultFallback = "circuitBreakerFallback", ignoreExceptions = {MediaStorageException.class})
+    @HystrixCommand(fallbackMethod = "saveFallback")
     public LinkPicture save(final ImagePicture imagePicture) {
         try {
             MediaLink largeMediaLink = storeMedia(imagePicture.getLargeImageContent());
@@ -62,7 +62,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
             );
         } catch (IOException exception) {
             LOGGER.error("An exception occurred when communicating to Cloudinary: {}", exception.getMessage());
-            throw new ImageStorageException(exception);
+            throw new CloudinaryImageStorageException(exception);
         }
     }
 
@@ -73,7 +73,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private LinkPicture circuitBreakerFallback() {
+    private LinkPicture saveFallback(final ImagePicture imagePicture) {
         throw new MediaStorageException();
     }
 }

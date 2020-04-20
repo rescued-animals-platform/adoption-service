@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.exception;
+package ec.animal.adoption.repository.exception;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,14 +25,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-public class ImageStorageExceptionTest {
+public class CloudinaryImageStorageExceptionTest {
 
     @Test
     public void shouldReturnMessage() {
         String expectedMessage = "The image could not be stored";
 
-        ImageStorageException imageStorageException = new ImageStorageException(mock(Throwable.class));
+        CloudinaryImageStorageException cloudinaryImageStorageException = new CloudinaryImageStorageException(mock(Throwable.class));
 
-        assertThat(imageStorageException.getMessage(), is(expectedMessage));
+        assertThat(cloudinaryImageStorageException.getMessage(), is(expectedMessage));
     }
 }

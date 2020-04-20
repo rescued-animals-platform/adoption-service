@@ -23,7 +23,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.domain.exception.ImageStorageException;
+import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
@@ -99,7 +99,7 @@ public class MediaRepositoryCloudinaryTest {
         when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
                 .thenThrow(IOException.class);
 
-        assertThrows(ImageStorageException.class, () -> {
+        assertThrows(CloudinaryImageStorageException.class, () -> {
             cloudinaryMediaStorageClient.save(imagePicture);
         });
     }
@@ -114,7 +114,7 @@ public class MediaRepositoryCloudinaryTest {
         when(uploader.upload(eq(imagePicture.getSmallImageContent()), anyMap()))
                 .thenThrow(IOException.class);
 
-        assertThrows(ImageStorageException.class, () -> {
+        assertThrows(CloudinaryImageStorageException.class, () -> {
             cloudinaryMediaStorageClient.save(imagePicture);
         });
     }

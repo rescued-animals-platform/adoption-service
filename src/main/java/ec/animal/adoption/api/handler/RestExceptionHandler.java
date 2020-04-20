@@ -24,7 +24,6 @@ import ec.animal.adoption.api.model.error.ApiSubError;
 import ec.animal.adoption.api.model.error.ValidationApiSubError;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
-import ec.animal.adoption.domain.exception.ImageStorageException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
@@ -65,22 +64,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidPictureException.class)
-    public ResponseEntity<Object> handleImageMediaProcessingException(final InvalidPictureException exception) {
+    public ResponseEntity<Object> handleInvalidPictureException(final InvalidPictureException exception) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         Throwable cause = exception.getCause();
         ApiError apiError = cause == null ? new ApiError(badRequest, exception.getMessage()) :
                 new ApiError(badRequest, exception.getMessage(), cause.getLocalizedMessage());
 
         return buildResponseEntity(apiError, badRequest);
-    }
-
-    @ExceptionHandler(ImageStorageException.class)
-    public ResponseEntity<Object> handleImageStorageException(final ImageStorageException exception) {
-        final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
-        return buildResponseEntity(
-                new ApiError(internalServerError, exception.getMessage(), exception.getCause().getLocalizedMessage()),
-                internalServerError
-        );
     }
 
     @ExceptionHandler(MediaStorageException.class)

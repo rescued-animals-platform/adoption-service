@@ -17,15 +17,15 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.exception;
+package ec.animal.adoption.repository.exception;
 
-public class ImageStorageException extends RuntimeException {
+public class CloudinaryImageStorageException extends RuntimeException {
 
     private transient static final long serialVersionUID = -341446159169481893L;
 
     private static final String MESSAGE = "The image could not be stored";
 
-    public ImageStorageException(final Throwable throwable) {
+    public CloudinaryImageStorageException(final Throwable throwable) {
         super(MESSAGE);
         this.initCause(throwable);
     }

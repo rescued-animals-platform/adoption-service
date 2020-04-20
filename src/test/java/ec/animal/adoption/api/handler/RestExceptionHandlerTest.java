@@ -23,7 +23,6 @@ import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.api.model.error.ValidationApiSubError;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
-import ec.animal.adoption.domain.exception.ImageStorageException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
@@ -242,7 +241,7 @@ public class RestExceptionHandlerTest {
     public void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidPictureException() {
         InvalidPictureException invalidPictureException = mock(InvalidPictureException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingException(
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(
                 invalidPictureException
         );
 
@@ -258,7 +257,7 @@ public class RestExceptionHandlerTest {
                         map(SupportedImageExtension::getExtension).collect(Collectors.joining(", ")))
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingException(
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(
                 invalidPictureException
         );
 
@@ -280,36 +279,9 @@ public class RestExceptionHandlerTest {
                 localizedMessage
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageMediaProcessingException(
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(
                 invalidPictureException
         );
-
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
-    }
-
-    @Test
-    public void shouldReturnAResponseEntityWithHttpStatusInternalServerErrorForImageStorageException() {
-        ImageStorageException imageStorageException = mock(ImageStorageException.class);
-        when(imageStorageException.getCause()).thenReturn(mock(Throwable.class));
-
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
-
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
-    }
-
-    @Test
-    public void shouldReturnAResponseEntityWithApiErrorForImageStorageException() {
-        Throwable throwable = mock(Throwable.class);
-        String localizedMessage = randomAlphabetic(10);
-        when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
-        ImageStorageException imageStorageException = new ImageStorageException(throwable);
-        ApiError expectedApiError = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR, "The image could not be stored", localizedMessage
-        );
-
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleImageStorageException(imageStorageException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
         ApiError apiError = (ApiError) responseEntity.getBody();
