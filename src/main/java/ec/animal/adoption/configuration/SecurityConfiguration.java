@@ -58,6 +58,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
+            .csrf()
+            .disable()
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/adoption/animals/**").hasAuthority("SCOPE_read:animals")
             .antMatchers(HttpMethod.POST, "/adoption/animals/**").hasAuthority("SCOPE_create:animals")
