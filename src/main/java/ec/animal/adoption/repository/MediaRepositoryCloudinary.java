@@ -72,7 +72,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
         return new MediaLink(url);
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private LinkPicture saveFallback(final ImagePicture imagePicture) {
         throw new MediaStorageException();
     }
