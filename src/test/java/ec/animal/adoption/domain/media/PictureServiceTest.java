@@ -22,10 +22,13 @@ package ec.animal.adoption.domain.media;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.ImagePictureBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
+import ec.animal.adoption.domain.organization.Organization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,15 +36,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +60,6 @@ public class PictureServiceTest {
 
     private PictureService pictureService;
 
-
     @BeforeEach
     public void setUp() {
         pictureService = new PictureService(mediaRepository, animalRepository);
@@ -67,20 +71,41 @@ public class PictureServiceTest {
         ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         when(mediaRepository.save(imagePicture)).thenReturn(primaryLinkPicture);
-        Animal animal = AnimalBuilder.random().withUuid(imagePicture.getAnimalUuid())
-                                     .withRegistrationDate(LocalDateTime.now()).build();
-        when(animalRepository.getBy(imagePicture.getAnimalUuid())).thenReturn(animal);
-        Animal animalWithPrimaryLinkPicture = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture)
-                                                           .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
-                                                           .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
-                                                           .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.random()
+                                                           .withPrimaryLinkPicture(primaryLinkPicture)
+                                                           .build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithPrimaryLinkPicture);
 
-        LinkPicture createdPicture = pictureService.createPrimaryPicture(imagePicture);
+        LinkPicture createdPicture = pictureService.createFor(animalUuid, organization, imagePicture);
 
         verify(animalRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue().getPrimaryLinkPicture(), is(primaryLinkPicture));
+        assertTrue(argumentCaptor.getValue().getPrimaryLinkPicture().isPresent());
+        assertEquals(primaryLinkPicture, argumentCaptor.getValue().getPrimaryLinkPicture().get());
         assertThat(createdPicture, is(primaryLinkPicture));
+    }
+
+    @Test
+    void shouldThrowEntityAlreadyExistsExceptionWhenThereIsAlreadyAPrimaryLinkPictureForAnimal() {
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animal = AnimalBuilder.random()
+                                     .withUuid(animalUuid)
+                                     .withOrganization(organization)
+                                     .withPrimaryLinkPicture(LinkPictureBuilder.random()
+                                                                               .withPictureType(PictureType.PRIMARY)
+                                                                               .build())
+                                     .build();
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+
+        assertThrows(EntityAlreadyExistsException.class, () -> {
+            pictureService.createFor(animalUuid, organization, imagePicture);
+        });
+        verifyNoInteractions(mediaRepository);
     }
 
     @Test
@@ -88,7 +113,7 @@ public class PictureServiceTest {
         ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
 
         assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createPrimaryPicture(imagePicture);
+            pictureService.createFor(UUID.randomUUID(), OrganizationBuilder.random().build(), imagePicture);
         });
     }
 
@@ -99,7 +124,7 @@ public class PictureServiceTest {
         when(imagePicture.isValid()).thenReturn(false);
 
         assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createPrimaryPicture(imagePicture);
+            pictureService.createFor(UUID.randomUUID(), OrganizationBuilder.random().build(), imagePicture);
         });
     }
 

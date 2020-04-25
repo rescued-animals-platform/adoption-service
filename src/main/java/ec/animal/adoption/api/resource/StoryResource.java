@@ -19,15 +19,19 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,23 +39,32 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/animals/{animalUuid}/story")
 public class StoryResource {
 
     private final StoryService storyService;
+    private final OrganizationService organizationService;
+    private final AdminTokenUtils adminTokenUtils;
 
     @Autowired
-    public StoryResource(final StoryService storyService) {
+    public StoryResource(final StoryService storyService,
+                         final OrganizationService organizationService,
+                         final AdminTokenUtils adminTokenUtils) {
         this.storyService = storyService;
+        this.organizationService = organizationService;
+        this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping
+    @PostMapping("/admin/animals/{animalUuid}/story")
     @ResponseStatus(HttpStatus.CREATED)
-    public Story create(@PathVariable("animalUuid") final UUID animalUuid, @RequestBody @Valid final Story story) {
-        return storyService.create(animalUuid, story);
+    public Story create(@PathVariable("animalUuid") final UUID animalUuid,
+                        @RequestBody @Valid final Story story,
+                        @AuthenticationPrincipal final Jwt token) {
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return storyService.createFor(animalUuid, organization, story);
     }
 
-    @GetMapping
+    @GetMapping("/animals/{animalUuid}/story")
     public Story get(@PathVariable("animalUuid") final UUID animalUuid) {
         return storyService.getBy(animalUuid);
     }

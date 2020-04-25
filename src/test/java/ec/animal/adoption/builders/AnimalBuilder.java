@@ -41,6 +41,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 public class AnimalBuilder {
 
     public static final UUID DEFAULT_ORGANIZATION_UUID = UUID.fromString("56009119-44bd-469a-a59b-401ab23d19ca");
+    public static final UUID ANOTHER_ORGANIZATION_UUID = UUID.fromString("dd20a44f-8aea-49bb-bfc7-cb57f6a4cd6d");
 
     private UUID uuid;
     private LocalDateTime registrationDate;
@@ -70,6 +71,12 @@ public class AnimalBuilder {
     public static AnimalBuilder randomWithDefaultOrganization() {
         AnimalBuilder animalBuilder = random();
         animalBuilder.organization = OrganizationBuilder.random().withUuid(DEFAULT_ORGANIZATION_UUID).build();
+        return animalBuilder;
+    }
+
+    public static AnimalBuilder randomWithAnotherOrganization() {
+        AnimalBuilder animalBuilder = random();
+        animalBuilder.organization = OrganizationBuilder.random().withUuid(ANOTHER_ORGANIZATION_UUID).build();
         return animalBuilder;
     }
 

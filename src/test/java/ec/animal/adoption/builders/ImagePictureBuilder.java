@@ -23,14 +23,11 @@ import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.PictureType;
 
-import java.util.UUID;
-
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class ImagePictureBuilder {
 
-    private UUID animalUuid;
     private String name;
     private PictureType pictureType;
     private Image largeImage;
@@ -38,17 +35,11 @@ public class ImagePictureBuilder {
 
     public static ImagePictureBuilder random() {
         final ImagePictureBuilder imagePictureBuilder = new ImagePictureBuilder();
-        imagePictureBuilder.animalUuid = UUID.randomUUID();
         imagePictureBuilder.name = randomAlphabetic(10);
         imagePictureBuilder.pictureType = getRandomPictureType();
         imagePictureBuilder.largeImage = ImageBuilder.random().build();
         imagePictureBuilder.smallImage = ImageBuilder.random().build();
         return imagePictureBuilder;
-    }
-
-    public ImagePictureBuilder withAnimalUuid(final UUID animalUuid) {
-        this.animalUuid = animalUuid;
-        return this;
     }
 
     public ImagePictureBuilder withName(final String name) {
@@ -72,6 +63,6 @@ public class ImagePictureBuilder {
     }
 
     public ImagePicture build() {
-        return new ImagePicture(animalUuid, name, pictureType, largeImage, smallImage);
+        return new ImagePicture(name, pictureType, largeImage, smallImage);
     }
 }

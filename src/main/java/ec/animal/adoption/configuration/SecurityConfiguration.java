@@ -22,7 +22,6 @@ package ec.animal.adoption.configuration;
 import ec.animal.adoption.validator.JwtAudienceValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,8 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/adoption/animals/**").hasAuthority("SCOPE_read:animals")
-            .antMatchers(HttpMethod.POST, "/adoption/animals/**").hasAuthority("SCOPE_create:animals")
+            .antMatchers("/adoption/admin/animals/**").hasAuthority("SCOPE_manage:animals")
+            .antMatchers("/adoption/animals/**").hasAuthority("SCOPE_read:animals-public")
             .and()
             .oauth2ResourceServer().jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
     }
@@ -84,6 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             @Override
             public void addCorsMappings(@NonNull final CorsRegistry registry) {
                 registry.addMapping("/adoption/animals/**");
+                registry.addMapping("/adoption/admin/animals/**");
             }
         };
     }

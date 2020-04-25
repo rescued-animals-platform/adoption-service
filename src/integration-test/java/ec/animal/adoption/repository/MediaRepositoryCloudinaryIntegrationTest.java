@@ -35,7 +35,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -56,7 +55,6 @@ public class MediaRepositoryCloudinaryIntegrationTest {
         byte[] smallImageContent = IOUtils.toByteArray(new ClassPathResource("test-image-small.jpeg").getInputStream());
 
         ImagePicture imagePicture = new ImagePicture(
-                UUID.randomUUID(),
                 randomAlphabetic(10),
                 PictureType.PRIMARY,
                 new Image(".jpeg", largeImageContent, largeImageContent.length),

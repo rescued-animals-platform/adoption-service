@@ -21,8 +21,10 @@ package ec.animal.adoption.domain.media;
 
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
+import ec.animal.adoption.domain.organization.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,25 +45,25 @@ public class PictureService {
         this.animalRepository = animalRepository;
     }
 
-    public LinkPicture createPrimaryPicture(final ImagePicture imagePicture) {
+    public LinkPicture createFor(final UUID animalUuid,
+                                 final Organization organization,
+                                 final ImagePicture imagePicture) {
         if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
             throw new InvalidPictureException();
         }
 
-        Animal animal = animalRepository.getBy(imagePicture.getAnimalUuid());
+        Animal animal = animalRepository.getBy(animalUuid, organization);
+        animal.getPrimaryLinkPicture().ifPresent(p -> {
+            throw new EntityAlreadyExistsException();
+        });
+
         LinkPicture linkPicture = mediaRepository.save(imagePicture);
         animal.setPrimaryLinkPicture(linkPicture);
-
-        return animalRepository.save(animal).getPrimaryLinkPicture();
+        return animalRepository.save(animal).getPrimaryLinkPicture().orElseThrow();
     }
 
     public LinkPicture getBy(final UUID animalUuid) {
         Animal animal = animalRepository.getBy(animalUuid);
-
-        if (animal.getPrimaryLinkPicture() == null) {
-            throw new EntityNotFoundException();
-        }
-
-        return animal.getPrimaryLinkPicture();
+        return animal.getPrimaryLinkPicture().orElseThrow(EntityNotFoundException::new);
     }
 }

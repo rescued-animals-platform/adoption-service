@@ -21,14 +21,17 @@ package ec.animal.adoption.repository;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
@@ -56,7 +59,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -94,7 +99,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldThrowEntityAlreadyExistException() {
+    public void shouldThrowEntityAlreadyExistExceptionIfAnyExceptionIsThrownByJpaAnimalRepository() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
@@ -105,41 +110,102 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetAnimalByItsUuid() {
-        JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
-        UUID uuid = expectedJpaAnimal.toAnimal().getUuid();
-        when(jpaAnimalRepository.findById(uuid)).thenReturn(Optional.of(expectedJpaAnimal));
+    void shouldReturnTrueIfAnimalWithClinicalRecordAndOrganizationUuidIsFound() {
+        Animal animal = AnimalBuilder.random().build();
+        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+                .thenReturn(Optional.of(new JpaAnimal(animal)));
 
-        Animal animalFound = animalRepositoryPsql.getBy(uuid);
+        boolean exists = animalRepositoryPsql.exists(animal);
 
-        assertEquals(expectedJpaAnimal.toAnimal(), animalFound);
+        assertTrue(exists);
     }
 
     @Test
-    public void shouldThrowEntityNotFoundException() {
+    void shouldReturnFalseIfAnimalWithClinicalRecordAndOrganizationUuidIsNotFound() {
+        Animal animal = AnimalBuilder.random().build();
+        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+                .thenReturn(Optional.empty());
+
+        boolean exists = animalRepositoryPsql.exists(animal);
+
+        assertFalse(exists);
+    }
+
+    @Test
+    public void shouldGetAnimalByItsUuid() {
+        JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
+        Animal expectedAnimal = expectedJpaAnimal.toAnimal();
+        when(jpaAnimalRepository.findById(expectedAnimal.getUuid())).thenReturn(Optional.of(expectedJpaAnimal));
+
+        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getUuid());
+
+        assertEquals(expectedAnimal, animalFound);
+    }
+
+    @Test
+    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsUuidIsNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
             animalRepositoryPsql.getBy(UUID.randomUUID());
         });
     }
 
     @Test
-    public void shouldReturnAllAnimalsByStateWithPagination() {
+    public void shouldGetAnimalByItsUuidAndOrganization() {
+        JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
+        Animal expectedAnimal = expectedJpaAnimal.toAnimal();
+        when(jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(expectedAnimal.getUuid(), expectedAnimal.getOrganizationUuid()))
+                .thenReturn(Optional.of(expectedJpaAnimal));
+
+        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getUuid(), expectedAnimal.getOrganization());
+
+        assertEquals(expectedAnimal, animalFound);
+    }
+
+    @Test
+    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsUuidAndOrganizationIsNotFound() {
+        assertThrows(EntityNotFoundException.class, () -> {
+            animalRepositoryPsql.getBy(UUID.randomUUID(), OrganizationBuilder.random().build());
+        });
+    }
+
+    @Test
+    public void shouldReturnAllAnimalsForOrganizationWithPagination() {
+        Pageable pageable = mock(Pageable.class);
+        List<JpaAnimal> listOfJpaAnimals = newArrayList(
+                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+        ).stream().map(JpaAnimal::new).collect(Collectors.toList());
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
+                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+        );
+        Organization organization = OrganizationBuilder.random().build();
+        when(jpaAnimalRepository.findAllByJpaOrganizationUuid(organization.getOrganizationUuid(), pageable))
+                .thenReturn(new PageImpl<>(listOfJpaAnimals));
+
+        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllFor(organization, pageable);
+
+        assertEquals(expectedPageOfAnimals, pageOfAnimals);
+    }
+
+    @Test
+    public void shouldReturnAllAnimalsWithFiltersAndPagination() {
         State lookingForHuman = new LookingForHuman(LocalDateTime.now());
         Species dog = Species.DOG;
         PhysicalActivity high = PhysicalActivity.HIGH;
         Size tiny = Size.TINY;
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> jpaAnimals = new ArrayList<>();
-        IntStream.rangeClosed(1, 10).forEach(i -> jpaAnimals.add(
-                new JpaAnimal(AnimalBuilder.random()
-                                           .withState(lookingForHuman)
-                                           .withSpecies(dog)
-                                           .withCharacteristics(CharacteristicsBuilder.random()
-                                                                                      .withPhysicalActivity(high)
-                                                                                      .withSize(tiny)
-                                                                                      .build())
-                                           .build())
-        ));
+        IntStream.rangeClosed(1, 10).forEach(i -> {
+            Characteristics characteristics = CharacteristicsBuilder.random()
+                                                                    .withPhysicalActivity(high)
+                                                                    .withSize(tiny)
+                                                                    .build();
+            Animal animal = AnimalBuilder.random()
+                                         .withState(lookingForHuman)
+                                         .withSpecies(dog)
+                                         .withCharacteristics(characteristics)
+                                         .build();
+            jpaAnimals.add(new JpaAnimal(animal));
+        });
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
                 jpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
@@ -150,22 +216,6 @@ public class AnimalRepositoryPsqlTest {
         PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(
                 lookingForHuman.getStateName(), dog, high, tiny, pageable
         );
-
-        assertEquals(expectedPageOfAnimals, pageOfAnimals);
-    }
-
-    @Test
-    public void shouldReturnAllAnimalsWithPagination() {
-        Pageable pageable = mock(Pageable.class);
-        List<JpaAnimal> listOfJpaAnimals = newArrayList(
-                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
-        ).stream().map(JpaAnimal::new).collect(Collectors.toList());
-        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
-                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
-        );
-        when(jpaAnimalRepository.findAll(pageable)).thenReturn(new PageImpl<>(listOfJpaAnimals));
-
-        PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAll(pageable);
 
         assertEquals(expectedPageOfAnimals, pageOfAnimals);
     }

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
@@ -38,6 +39,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
@@ -63,31 +65,39 @@ public class AnimalResourceTest {
     private OrganizationService organizationService;
 
     @Mock
+    private AdminTokenUtils adminTokenUtils;
+
+    @Mock
     private Animal expectedAnimal;
+
+    @Mock
+    private PagedEntity<Animal> expectedPageOfAnimals;
 
     @Mock
     private PagedEntity<AnimalDto> expectedPageOfAnimalDtosFiltered;
 
     @Mock
-    private PagedEntity<Animal> expectedPageOfAnimals;
+    private Jwt token;
 
+    private UUID organizationUuid;
     private AnimalResource animalResource;
 
     @BeforeEach
     public void setUp() {
-        animalResource = new AnimalResource(animalService, organizationService);
+        organizationUuid = UUID.randomUUID();
+        animalResource = new AnimalResource(animalService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
         Animal animal = AnimalBuilder.random().withOrganization(null).build();
-        UUID organizationId = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().withUuid(organizationId).build();
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
         ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
-        when(organizationService.getBy(organizationId)).thenReturn(organization);
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
         when(animalService.create(any(Animal.class))).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalResource.create(animal, organizationId);
+        Animal createdAnimal = animalResource.create(animal, token);
 
         assertThat(createdAnimal, is(expectedAnimal));
         verify(animalService).create(animalArgumentCaptor.capture());
@@ -96,10 +106,13 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldGetAnAnimalByItsIdentifier() {
-        UUID uuid = UUID.randomUUID();
-        when(animalService.getBy(uuid)).thenReturn(expectedAnimal);
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(animalService.getBy(animalUuid, organization)).thenReturn(expectedAnimal);
 
-        Animal animal = animalResource.get(uuid);
+        Animal animal = animalResource.get(animalUuid, token);
 
         assertThat(animal, is(expectedAnimal));
     }
@@ -107,15 +120,18 @@ public class AnimalResourceTest {
     @Test
     public void shouldReturnAllAnimalsWithPagination() {
         Pageable pageable = mock(Pageable.class);
-        when(animalService.listAll(pageable)).thenReturn(expectedPageOfAnimals);
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(animalService.listAllFor(organization, pageable)).thenReturn(expectedPageOfAnimals);
 
-        PagedEntity<Animal> pageOfAnimals = animalResource.listAll(pageable);
+        PagedEntity<Animal> pageOfAnimals = animalResource.listAll(pageable, token);
 
         assertThat(pageOfAnimals, is(expectedPageOfAnimals));
     }
 
     @Test
-    public void shouldReturnAllAnimalsWithFiltersAndPagination() {
+    public void shouldReturnAllAnimalDtosWithFiltersAndPagination() {
         State state = getRandomState();
         String stateName = state.getStateName();
         Species species = getRandomSpecies();

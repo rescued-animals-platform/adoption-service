@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.UUID;
-
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,29 +38,15 @@ public class ImagePictureTest {
 
     @Test
     public void shouldCreateAnImagePicture() {
-        UUID animalUuid = UUID.randomUUID();
         String name = randomAlphabetic(10);
         PictureType pictureType = getRandomPictureType();
-        ImagePicture imagePicture = ImagePictureBuilder.random().withAnimalUuid(animalUuid).
-                withName(name).withPictureType(pictureType).build();
+        ImagePicture imagePicture = ImagePictureBuilder.random()
+                                                       .withName(name)
+                                                       .withPictureType(pictureType)
+                                                       .build();
 
-        assertThat(imagePicture.getAnimalUuid(), is(animalUuid));
         assertThat(imagePicture.getName(), is(name));
         assertThat(imagePicture.getPictureType(), is(pictureType));
-    }
-
-    @Test
-    public void shouldReturnLargeImagePath() {
-        Image largeImage = mock(Image.class);
-        String extension = randomAlphabetic(3);
-        when(largeImage.getExtension()).thenReturn(extension);
-        UUID animalUuid = UUID.randomUUID();
-        String name = randomAlphabetic(10);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withAnimalUuid(animalUuid).
-                withName(name).withLargeImage(largeImage).build();
-        String expectedLargeImagePath = animalUuid + "/" + name + "_LARGE." + extension;
-
-        assertThat(imagePicture.getLargeImagePath(), is(expectedLargeImagePath));
     }
 
     @Test
@@ -73,20 +57,6 @@ public class ImagePictureTest {
         ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(largeImage).build();
 
         assertThat(imagePicture.getLargeImageContent(), is(content));
-    }
-
-    @Test
-    public void shouldReturnSmallImagePath() {
-        Image smallImage = mock(Image.class);
-        String extension = randomAlphabetic(3);
-        when(smallImage.getExtension()).thenReturn(extension);
-        UUID animalUuid = UUID.randomUUID();
-        String name = randomAlphabetic(10);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withAnimalUuid(animalUuid).
-                withName(name).withSmallImage(smallImage).build();
-        String expectedSmallImagePath = animalUuid + "/" + name + "_SMALL." + extension;
-
-        assertThat(imagePicture.getSmallImagePath(), is(expectedSmallImagePath));
     }
 
     @Test

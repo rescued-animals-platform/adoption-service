@@ -51,8 +51,8 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
 
@@ -75,12 +75,13 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
-        LinkPicture primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
+        Optional<LinkPicture> primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
 
-        assertThat(primaryLinkPicture.getName(), is(expectedPrimaryLinkPicture.getName()));
-        assertThat(primaryLinkPicture.getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
-        assertThat(primaryLinkPicture.getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
-        assertThat(primaryLinkPicture.getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
+        assertTrue(primaryLinkPicture.isPresent());
+        assertThat(primaryLinkPicture.get().getName(), is(expectedPrimaryLinkPicture.getName()));
+        assertThat(primaryLinkPicture.get().getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
+        assertThat(primaryLinkPicture.get().getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
+        assertThat(primaryLinkPicture.get().getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
     }
 
     @Test
@@ -93,12 +94,13 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithCharacteristics = jpaAnimal.toAnimal();
-        Characteristics characteristics = animalWithCharacteristics.getCharacteristics();
+        Optional<Characteristics> characteristics = animalWithCharacteristics.getCharacteristics();
 
-        assertThat(characteristics.getSize(), is(expectedCharacteristics.getSize()));
-        assertThat(characteristics.getPhysicalActivity(), is(expectedCharacteristics.getPhysicalActivity()));
-        assertThat(characteristics.getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
-        assertThat(characteristics.getTemperaments(), is(expectedCharacteristics.getTemperaments()));
+        assertTrue(characteristics.isPresent());
+        assertThat(characteristics.get().getSize(), is(expectedCharacteristics.getSize()));
+        assertThat(characteristics.get().getPhysicalActivity(), is(expectedCharacteristics.getPhysicalActivity()));
+        assertThat(characteristics.get().getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
+        assertThat(characteristics.get().getTemperaments(), is(expectedCharacteristics.getTemperaments()));
     }
 
     @Test
@@ -109,16 +111,17 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithStory = jpaAnimal.toAnimal();
-        Story story = animalWithStory.getStory();
+        Optional<Story> story = animalWithStory.getStory();
 
-        assertThat(story.getText(), is(expectedStory.getText()));
+        assertTrue(story.isPresent());
+        assertThat(story.get().getText(), is(expectedStory.getText()));
     }
 
     @Test
     public void shouldAddJpaPrimaryLinkPictureToJpaAnimal() {
-        JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = createAndSaveJpaAnimal();
+        JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
-        assertThat(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture(), is(nullValue()));
+        assertTrue(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture().isEmpty());
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
                                                                    .withPictureType(PictureType.PRIMARY).build();
         animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(expectedPrimaryLinkPicture);
@@ -126,72 +129,95 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
-        LinkPicture primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
+        Optional<LinkPicture> primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
 
-        assertThat(primaryLinkPicture.getName(), is(expectedPrimaryLinkPicture.getName()));
-        assertThat(primaryLinkPicture.getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
-        assertThat(primaryLinkPicture.getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
-        assertThat(primaryLinkPicture.getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
+        assertTrue(primaryLinkPicture.isPresent());
+        assertThat(primaryLinkPicture.get().getName(), is(expectedPrimaryLinkPicture.getName()));
+        assertThat(primaryLinkPicture.get().getPictureType(), is(expectedPrimaryLinkPicture.getPictureType()));
+        assertThat(primaryLinkPicture.get().getLargeImageUrl(), is(expectedPrimaryLinkPicture.getLargeImageUrl()));
+        assertThat(primaryLinkPicture.get().getSmallImageUrl(), is(expectedPrimaryLinkPicture.getSmallImageUrl()));
     }
 
     @Test
     public void shouldAddJpaCharacteristicsToJpaAnimal() {
-        JpaAnimal jpaAnimalWithNoCharacteristics = createAndSaveJpaAnimal();
+        JpaAnimal jpaAnimalWithNoCharacteristics = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoCharacteristics = jpaAnimalWithNoCharacteristics.toAnimal();
-        assertThat(animalWithNoCharacteristics.getCharacteristics(), is(nullValue()));
+        assertTrue(animalWithNoCharacteristics.getCharacteristics().isEmpty());
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
         animalWithNoCharacteristics.setCharacteristics(expectedCharacteristics);
         JpaAnimal entity = new JpaAnimal(animalWithNoCharacteristics);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithCharacteristics = jpaAnimal.toAnimal();
-        Characteristics characteristics = animalWithCharacteristics.getCharacteristics();
+        Optional<Characteristics> characteristics = animalWithCharacteristics.getCharacteristics();
 
-        assertThat(characteristics.getSize(), is(expectedCharacteristics.getSize()));
-        assertThat(characteristics.getPhysicalActivity(), is(expectedCharacteristics.getPhysicalActivity()));
-        assertThat(characteristics.getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
-        assertThat(characteristics.getTemperaments(), is(expectedCharacteristics.getTemperaments()));
+        assertTrue(characteristics.isPresent());
+        assertThat(characteristics.get().getSize(), is(expectedCharacteristics.getSize()));
+        assertThat(characteristics.get().getPhysicalActivity(), is(expectedCharacteristics.getPhysicalActivity()));
+        assertThat(characteristics.get().getFriendlyWith(), is(expectedCharacteristics.getFriendlyWith()));
+        assertThat(characteristics.get().getTemperaments(), is(expectedCharacteristics.getTemperaments()));
     }
 
     @Test
     public void shouldAddJpaStoryToJpaAnimal() {
-        JpaAnimal jpaAnimalWithNoStory = createAndSaveJpaAnimal();
+        JpaAnimal jpaAnimalWithNoStory = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoStory = jpaAnimalWithNoStory.toAnimal();
-        assertThat(animalWithNoStory.getStory(), is(nullValue()));
+        assertTrue(animalWithNoStory.getStory().isEmpty());
         Story expectedStory = StoryBuilder.random().build();
         animalWithNoStory.setStory(expectedStory);
         JpaAnimal entity = new JpaAnimal(animalWithNoStory);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
         Animal animalWithStory = jpaAnimal.toAnimal();
-        Story story = animalWithStory.getStory();
+        Optional<Story> story = animalWithStory.getStory();
 
-        assertThat(story.getText(), is(expectedStory.getText()));
+        assertTrue(story.isPresent());
+        assertThat(story.get().getText(), is(expectedStory.getText()));
     }
 
     @Test
-    public void shouldFindJpaAnimalByAnimalUuid() {
-        JpaAnimal jpaAnimal = createAndSaveJpaAnimal();
+    public void shouldFindJpaAnimalByAnimalUuidAndOrganizationUuid() {
+        JpaAnimal jpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
         UUID animalUuid = jpaAnimal.toAnimal().getUuid();
 
-        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findById(animalUuid);
+        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(
+                animalUuid, AnimalBuilder.DEFAULT_ORGANIZATION_UUID
+        );
 
         assertThat(optionalJpaAnimal.isPresent(), is(true));
         assertThat(optionalJpaAnimal.get(), is(jpaAnimal));
     }
 
     @Test
-    public void shouldReturnPageWithFourJpaAnimals() {
-        IntStream.rangeClosed(1, 4).forEach(n -> jpaAnimalRepository.save(
-                new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build()))
-        );
+    public void shouldReturnPageWithFourJpaAnimalsMatchingOrganizationUuid() {
+        IntStream.rangeClosed(1, 5).forEach(n -> createAndSaveJpaAnimalForDefaultOrganization());
+        IntStream.rangeClosed(1, 5).forEach(n -> createAndSaveJpaAnimalForAnotherOrganization());
         Pageable pageable = PageRequest.of(0, 4);
 
-        Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAll(pageable);
+        Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationUuid(
+                AnimalBuilder.DEFAULT_ORGANIZATION_UUID, pageable
+        );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 
-        assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
-        assertThat(jpaAnimals.size(), is(4));
+        assertEquals(pageable, pageOfJpaAnimals.getPageable());
+        assertEquals(4, jpaAnimals.size());
+        jpaAnimals.forEach(jpaAnimal -> {
+            Animal animal = jpaAnimal.toAnimal();
+            assertEquals(AnimalBuilder.DEFAULT_ORGANIZATION_UUID, animal.getOrganizationUuid());
+        });
+    }
+
+    @Test
+    void shouldReturnJpaAnimalMatchingClinicalRecordAndOrganizationUuid() {
+        JpaAnimal expectedJpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
+        Animal animal = expectedJpaAnimal.toAnimal();
+
+        Optional<JpaAnimal> actualJpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(
+                animal.getClinicalRecord(), animal.getOrganizationUuid()
+        );
+
+        assertTrue(actualJpaAnimal.isPresent());
+        assertEquals(expectedJpaAnimal, actualJpaAnimal.get());
     }
 
     @Test

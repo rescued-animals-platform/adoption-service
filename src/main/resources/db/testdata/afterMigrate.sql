@@ -1,1 +1,2 @@
 INSERT INTO organization (uuid, name, city, reception_address, email, adoption_form_pdf_url) VALUES ('56009119-44bd-469a-a59b-401ab23d19ca', 'My Test Organization', 'QUITO', 'Av. Orellana E23-54', 'mytestorg@mail.com', 'http://www.mytestorg.com/adoption-form') ON CONFLICT DO NOTHING;
+INSERT INTO organization (uuid, name, city, reception_address, email, adoption_form_pdf_url) VALUES ('dd20a44f-8aea-49bb-bfc7-cb57f6a4cd6d', 'Another Organization', 'QUITO', 'Av. America N21-23', 'anotherorg@mail.com', 'http://www.anotherorg.com/adoption-form') ON CONFLICT DO NOTHING;

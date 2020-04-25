@@ -21,7 +21,9 @@ package ec.animal.adoption.domain.story;
 
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
+import ec.animal.adoption.domain.organization.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,20 +39,18 @@ public class StoryService {
         this.animalRepository = animalRepository;
     }
 
-    public Story create(final UUID animalUuid, final Story story) {
-        Animal animal = animalRepository.getBy(animalUuid);
+    public Story createFor(final UUID animalUuid, final Organization organization, final Story story) {
+        Animal animal = animalRepository.getBy(animalUuid, organization);
+        animal.getStory().ifPresent(s -> {
+            throw new EntityAlreadyExistsException();
+        });
         animal.setStory(story);
 
-        return animalRepository.save(animal).getStory();
+        return animalRepository.save(animal).getStory().orElseThrow();
     }
 
     public Story getBy(final UUID animalUuid) {
         Animal animal = animalRepository.getBy(animalUuid);
-
-        if (animal.getStory() == null) {
-            throw new EntityNotFoundException();
-        }
-
-        return animal.getStory();
+        return animal.getStory().orElseThrow(EntityNotFoundException::new);
     }
 }

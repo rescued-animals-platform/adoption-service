@@ -21,18 +21,27 @@ package ec.animal.adoption.domain.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class EntityAlreadyExistsExceptionTest {
 
+    private static final String EXPECTED_MESSAGE = "The resource already exists";
+
+    @Test
+    public void shouldReturnMessageAndSetCause() {
+        Throwable expectedCause = mock(Throwable.class);
+
+        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(expectedCause);
+
+        assertEquals(EXPECTED_MESSAGE, entityAlreadyExistsException.getMessage());
+        assertEquals(expectedCause, entityAlreadyExistsException.getCause());
+    }
+
     @Test
     public void shouldReturnMessage() {
-        String expectedMessage = "The resource already exists";
+        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException();
 
-        EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(mock(Throwable.class));
-
-        assertThat(entityAlreadyExistsException.getMessage(), is(expectedMessage));
+        assertEquals(EXPECTED_MESSAGE, entityAlreadyExistsException.getMessage());
     }
 }

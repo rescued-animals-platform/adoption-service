@@ -19,20 +19,24 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureService;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -43,28 +47,39 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/animals/{animalUuid}/pictures")
 public class PictureResource {
 
     private final PictureService pictureService;
+    private final OrganizationService organizationService;
+    private final AdminTokenUtils adminTokenUtils;
 
     @Autowired
-    public PictureResource(final PictureService pictureService) {
+    public PictureResource(final PictureService pictureService,
+                           final OrganizationService organizationService,
+                           final AdminTokenUtils adminTokenUtils) {
         this.pictureService = pictureService;
+        this.organizationService = organizationService;
+        this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/admin/animals/{animalUuid}/pictures",
+                 consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+                 produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public LinkPicture createPrimaryPicture(
             @PathVariable("animalUuid") final UUID animalUuid,
             @RequestParam("name") final String name,
             @RequestParam("pictureType") final PictureType pictureType,
             @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
-            @RequestPart("smallImage") final MultipartFile smallImageMultipartFile
+            @RequestPart("smallImage") final MultipartFile smallImageMultipartFile,
+            @AuthenticationPrincipal final Jwt token
     ) {
-        return pictureService.createPrimaryPicture(
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return pictureService.createFor(
+                animalUuid,
+                organization,
                 new ImagePicture(
-                        animalUuid,
                         name,
                         pictureType,
                         createImageFromMultipartFile(largeImageMultipartFile),
@@ -89,7 +104,7 @@ public class PictureResource {
         }
     }
 
-    @GetMapping
+    @GetMapping("/animals/{animalUuid}/pictures")
     public LinkPicture get(@PathVariable("animalUuid") final UUID animalUuid) {
         return pictureService.getBy(animalUuid);
     }

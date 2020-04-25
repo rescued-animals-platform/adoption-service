@@ -24,6 +24,7 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.media.LinkPicture;
 
 import java.util.UUID;
 
@@ -54,7 +55,8 @@ public class AnimalDto {
         this.species = animal.getSpecies();
         this.estimatedAge = animal.getEstimatedAge();
         this.sex = animal.getSex();
-        this.smallPrimaryPictureUrl = animal.getPrimaryLinkPicture() == null ? null :
-                animal.getPrimaryLinkPicture().getSmallImageUrl();
+        this.smallPrimaryPictureUrl = animal.getPrimaryLinkPicture()
+                                            .map(LinkPicture::getSmallImageUrl)
+                                            .orElse(null);
     }
 }

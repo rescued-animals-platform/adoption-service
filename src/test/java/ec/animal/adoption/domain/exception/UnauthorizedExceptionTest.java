@@ -21,8 +21,8 @@ package ec.animal.adoption.domain.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class UnauthorizedExceptionTest {
 
@@ -32,6 +32,17 @@ class UnauthorizedExceptionTest {
 
         UnauthorizedException unauthorizedException = new UnauthorizedException();
 
-        assertThat(unauthorizedException.getMessage(), is(expectedMessage));
+        assertEquals(expectedMessage, unauthorizedException.getMessage());
+    }
+
+    @Test
+    public void shouldReturnMessageAndSetCause() {
+        String expectedMessage = "Unauthorized";
+        Throwable expectedCause = mock(Throwable.class);
+
+        UnauthorizedException unauthorizedException = new UnauthorizedException(expectedCause);
+
+        assertEquals(expectedMessage, unauthorizedException.getMessage());
+        assertEquals(expectedCause, unauthorizedException.getCause());
     }
 }

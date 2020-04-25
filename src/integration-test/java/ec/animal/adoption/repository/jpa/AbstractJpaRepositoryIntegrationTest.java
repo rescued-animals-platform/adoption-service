@@ -16,7 +16,11 @@ public abstract class AbstractJpaRepositoryIntegrationTest {
     @Autowired
     JpaAnimalRepository jpaAnimalRepository;
 
-    JpaAnimal createAndSaveJpaAnimal() {
+    JpaAnimal createAndSaveJpaAnimalForDefaultOrganization() {
         return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build()));
+    }
+
+    JpaAnimal createAndSaveJpaAnimalForAnotherOrganization() {
+        return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.randomWithAnotherOrganization().build()));
     }
 }

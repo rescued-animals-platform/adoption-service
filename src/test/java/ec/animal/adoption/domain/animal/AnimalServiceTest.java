@@ -21,12 +21,15 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,8 +51,12 @@ import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,23 +93,49 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldCreateAnAnimal() {
+    public void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
         Animal animal = AnimalBuilder.random().build();
+        when(animalRepository.exists(animal)).thenReturn(false);
         when(animalRepository.save(animal)).thenReturn(expectedAnimal);
 
         Animal createdAnimal = animalService.create(animal);
 
-        assertThat(createdAnimal, is(expectedAnimal));
+        assertEquals(expectedAnimal, createdAnimal);
+    }
+
+    @Test
+    public void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
+        Animal animal = AnimalBuilder.random().build();
+        when(animalRepository.exists(animal)).thenReturn(true);
+
+        assertThrows(EntityAlreadyExistsException.class, () -> {
+            animalService.create(animal);
+        });
+        verify(animalRepository, never()).save(any(Animal.class));
     }
 
     @Test
     public void shouldReturnAnimalByItsUuid() {
         UUID uuid = UUID.randomUUID();
-        when(animalRepository.getBy(uuid)).thenReturn(expectedAnimal);
+        Organization organization = OrganizationBuilder.random().build();
+        when(animalRepository.getBy(uuid, organization)).thenReturn(expectedAnimal);
 
-        Animal animal = animalService.getBy(uuid);
+        Animal animal = animalService.getBy(uuid, organization);
 
         assertThat(animal, is(expectedAnimal));
+    }
+
+    @Test
+    public void shouldReturnAllAnimals() {
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
+                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+        ));
+        Organization organization = OrganizationBuilder.random().build();
+        when(animalRepository.getAllFor(organization, pageable)).thenReturn(expectedPageOfAnimals);
+
+        PagedEntity<Animal> pageOfAnimals = animalService.listAllFor(organization, pageable);
+
+        assertThat(pageOfAnimals, is(expectedPageOfAnimals));
     }
 
     @Test
@@ -152,17 +185,5 @@ public class AnimalServiceTest {
         Assertions.assertThat(pageOfAnimalDtos)
                   .usingRecursiveFieldByFieldElementComparator()
                   .isEqualTo(expectedPageOfAnimalDtos);
-    }
-
-    @Test
-    public void shouldReturnAllAnimals() {
-        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
-                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
-        ));
-        when(animalRepository.getAll(pageable)).thenReturn(expectedPageOfAnimals);
-
-        PagedEntity<Animal> pageOfAnimals = animalService.listAll(pageable);
-
-        assertThat(pageOfAnimals, is(expectedPageOfAnimals));
     }
 }

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
@@ -31,54 +32,62 @@ import ec.animal.adoption.domain.organization.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @RestController
-@Validated
-@RequestMapping("/animals")
 public class AnimalResource {
 
     private final AnimalService animalService;
     private final OrganizationService organizationService;
+    private final AdminTokenUtils adminTokenUtils;
 
     @Autowired
-    public AnimalResource(final AnimalService animalService, final OrganizationService organizationService) {
+    public AnimalResource(final AnimalService animalService,
+                          final OrganizationService organizationService,
+                          final AdminTokenUtils adminTokenUtils) {
         this.animalService = animalService;
         this.organizationService = organizationService;
+        this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping
+    @PostMapping("/admin/animals")
     @ResponseStatus(HttpStatus.CREATED)
     public Animal create(@RequestBody @Valid final Animal animal,
-                         @RequestParam("organizationId") @NotNull(message = "Organization id is required") final UUID organizationId) {
-        Organization organization = organizationService.getBy(organizationId);
+                         @AuthenticationPrincipal final Jwt token) {
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
         animal.setOrganization(organization);
         return animalService.create(animal);
     }
 
-    @GetMapping("/{uuid}")
-    public Animal get(@PathVariable("uuid") final UUID uuid) {
-        return animalService.getBy(uuid);
+    @GetMapping("/admin/animals/{uuid}")
+    public Animal get(@PathVariable("uuid") final UUID animalUuid,
+                      @AuthenticationPrincipal final Jwt token) {
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return animalService.getBy(animalUuid, organization);
     }
 
-    @GetMapping
-    public PagedEntity<Animal> listAll(final Pageable pageable) {
-        return animalService.listAll(pageable);
+    @GetMapping("/admin/animals")
+    public PagedEntity<Animal> listAll(final Pageable pageable,
+                                       @AuthenticationPrincipal final Jwt token) {
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return animalService.listAllFor(organization, pageable);
     }
 
-    @GetMapping(params = {"state", "species", "physicalActivity", "animalSize"})
+    @GetMapping("/animals")
     public PagedEntity<AnimalDto> listAllWithFilters(
             @RequestParam("state") final String stateName,
             @RequestParam("species") final Species species,

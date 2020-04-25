@@ -20,9 +20,13 @@
 package ec.animal.adoption.domain.story;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
+import ec.animal.adoption.domain.organization.Organization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +38,9 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,20 +63,38 @@ public class StoryServiceTest {
     public void shouldCreateStory() {
         ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
         UUID animalUuid = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).build();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
         Story expectedStory = mock(Story.class);
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
         Animal animalWithStory = AnimalBuilder.random().withStory(expectedStory)
                                               .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
                                               .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
                                               .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithStory);
 
-        Story createdStory = storyService.create(animalUuid, expectedStory);
+        Story createdStory = storyService.createFor(animalUuid, organization, expectedStory);
 
         verify(animalRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue().getStory(), is(expectedStory));
-        assertThat(createdStory, is(expectedStory));
+        assertTrue(argumentCaptor.getValue().getStory().isPresent());
+        assertEquals(expectedStory, argumentCaptor.getValue().getStory().get());
+        assertEquals(expectedStory, createdStory);
+    }
+
+    @Test
+    void shouldThrowEntityAlreadyExistsExceptionWhenThereIsAlreadyAStoryForAnimal() {
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animal = AnimalBuilder.random()
+                                     .withUuid(animalUuid)
+                                     .withOrganization(organization)
+                                     .withStory(StoryBuilder.random().build())
+                                     .build();
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+
+        assertThrows(EntityAlreadyExistsException.class, () -> {
+            storyService.createFor(animalUuid, organization, mock(Story.class));
+        });
     }
 
     @Test

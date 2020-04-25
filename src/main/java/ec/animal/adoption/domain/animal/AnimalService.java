@@ -23,7 +23,9 @@ import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.InvalidStateException;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -42,15 +44,19 @@ public class AnimalService {
     }
 
     public Animal create(final Animal animal) {
+        if (animalRepository.exists(animal)) {
+            throw new EntityAlreadyExistsException();
+        }
+
         return animalRepository.save(animal);
     }
 
-    public Animal getBy(final UUID uuid) {
-        return animalRepository.getBy(uuid);
+    public Animal getBy(final UUID animalUuid, final Organization organization) {
+        return animalRepository.getBy(animalUuid, organization);
     }
 
-    public PagedEntity<Animal> listAll(final Pageable pageable) {
-        return animalRepository.getAll(pageable);
+    public PagedEntity<Animal> listAllFor(final Organization organization, final Pageable pageable) {
+        return animalRepository.getAllFor(organization, pageable);
     }
 
     public PagedEntity<AnimalDto> listAllWithFilters(

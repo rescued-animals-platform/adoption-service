@@ -25,9 +25,11 @@ public class EntityAlreadyExistsException extends RuntimeException {
 
     private static final String MESSAGE = "The resource already exists";
 
-    public EntityAlreadyExistsException(final Throwable throwable) {
-        super(MESSAGE, throwable);
+    public EntityAlreadyExistsException() {
+        super(MESSAGE);
     }
 
-
+    public EntityAlreadyExistsException(final Throwable cause) {
+        super(MESSAGE, cause);
+    }
 }

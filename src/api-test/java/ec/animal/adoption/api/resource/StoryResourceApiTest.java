@@ -42,7 +42,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         Story story = StoryBuilder.random().build();
 
         webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
+                     .uri(STORY_ADMIN_URL, animal.getUuid())
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
@@ -59,7 +59,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
 
         webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
                      .bodyValue(storyWithWrongData)
                      .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
@@ -73,7 +73,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         String storyWithMissingData = "{\"text\":\"\"}";
 
         webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
                      .bodyValue(storyWithMissingData)
                      .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
@@ -85,7 +85,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
         webTestClient.post()
-                     .uri(STORY_URL, UUID.randomUUID())
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
                      .bodyValue(StoryBuilder.random().build())
                      .exchange()
                      .expectStatus()
@@ -98,14 +98,14 @@ public class StoryResourceApiTest extends AbstractApiTest {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story story = StoryBuilder.random().build();
         webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
+                     .uri(STORY_ADMIN_URL, animal.getUuid())
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
-                     .uri(STORY_URL, animal.getUuid())
+                     .uri(STORY_ADMIN_URL, animal.getUuid())
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
@@ -117,7 +117,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     public void shouldReturn200OkWithStory() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story createdStory = webTestClient.post()
-                                          .uri(STORY_URL, animal.getUuid())
+                                          .uri(STORY_ADMIN_URL, animal.getUuid())
                                           .bodyValue(StoryBuilder.random().build())
                                           .exchange()
                                           .expectStatus()
@@ -129,7 +129,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         assertNotNull(createdStory);
 
         webTestClient.get()
-                     .uri(STORY_URL, animal.getUuid())
+                     .uri(GET_STORY_URL, animal.getUuid())
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -140,7 +140,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
         webTestClient.get()
-                     .uri(STORY_URL, UUID.randomUUID())
+                     .uri(GET_STORY_URL, UUID.randomUUID())
                      .exchange()
                      .expectStatus()
                      .isNotFound()
@@ -152,7 +152,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
-                     .uri(STORY_URL, animal.getUuid())
+                     .uri(GET_STORY_URL, animal.getUuid())
                      .exchange()
                      .expectStatus()
                      .isNotFound()

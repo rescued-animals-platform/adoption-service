@@ -20,25 +20,39 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
+import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import static java.lang.System.getenv;
 
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractApiTest {
 
-    static final String CREATE_ANIMAL_URL = "/adoption/animals?organizationId={organizationId}";
-    static final String GET_ANIMAL_URL = "/adoption/animals/{uuid}";
+    static final String CREATE_ANIMAL_ADMIN_URL = "/adoption/admin/animals";
+    static final String GET_ANIMAL_ADMIN_URL = "/adoption/admin/animals/{uuid}";
+    static final String GET_ANIMALS_ADMIN_URL = "/adoption/admin/animals";
     static final String GET_ANIMALS_URL = "/adoption/animals";
-    static final String CHARACTERISTICS_URL = "/adoption/animals/{animalUuid}/characteristics";
-    static final String PICTURES_URL = "/adoption/animals/{animalUuid}/pictures";
-    static final String STORY_URL = "/adoption/animals/{animalUuid}/story";
+    static final String CHARACTERISTICS_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/characteristics";
+    static final String GET_CHARACTERISTICS_URL = "/adoption/animals/{animalUuid}/characteristics";
+    static final String PICTURES_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/pictures";
+    static final String GET_PICTURES_URL = "/adoption/animals/{animalUuid}/pictures";
+    static final String STORY_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/story";
+    static final String GET_STORY_URL = "/adoption/animals/{animalUuid}/story";
 
     static WebTestClient webTestClient;
 
@@ -55,7 +69,7 @@ public abstract class AbstractApiTest {
 
     Animal createRandomAnimalWithDefaultLookingForHumanState() {
         return webTestClient.post()
-                            .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                            .uri(CREATE_ANIMAL_ADMIN_URL)
                             .bodyValue(AnimalBuilder.random().withState(new LookingForHuman(LocalDateTime.now())).build())
                             .exchange()
                             .expectStatus()
@@ -65,15 +79,34 @@ public abstract class AbstractApiTest {
                             .getResponseBody();
     }
 
-    void createAnimal(final Animal animal) {
-        webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isCreated()
-                     .expectBody(Animal.class)
-                     .returnResult()
-                     .getResponseBody();
+    void createAnimals(final int numberOfAnimals,
+                       final State state,
+                       final Species species,
+                       final PhysicalActivity physicalActivity,
+                       final Size size) {
+        IntStream.rangeClosed(1, numberOfAnimals).forEach(n -> {
+            Characteristics characteristics = CharacteristicsBuilder.random()
+                                                                    .withPhysicalActivity(physicalActivity)
+                                                                    .withSize(size)
+                                                                    .build();
+            LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+            Animal animal = AnimalBuilder.random()
+                                         .withState(state)
+                                         .withSpecies(species)
+                                         .withCharacteristics(characteristics)
+                                         .withPrimaryLinkPicture(primaryLinkPicture)
+                                         .build();
+
+            webTestClient.post()
+                         .uri(CREATE_ANIMAL_ADMIN_URL)
+                         .bodyValue(animal)
+                         .exchange()
+                         .expectStatus()
+                         .isCreated()
+                         .expectBody(Animal.class)
+                         .returnResult()
+                         .getResponseBody();
+        });
     }
+
 }

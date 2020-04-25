@@ -55,9 +55,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnimalTest {
 
@@ -89,7 +89,8 @@ public class AnimalTest {
 
         animal.setPrimaryLinkPicture(primaryLinkPicture);
 
-        assertThat(animal.getPrimaryLinkPicture(), is(primaryLinkPicture));
+        assertTrue(animal.getPrimaryLinkPicture().isPresent());
+        assertEquals(primaryLinkPicture, animal.getPrimaryLinkPicture().get());
     }
 
     @Test
@@ -110,7 +111,8 @@ public class AnimalTest {
 
         animal.setCharacteristics(characteristics);
 
-        assertThat(animal.getCharacteristics(), is(characteristics));
+        assertTrue(animal.getCharacteristics().isPresent());
+        assertEquals(characteristics, animal.getCharacteristics().get());
     }
 
     @Test
@@ -120,7 +122,8 @@ public class AnimalTest {
 
         animal.setStory(story);
 
-        assertThat(animal.getStory(), is(story));
+        assertTrue(animal.getStory().isPresent());
+        assertEquals(story, animal.getStory().get());
     }
 
     @Test
@@ -187,7 +190,7 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithPrimaryLinkPicture, Animal.class);
 
-        assertThat(deserializedAnimal.getPrimaryLinkPicture(), is(nullValue()));
+        assertTrue(deserializedAnimal.getPrimaryLinkPicture().isEmpty());
     }
 
     @Test
@@ -202,7 +205,7 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithCharacteristics, Animal.class);
 
-        assertThat(deserializedAnimal.getCharacteristics(), is(nullValue()));
+        assertTrue(deserializedAnimal.getCharacteristics().isEmpty());
     }
 
     @Test
@@ -217,7 +220,7 @@ public class AnimalTest {
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithStory, Animal.class);
 
-        assertThat(deserializedAnimal.getStory(), is(nullValue()));
+        assertTrue(deserializedAnimal.getStory().isEmpty());
     }
 
     @Test

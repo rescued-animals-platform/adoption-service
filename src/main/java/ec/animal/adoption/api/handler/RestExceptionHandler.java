@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -52,8 +52,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityAlreadyExistsException.class)
     protected ResponseEntity<Object> handleEntityAlreadyExistsException(final EntityAlreadyExistsException exception) {
         final HttpStatus conflict = HttpStatus.CONFLICT;
+        Optional<Throwable> cause = Optional.ofNullable(exception.getCause());
         return buildResponseEntity(
-                new ApiError(conflict, exception.getMessage(), exception.getCause().getLocalizedMessage()), conflict
+                new ApiError(
+                        conflict,
+                        exception.getMessage(),
+                        cause.map(Throwable::getLocalizedMessage).orElse(null)
+                ),
+                conflict
         );
     }
 
@@ -89,18 +95,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnauthorizedException(final UnauthorizedException exception) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
         return buildResponseEntity(new ApiError(forbidden, exception.getMessage()), forbidden);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException exception) {
-        final List<ApiSubError> apiSubErrors = exception.getConstraintViolations()
-                                                        .stream()
-                                                        .map(c -> new ValidationApiSubError(c.getPropertyPath().toString(), c.getMessage()))
-                                                        .collect(Collectors.toList());
-        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        ApiError apiError = new ApiError(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrors);
-
-        return buildResponseEntity(apiError, badRequest);
     }
 
     @Override

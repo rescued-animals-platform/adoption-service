@@ -2,11 +2,10 @@ docker_compose_builder = docker-compose run adoption-service-builder
 
 deploy:
 	./gradlew clean bootJar --rerun-tasks
-	@docker-compose build
+	@docker-compose build adoption-service
 	docker-compose up -d --scale adoption-service-builder=0
 
 deploy-dependencies-only:
-	@docker-compose build adoption-service-db wiremock
 	@docker-compose up -d adoption-service-db wiremock
 
 undeploy:
@@ -27,9 +26,11 @@ integration-test: deploy-dependencies-only
 	make undeploy
 
 api-test: deploy
+	@docker-compose build adoption-service-builder
 	$(docker_compose_builder) gradle apiTest --rerun-tasks
 	make undeploy
 
 all-test: unit-test pitest deploy
+	@docker-compose build adoption-service-builder
 	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
 	make undeploy

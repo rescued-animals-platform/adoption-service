@@ -35,6 +35,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("PMD.DataClass")
@@ -149,24 +150,24 @@ public class Animal extends Entity {
         this.primaryLinkPicture = primaryLinkPicture;
     }
 
-    public LinkPicture getPrimaryLinkPicture() {
-        return primaryLinkPicture;
+    public Optional<LinkPicture> getPrimaryLinkPicture() {
+        return Optional.ofNullable(primaryLinkPicture);
     }
 
     public void setCharacteristics(final Characteristics characteristics) {
         this.characteristics = characteristics;
     }
 
-    public Characteristics getCharacteristics() {
-        return characteristics;
+    public Optional<Characteristics> getCharacteristics() {
+        return Optional.ofNullable(characteristics);
     }
 
     public void setStory(final Story story) {
         this.story = story;
     }
 
-    public Story getStory() {
-        return story;
+    public Optional<Story> getStory() {
+        return Optional.ofNullable(story);
     }
 
     public void setOrganization(final Organization organization) {
@@ -175,6 +176,11 @@ public class Animal extends Entity {
 
     public Organization getOrganization() {
         return organization;
+    }
+
+    @JsonIgnore
+    public UUID getOrganizationUuid() {
+        return this.organization.getOrganizationUuid();
     }
 
     @Override

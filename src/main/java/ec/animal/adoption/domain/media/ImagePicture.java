@@ -19,32 +19,21 @@
 
 package ec.animal.adoption.domain.media;
 
-import java.util.UUID;
-
 public class ImagePicture {
 
-    private final UUID animalUuid;
     private final String name;
     private final PictureType pictureType;
     private final Image largeImage;
     private final Image smallImage;
 
-    public ImagePicture(
-            final UUID animalUuid,
-            final String name,
-            final PictureType pictureType,
-            final Image largeImage,
-            final Image smallImage
-    ) {
-        this.animalUuid = animalUuid;
+    public ImagePicture(final String name,
+                        final PictureType pictureType,
+                        final Image largeImage,
+                        final Image smallImage) {
         this.name = name;
         this.pictureType = pictureType;
         this.largeImage = largeImage;
         this.smallImage = smallImage;
-    }
-
-    public UUID getAnimalUuid() {
-        return animalUuid;
     }
 
     public String getName() {
@@ -55,24 +44,8 @@ public class ImagePicture {
         return pictureType;
     }
 
-    private String getLargeImageName() {
-        return this.name + "_LARGE." + largeImage.getExtension();
-    }
-
-    public String getLargeImagePath() {
-        return this.animalUuid + "/" + this.getLargeImageName();
-    }
-
     public byte[] getLargeImageContent() {
         return this.largeImage.getContent();
-    }
-
-    private String getSmallImageName() {
-        return this.name + "_SMALL." + smallImage.getExtension();
-    }
-
-    public String getSmallImagePath() {
-        return this.animalUuid + "/" + this.getSmallImageName();
     }
 
     public byte[] getSmallImageContent() {
@@ -95,9 +68,6 @@ public class ImagePicture {
 
         ImagePicture that = (ImagePicture) o;
 
-        if (animalUuid != null ? !animalUuid.equals(that.animalUuid) : that.animalUuid != null) {
-            return false;
-        }
         if (name != null ? !name.equals(that.name) : that.name != null) {
             return false;
         }
@@ -113,8 +83,7 @@ public class ImagePicture {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = animalUuid != null ? animalUuid.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);
         result = 31 * result + (largeImage != null ? largeImage.hashCode() : 0);
         result = 31 * result + (smallImage != null ? smallImage.hashCode() : 0);

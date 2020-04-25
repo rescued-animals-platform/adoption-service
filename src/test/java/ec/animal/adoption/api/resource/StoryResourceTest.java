@@ -19,6 +19,10 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
@@ -41,6 +46,12 @@ public class StoryResourceTest {
     private StoryService storyService;
 
     @Mock
+    private OrganizationService organizationService;
+
+    @Mock
+    private AdminTokenUtils adminTokenUtils;
+
+    @Mock
     private Story expectedStory;
 
     private UUID animalUuid;
@@ -49,15 +60,20 @@ public class StoryResourceTest {
     @BeforeEach
     public void setUp() {
         animalUuid = UUID.randomUUID();
-        storyResource = new StoryResource(storyService);
+        storyResource = new StoryResource(storyService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAStoryForAnimal() {
+        Jwt token = mock(Jwt.class);
+        UUID organizationUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
         Story story = mock(Story.class);
-        when(storyService.create(animalUuid, story)).thenReturn(expectedStory);
+        when(storyService.createFor(animalUuid, organization, story)).thenReturn(expectedStory);
 
-        Story createdStory = storyResource.create(animalUuid, story);
+        Story createdStory = storyResource.create(animalUuid, story, token);
 
         assertThat(createdStory, is(expectedStory));
     }

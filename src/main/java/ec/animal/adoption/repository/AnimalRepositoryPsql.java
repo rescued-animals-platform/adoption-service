@@ -27,9 +27,11 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -58,28 +60,44 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public Animal getBy(final UUID uuid) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(uuid);
+    public boolean exists(final Animal animal) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(
+                animal.getClinicalRecord(), animal.getOrganizationUuid()
+        );
+        return jpaAnimal.isPresent();
+    }
+
+    @Override
+    public Animal getBy(final UUID animalUuid) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalUuid);
         return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public PagedEntity<Animal> getAllBy(
-            final String stateName,
-            final Species species,
-            final PhysicalActivity physicalActivity,
-            final Size size,
-            final Pageable pageable
-    ) {
-        return new PagedEntity<>(
-                jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                        stateName, species.name(), physicalActivity.name(), size.name(), pageable
-                ).map(JpaAnimal::toAnimal)
+    public Animal getBy(final UUID animalUuid, final Organization organization) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(
+                animalUuid, organization.getOrganizationUuid()
         );
+        return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public PagedEntity<Animal> getAll(final Pageable pageable) {
-        return new PagedEntity<>(jpaAnimalRepository.findAll(pageable).map(JpaAnimal::toAnimal));
+    public PagedEntity<Animal> getAllFor(final Organization organization, final Pageable pageable) {
+        Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationUuid(
+                organization.getOrganizationUuid(), pageable
+        );
+        return new PagedEntity<>(jpaAnimals.map(JpaAnimal::toAnimal));
+    }
+
+    @Override
+    public PagedEntity<Animal> getAllBy(final String stateName,
+                                        final Species species,
+                                        final PhysicalActivity physicalActivity,
+                                        final Size size,
+                                        final Pageable pageable) {
+        Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
+                stateName, species.name(), physicalActivity.name(), size.name(), pageable
+        );
+        return new PagedEntity<>(jpaAnimals.map(JpaAnimal::toAnimal));
     }
 }

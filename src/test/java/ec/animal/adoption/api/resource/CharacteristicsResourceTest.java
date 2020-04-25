@@ -19,13 +19,18 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
@@ -41,6 +46,12 @@ public class CharacteristicsResourceTest {
     private CharacteristicsService characteristicsService;
 
     @Mock
+    private OrganizationService organizationService;
+
+    @Mock
+    private AdminTokenUtils adminTokenUtils;
+
+    @Mock
     private Characteristics expectedCharacteristics;
 
     private UUID animalUuid;
@@ -49,15 +60,20 @@ public class CharacteristicsResourceTest {
     @BeforeEach
     public void setUp() {
         animalUuid = UUID.randomUUID();
-        characteristicsResource = new CharacteristicsResource(characteristicsService);
+        characteristicsResource = new CharacteristicsResource(characteristicsService, organizationService, adminTokenUtils);
     }
 
     @Test
-    public void shouldCreateCharacteristicsForAnimal() {
+    public void shouldCreateCharacteristicsForAnimalFromOrganization() {
+        UUID organizationUuid = UUID.randomUUID();
+        Jwt token = mock(Jwt.class);
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
         Characteristics characteristics = mock(Characteristics.class);
-        when(characteristicsService.create(animalUuid, characteristics)).thenReturn(expectedCharacteristics);
+        when(characteristicsService.createFor(animalUuid, organization, characteristics)).thenReturn(expectedCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsResource.create(animalUuid, characteristics);
+        Characteristics createdCharacteristics = characteristicsResource.create(animalUuid, characteristics, token);
 
         assertThat(createdCharacteristics, is(expectedCharacteristics));
     }

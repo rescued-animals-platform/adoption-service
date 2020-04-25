@@ -42,7 +42,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class JpaAnimalTest {
@@ -111,9 +111,12 @@ public class JpaAnimalTest {
                   () -> assertEquals(expectedAnimal.getEstimatedAge(), actualAnimal.getEstimatedAge()),
                   () -> assertEquals(expectedAnimal.getSex(), actualAnimal.getSex()),
                   () -> assertEquals(expectedAnimal.getState(), actualAnimal.getState()),
-                  () -> assertEqualsPrimaryLinkPicture(expectedAnimal.getPrimaryLinkPicture(), actualAnimal.getPrimaryLinkPicture()),
-                  () -> assertEqualsCharacteristics(expectedAnimal.getCharacteristics(), actualAnimal.getCharacteristics()),
-                  () -> assertEquals(expectedAnimal.getStory().getText(), actualAnimal.getStory().getText()),
+                  () -> assertTrue(actualAnimal.getPrimaryLinkPicture().isPresent()),
+                  () -> assertEqualsPrimaryLinkPicture(primaryLinkPicture, actualAnimal.getPrimaryLinkPicture().get()),
+                  () -> assertTrue(actualAnimal.getCharacteristics().isPresent()),
+                  () -> assertEqualsCharacteristics(characteristics, actualAnimal.getCharacteristics().get()),
+                  () -> assertTrue(actualAnimal.getStory().isPresent()),
+                  () -> assertEquals(story.getText(), actualAnimal.getStory().get().getText()),
                   () -> assertEquals(expectedAnimal.getOrganization(), actualAnimal.getOrganization()));
     }
 
@@ -141,7 +144,7 @@ public class JpaAnimalTest {
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertNull(jpaAnimalToAnimal.getPrimaryLinkPicture());
+        assertTrue(jpaAnimalToAnimal.getPrimaryLinkPicture().isEmpty());
     }
 
     @Test
@@ -152,7 +155,7 @@ public class JpaAnimalTest {
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertNull(jpaAnimalToAnimal.getCharacteristics());
+        assertTrue(jpaAnimalToAnimal.getCharacteristics().isEmpty());
     }
 
     @Test
@@ -163,7 +166,7 @@ public class JpaAnimalTest {
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertNull(jpaAnimalToAnimal.getStory());
+        assertTrue(jpaAnimalToAnimal.getStory().isEmpty());
     }
 
     @Test

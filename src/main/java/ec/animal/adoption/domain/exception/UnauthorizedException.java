@@ -26,4 +26,8 @@ public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException() {
         super("Unauthorized");
     }
+
+    public UnauthorizedException(final Throwable cause) {
+        super("Unauthorized", cause);
+    }
 }

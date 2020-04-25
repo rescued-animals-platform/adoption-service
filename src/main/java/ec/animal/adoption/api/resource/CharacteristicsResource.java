@@ -19,15 +19,19 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,26 +39,34 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/animals/{animalUuid}/characteristics")
 public class CharacteristicsResource {
 
     private final CharacteristicsService characteristicsService;
+    private final OrganizationService organizationService;
+    private final AdminTokenUtils adminTokenUtils;
 
     @Autowired
-    public CharacteristicsResource(final CharacteristicsService characteristicsService) {
+    public CharacteristicsResource(final CharacteristicsService characteristicsService,
+                                   final OrganizationService organizationService,
+                                   final AdminTokenUtils adminTokenUtils) {
         this.characteristicsService = characteristicsService;
+        this.organizationService = organizationService;
+        this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping
+    @PostMapping("/admin/animals/{animalUuid}/characteristics")
     @ResponseStatus(HttpStatus.CREATED)
     public Characteristics create(
             @PathVariable("animalUuid") final UUID animalUuid,
-            @RequestBody @Valid final Characteristics characteristics
+            @RequestBody @Valid final Characteristics characteristics,
+            @AuthenticationPrincipal final Jwt token
     ) {
-        return characteristicsService.create(animalUuid, characteristics);
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return characteristicsService.createFor(animalUuid, organization, characteristics);
     }
 
-    @GetMapping
+    @GetMapping("/animals/{animalUuid}/characteristics")
     public Characteristics get(@PathVariable("animalUuid") final UUID animalUuid) {
         return characteristicsService.getBy(animalUuid);
     }

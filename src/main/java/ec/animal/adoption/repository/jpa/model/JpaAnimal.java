@@ -107,9 +107,9 @@ public class JpaAnimal implements Serializable {
         this.sex = animal.getSex().name();
         this.stateName = animal.getStateName();
         this.state = animal.getState();
-        this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture());
-        this.setJpaCharacteristics(animal.getCharacteristics());
-        this.setJpaStory(animal.getStory());
+        this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture().orElse(null));
+        this.setJpaCharacteristics(animal.getCharacteristics().orElse(null));
+        this.setJpaStory(animal.getStory().orElse(null));
         this.jpaOrganization = new JpaOrganization(animal.getOrganization());
     }
 

@@ -1,7 +1,7 @@
 CREATE TABLE animal (
   uuid UUID PRIMARY KEY,
   registration_date TIMESTAMP DEFAULT current_timestamp,
-  clinical_record VARCHAR(40) NOT NULL UNIQUE,
+  clinical_record VARCHAR(40) NOT NULL,
   name VARCHAR(40) NOT NULL,
   species VARCHAR(3) NOT NULL,
   estimated_age VARCHAR(12) NOT NULL,

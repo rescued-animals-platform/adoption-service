@@ -21,26 +21,19 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
@@ -62,7 +55,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         Animal animal = AnimalBuilder.random().build();
 
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()
@@ -88,7 +81,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         Animal animal = AnimalBuilder.random().withState(null).build();
 
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()
@@ -107,25 +100,6 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      });
     }
 
-    @ParameterizedTest(name = "should return 400 bad request when organizationId is \"{0}\"")
-    @MethodSource("invalidOrganizationIds")
-    public void shouldReturn400BadRequestWhenOrganizationIdIsNullOrEmpty(final String organizationId) {
-        Animal animal = AnimalBuilder.random().build();
-
-        webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, organizationId)
-                     .bodyValue(animal)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
-    }
-
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private static Stream<String> invalidOrganizationIds() {
-        return Stream.of(null, "");
-    }
-
     @Test
     public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
         Animal animal = AnimalBuilder.random().build();
@@ -136,7 +110,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 "\",\"sex\":\"12345\"}";
 
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animalWithWrongData)
                      .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
@@ -152,7 +126,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 "\",\"species\":\"" + animal.getSpecies() + "\"}";
 
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animalWithMissingData)
                      .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
@@ -165,14 +139,14 @@ public class AnimalResourceApiTest extends AbstractApiTest {
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         Animal animal = AnimalBuilder.random().build();
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
-                     .uri(CREATE_ANIMAL_URL, AnimalBuilder.DEFAULT_ORGANIZATION_UUID)
+                     .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animal)
                      .exchange()
                      .expectStatus()
@@ -185,7 +159,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         Animal createdAnimal = createRandomAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
-                     .uri(GET_ANIMAL_URL, createdAnimal.getUuid())
+                     .uri(GET_ANIMAL_ADMIN_URL, createdAnimal.getUuid())
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -201,7 +175,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenAnimalDoesNotExist() {
         webTestClient.get()
-                     .uri(GET_ANIMAL_URL, UUID.randomUUID())
+                     .uri(GET_ANIMAL_ADMIN_URL, UUID.randomUUID())
                      .exchange()
                      .expectStatus()
                      .isNotFound()
@@ -209,16 +183,35 @@ public class AnimalResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimalsFilteredByState() {
+    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndTwoAnimals() {
+        createRandomAnimalWithDefaultLookingForHumanState();
+        createRandomAnimalWithDefaultLookingForHumanState();
+
+        webTestClient.get()
+                     .uri(GET_ANIMALS_ADMIN_URL + "?page=0&size=2")
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(PagedEntity.class)
+                     .consumeWith(animalsEntityExchangeResult -> {
+                         var pagedEntity = animalsEntityExchangeResult.getResponseBody();
+                         assertNotNull(pagedEntity);
+                         assertThat(pagedEntity.isEmpty(), is(false));
+                         assertThat(pagedEntity.getNumberOfElements(), is(2));
+                         assertThat(pagedEntity.getSize(), is(2));
+                         assertThat(pagedEntity.isFirst(), is(true));
+                         assertThat(pagedEntity.getContent().size(), is(2));
+                     });
+    }
+
+    @Test
+    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndThreeAnimalsFiltered() {
         State state = getRandomState();
         Species species = getRandomSpecies();
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();
-        IntStream.rangeClosed(1, 3).forEach(n -> createAnimal(AnimalBuilder.random().withState(state)
-                                                                           .withSpecies(species).withCharacteristics(
-                        CharacteristicsBuilder.random().withPhysicalActivity(physicalActivity).withSize(size).build())
-                                                                           .withPrimaryLinkPicture(LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build())
-                                                                           .build()));
+        int numberOfAnimals = 3;
+        createAnimals(numberOfAnimals, state, species, physicalActivity, size);
         String uri = GET_ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
                 "&animalSize={size}&page=0&size=3";
 
@@ -232,10 +225,10 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                          var pagedEntity = animalsEntityExchangeResult.getResponseBody();
                          assertNotNull(pagedEntity);
                          assertThat(pagedEntity.isEmpty(), is(false));
-                         assertThat(pagedEntity.getNumberOfElements(), is(3));
-                         assertThat(pagedEntity.getSize(), is(3));
+                         assertThat(pagedEntity.getNumberOfElements(), is(numberOfAnimals));
+                         assertThat(pagedEntity.getSize(), is(numberOfAnimals));
                          assertThat(pagedEntity.isFirst(), is(true));
-                         assertThat(pagedEntity.getContent().size(), is(3));
+                         assertThat(pagedEntity.getContent().size(), is(numberOfAnimals));
                      });
     }
 
@@ -291,27 +284,5 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isBadRequest()
                      .expectBody(ApiError.class);
-    }
-
-    @Test
-    public void shouldReturn200OkWithPagedEntityContainingFirstPageAndTwoAnimals() {
-        createRandomAnimalWithDefaultLookingForHumanState();
-        createRandomAnimalWithDefaultLookingForHumanState();
-
-        webTestClient.get()
-                     .uri(GET_ANIMALS_URL + "?page=0&size=2")
-                     .exchange()
-                     .expectStatus()
-                     .isOk()
-                     .expectBody(PagedEntity.class)
-                     .consumeWith(animalsEntityExchangeResult -> {
-                         var pagedEntity = animalsEntityExchangeResult.getResponseBody();
-                         assertNotNull(pagedEntity);
-                         assertThat(pagedEntity.isEmpty(), is(false));
-                         assertThat(pagedEntity.getNumberOfElements(), is(2));
-                         assertThat(pagedEntity.getSize(), is(2));
-                         assertThat(pagedEntity.isFirst(), is(true));
-                         assertThat(pagedEntity.getContent().size(), is(2));
-                     });
     }
 }
