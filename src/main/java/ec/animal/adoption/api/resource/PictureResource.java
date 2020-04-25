@@ -29,6 +29,8 @@ import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,6 +50,8 @@ import java.util.UUID;
 
 @RestController
 public class PictureResource {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(PictureResource.class);
 
     private final PictureService pictureService;
     private final OrganizationService organizationService;
@@ -92,6 +96,8 @@ public class PictureResource {
         String originalFilename = multipartFile.getOriginalFilename();
 
         if (multipartFile.isEmpty() || originalFilename == null) {
+            LOGGER.info("Invalid picture: multipartFile.isEmpty()={}, originalFilename={}",
+                        multipartFile.isEmpty(), originalFilename);
             throw new InvalidPictureException();
         }
 
@@ -100,6 +106,7 @@ public class PictureResource {
                              multipartFile.getBytes(),
                              multipartFile.getSize());
         } catch (IOException exception) {
+            LOGGER.error("Exception thrown when creating an image for {}", originalFilename, exception);
             throw new InvalidPictureException(exception);
         }
     }

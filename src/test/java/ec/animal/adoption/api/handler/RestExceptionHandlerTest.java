@@ -318,6 +318,28 @@ public class RestExceptionHandlerTest {
         assertThat(apiError, is(expectedApiError));
     }
 
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableForException() {
+        Exception exception = mock(Exception.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleGlobalException(exception);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.SERVICE_UNAVAILABLE));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForException() {
+        String message = randomAlphabetic(10);
+        Exception exception = new Exception(message);
+        ApiError expectedApiError = new ApiError(HttpStatus.SERVICE_UNAVAILABLE, message);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleGlobalException(exception);
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
     private static List<FieldError> createFieldErrors() {
         List<FieldError> fieldErrors = new ArrayList<>();
         FieldError fieldError = new FieldError(

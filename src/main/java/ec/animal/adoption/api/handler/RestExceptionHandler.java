@@ -28,6 +28,8 @@ import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
 import ec.animal.adoption.domain.exception.UnauthorizedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,8 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandler.class);
 
     public static final String VALIDATION_FAILED_ERROR_MESSAGE = "Validation failed";
 
@@ -95,6 +99,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnauthorizedException(final UnauthorizedException exception) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
         return buildResponseEntity(new ApiError(forbidden, exception.getMessage()), forbidden);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGlobalException(final Exception exception) {
+        LOGGER.error("Uncaught exception", exception);
+        final HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
+        return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
     @Override

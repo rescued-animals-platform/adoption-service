@@ -61,7 +61,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
                     smallMediaLink
             );
         } catch (IOException exception) {
-            LOGGER.error("An exception occurred when communicating to Cloudinary: {}", exception.getMessage());
+            LOGGER.error("Exception thrown when communicating to Cloudinary", exception);
             throw new CloudinaryImageStorageException(exception);
         }
     }
@@ -74,6 +74,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private LinkPicture saveFallback(final ImagePicture imagePicture) {
+        LOGGER.info("Fallback for Cloudinary");
         throw new MediaStorageException();
     }
 }

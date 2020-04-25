@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -26,11 +25,14 @@ public class AdminTokenUtils {
     public UUID extractOrganizationUuidFrom(final Jwt token) {
         String organizationUuid = token.getClaimAsString(organizationIdClaimName);
         try {
-            return Optional.ofNullable(organizationUuid)
-                           .map(UUID::fromString)
-                           .orElseThrow(UnauthorizedException::new);
+            if (organizationUuid == null) {
+                LOGGER.info("Token doesn't have the organization_id claim");
+                throw new UnauthorizedException();
+            }
+
+            return UUID.fromString(organizationUuid);
         } catch (IllegalArgumentException ex) {
-            LOGGER.info("Error while parsing organization uuid", ex);
+            LOGGER.info("Organization uuid found in token claim is not a valid uuid", ex);
             throw new UnauthorizedException(ex);
         }
     }

@@ -25,6 +25,8 @@ import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.organization.Organization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,8 @@ import java.util.UUID;
 
 @Service
 public class PictureService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(PictureService.class);
 
     private final MediaRepository mediaRepository;
     private final AnimalRepository animalRepository;
@@ -49,6 +53,8 @@ public class PictureService {
                                  final Organization organization,
                                  final ImagePicture imagePicture) {
         if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
+            LOGGER.info("Invalid picture: type={}, imagePicture.isValid()={}",
+                        imagePicture.getPictureType(), imagePicture.isValid());
             throw new InvalidPictureException();
         }
 

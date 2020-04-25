@@ -30,6 +30,8 @@ import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,8 @@ import java.util.UUID;
 
 @Repository
 public class AnimalRepositoryPsql implements AnimalRepository {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(AnimalRepositoryPsql.class);
 
     private final JpaAnimalRepository jpaAnimalRepository;
 
@@ -55,6 +59,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
+            LOGGER.error("Exception thrown when saving an animal", exception);
             throw new EntityAlreadyExistsException(exception);
         }
     }
