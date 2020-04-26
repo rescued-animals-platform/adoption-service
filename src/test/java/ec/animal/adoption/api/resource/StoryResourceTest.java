@@ -36,6 +36,7 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,20 +55,24 @@ public class StoryResourceTest {
     @Mock
     private Story expectedStory;
 
+    @Mock
+    private Jwt token;
+
+    private UUID organizationUuid;
+    private Organization organization;
     private UUID animalUuid;
     private StoryResource storyResource;
 
     @BeforeEach
     public void setUp() {
+        organizationUuid = UUID.randomUUID();
+        organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
         animalUuid = UUID.randomUUID();
         storyResource = new StoryResource(storyService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAStoryForAnimal() {
-        Jwt token = mock(Jwt.class);
-        UUID organizationUuid = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
         when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
         when(organizationService.getBy(organizationUuid)).thenReturn(organization);
         Story story = mock(Story.class);
@@ -75,7 +80,19 @@ public class StoryResourceTest {
 
         Story createdStory = storyResource.create(animalUuid, story, token);
 
-        assertThat(createdStory, is(expectedStory));
+        assertEquals(expectedStory, createdStory);
+    }
+
+    @Test
+    void shouldUpdateStoryForAnimal() {
+        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
+        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        Story story = mock(Story.class);
+        when(storyService.updateFor(animalUuid, organization, story)).thenReturn(expectedStory);
+
+        Story updatedStory = storyResource.update(animalUuid, story, token);
+
+        assertEquals(expectedStory, updatedStory);
     }
 
     @Test

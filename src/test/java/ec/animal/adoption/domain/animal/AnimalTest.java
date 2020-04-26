@@ -58,6 +58,8 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AnimalTest {
 
@@ -134,6 +136,20 @@ public class AnimalTest {
         animal.setOrganization(organization);
 
         assertThat(animal.getOrganization(), is(organization));
+    }
+
+    @Test
+    void shouldSetUpdatedStory() {
+        Story currentStory = mock(Story.class);
+        Animal animal = AnimalBuilder.random().withStory(currentStory).build();
+        Story newStory = mock(Story.class);
+        Story updatedStory = mock(Story.class);
+        when(currentStory.updateWith(newStory)).thenReturn(updatedStory);
+
+        animal.updateStory(newStory);
+
+        assertTrue(animal.getStory().isPresent());
+        assertEquals(updatedStory, animal.getStory().get());
     }
 
     @Test

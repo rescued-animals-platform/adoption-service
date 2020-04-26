@@ -34,7 +34,7 @@ public interface JpaAnimalRepository extends PagingAndSortingRepository<JpaAnima
 
     Page<JpaAnimal> findAllByJpaOrganizationUuid(UUID organizationUuid, Pageable pageable);
 
-    Optional<JpaAnimal> findByClinicalRecordAndJpaOrganizationUuid(String clinicalRecord, UUID organizationUuid);
+    boolean existsByClinicalRecordAndJpaOrganizationUuid(String clinicalRecord, UUID organizationUuid);
 
     Page<JpaAnimal> findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
             String stateName, String species, String physicalActivity, String size, Pageable pageable

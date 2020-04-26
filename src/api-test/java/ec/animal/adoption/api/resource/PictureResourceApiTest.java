@@ -75,6 +75,8 @@ public class PictureResourceApiTest extends AbstractApiTest {
                          assertNotNull(linkPicture);
                          assertThat(linkPicture.getName(), is(name));
                          assertThat(linkPicture.getPictureType(), is(pictureType));
+                         assertNotNull(linkPicture.getLargeImageUrl());
+                         assertNotNull(linkPicture.getSmallImageUrl());
                      });
     }
 

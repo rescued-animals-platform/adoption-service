@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
@@ -55,7 +56,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
+    public void shouldReturn400BadRequestWhenCreatingAStoryAndJsonCannotBeParsed() {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
 
         webTestClient.post()
@@ -69,7 +70,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
+    public void shouldReturn400BadRequestWhenCreatingAStoryAndMissingDataIsProvided() {
         String storyWithMissingData = "{\"text\":\"\"}";
 
         webTestClient.post()
@@ -110,6 +111,79 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isEqualTo(CONFLICT)
+                     .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn200OkWithUpdatedStory() {
+        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
+        Story createdStory = createStoryForAnimal(animal.getUuid(), StoryBuilder.random().build());
+        String newStoryText = randomAlphabetic(10);
+        Story newStory = StoryBuilder.random().withText(newStoryText).build();
+
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, animal.getUuid())
+                     .bodyValue(newStory)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(Story.class)
+                     .consumeWith(storyEntityExchangeResult -> {
+                         Story updatedStory = storyEntityExchangeResult.getResponseBody();
+                         assertNotEquals(createdStory, updatedStory);
+                         assertEquals(newStory, updatedStory);
+                     });
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenUpdatingAStoryAndJsonCannotBeParsed() {
+        String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
+
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .bodyValue(storyWithWrongData)
+                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenUpdatingAStoryAndMissingDataIsProvided() {
+        String storyWithMissingData = "{\"text\":\"\"}";
+
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .bodyValue(storyWithMissingData)
+                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenUpdatingStoryBeforeCreatingOne() {
+        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
+
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, animal.getUuid())
+                     .bodyValue(StoryBuilder.random().build())
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody(ApiError.class);
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenUpdatingStoryForNonExistentAnimal() {
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .bodyValue(StoryBuilder.random().build())
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
                      .expectBody(ApiError.class);
     }
 
@@ -157,5 +231,17 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isNotFound()
                      .expectBody(ApiError.class);
+    }
+
+    private static Story createStoryForAnimal(final UUID animalUuid, final Story story) {
+        return webTestClient.post()
+                            .uri(STORY_ADMIN_URL, animalUuid)
+                            .bodyValue(story)
+                            .exchange()
+                            .expectStatus()
+                            .isCreated()
+                            .expectBody(Story.class)
+                            .returnResult()
+                            .getResponseBody();
     }
 }

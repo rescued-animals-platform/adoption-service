@@ -52,6 +52,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryIntegrationTest {
@@ -208,16 +209,24 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
-    void shouldReturnJpaAnimalMatchingClinicalRecordAndOrganizationUuid() {
+    void shouldReturnTrueWhenJpaAnimalMatchingClinicalRecordAndOrganizationUuidExists() {
         JpaAnimal expectedJpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animal = expectedJpaAnimal.toAnimal();
 
-        Optional<JpaAnimal> actualJpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(
+        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
                 animal.getClinicalRecord(), animal.getOrganizationUuid()
         );
 
-        assertTrue(actualJpaAnimal.isPresent());
-        assertEquals(expectedJpaAnimal, actualJpaAnimal.get());
+        assertTrue(exists);
+    }
+
+    @Test
+    void shouldReturnFalseWhenJpaAnimalMatchingClinicalRecordAndOrganizationUuidDoesNotExist() {
+        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
+                randomAlphabetic(10), UUID.randomUUID()
+        );
+
+        assertFalse(exists);
     }
 
     @Test

@@ -66,10 +66,9 @@ public class AnimalRepositoryPsql implements AnimalRepository {
 
     @Override
     public boolean exists(final Animal animal) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(
+        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
                 animal.getClinicalRecord(), animal.getOrganizationUuid()
         );
-        return jpaAnimal.isPresent();
     }
 
     @Override

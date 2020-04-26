@@ -112,8 +112,8 @@ public class AnimalRepositoryPsqlTest {
     @Test
     void shouldReturnTrueIfAnimalWithClinicalRecordAndOrganizationUuidIsFound() {
         Animal animal = AnimalBuilder.random().build();
-        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
-                .thenReturn(Optional.of(new JpaAnimal(animal)));
+        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+                .thenReturn(true);
 
         boolean exists = animalRepositoryPsql.exists(animal);
 
@@ -123,8 +123,8 @@ public class AnimalRepositoryPsqlTest {
     @Test
     void shouldReturnFalseIfAnimalWithClinicalRecordAndOrganizationUuidIsNotFound() {
         Animal animal = AnimalBuilder.random().build();
-        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
-                .thenReturn(Optional.empty());
+        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+                .thenReturn(false);
 
         boolean exists = animalRepositoryPsql.exists(animal);
 

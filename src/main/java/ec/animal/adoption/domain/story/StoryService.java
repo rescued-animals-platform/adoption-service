@@ -24,6 +24,8 @@ import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.organization.Organization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ import java.util.UUID;
 
 @Service
 public class StoryService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(StoryService.class);
 
     private final AnimalRepository animalRepository;
 
@@ -42,10 +46,23 @@ public class StoryService {
     public Story createFor(final UUID animalUuid, final Organization organization, final Story story) {
         Animal animal = animalRepository.getBy(animalUuid, organization);
         animal.getStory().ifPresent(s -> {
+            LOGGER.info("A story already exists for animal {}", animalUuid);
             throw new EntityAlreadyExistsException();
         });
         animal.setStory(story);
 
+        return animalRepository.save(animal).getStory().orElseThrow();
+    }
+
+    public Story updateFor(final UUID animalUuid, final Organization organization, final Story story) {
+        Animal animal = animalRepository.getBy(animalUuid, organization);
+
+        if (animal.getStory().isEmpty()) {
+            LOGGER.info("Can't update a non-existent story for animal {}", animalUuid);
+            throw new EntityNotFoundException();
+        }
+
+        animal.updateStory(story);
         return animalRepository.save(animal).getStory().orElseThrow();
     }
 

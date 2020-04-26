@@ -39,6 +39,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StoryTest {
@@ -57,6 +60,26 @@ public class StoryTest {
     @Test
     public void shouldCreateAStory() {
         assertThat(story.getText(), is(text));
+    }
+
+    @Test
+    void shouldUpdateStoryTextAndRegistrationTime() {
+        String newText = randomAlphabetic(50);
+        Story newStory = StoryBuilder.random().withText(newText).build();
+
+        Story updatedStory = story.updateWith(newStory);
+
+        assertAll(() -> assertEquals(story.getUuid(), updatedStory.getUuid()),
+                  () -> assertNotEquals(story.getRegistrationDate(), updatedStory.getRegistrationDate()),
+                  () -> assertEquals(LocalDateTime.now().toLocalDate(), updatedStory.getRegistrationDate().toLocalDate()),
+                  () -> assertEquals(newText, updatedStory.getText()));
+    }
+
+    @Test
+    void shouldReturnSameStoryWhenUpdatedWithItself() {
+        Story updatedStory = story.updateWith(story);
+
+        assertEquals(story, updatedStory);
     }
 
     @Test

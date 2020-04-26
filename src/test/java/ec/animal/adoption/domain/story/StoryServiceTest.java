@@ -34,6 +34,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -61,23 +62,24 @@ public class StoryServiceTest {
 
     @Test
     public void shouldCreateStory() {
-        ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
+        ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
         UUID animalUuid = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
         Story expectedStory = mock(Story.class);
         when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
-        Animal animalWithStory = AnimalBuilder.random().withStory(expectedStory)
-                                              .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
-                                              .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
-                                              .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+        Animal animalWithStory = AnimalBuilder.random()
+                                              .withUuid(animalUuid)
+                                              .withOrganization(organization)
+                                              .withStory(expectedStory)
+                                              .build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithStory);
 
         Story createdStory = storyService.createFor(animalUuid, organization, expectedStory);
 
-        verify(animalRepository).save(argumentCaptor.capture());
-        assertTrue(argumentCaptor.getValue().getStory().isPresent());
-        assertEquals(expectedStory, argumentCaptor.getValue().getStory().get());
+        verify(animalRepository).save(animalArgumentCaptor.capture());
+        assertTrue(animalArgumentCaptor.getValue().getStory().isPresent());
+        assertEquals(expectedStory, animalArgumentCaptor.getValue().getStory().get());
         assertEquals(expectedStory, createdStory);
     }
 
@@ -94,6 +96,39 @@ public class StoryServiceTest {
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
             storyService.createFor(animalUuid, organization, mock(Story.class));
+        });
+    }
+
+    @Test
+    public void shouldUpdateStory() {
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animalFound = mock(Animal.class);
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animalFound);
+        when(animalFound.getStory()).thenReturn(Optional.of(mock(Story.class)));
+        Story newStory = mock(Story.class);
+        Animal animalWithUpdatedStory = mock(Animal.class);
+        Story expectedUpdatedStory = mock(Story.class);
+        when(animalWithUpdatedStory.getStory()).thenReturn(Optional.of(expectedUpdatedStory));
+        when(animalRepository.save(any(Animal.class))).thenReturn(animalWithUpdatedStory);
+
+        Story updatedStory = storyService.updateFor(animalUuid, organization, newStory);
+
+        verify(animalFound).updateStory(newStory);
+        assertEquals(expectedUpdatedStory, updatedStory);
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundExceptionWhenUpdatingStoryForAnimalThatDoesNotHaveAlreadyAStory() {
+        UUID animalUuid = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().build();
+        Animal animalFound = mock(Animal.class);
+        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animalFound);
+        when(animalFound.getStory()).thenReturn(Optional.empty());
+        Story newStory = mock(Story.class);
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            storyService.updateFor(animalUuid, organization, newStory);
         });
     }
 

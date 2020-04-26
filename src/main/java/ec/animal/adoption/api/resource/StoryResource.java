@@ -31,6 +31,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,6 +63,15 @@ public class StoryResource {
         UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
         Organization organization = organizationService.getBy(organizationUuid);
         return storyService.createFor(animalUuid, organization, story);
+    }
+
+    @PutMapping("/admin/animals/{animalUuid}/story")
+    public Story update(@PathVariable("animalUuid") final UUID animalUuid,
+                        @RequestBody @Valid final Story story,
+                        @AuthenticationPrincipal final Jwt token) {
+        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        Organization organization = organizationService.getBy(organizationUuid);
+        return storyService.updateFor(animalUuid, organization, story);
     }
 
     @GetMapping("/animals/{animalUuid}/story")

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
+import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -48,6 +49,14 @@ public class Story extends Entity {
 
     public String getText() {
         return this.text;
+    }
+
+    public Story updateWith(@NonNull Story story) {
+        if (this.equals(story)) {
+            return this;
+        }
+
+        return new Story(this.getUuid(), LocalDateTime.now(), story.getText());
     }
 
     @Override
