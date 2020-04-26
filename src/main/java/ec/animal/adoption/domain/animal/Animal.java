@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings("PMD.DataClass")
 public class Animal extends Entity {
 
     @NotEmpty(message = "Animal clinical record is required")
@@ -182,7 +183,7 @@ public class Animal extends Entity {
         return this.organization.getOrganizationUuid();
     }
 
-    public void updateStory(Story story) {
+    public void updateStory(final Story story) {
         this.setStory(this.story.updateWith(story));
     }
 

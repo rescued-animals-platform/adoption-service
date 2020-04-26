@@ -51,7 +51,7 @@ public class Story extends Entity {
         return this.text;
     }
 
-    public Story updateWith(@NonNull Story story) {
+    public Story updateWith(@NonNull final Story story) {
         if (this.equals(story)) {
             return this;
         }
