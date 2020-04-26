@@ -33,6 +33,8 @@ import ec.animal.adoption.domain.story.Story;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,7 +47,8 @@ public class Animal extends Entity {
     @JsonProperty("clinicalRecord")
     private final String clinicalRecord;
 
-    @NotEmpty(message = "Animal name is required")
+    @Size(min = 1, message = "Animal name must be a non-empty string")
+    @Pattern(regexp = "^(?!\\s*$).+$", message = "Animal name must be a non-empty string")
     @JsonProperty("name")
     private final String name;
 

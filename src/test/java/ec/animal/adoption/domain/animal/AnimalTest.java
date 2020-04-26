@@ -63,7 +63,7 @@ import static org.mockito.Mockito.when;
 
 public class AnimalTest {
 
-    private static final String ANIMAL_NAME_IS_REQUIRED = "Animal name is required";
+    private static final String ANIMAL_NAME_MUST_BE_A_NON_EMPTY_STRING = "Animal name must be a non-empty string";
     private static final String ANIMAL_CLINICAL_RECORD_IS_REQUIRED = "Animal clinical record is required";
     private static final String ANIMAL_SPECIES_IS_REQUIRED = "Animal species is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
@@ -356,26 +356,23 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldValidateNonNullName() {
+    public void shouldAllowNullName() {
         Animal animal = AnimalBuilder.random().withName(null).build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
+        assertThat(constraintViolations.size(), is(0));
     }
 
     @Test
     public void shouldValidateNonEmptyName() {
-        Animal animal = AnimalBuilder.random().withName("").build();
+        Animal animal = AnimalBuilder.random().withName(" ").build();
 
         Set<ConstraintViolation<Animal>> constraintViolations = getValidator().validate(animal);
 
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<Animal> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_IS_REQUIRED));
+        assertThat(constraintViolation.getMessage(), is(ANIMAL_NAME_MUST_BE_A_NON_EMPTY_STRING));
         assertThat(constraintViolation.getPropertyPath().toString(), is("name"));
     }
 

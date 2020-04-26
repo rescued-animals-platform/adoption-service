@@ -58,7 +58,6 @@ public class JpaAnimal implements Serializable {
     @NotNull
     private String clinicalRecord;
 
-    @NotNull
     private String name;
 
     @NotNull
