@@ -43,10 +43,10 @@ public class StoryService {
         this.animalRepository = animalRepository;
     }
 
-    public Story createFor(final UUID animalUuid, final Organization organization, final Story story) {
-        Animal animal = animalRepository.getBy(animalUuid, organization);
+    public Story createFor(final UUID animalId, final Organization organization, final Story story) {
+        Animal animal = animalRepository.getBy(animalId, organization);
         animal.getStory().ifPresent(s -> {
-            LOGGER.info("A story already exists for animal {}", animalUuid);
+            LOGGER.info("A story already exists for animal {}", animalId);
             throw new EntityAlreadyExistsException();
         });
         animal.setStory(story);
@@ -54,11 +54,11 @@ public class StoryService {
         return animalRepository.save(animal).getStory().orElseThrow();
     }
 
-    public Story updateFor(final UUID animalUuid, final Organization organization, final Story story) {
-        Animal animal = animalRepository.getBy(animalUuid, organization);
+    public Story updateFor(final UUID animalId, final Organization organization, final Story story) {
+        Animal animal = animalRepository.getBy(animalId, organization);
 
         if (animal.getStory().isEmpty()) {
-            LOGGER.info("Can't update a non-existent story for animal {}", animalUuid);
+            LOGGER.info("Can't update a non-existent story for animal {}", animalId);
             throw new EntityNotFoundException();
         }
 
@@ -66,8 +66,8 @@ public class StoryService {
         return animalRepository.save(animal).getStory().orElseThrow();
     }
 
-    public Story getBy(final UUID animalUuid) {
-        Animal animal = animalRepository.getBy(animalUuid);
+    public Story getBy(final UUID animalId) {
+        Animal animal = animalRepository.getBy(animalId);
         return animal.getStory().orElseThrow(EntityNotFoundException::new);
     }
 }

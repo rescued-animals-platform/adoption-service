@@ -65,7 +65,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                          Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
                          assertNotNull(createdAnimal);
                          assertAll(
-                                 () -> assertNotNull(createdAnimal.getUuid()),
+                                 () -> assertNotNull(createdAnimal.getIdentifier()),
                                  () -> assertNotNull(createdAnimal.getRegistrationDate()),
                                  () -> assertEquals(animal.getClinicalRecord(), createdAnimal.getClinicalRecord()),
                                  () -> assertEquals(animal.getName(), createdAnimal.getName()),
@@ -90,7 +90,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .consumeWith(animalEntityExchangeResult -> {
                          Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
                          assertNotNull(createdAnimal);
-                         assertNotNull(createdAnimal.getUuid());
+                         assertNotNull(createdAnimal.getIdentifier());
                          assertNotNull(createdAnimal.getRegistrationDate());
                          assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
                          assertThat(createdAnimal.getName(), is(animal.getName()));
@@ -159,7 +159,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         Animal createdAnimal = createRandomAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
-                     .uri(GET_ANIMAL_ADMIN_URL, createdAnimal.getUuid())
+                     .uri(GET_ANIMAL_ADMIN_URL, createdAnimal.getIdentifier())
                      .exchange()
                      .expectStatus()
                      .isOk()

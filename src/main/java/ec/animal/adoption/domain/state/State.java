@@ -25,20 +25,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.CaseFormat;
-import org.reflections.Reflections;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "name")
-@JsonSubTypes({@JsonSubTypes.Type(value = LookingForHuman.class),
-               @JsonSubTypes.Type(value = Adopted.class),
-               @JsonSubTypes.Type(value = Unavailable.class)})
+@JsonSubTypes({@JsonSubTypes.Type(LookingForHuman.class),
+               @JsonSubTypes.Type(Adopted.class),
+               @JsonSubTypes.Type(Unavailable.class)})
 public abstract class State implements Serializable {
 
     private transient static final long serialVersionUID = -312436659134428610L;
+    private static final Set<String> VALID_STATE_NAMES = Set.of("lookingForHuman", "adopted", "unavailable");
 
     @JsonProperty("date")
     private final LocalDateTime date;
@@ -57,12 +58,7 @@ public abstract class State implements Serializable {
     }
 
     public static boolean isStateNameValid(final String stateName) {
-        Reflections reflections = new Reflections(State.class.getPackageName());
-        Set<Class<? extends State>> states = reflections.getSubTypesOf(State.class);
-
-        return states.stream().map(Class::getSimpleName)
-                     .map(State::convertUpperCamelToLowerCamelCase)
-                     .anyMatch(n -> n.equals(stateName));
+        return Optional.ofNullable(stateName).filter(VALID_STATE_NAMES::contains).isPresent();
     }
 
     private static String convertUpperCamelToLowerCamelCase(final String value) {

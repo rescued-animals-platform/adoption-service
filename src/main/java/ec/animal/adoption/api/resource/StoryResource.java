@@ -55,27 +55,27 @@ public class StoryResource {
         this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping("/admin/animals/{animalUuid}/story")
+    @PostMapping("/admin/animals/{id}/story")
     @ResponseStatus(HttpStatus.CREATED)
-    public Story create(@PathVariable("animalUuid") final UUID animalUuid,
+    public Story create(@PathVariable("id") final UUID animalId,
                         @RequestBody @Valid final Story story,
                         @AuthenticationPrincipal final Jwt token) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
-        return storyService.createFor(animalUuid, organization, story);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        return storyService.createFor(animalId, organization, story);
     }
 
-    @PutMapping("/admin/animals/{animalUuid}/story")
-    public Story update(@PathVariable("animalUuid") final UUID animalUuid,
+    @PutMapping("/admin/animals/{id}/story")
+    public Story update(@PathVariable("id") final UUID animalId,
                         @RequestBody @Valid final Story story,
                         @AuthenticationPrincipal final Jwt token) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
-        return storyService.updateFor(animalUuid, organization, story);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        return storyService.updateFor(animalId, organization, story);
     }
 
-    @GetMapping("/animals/{animalUuid}/story")
-    public Story get(@PathVariable("animalUuid") final UUID animalUuid) {
-        return storyService.getBy(animalUuid);
+    @GetMapping("/animals/{id}/story")
+    public Story get(@PathVariable("id") final UUID animalId) {
+        return storyService.getBy(animalId);
     }
 }

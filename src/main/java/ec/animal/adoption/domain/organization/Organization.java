@@ -24,20 +24,20 @@ import java.util.UUID;
 @SuppressWarnings("PMD.DataClass")
 public class Organization {
 
-    private final UUID organizationUuid;
+    private final UUID organizationId;
     private final String name;
     private final String city;
     private final String email;
     private final String receptionAddress;
     private final String adoptionFormPdfUrl;
 
-    public Organization(final UUID organizationUuid,
+    public Organization(final UUID organizationId,
                         final String name,
                         final String city,
                         final String email,
                         final String receptionAddress,
                         final String adoptionFormPdfUrl) {
-        this.organizationUuid = organizationUuid;
+        this.organizationId = organizationId;
         this.name = name;
         this.city = city;
         this.email = email;
@@ -45,8 +45,8 @@ public class Organization {
         this.adoptionFormPdfUrl = adoptionFormPdfUrl;
     }
 
-    public UUID getOrganizationUuid() {
-        return organizationUuid;
+    public UUID getOrganizationId() {
+        return organizationId;
     }
 
     public String getName() {
@@ -81,12 +81,12 @@ public class Organization {
 
         Organization that = (Organization) o;
 
-        return organizationUuid != null ? organizationUuid.equals(that.organizationUuid) : that.organizationUuid == null;
+        return organizationId != null ? organizationId.equals(that.organizationId) : that.organizationId == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return organizationUuid != null ? organizationUuid.hashCode() : 0;
+        return organizationId != null ? organizationId.hashCode() : 0;
     }
 }

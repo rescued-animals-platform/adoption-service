@@ -37,13 +37,13 @@ import static org.mockito.Mockito.mock;
 public class JpaStoryTest {
 
     @Test
-    public void shouldGenerateAnUuidWhenCreatingAJpaStoryForAStoryWithNoUuid() {
-        Story story = StoryBuilder.random().withUuid(null).build();
+    public void shouldGenerateAnIdWhenCreatingAJpaStoryForAStoryWithNoId() {
+        Story story = StoryBuilder.random().withIdentifier(null).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
 
-        assertNotNull(jpaStoryToStory.getUuid());
+        assertNotNull(jpaStoryToStory.getIdentifier());
     }
 
     @Test
@@ -57,14 +57,14 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldCreateAStoryWithUuid() {
-        UUID uuid = UUID.randomUUID();
-        Story story = StoryBuilder.random().withUuid(uuid).build();
+    public void shouldCreateAStoryWithId() {
+        UUID storyId = UUID.randomUUID();
+        Story story = StoryBuilder.random().withIdentifier(storyId).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
 
-        assertThat(jpaStoryToStory.getUuid(), is(uuid));
+        assertThat(jpaStoryToStory.getIdentifier(), is(storyId));
     }
 
     @Test

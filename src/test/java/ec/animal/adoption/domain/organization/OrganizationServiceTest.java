@@ -50,22 +50,22 @@ class OrganizationServiceTest {
 
     @Test
     void shouldReturnOrganizationByItsIdentifier() {
-        UUID organizationUuid = UUID.randomUUID();
-        Organization expectedOrganization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        when(organizationRepository.getBy(organizationUuid)).thenReturn(of(expectedOrganization));
+        UUID organizationId = UUID.randomUUID();
+        Organization expectedOrganization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        when(organizationRepository.getBy(organizationId)).thenReturn(of(expectedOrganization));
 
-        Organization actualOrganization = organizationService.getBy(organizationUuid);
+        Organization actualOrganization = organizationService.getBy(organizationId);
 
         assertEquals(expectedOrganization, actualOrganization);
     }
 
     @Test
     void shouldThrowUnauthorizedException() {
-        UUID organizationUuid = UUID.randomUUID();
-        when(organizationRepository.getBy(organizationUuid)).thenReturn(empty());
+        UUID organizationId = UUID.randomUUID();
+        when(organizationRepository.getBy(organizationId)).thenReturn(empty());
 
         assertThrows(UnauthorizedException.class, () -> {
-            organizationService.getBy(organizationUuid);
+            organizationService.getBy(organizationId);
         });
     }
 }

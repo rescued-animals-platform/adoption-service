@@ -37,8 +37,8 @@ import static org.mockito.Mockito.mock;
 public class JpaPrimaryLinkPictureTest {
 
     @Test
-    public void shouldGenerateAnUuidWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoUuid() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(null)
+    public void shouldGenerateAnIdWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoId() {
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withIdentifier(null)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -46,7 +46,7 @@ public class JpaPrimaryLinkPictureTest {
 
         LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
 
-        assertNotNull(jpaPrimaryLinkPictureToLinkPicture.getUuid());
+        assertNotNull(jpaPrimaryLinkPictureToLinkPicture.getIdentifier());
     }
 
     @Test
@@ -63,9 +63,9 @@ public class JpaPrimaryLinkPictureTest {
     }
 
     @Test
-    public void shouldCreateAPrimaryLinkPictureWithUuid() {
-        UUID uuid = UUID.randomUUID();
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withUuid(uuid)
+    public void shouldCreateAPrimaryLinkPictureWithId() {
+        UUID linkPictureId = UUID.randomUUID();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withIdentifier(linkPictureId)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -73,7 +73,7 @@ public class JpaPrimaryLinkPictureTest {
 
         LinkPicture jpaPrimaryLinkPictureToLinkPicture = jpaPrimaryLinkPicture.toLinkPicture();
 
-        assertThat(jpaPrimaryLinkPictureToLinkPicture.getUuid(), is(uuid));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getIdentifier(), is(linkPictureId));
     }
 
     @Test

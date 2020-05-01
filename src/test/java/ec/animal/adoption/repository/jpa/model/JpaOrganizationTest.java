@@ -36,7 +36,7 @@ public class JpaOrganizationTest {
         Organization actualOrganization = jpaOrganization.toOrganization();
 
         assertAll(
-                () -> assertEquals(expectedOrganization.getOrganizationUuid(), actualOrganization.getOrganizationUuid()),
+                () -> assertEquals(expectedOrganization.getOrganizationId(), actualOrganization.getOrganizationId()),
                 () -> assertEquals(expectedOrganization.getName(), actualOrganization.getName()),
                 () -> assertEquals(expectedOrganization.getCity(), actualOrganization.getCity()),
                 () -> assertEquals(expectedOrganization.getEmail(), actualOrganization.getEmail()),

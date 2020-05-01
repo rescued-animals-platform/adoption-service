@@ -62,18 +62,18 @@ public class CharacteristicsServiceTest {
     @Test
     public void shouldCreateCharacteristics() {
         ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withOrganization(organization).build();
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
         Animal animalWithCharacteristics = AnimalBuilder.random().withCharacteristics(expectedCharacteristics)
                                                         .withState(animal.getState()).withClinicalRecord(animal.getClinicalRecord()).withName(animal.getName())
                                                         .withEstimatedAge(animal.getEstimatedAge()).withSex(animal.getSex()).withSpecies(animal.getSpecies())
-                                                        .withRegistrationDate(animal.getRegistrationDate()).withUuid(animal.getUuid()).build();
+                                                        .withRegistrationDate(animal.getRegistrationDate()).withIdentifier(animal.getIdentifier()).build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsService.createFor(animalUuid, organization, expectedCharacteristics);
+        Characteristics createdCharacteristics = characteristicsService.createFor(animalId, organization, expectedCharacteristics);
 
         verify(animalRepository).save(argumentCaptor.capture());
         assertTrue(argumentCaptor.getValue().getCharacteristics().isPresent());
@@ -83,41 +83,41 @@ public class CharacteristicsServiceTest {
 
     @Test
     void shouldThrowEntityAlreadyExistsExceptionWhenThereAreAlreadyCharacteristicsForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animal = AnimalBuilder.random()
-                                     .withUuid(animalUuid)
+                                     .withIdentifier(animalId)
                                      .withOrganization(organization)
                                      .withCharacteristics(CharacteristicsBuilder.random().build())
                                      .build();
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            characteristicsService.createFor(animalUuid, organization, mock(Characteristics.class));
+            characteristicsService.createFor(animalId, organization, mock(Characteristics.class));
         });
     }
 
     @Test
-    public void shouldGetCharacteristicsByAnimalUuid() {
-        UUID animalUuid = UUID.randomUUID();
+    public void shouldGetCharacteristicsByAnimalId() {
+        UUID animalId = UUID.randomUUID();
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withCharacteristics(expectedCharacteristics)
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withCharacteristics(expectedCharacteristics)
                                      .build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
-        Characteristics characteristics = characteristicsService.getBy(animalUuid);
+        Characteristics characteristics = characteristicsService.getBy(animalId);
 
         assertThat(characteristics, is(expectedCharacteristics));
     }
 
     @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereAreNoCharacteristicsForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
         assertThrows(EntityNotFoundException.class, () -> {
-            characteristicsService.getBy(animalUuid);
+            characteristicsService.getBy(animalId);
         });
     }
 }

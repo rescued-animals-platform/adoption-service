@@ -66,29 +66,29 @@ public class AnimalRepositoryPsql implements AnimalRepository {
 
     @Override
     public boolean exists(final Animal animal) {
-        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
-                animal.getClinicalRecord(), animal.getOrganizationUuid()
+        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(
+                animal.getClinicalRecord(), animal.getOrganizationId()
         );
     }
 
     @Override
-    public Animal getBy(final UUID animalUuid) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalUuid);
+    public Animal getBy(final UUID animalId) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalId);
         return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public Animal getBy(final UUID animalUuid, final Organization organization) {
-        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(
-                animalUuid, organization.getOrganizationUuid()
+    public Animal getBy(final UUID animalId, final Organization organization) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByIdAndJpaOrganizationId(
+                animalId, organization.getOrganizationId()
         );
         return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public PagedEntity<Animal> getAllFor(final Organization organization, final Pageable pageable) {
-        Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationUuid(
-                organization.getOrganizationUuid(), pageable
+        Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationId(
+                organization.getOrganizationId(), pageable
         );
         return new PagedEntity<>(jpaAnimals.map(JpaAnimal::toAnimal));
     }

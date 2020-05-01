@@ -79,22 +79,22 @@ public class AnimalResourceTest {
     @Mock
     private Jwt token;
 
-    private UUID organizationUuid;
+    private UUID organizationId;
     private AnimalResource animalResource;
 
     @BeforeEach
     public void setUp() {
-        organizationUuid = UUID.randomUUID();
+        organizationId = UUID.randomUUID();
         animalResource = new AnimalResource(animalService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
         Animal animal = AnimalBuilder.random().withOrganization(null).build();
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
+        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
         ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
         when(animalService.create(any(Animal.class))).thenReturn(expectedAnimal);
 
         Animal createdAnimal = animalResource.create(animal, token);
@@ -106,13 +106,13 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldGetAnAnimalByItsIdentifier() {
-        UUID animalUuid = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
-        when(animalService.getBy(animalUuid, organization)).thenReturn(expectedAnimal);
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
+        when(animalService.getBy(animalId, organization)).thenReturn(expectedAnimal);
 
-        Animal animal = animalResource.get(animalUuid, token);
+        Animal animal = animalResource.get(animalId, token);
 
         assertThat(animal, is(expectedAnimal));
     }
@@ -120,9 +120,9 @@ public class AnimalResourceTest {
     @Test
     public void shouldReturnAllAnimalsWithPagination() {
         Pageable pageable = mock(Pageable.class);
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
         when(animalService.listAllFor(organization, pageable)).thenReturn(expectedPageOfAnimals);
 
         PagedEntity<Animal> pageOfAnimals = animalResource.listAll(pageable, token);

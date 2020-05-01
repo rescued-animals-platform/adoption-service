@@ -66,22 +66,22 @@ public class PictureResource {
         this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping(path = "/admin/animals/{animalUuid}/pictures",
+    @PostMapping(path = "/admin/animals/{id}/pictures",
                  consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
                  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public LinkPicture createPrimaryPicture(
-            @PathVariable("animalUuid") final UUID animalUuid,
+            @PathVariable("id") final UUID animalId,
             @RequestParam("name") final String name,
             @RequestParam("pictureType") final PictureType pictureType,
             @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
             @RequestPart("smallImage") final MultipartFile smallImageMultipartFile,
             @AuthenticationPrincipal final Jwt token
     ) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
         return pictureService.createFor(
-                animalUuid,
+                animalId,
                 organization,
                 new ImagePicture(
                         name,
@@ -111,8 +111,8 @@ public class PictureResource {
         }
     }
 
-    @GetMapping("/animals/{animalUuid}/pictures")
-    public LinkPicture get(@PathVariable("animalUuid") final UUID animalUuid) {
-        return pictureService.getBy(animalUuid);
+    @GetMapping("/animals/{id}/pictures")
+    public LinkPicture get(@PathVariable("id") final UUID animalId) {
+        return pictureService.getBy(animalId);
     }
 }

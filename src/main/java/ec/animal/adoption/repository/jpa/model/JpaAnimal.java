@@ -45,13 +45,14 @@ import java.util.UUID;
 
 @TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
 @Entity(name = "animal")
+@SuppressWarnings("PMD.ShortVariable")
 public class JpaAnimal implements Serializable {
 
     private transient static final long serialVersionUID = -632732651164438810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID uuid;
+    private UUID id;
 
     private LocalDateTime registrationDate;
 
@@ -88,7 +89,7 @@ public class JpaAnimal implements Serializable {
     private JpaStory jpaStory;
 
     @OneToOne
-    @JoinColumn(name = "organization_uuid", updatable = false)
+    @JoinColumn(name = "organization_id", updatable = false)
     private JpaOrganization jpaOrganization;
 
     private JpaAnimal() {
@@ -97,7 +98,7 @@ public class JpaAnimal implements Serializable {
 
     public JpaAnimal(final Animal animal) {
         this();
-        this.setUuid(animal.getUuid());
+        this.setId(animal.getIdentifier());
         this.setRegistrationDate(animal.getRegistrationDate());
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
@@ -112,8 +113,8 @@ public class JpaAnimal implements Serializable {
         this.jpaOrganization = new JpaOrganization(animal.getOrganization());
     }
 
-    private void setUuid(final UUID uuid) {
-        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    private void setId(final UUID id) {
+        this.id = id == null ? UUID.randomUUID() : id;
     }
 
     private void setRegistrationDate(final LocalDateTime registrationDate) {
@@ -137,7 +138,7 @@ public class JpaAnimal implements Serializable {
 
     public Animal toAnimal() {
         Animal animal = new Animal(
-                uuid,
+                id,
                 registrationDate,
                 clinicalRecord,
                 name,
@@ -175,12 +176,12 @@ public class JpaAnimal implements Serializable {
 
         JpaAnimal jpaAnimal = (JpaAnimal) o;
 
-        return uuid != null ? uuid.equals(jpaAnimal.uuid) : jpaAnimal.uuid == null;
+        return id != null ? id.equals(jpaAnimal.id) : jpaAnimal.id == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return uuid != null ? uuid.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

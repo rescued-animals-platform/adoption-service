@@ -33,16 +33,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "story")
+@SuppressWarnings("PMD.ShortVariable")
 public class JpaStory implements Serializable {
 
     private transient static final long serialVersionUID = -242532859161428810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID uuid;
+    private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "animal_uuid", nullable = false)
+    @JoinColumn(name = "animal_id", nullable = false)
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
@@ -57,14 +58,14 @@ public class JpaStory implements Serializable {
 
     public JpaStory(final Story story, final JpaAnimal jpaAnimal) {
         this();
-        this.setUuid(story.getUuid());
+        this.setId(story.getIdentifier());
         this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(story.getRegistrationDate());
         this.text = story.getText();
     }
 
-    private void setUuid(final UUID uuid) {
-        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    private void setId(final UUID id) {
+        this.id = id == null ? UUID.randomUUID() : id;
     }
 
     private void setRegistrationDate(final LocalDateTime registrationDate) {
@@ -72,7 +73,7 @@ public class JpaStory implements Serializable {
     }
 
     public Story toStory() {
-        return new Story(this.uuid, this.registrationDate, this.text);
+        return new Story(this.id, this.registrationDate, this.text);
     }
 
     @Override
@@ -87,12 +88,12 @@ public class JpaStory implements Serializable {
 
         JpaStory jpaStory = (JpaStory) o;
 
-        return uuid != null ? uuid.equals(jpaStory.uuid) : jpaStory.uuid == null;
+        return id != null ? id.equals(jpaStory.id) : jpaStory.id == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return uuid != null ? uuid.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

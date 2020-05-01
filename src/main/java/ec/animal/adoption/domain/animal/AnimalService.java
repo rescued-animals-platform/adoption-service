@@ -49,8 +49,8 @@ public class AnimalService {
         return animalRepository.save(animal);
     }
 
-    public Animal getBy(final UUID animalUuid, final Organization organization) {
-        return animalRepository.getBy(animalUuid, organization);
+    public Animal getBy(final UUID animalId, final Organization organization) {
+        return animalRepository.getBy(animalId, organization);
     }
 
     public PagedEntity<Animal> listAllFor(final Organization organization, final Pageable pageable) {

@@ -31,8 +31,8 @@ import java.util.UUID;
 @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 public class AnimalDto {
 
-    @JsonProperty("uuid")
-    private final UUID uuid;
+    @JsonProperty("id")
+    private final UUID animalId;
 
     @JsonProperty("name")
     private final String name;
@@ -50,7 +50,7 @@ public class AnimalDto {
     private final String smallPrimaryPictureUrl;
 
     public AnimalDto(final Animal animal) {
-        this.uuid = animal.getUuid();
+        this.animalId = animal.getIdentifier();
         this.name = animal.getName();
         this.species = animal.getSpecies();
         this.estimatedAge = animal.getEstimatedAge();

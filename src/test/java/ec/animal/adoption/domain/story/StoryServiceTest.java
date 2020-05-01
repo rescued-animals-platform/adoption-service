@@ -63,19 +63,19 @@ public class StoryServiceTest {
     @Test
     public void shouldCreateStory() {
         ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withOrganization(organization).build();
         Story expectedStory = mock(Story.class);
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
         Animal animalWithStory = AnimalBuilder.random()
-                                              .withUuid(animalUuid)
+                                              .withIdentifier(animalId)
                                               .withOrganization(organization)
                                               .withStory(expectedStory)
                                               .build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithStory);
 
-        Story createdStory = storyService.createFor(animalUuid, organization, expectedStory);
+        Story createdStory = storyService.createFor(animalId, organization, expectedStory);
 
         verify(animalRepository).save(animalArgumentCaptor.capture());
         assertTrue(animalArgumentCaptor.getValue().getStory().isPresent());
@@ -85,26 +85,26 @@ public class StoryServiceTest {
 
     @Test
     void shouldThrowEntityAlreadyExistsExceptionWhenThereIsAlreadyAStoryForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animal = AnimalBuilder.random()
-                                     .withUuid(animalUuid)
+                                     .withIdentifier(animalId)
                                      .withOrganization(organization)
                                      .withStory(StoryBuilder.random().build())
                                      .build();
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            storyService.createFor(animalUuid, organization, mock(Story.class));
+            storyService.createFor(animalId, organization, mock(Story.class));
         });
     }
 
     @Test
     public void shouldUpdateStory() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animalFound = mock(Animal.class);
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animalFound);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animalFound);
         when(animalFound.getStory()).thenReturn(Optional.of(mock(Story.class)));
         Story newStory = mock(Story.class);
         Animal animalWithUpdatedStory = mock(Animal.class);
@@ -112,7 +112,7 @@ public class StoryServiceTest {
         when(animalWithUpdatedStory.getStory()).thenReturn(Optional.of(expectedUpdatedStory));
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithUpdatedStory);
 
-        Story updatedStory = storyService.updateFor(animalUuid, organization, newStory);
+        Story updatedStory = storyService.updateFor(animalId, organization, newStory);
 
         verify(animalFound).updateStory(newStory);
         assertEquals(expectedUpdatedStory, updatedStory);
@@ -120,38 +120,38 @@ public class StoryServiceTest {
 
     @Test
     void shouldThrowEntityNotFoundExceptionWhenUpdatingStoryForAnimalThatDoesNotHaveAlreadyAStory() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animalFound = mock(Animal.class);
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animalFound);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animalFound);
         when(animalFound.getStory()).thenReturn(Optional.empty());
         Story newStory = mock(Story.class);
 
         assertThrows(EntityNotFoundException.class, () -> {
-            storyService.updateFor(animalUuid, organization, newStory);
+            storyService.updateFor(animalId, organization, newStory);
         });
     }
 
     @Test
-    public void shouldGetStoryByAnimalUuid() {
-        UUID animalUuid = UUID.randomUUID();
+    public void shouldGetStoryByAnimalId() {
+        UUID animalId = UUID.randomUUID();
         Story expectedStory = mock(Story.class);
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withStory(expectedStory).build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withStory(expectedStory).build();
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
-        Story story = storyService.getBy(animalUuid);
+        Story story = storyService.getBy(animalId);
 
         assertThat(story, is(expectedStory));
     }
 
     @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereIsNoStoryForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
         assertThrows(EntityNotFoundException.class, () -> {
-            storyService.getBy(animalUuid);
+            storyService.getBy(animalId);
         });
     }
 }

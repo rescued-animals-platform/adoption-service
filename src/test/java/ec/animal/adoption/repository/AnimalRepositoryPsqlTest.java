@@ -110,9 +110,9 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    void shouldReturnTrueIfAnimalWithClinicalRecordAndOrganizationUuidIsFound() {
+    void shouldReturnTrueIfAnimalWithClinicalRecordAndOrganizationIdIsFound() {
         Animal animal = AnimalBuilder.random().build();
-        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(animal.getClinicalRecord(), animal.getOrganizationId()))
                 .thenReturn(true);
 
         boolean exists = animalRepositoryPsql.exists(animal);
@@ -121,9 +121,9 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    void shouldReturnFalseIfAnimalWithClinicalRecordAndOrganizationUuidIsNotFound() {
+    void shouldReturnFalseIfAnimalWithClinicalRecordAndOrganizationIdIsNotFound() {
         Animal animal = AnimalBuilder.random().build();
-        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(animal.getClinicalRecord(), animal.getOrganizationUuid()))
+        when(jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(animal.getClinicalRecord(), animal.getOrganizationId()))
                 .thenReturn(false);
 
         boolean exists = animalRepositoryPsql.exists(animal);
@@ -132,37 +132,37 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetAnimalByItsUuid() {
+    public void shouldGetAnimalByItsIdentifier() {
         JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
         Animal expectedAnimal = expectedJpaAnimal.toAnimal();
-        when(jpaAnimalRepository.findById(expectedAnimal.getUuid())).thenReturn(Optional.of(expectedJpaAnimal));
+        when(jpaAnimalRepository.findById(expectedAnimal.getIdentifier())).thenReturn(Optional.of(expectedJpaAnimal));
 
-        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getUuid());
+        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getIdentifier());
 
         assertEquals(expectedAnimal, animalFound);
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsUuidIsNotFound() {
+    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierIsNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
             animalRepositoryPsql.getBy(UUID.randomUUID());
         });
     }
 
     @Test
-    public void shouldGetAnimalByItsUuidAndOrganization() {
+    public void shouldGetAnimalByItsIdentifierAndOrganization() {
         JpaAnimal expectedJpaAnimal = new JpaAnimal(animal);
         Animal expectedAnimal = expectedJpaAnimal.toAnimal();
-        when(jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(expectedAnimal.getUuid(), expectedAnimal.getOrganizationUuid()))
+        when(jpaAnimalRepository.findByIdAndJpaOrganizationId(expectedAnimal.getIdentifier(), expectedAnimal.getOrganizationId()))
                 .thenReturn(Optional.of(expectedJpaAnimal));
 
-        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getUuid(), expectedAnimal.getOrganization());
+        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getIdentifier(), expectedAnimal.getOrganization());
 
         assertEquals(expectedAnimal, animalFound);
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsUuidAndOrganizationIsNotFound() {
+    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierAndOrganizationIsNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
             animalRepositoryPsql.getBy(UUID.randomUUID(), OrganizationBuilder.random().build());
         });
@@ -178,7 +178,7 @@ public class AnimalRepositoryPsqlTest {
                 listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
         Organization organization = OrganizationBuilder.random().build();
-        when(jpaAnimalRepository.findAllByJpaOrganizationUuid(organization.getOrganizationUuid(), pageable))
+        when(jpaAnimalRepository.findAllByJpaOrganizationId(organization.getOrganizationId(), pageable))
                 .thenReturn(new PageImpl<>(listOfJpaAnimals));
 
         PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllFor(organization, pageable);

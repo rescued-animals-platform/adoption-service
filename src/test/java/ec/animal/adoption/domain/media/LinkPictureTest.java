@@ -72,33 +72,33 @@ public class LinkPictureTest {
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
+    public void shouldNotIncludeIdAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        LinkPicture linkPicture = LinkPictureBuilder.random().withUuid(UUID.randomUUID())
+        LinkPicture linkPicture = LinkPictureBuilder.random().withIdentifier(UUID.randomUUID())
                                                     .withRegistrationDate(LocalDateTime.now()).build();
 
         String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
 
-        assertThat(serializedLinkPicture, not(containsString("uuid")));
-        assertThat(serializedLinkPicture, not(containsString("registrationDate")));
+        assertThat(serializedLinkPicture, not(containsString("\"id\":")));
+        assertThat(serializedLinkPicture, not(containsString("\"registrationDate\":")));
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInDeserialization() throws IOException {
+    public void shouldNotIncludeIdAndRegistrationDateInDeserialization() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String uuidAsJson = String.format("\"uuid\":\"%s\"", UUID.randomUUID());
+        String idAsJson = String.format("\"id\":\"%s\"", UUID.randomUUID());
         String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
         String serializedLinkPicture = String.format(
                 "{%s,%s,\"name\":\"anyName\",\"pictureType\":\"PRIMARY\"," +
                         "\"largeImageMediaLink\":{\"url\":\"anyLargeUrl\"}," +
                         "\"smallImageMediaLink\":{\"url\":\"anySmallUrl\"}}",
-                uuidAsJson,
+                idAsJson,
                 registrationDateAsJson
         );
 
         LinkPicture linkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
 
-        assertNull(linkPicture.getUuid());
+        assertNull(linkPicture.getIdentifier());
         assertNull(linkPicture.getRegistrationDate());
     }
 }

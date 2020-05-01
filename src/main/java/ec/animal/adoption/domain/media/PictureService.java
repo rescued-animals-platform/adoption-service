@@ -49,7 +49,7 @@ public class PictureService {
         this.animalRepository = animalRepository;
     }
 
-    public LinkPicture createFor(final UUID animalUuid,
+    public LinkPicture createFor(final UUID animalId,
                                  final Organization organization,
                                  final ImagePicture imagePicture) {
         if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
@@ -58,7 +58,7 @@ public class PictureService {
             throw new InvalidPictureException();
         }
 
-        Animal animal = animalRepository.getBy(animalUuid, organization);
+        Animal animal = animalRepository.getBy(animalId, organization);
         animal.getPrimaryLinkPicture().ifPresent(p -> {
             throw new EntityAlreadyExistsException();
         });
@@ -68,8 +68,8 @@ public class PictureService {
         return animalRepository.save(animal).getPrimaryLinkPicture().orElseThrow();
     }
 
-    public LinkPicture getBy(final UUID animalUuid) {
-        Animal animal = animalRepository.getBy(animalUuid);
+    public LinkPicture getBy(final UUID animalId) {
+        Animal animal = animalRepository.getBy(animalId);
         return animal.getPrimaryLinkPicture().orElseThrow(EntityNotFoundException::new);
     }
 }

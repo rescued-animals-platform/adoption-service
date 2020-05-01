@@ -29,7 +29,7 @@ import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"uuid", "registrationDate"})
+@JsonIgnoreProperties({"id", "registrationDate"})
 public class Story extends Entity {
 
     @NotEmpty(message = "Story text is required")
@@ -42,8 +42,8 @@ public class Story extends Entity {
         this.text = text;
     }
 
-    public Story(final UUID uuid, final LocalDateTime registrationDate, final String text) {
-        super(uuid, registrationDate);
+    public Story(final UUID storyId, final LocalDateTime registrationDate, final String text) {
+        super(storyId, registrationDate);
         this.text = text;
     }
 
@@ -56,7 +56,7 @@ public class Story extends Entity {
             return this;
         }
 
-        return new Story(this.getUuid(), LocalDateTime.now(), story.getText());
+        return new Story(this.getIdentifier(), LocalDateTime.now(), story.getText());
     }
 
     @Override

@@ -35,16 +35,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "primary_link_picture")
+@SuppressWarnings("PMD.ShortVariable")
 public class JpaPrimaryLinkPicture implements Serializable {
 
     private transient static final long serialVersionUID = -832433659194420810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID uuid;
+    private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "animal_uuid", nullable = false)
+    @JoinColumn(name = "animal_id", nullable = false)
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
@@ -63,7 +64,7 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     public JpaPrimaryLinkPicture(final LinkPicture linkPicture, final JpaAnimal jpaAnimal) {
         this();
-        this.setUuid(linkPicture.getUuid());
+        this.setId(linkPicture.getIdentifier());
         this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(linkPicture.getRegistrationDate());
         this.name = linkPicture.getName();
@@ -71,8 +72,8 @@ public class JpaPrimaryLinkPicture implements Serializable {
         this.smallImageUrl = linkPicture.getSmallImageUrl();
     }
 
-    private void setUuid(final UUID uuid) {
-        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    private void setId(final UUID id) {
+        this.id = id == null ? UUID.randomUUID() : id;
     }
 
     private void setRegistrationDate(final LocalDateTime registrationDate) {
@@ -81,7 +82,7 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     public LinkPicture toLinkPicture() {
         return new LinkPicture(
-                this.uuid,
+                this.id,
                 this.registrationDate,
                 this.name,
                 PictureType.PRIMARY,
@@ -102,12 +103,12 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
         JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
 
-        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return uuid != null ? uuid.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

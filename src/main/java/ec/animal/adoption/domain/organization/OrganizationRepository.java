@@ -24,5 +24,5 @@ import java.util.UUID;
 
 public interface OrganizationRepository {
 
-    Optional<Organization> getBy(final UUID uuid);
+    Optional<Organization> getBy(final UUID organizationId);
 }

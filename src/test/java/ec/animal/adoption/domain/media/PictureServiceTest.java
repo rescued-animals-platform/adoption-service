@@ -71,16 +71,16 @@ public class PictureServiceTest {
         ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         when(mediaRepository.save(imagePicture)).thenReturn(primaryLinkPicture);
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid).withOrganization(organization).build();
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withOrganization(organization).build();
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
         Animal animalWithPrimaryLinkPicture = AnimalBuilder.random()
                                                            .withPrimaryLinkPicture(primaryLinkPicture)
                                                            .build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithPrimaryLinkPicture);
 
-        LinkPicture createdPicture = pictureService.createFor(animalUuid, organization, imagePicture);
+        LinkPicture createdPicture = pictureService.createFor(animalId, organization, imagePicture);
 
         verify(animalRepository).save(argumentCaptor.capture());
         assertTrue(argumentCaptor.getValue().getPrimaryLinkPicture().isPresent());
@@ -90,20 +90,20 @@ public class PictureServiceTest {
 
     @Test
     void shouldThrowEntityAlreadyExistsExceptionWhenThereIsAlreadyAPrimaryLinkPictureForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
         Animal animal = AnimalBuilder.random()
-                                     .withUuid(animalUuid)
+                                     .withIdentifier(animalId)
                                      .withOrganization(organization)
                                      .withPrimaryLinkPicture(LinkPictureBuilder.random()
                                                                                .withPictureType(PictureType.PRIMARY)
                                                                                .build())
                                      .build();
-        when(animalRepository.getBy(animalUuid, organization)).thenReturn(animal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
         ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            pictureService.createFor(animalUuid, organization, imagePicture);
+            pictureService.createFor(animalId, organization, imagePicture);
         });
         verifyNoInteractions(mediaRepository);
     }
@@ -129,27 +129,27 @@ public class PictureServiceTest {
     }
 
     @Test
-    public void shouldGetPrimaryLinkPictureByAnimalUuid() {
+    public void shouldGetPrimaryLinkPictureByAnimalId() {
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
                                                                    .withPictureType(PictureType.PRIMARY).build();
-        UUID animalUuid = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withUuid(animalUuid)
+        UUID animalId = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId)
                                      .withPrimaryLinkPicture(expectedPrimaryLinkPicture).build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
-        LinkPicture linkPicture = pictureService.getBy(animalUuid);
+        LinkPicture linkPicture = pictureService.getBy(animalId);
 
         assertThat(linkPicture, is(expectedPrimaryLinkPicture));
     }
 
     @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPrimaryLinkPictureForAnimal() {
-        UUID animalUuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().build();
-        when(animalRepository.getBy(animalUuid)).thenReturn(animal);
+        when(animalRepository.getBy(animalId)).thenReturn(animal);
 
         assertThrows(EntityNotFoundException.class, () -> {
-            pictureService.getBy(animalUuid);
+            pictureService.getBy(animalId);
         });
     }
 }

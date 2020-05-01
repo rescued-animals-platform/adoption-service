@@ -31,9 +31,9 @@ public interface AnimalRepository {
 
     Animal save(final Animal animal);
 
-    Animal getBy(final UUID animalUuid);
+    Animal getBy(final UUID animalId);
 
-    Animal getBy(final UUID animalUuid, final Organization organization);
+    Animal getBy(final UUID animalId, final Organization organization);
 
     boolean exists(final Animal animal);
 

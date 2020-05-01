@@ -40,12 +40,12 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
-    private UUID animalUuid;
+    private UUID animalId;
 
     @BeforeEach
     public void setUp() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        animalUuid = animal.getUuid();
+        animalId = animal.getIdentifier();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
-                     .uri(CHARACTERISTICS_ADMIN_URL, animalUuid)
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
                      .bodyValue(characteristics)
                      .exchange()
                      .expectStatus()
@@ -113,14 +113,14 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
 
         webTestClient.post()
-                     .uri(CHARACTERISTICS_ADMIN_URL, animalUuid)
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
                      .bodyValue(characteristics)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
-                     .uri(CHARACTERISTICS_ADMIN_URL, animalUuid)
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
                      .bodyValue(characteristics)
                      .exchange()
                      .expectStatus()
@@ -131,7 +131,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn200OkWithCharacteristics() {
         Characteristics createdCharacteristics = webTestClient.post()
-                                                              .uri(CHARACTERISTICS_ADMIN_URL, animalUuid)
+                                                              .uri(CHARACTERISTICS_ADMIN_URL, animalId)
                                                               .bodyValue(CharacteristicsBuilder.random().build())
                                                               .exchange()
                                                               .expectStatus()
@@ -143,7 +143,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
         assertNotNull(createdCharacteristics);
 
         webTestClient.get()
-                     .uri(GET_CHARACTERISTICS_URL, animalUuid)
+                     .uri(GET_CHARACTERISTICS_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -152,7 +152,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+    public void shouldReturn404NotFoundWhenAnimalIdDoesNotExist() {
         webTestClient.get()
                      .uri(GET_CHARACTERISTICS_URL, UUID.randomUUID())
                      .exchange()
@@ -164,7 +164,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                     .uri(GET_CHARACTERISTICS_URL, animalUuid)
+                     .uri(GET_CHARACTERISTICS_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

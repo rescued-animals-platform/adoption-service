@@ -31,14 +31,14 @@ class OrganizationTest {
 
     @Test
     void shouldCreateOrganization() {
-        UUID organizationUuid = UUID.randomUUID();
+        UUID organizationId = UUID.randomUUID();
         String name = randomAlphabetic(10);
         String city = randomAlphabetic(10);
         String email = randomAlphabetic(10);
         String receptionAddress = randomAlphabetic(20);
         String adoptionFormPdfUrl = randomAlphabetic(20);
 
-        Organization organization = new Organization(organizationUuid, name, city, email, receptionAddress, adoptionFormPdfUrl);
+        Organization organization = new Organization(organizationId, name, city, email, receptionAddress, adoptionFormPdfUrl);
 
         assertAll(() -> assertEquals(name, organization.getName()),
                   () -> assertEquals(city, organization.getCity()),

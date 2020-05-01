@@ -43,7 +43,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     private static final String LARGE_IMAGE = "largeImage";
     private static final String SMALL_IMAGE = "smallImage";
 
-    private UUID animalUuid;
+    private UUID animalId;
     private String name;
     private PictureType pictureType;
     private LinkedMultiValueMap<String, Object> validMultipartPicturesFormData;
@@ -51,7 +51,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @BeforeEach
     public void setUp() {
         Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        animalUuid = animal.getUuid();
+        animalId = animal.getIdentifier();
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();
@@ -64,7 +64,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn201CreatedWithLinkPicture() {
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(validMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
@@ -94,14 +94,14 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn409ConflictWhenCreatingPrimaryPictureThatAlreadyExist() {
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(validMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(validMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
@@ -118,7 +118,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
@@ -135,7 +135,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
@@ -152,7 +152,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
 
         webTestClient.post()
-                     .uri(PICTURES_ADMIN_URL, animalUuid)
+                     .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
                      .expectStatus()
@@ -163,7 +163,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn200OkWithPrimaryPicture() {
         LinkPicture createdLinkPicture = webTestClient.post()
-                                                      .uri(PICTURES_ADMIN_URL, animalUuid)
+                                                      .uri(PICTURES_ADMIN_URL, animalId)
                                                       .bodyValue(validMultipartPicturesFormData)
                                                       .exchange()
                                                       .expectStatus()
@@ -175,7 +175,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
         assertNotNull(createdLinkPicture);
 
         webTestClient.get()
-                     .uri(GET_PICTURES_URL, animalUuid)
+                     .uri(GET_PICTURES_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -184,7 +184,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn404NotFoundWhenAnimalUuidDoesNotExist() {
+    public void shouldReturn404NotFoundWhenAnimalIdDoesNotExist() {
         webTestClient.get()
                      .uri(GET_PICTURES_URL, UUID.randomUUID())
                      .exchange()
@@ -196,7 +196,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenPrimaryPictureCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                     .uri(GET_PICTURES_URL, animalUuid)
+                     .uri(GET_PICTURES_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

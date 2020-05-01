@@ -167,7 +167,7 @@ public class AnimalTest {
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         Story story = StoryBuilder.random().build();
         Animal animal = AnimalBuilder.random()
-                                     .withUuid(UUID.randomUUID())
+                                     .withIdentifier(UUID.randomUUID())
                                      .withPrimaryLinkPicture(primaryLinkPicture)
                                      .withCharacteristics(characteristics)
                                      .withStory(story)
@@ -181,7 +181,7 @@ public class AnimalTest {
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
-        assertThat(serializedAnimal, containsString(String.format("\"uuid\":\"%s\"", animal.getUuid().toString())));
+        assertThat(serializedAnimal, containsString(String.format("\"id\":\"%s\"", animal.getIdentifier().toString())));
         assertThat(serializedAnimal, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
         assertThat(serializedAnimal, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
         assertThat(serializedAnimal, containsString(String.format("\"name\":\"%s\"", animal.getName())));

@@ -38,8 +38,8 @@ public class OrganizationRepositoryPsql implements OrganizationRepository {
     }
 
     @Override
-    public Optional<Organization> getBy(final UUID uuid) {
-        Optional<JpaOrganization> jpaOrganization = jpaOrganizationRepository.findById(uuid);
+    public Optional<Organization> getBy(final UUID organizationId) {
+        Optional<JpaOrganization> jpaOrganization = jpaOrganizationRepository.findById(organizationId);
         return jpaOrganization.map(JpaOrganization::toOrganization);
     }
 }

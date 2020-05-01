@@ -98,7 +98,7 @@ public class Animal extends Entity {
     }
 
     public Animal(
-            final UUID uuid,
+            final UUID animalId,
             final LocalDateTime registrationDate,
             final String clinicalRecord,
             final String name,
@@ -107,7 +107,7 @@ public class Animal extends Entity {
             final Sex sex,
             final State state
     ) {
-        super(uuid, registrationDate);
+        super(animalId, registrationDate);
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -182,8 +182,8 @@ public class Animal extends Entity {
     }
 
     @JsonIgnore
-    public UUID getOrganizationUuid() {
-        return this.organization.getOrganizationUuid();
+    public UUID getOrganizationId() {
+        return this.organization.getOrganizationId();
     }
 
     public void updateStory(final Story story) {

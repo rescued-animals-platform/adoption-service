@@ -1,5 +1,5 @@
 CREATE TABLE organization (
-  uuid UUID PRIMARY KEY,
+  id UUID PRIMARY KEY,
   registration_date TIMESTAMP DEFAULT current_timestamp,
   name VARCHAR(100) NOT NULL,
   city VARCHAR(50) NOT NULL,

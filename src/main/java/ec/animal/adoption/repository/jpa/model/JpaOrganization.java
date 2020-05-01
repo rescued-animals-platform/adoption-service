@@ -28,13 +28,14 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "organization")
+@SuppressWarnings("PMD.ShortVariable")
 public class JpaOrganization implements Serializable {
 
     private transient static final long serialVersionUID = -579031381673428820L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID uuid;
+    private UUID id;
 
     private String name;
     private String city;
@@ -48,7 +49,7 @@ public class JpaOrganization implements Serializable {
 
     public JpaOrganization(final Organization organization) {
         this();
-        this.uuid = organization.getOrganizationUuid();
+        this.id = organization.getOrganizationId();
         this.name = organization.getName();
         this.city = organization.getCity();
         this.email = organization.getEmail();
@@ -57,7 +58,7 @@ public class JpaOrganization implements Serializable {
     }
 
     public Organization toOrganization() {
-        return new Organization(this.uuid,
+        return new Organization(this.id,
                                 this.name,
                                 this.city,
                                 this.email,

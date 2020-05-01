@@ -39,13 +39,13 @@ import static org.mockito.Mockito.mock;
 public class JpaCharacteristicsTest {
 
     @Test
-    public void shouldGenerateAnUuidWhenCreatingJpaCharacteristicsForCharacteristicsWithNoUuid() {
-        Characteristics characteristics = CharacteristicsBuilder.random().withUuid(null).build();
+    public void shouldGenerateAnIdWhenCreatingJpaCharacteristicsForCharacteristicsWithNoId() {
+        Characteristics characteristics = CharacteristicsBuilder.random().withIdentifier(null).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
 
-        assertNotNull(jpaCharacteristicsToCharacteristics.getUuid());
+        assertNotNull(jpaCharacteristicsToCharacteristics.getIdentifier());
     }
 
     @Test
@@ -59,14 +59,14 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsWithUuid() {
-        UUID uuid = UUID.randomUUID();
-        Characteristics characteristics = CharacteristicsBuilder.random().withUuid(uuid).build();
+    public void shouldCreateCharacteristicsWithId() {
+        UUID characteristicsId = UUID.randomUUID();
+        Characteristics characteristics = CharacteristicsBuilder.random().withIdentifier(characteristicsId).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
 
-        assertThat(jpaCharacteristicsToCharacteristics.getUuid(), is(uuid));
+        assertThat(jpaCharacteristicsToCharacteristics.getIdentifier(), is(characteristicsId));
     }
 
     @Test

@@ -112,12 +112,12 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAnimalByItsUuid() {
-        UUID uuid = UUID.randomUUID();
+    public void shouldReturnAnimalByItsIdentifier() {
+        UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationBuilder.random().build();
-        when(animalRepository.getBy(uuid, organization)).thenReturn(expectedAnimal);
+        when(animalRepository.getBy(animalId, organization)).thenReturn(expectedAnimal);
 
-        Animal animal = animalService.getBy(uuid, organization);
+        Animal animal = animalService.getBy(animalId, organization);
 
         assertThat(animal, is(expectedAnimal));
     }

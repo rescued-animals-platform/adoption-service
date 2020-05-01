@@ -177,12 +177,12 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
-    public void shouldFindJpaAnimalByAnimalUuidAndOrganizationUuid() {
+    public void shouldFindJpaAnimalByAnimalIdAndOrganizationId() {
         JpaAnimal jpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
-        UUID animalUuid = jpaAnimal.toAnimal().getUuid();
+        UUID animalId = jpaAnimal.toAnimal().getIdentifier();
 
-        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByUuidAndJpaOrganizationUuid(
-                animalUuid, AnimalBuilder.DEFAULT_ORGANIZATION_UUID
+        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByIdAndJpaOrganizationId(
+                animalId, AnimalBuilder.DEFAULT_ORGANIZATION_ID
         );
 
         assertThat(optionalJpaAnimal.isPresent(), is(true));
@@ -190,13 +190,13 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
-    public void shouldReturnPageWithFourJpaAnimalsMatchingOrganizationUuid() {
+    public void shouldReturnPageWithFourJpaAnimalsMatchingOrganizationId() {
         IntStream.rangeClosed(1, 5).forEach(n -> createAndSaveJpaAnimalForDefaultOrganization());
         IntStream.rangeClosed(1, 5).forEach(n -> createAndSaveJpaAnimalForAnotherOrganization());
         Pageable pageable = PageRequest.of(0, 4);
 
-        Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationUuid(
-                AnimalBuilder.DEFAULT_ORGANIZATION_UUID, pageable
+        Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationId(
+                AnimalBuilder.DEFAULT_ORGANIZATION_ID, pageable
         );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 
@@ -204,25 +204,25 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         assertEquals(4, jpaAnimals.size());
         jpaAnimals.forEach(jpaAnimal -> {
             Animal animal = jpaAnimal.toAnimal();
-            assertEquals(AnimalBuilder.DEFAULT_ORGANIZATION_UUID, animal.getOrganizationUuid());
+            assertEquals(AnimalBuilder.DEFAULT_ORGANIZATION_ID, animal.getOrganizationId());
         });
     }
 
     @Test
-    void shouldReturnTrueWhenJpaAnimalMatchingClinicalRecordAndOrganizationUuidExists() {
+    void shouldReturnTrueWhenJpaAnimalMatchingClinicalRecordAndOrganizationIdExists() {
         JpaAnimal expectedJpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animal = expectedJpaAnimal.toAnimal();
 
-        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
-                animal.getClinicalRecord(), animal.getOrganizationUuid()
+        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(
+                animal.getClinicalRecord(), animal.getOrganizationId()
         );
 
         assertTrue(exists);
     }
 
     @Test
-    void shouldReturnFalseWhenJpaAnimalMatchingClinicalRecordAndOrganizationUuidDoesNotExist() {
-        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationUuid(
+    void shouldReturnFalseWhenJpaAnimalMatchingClinicalRecordAndOrganizationIdDoesNotExist() {
+        boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(
                 randomAlphabetic(10), UUID.randomUUID()
         );
 

@@ -63,10 +63,10 @@ class OrganizationRepositoryPsqlTest {
     @Test
     public void shouldGetOrganizationByItsIdentifier() {
         Organization organization = OrganizationBuilder.random().build();
-        UUID organizationUuid = organization.getOrganizationUuid();
-        when(jpaOrganizationRepository.findById(organizationUuid)).thenReturn(of(new JpaOrganization(organization)));
+        UUID organizationId = organization.getOrganizationId();
+        when(jpaOrganizationRepository.findById(organizationId)).thenReturn(of(new JpaOrganization(organization)));
 
-        Optional<Organization> organizationFound = organizationRepositoryPsql.getBy(organizationUuid);
+        Optional<Organization> organizationFound = organizationRepositoryPsql.getBy(organizationId);
 
         assertTrue(organizationFound.isPresent());
         assertEquals(organization, organizationFound.get());
@@ -74,9 +74,9 @@ class OrganizationRepositoryPsqlTest {
 
     @Test
     public void shouldReturnEmptyOrganization() {
-        UUID organizationUuid = UUID.randomUUID();
-        when(jpaOrganizationRepository.findById(organizationUuid)).thenReturn(empty());
-        Optional<Organization> organization = organizationRepositoryPsql.getBy(organizationUuid);
+        UUID organizationId = UUID.randomUUID();
+        when(jpaOrganizationRepository.findById(organizationId)).thenReturn(empty());
+        Optional<Organization> organization = organizationRepositoryPsql.getBy(organizationId);
 
         assertTrue(organization.isEmpty());
     }

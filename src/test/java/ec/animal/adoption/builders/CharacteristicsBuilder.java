@@ -35,7 +35,7 @@ import static ec.animal.adoption.TestUtils.getRandomSize;
 
 public class CharacteristicsBuilder {
 
-    private UUID uuid;
+    private UUID characteristicsId;
     private LocalDateTime registrationDate;
     private Size size;
     private PhysicalActivity physicalActivity;
@@ -51,8 +51,8 @@ public class CharacteristicsBuilder {
         return characteristicsBuilder;
     }
 
-    public CharacteristicsBuilder withUuid(final UUID uuid) {
-        this.uuid = uuid;
+    public CharacteristicsBuilder withIdentifier(final UUID characteristicsId) {
+        this.characteristicsId = characteristicsId;
         return this;
     }
 
@@ -83,7 +83,7 @@ public class CharacteristicsBuilder {
 
     public Characteristics build() {
         return new Characteristics(
-                this.uuid,
+                this.characteristicsId,
                 this.registrationDate,
                 this.size,
                 this.physicalActivity,

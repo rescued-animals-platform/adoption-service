@@ -39,10 +39,10 @@ public class CharacteristicsService {
         this.animalRepository = animalRepository;
     }
 
-    public Characteristics createFor(final UUID animalUuid,
+    public Characteristics createFor(final UUID animalId,
                                      final Organization organization,
                                      final Characteristics characteristics) {
-        Animal animal = animalRepository.getBy(animalUuid, organization);
+        Animal animal = animalRepository.getBy(animalId, organization);
         animal.getCharacteristics().ifPresent(c -> {
             throw new EntityAlreadyExistsException();
         });
@@ -51,8 +51,8 @@ public class CharacteristicsService {
         return animalRepository.save(animal).getCharacteristics().orElseThrow();
     }
 
-    public Characteristics getBy(final UUID animalUuid) {
-        Animal animal = animalRepository.getBy(animalUuid);
+    public Characteristics getBy(final UUID animalId) {
+        Animal animal = animalRepository.getBy(animalId);
         return animal.getCharacteristics().orElseThrow(EntityNotFoundException::new);
     }
 }

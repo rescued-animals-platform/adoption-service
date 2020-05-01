@@ -69,7 +69,7 @@ public class StoryTest {
 
         Story updatedStory = story.updateWith(newStory);
 
-        assertAll(() -> assertEquals(story.getUuid(), updatedStory.getUuid()),
+        assertAll(() -> assertEquals(story.getIdentifier(), updatedStory.getIdentifier()),
                   () -> assertNotEquals(story.getRegistrationDate(), updatedStory.getRegistrationDate()),
                   () -> assertEquals(LocalDateTime.now().toLocalDate(), updatedStory.getRegistrationDate().toLocalDate()),
                   () -> assertEquals(newText, updatedStory.getText()));
@@ -98,27 +98,27 @@ public class StoryTest {
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
+    public void shouldNotIncludeIdAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        Story story = StoryBuilder.random().withUuid(UUID.randomUUID()).withRegistrationDate(LocalDateTime.now())
+        Story story = StoryBuilder.random().withIdentifier(UUID.randomUUID()).withRegistrationDate(LocalDateTime.now())
                                   .build();
 
         String serializedStory = objectMapper.writeValueAsString(story);
 
-        assertThat(serializedStory, not(containsString("uuid")));
-        assertThat(serializedStory, not(containsString("registrationDate")));
+        assertThat(serializedStory, not(containsString("\"id\":")));
+        assertThat(serializedStory, not(containsString("\"registrationDate\":")));
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInDeserialization() throws IOException {
+    public void shouldNotIncludeIdAndRegistrationDateInDeserialization() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String uuidAsJson = String.format("\"uuid\":\"%s\"", UUID.randomUUID());
+        String idAsJson = String.format("\"id\":\"%s\"", UUID.randomUUID());
         String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
-        String serializedStory = String.format("{%s,%s,\"text\":\"anyTest\"}", uuidAsJson, registrationDateAsJson);
+        String serializedStory = String.format("{%s,%s,\"text\":\"anyTest\"}", idAsJson, registrationDateAsJson);
 
         Story story = objectMapper.readValue(serializedStory, Story.class);
 
-        assertNull(story.getUuid());
+        assertNull(story.getIdentifier());
         assertNull(story.getRegistrationDate());
     }
 

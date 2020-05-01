@@ -31,7 +31,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class LinkPictureBuilder {
 
-    private UUID uuid;
+    private UUID linkPictureId;
     private LocalDateTime registrationDate;
     private String name;
     private PictureType pictureType;
@@ -47,8 +47,8 @@ public class LinkPictureBuilder {
         return linkPictureBuilder;
     }
 
-    public LinkPictureBuilder withUuid(final UUID uuid) {
-        this.uuid = uuid;
+    public LinkPictureBuilder withIdentifier(final UUID linkPictureId) {
+        this.linkPictureId = linkPictureId;
         return this;
     }
 
@@ -79,7 +79,7 @@ public class LinkPictureBuilder {
 
     public LinkPicture build() {
         return new LinkPicture(
-                this.uuid,
+                this.linkPictureId,
                 this.registrationDate,
                 this.name,
                 this.pictureType,

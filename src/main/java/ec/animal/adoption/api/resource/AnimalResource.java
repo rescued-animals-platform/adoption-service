@@ -68,25 +68,25 @@ public class AnimalResource {
     @ResponseStatus(HttpStatus.CREATED)
     public Animal create(@RequestBody @Valid final Animal animal,
                          @AuthenticationPrincipal final Jwt token) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
         animal.setOrganization(organization);
         return animalService.create(animal);
     }
 
-    @GetMapping("/admin/animals/{uuid}")
-    public Animal get(@PathVariable("uuid") final UUID animalUuid,
+    @GetMapping("/admin/animals/{id}")
+    public Animal get(@PathVariable("id") final UUID animalId,
                       @AuthenticationPrincipal final Jwt token) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
-        return animalService.getBy(animalUuid, organization);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        return animalService.getBy(animalId, organization);
     }
 
     @GetMapping("/admin/animals")
     public PagedEntity<Animal> listAll(final Pageable pageable,
                                        @AuthenticationPrincipal final Jwt token) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
         return animalService.listAllFor(organization, pageable);
     }
 

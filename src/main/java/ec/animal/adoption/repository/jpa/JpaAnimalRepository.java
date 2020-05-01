@@ -27,14 +27,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("PMD.UseObjectForClearerAPI")
+@SuppressWarnings({"PMD.UseObjectForClearerAPI"})
 public interface JpaAnimalRepository extends PagingAndSortingRepository<JpaAnimal, UUID> {
 
-    Optional<JpaAnimal> findByUuidAndJpaOrganizationUuid(UUID uuid, UUID organizationUuid);
+    Optional<JpaAnimal> findByIdAndJpaOrganizationId(UUID animalId, UUID organizationId);
 
-    Page<JpaAnimal> findAllByJpaOrganizationUuid(UUID organizationUuid, Pageable pageable);
+    Page<JpaAnimal> findAllByJpaOrganizationId(UUID organizationId, Pageable pageable);
 
-    boolean existsByClinicalRecordAndJpaOrganizationUuid(String clinicalRecord, UUID organizationUuid);
+    boolean existsByClinicalRecordAndJpaOrganizationId(String clinicalRecord, UUID organizationId);
 
     Page<JpaAnimal> findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
             String stateName, String species, String physicalActivity, String size, Pageable pageable

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static ec.animal.adoption.builders.AnimalBuilder.DEFAULT_ORGANIZATION_UUID;
+import static ec.animal.adoption.builders.AnimalBuilder.DEFAULT_ORGANIZATION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -38,8 +38,8 @@ public class JpaOrganizationRepositoryIntegrationTest extends AbstractJpaReposit
     private JpaOrganizationRepository jpaOrganizationRepository;
 
     @Test
-    public void shouldFindJpaOrganizationByOrganizationUuid() {
-        Optional<JpaOrganization> optionalJpaOrganization = jpaOrganizationRepository.findById(DEFAULT_ORGANIZATION_UUID);
+    public void shouldFindJpaOrganizationByOrganizationId() {
+        Optional<JpaOrganization> optionalJpaOrganization = jpaOrganizationRepository.findById(DEFAULT_ORGANIZATION_ID);
 
         assertThat(optionalJpaOrganization.isPresent(), is(true));
         Organization organization = optionalJpaOrganization.get().toOrganization();

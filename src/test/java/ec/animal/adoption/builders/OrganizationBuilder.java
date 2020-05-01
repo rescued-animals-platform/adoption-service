@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class OrganizationBuilder {
 
-    private UUID organizationUuid;
+    private UUID organizationId;
     private String name;
     private String city;
     private String receptionAddress;
@@ -36,7 +36,7 @@ public class OrganizationBuilder {
 
     public static OrganizationBuilder random() {
         OrganizationBuilder organizationBuilder = new OrganizationBuilder();
-        organizationBuilder.organizationUuid = UUID.randomUUID();
+        organizationBuilder.organizationId = UUID.randomUUID();
         organizationBuilder.name = randomAlphabetic(10);
         organizationBuilder.city = randomAlphabetic(10);
         organizationBuilder.email = organizationBuilder.name + "@email.com";
@@ -45,13 +45,13 @@ public class OrganizationBuilder {
         return organizationBuilder;
     }
 
-    public OrganizationBuilder withUuid(final UUID uuid) {
-        this.organizationUuid = uuid;
+    public OrganizationBuilder withIdentifier(final UUID organizationId) {
+        this.organizationId = organizationId;
         return this;
     }
 
     public Organization build() {
-        return new Organization(this.organizationUuid,
+        return new Organization(this.organizationId,
                                 this.name,
                                 this.city,
                                 this.email,

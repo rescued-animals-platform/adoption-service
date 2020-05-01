@@ -54,20 +54,20 @@ public class CharacteristicsResource {
         this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping("/admin/animals/{animalUuid}/characteristics")
+    @PostMapping("/admin/animals/{id}/characteristics")
     @ResponseStatus(HttpStatus.CREATED)
     public Characteristics create(
-            @PathVariable("animalUuid") final UUID animalUuid,
+            @PathVariable("id") final UUID animalId,
             @RequestBody @Valid final Characteristics characteristics,
             @AuthenticationPrincipal final Jwt token
     ) {
-        UUID organizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
-        Organization organization = organizationService.getBy(organizationUuid);
-        return characteristicsService.createFor(animalUuid, organization, characteristics);
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        return characteristicsService.createFor(animalId, organization, characteristics);
     }
 
-    @GetMapping("/animals/{animalUuid}/characteristics")
-    public Characteristics get(@PathVariable("animalUuid") final UUID animalUuid) {
-        return characteristicsService.getBy(animalUuid);
+    @GetMapping("/animals/{id}/characteristics")
+    public Characteristics get(@PathVariable("id") final UUID animalId) {
+        return characteristicsService.getBy(animalId);
     }
 }

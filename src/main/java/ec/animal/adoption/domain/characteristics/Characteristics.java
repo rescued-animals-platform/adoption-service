@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"uuid", "registrationDate"})
+@JsonIgnoreProperties({"id", "registrationDate"})
 @SuppressWarnings("PMD.DataClass")
 public class Characteristics extends Entity {
 
@@ -69,14 +69,14 @@ public class Characteristics extends Entity {
     }
 
     public Characteristics(
-            final UUID uuid,
+            final UUID characteristicsId,
             final LocalDateTime registrationDate,
             final Size size,
             final PhysicalActivity physicalActivity,
             final Temperaments temperaments,
             final FriendlyWith... friendlyWith
     ) {
-        super(uuid, registrationDate);
+        super(characteristicsId, registrationDate);
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));

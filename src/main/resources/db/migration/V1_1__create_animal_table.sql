@@ -1,5 +1,5 @@
 CREATE TABLE animal (
-  uuid UUID PRIMARY KEY,
+  id UUID PRIMARY KEY,
   registration_date TIMESTAMP DEFAULT current_timestamp,
   clinical_record VARCHAR(40) NOT NULL,
   name VARCHAR(40),
@@ -8,6 +8,6 @@ CREATE TABLE animal (
   sex VARCHAR(6) NOT NULL,
   state_name VARCHAR(20) NOT NULL,
   state TEXT NOT NULL,
-  organization_uuid UUID NOT NULL,
-  CONSTRAINT animal_organization FOREIGN KEY(organization_uuid) REFERENCES organization(uuid)
+  organization_id UUID NOT NULL,
+  CONSTRAINT animal_organization FOREIGN KEY(organization_id) REFERENCES organization(id)
 );

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import ec.animal.adoption.builders.AnimalBuilder;
 import ec.animal.adoption.builders.LinkPictureBuilder;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import org.junit.jupiter.api.Test;
@@ -43,16 +44,18 @@ public class AnimalDtoTest {
     @Test
     public void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
         ObjectMapper objectMapper = getObjectMapper();
-        UUID uuid = UUID.randomUUID();
+        UUID animalId = UUID.randomUUID();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
-        Animal animal = AnimalBuilder.random().withUuid(uuid).withPrimaryLinkPicture(LinkPictureBuilder.random()
-                                                                                                       .withPictureType(PictureType.PRIMARY).withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
-                                                                                                       .build()).build();
+        LinkPicture primaryLinkPicture = LinkPictureBuilder.random()
+                                                           .withPictureType(PictureType.PRIMARY)
+                                                           .withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
+                                                           .build();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
         AnimalDto animalDto = new AnimalDto(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
 
-        assertThat(serializedAnimalDto, containsString(String.format("\"uuid\":\"%s\"", uuid.toString())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"id\":\"%s\"", animalId.toString())));
         assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
         assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
@@ -65,13 +68,13 @@ public class AnimalDtoTest {
     @Test
     public void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
         ObjectMapper objectMapper = getObjectMapper();
-        UUID uuid = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withUuid(uuid).build();
+        UUID animalId = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).build();
         AnimalDto animalDto = new AnimalDto(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
 
-        assertThat(serializedAnimalDto, containsString(String.format("\"uuid\":\"%s\"", uuid.toString())));
+        assertThat(serializedAnimalDto, containsString(String.format("\"id\":\"%s\"", animalId.toString())));
         assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
         assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
         assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
@@ -83,7 +86,7 @@ public class AnimalDtoTest {
     @Test
     public void shouldNotBeDeserializable() {
         ObjectMapper objectMapper = getObjectMapper();
-        String animalDtoAsJson = "{\"uuid\":\"32bb12fb-6545-4cba-b439-49bf75b32369\",\"name\":\"LUjMtOrKfE\"," +
+        String animalDtoAsJson = "{\"id\":\"32bb12fb-6545-4cba-b439-49bf75b32369\",\"name\":\"LUjMtOrKfE\"," +
                 "\"species\":\"CAT\",\"estimatedAge\":\"YOUNG\",\"sex\":\"FEMALE\"," +
                 "\"smallPrimaryPictureUrl\":\"TznABoDYFF\"}";
 

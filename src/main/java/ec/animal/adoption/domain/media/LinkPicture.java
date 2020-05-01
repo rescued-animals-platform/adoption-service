@@ -28,7 +28,7 @@ import ec.animal.adoption.domain.Entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"uuid", "registrationDate"})
+@JsonIgnoreProperties({"id", "registrationDate"})
 public class LinkPicture extends Entity {
 
     @JsonProperty("name")
@@ -58,14 +58,14 @@ public class LinkPicture extends Entity {
     }
 
     public LinkPicture(
-            final UUID uuid,
+            final UUID linkPictureId,
             final LocalDateTime registrationDate,
             final String name,
             final PictureType pictureType,
             final MediaLink largeImageMediaLink,
             final MediaLink smallImageMediaLink
     ) {
-        super(uuid, registrationDate);
+        super(linkPictureId, registrationDate);
         this.name = name;
         this.pictureType = pictureType;
         this.largeImageMediaLink = largeImageMediaLink;

@@ -80,33 +80,33 @@ public class CharacteristicsTest {
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInSerialization() throws JsonProcessingException {
+    public void shouldNotIncludeIdAndRegistrationDateInSerialization() throws JsonProcessingException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        Characteristics characteristics = CharacteristicsBuilder.random().withUuid(UUID.randomUUID())
+        Characteristics characteristics = CharacteristicsBuilder.random().withIdentifier(UUID.randomUUID())
                                                                 .withRegistrationDate(LocalDateTime.now()).build();
 
         String serializedCharacteristics = objectMapper.writeValueAsString(characteristics);
 
-        assertThat(serializedCharacteristics, not(containsString("uuid")));
-        assertThat(serializedCharacteristics, not(containsString("registrationDate")));
+        assertThat(serializedCharacteristics, not(containsString("\"id\":")));
+        assertThat(serializedCharacteristics, not(containsString("\"registrationDate\":")));
     }
 
     @Test
-    public void shouldNotIncludeUuidAndRegistrationDateInDeserialization() throws IOException {
+    public void shouldNotIncludeIdAndRegistrationDateInDeserialization() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String uuidAsJson = String.format("\"uuid\":\"%s\"", UUID.randomUUID());
+        String idAsJson = String.format("\"id\":\"%s\"", UUID.randomUUID());
         String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
         String serializedCharacteristics = String.format(
                 "{%s,%s,\"size\":\"SMALL\",\"physicalActivity\":\"MEDIUM\",\"temperaments\":" +
                         "{\"sociability\":\"VERY_SOCIABLE\",\"docility\":\"NEITHER_DOCILE_NOR_DOMINANT\"," +
                         "\"balance\":\"NEITHER_BALANCED_NOR_POSSESSIVE\"},\"friendlyWith\":[\"OTHER_ANIMALS\"]}",
-                uuidAsJson,
+                idAsJson,
                 registrationDateAsJson
         );
 
         Characteristics characteristics = objectMapper.readValue(serializedCharacteristics, Characteristics.class);
 
-        assertNull(characteristics.getUuid());
+        assertNull(characteristics.getIdentifier());
         assertNull(characteristics.getRegistrationDate());
     }
 

@@ -44,15 +44,15 @@ import static java.lang.System.getenv;
 public abstract class AbstractApiTest {
 
     static final String CREATE_ANIMAL_ADMIN_URL = "/adoption/admin/animals";
-    static final String GET_ANIMAL_ADMIN_URL = "/adoption/admin/animals/{uuid}";
+    static final String GET_ANIMAL_ADMIN_URL = "/adoption/admin/animals/{id}";
     static final String GET_ANIMALS_ADMIN_URL = "/adoption/admin/animals";
     static final String GET_ANIMALS_URL = "/adoption/animals";
-    static final String CHARACTERISTICS_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/characteristics";
-    static final String GET_CHARACTERISTICS_URL = "/adoption/animals/{animalUuid}/characteristics";
-    static final String PICTURES_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/pictures";
-    static final String GET_PICTURES_URL = "/adoption/animals/{animalUuid}/pictures";
-    static final String STORY_ADMIN_URL = "/adoption/admin/animals/{animalUuid}/story";
-    static final String GET_STORY_URL = "/adoption/animals/{animalUuid}/story";
+    static final String CHARACTERISTICS_ADMIN_URL = "/adoption/admin/animals/{id}/characteristics";
+    static final String GET_CHARACTERISTICS_URL = "/adoption/animals/{id}/characteristics";
+    static final String PICTURES_ADMIN_URL = "/adoption/admin/animals/{id}/pictures";
+    static final String GET_PICTURES_URL = "/adoption/animals/{id}/pictures";
+    static final String STORY_ADMIN_URL = "/adoption/admin/animals/{id}/story";
+    static final String GET_STORY_URL = "/adoption/animals/{id}/story";
 
     static WebTestClient webTestClient;
 

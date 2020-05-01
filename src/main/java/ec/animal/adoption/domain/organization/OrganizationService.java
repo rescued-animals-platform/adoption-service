@@ -40,11 +40,11 @@ public class OrganizationService {
         this.organizationRepository = organizationRepository;
     }
 
-    public Organization getBy(final UUID organizationUuid) {
-        Optional<Organization> organization = organizationRepository.getBy(organizationUuid);
+    public Organization getBy(final UUID organizationId) {
+        Optional<Organization> organization = organizationRepository.getBy(organizationId);
 
         if (organization.isEmpty()) {
-            LOGGER.info("Organization with uuid: {} doesn't exist", organizationUuid);
+            LOGGER.info("Organization with id: {} doesn't exist", organizationId);
             throw new UnauthorizedException();
         }
 

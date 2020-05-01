@@ -48,13 +48,13 @@ import static org.mockito.Mockito.mock;
 public class JpaAnimalTest {
 
     @Test
-    public void shouldGenerateAnUuidWhenCreatingAJpaAnimalForAnAnimalWithNoUuid() {
-        Animal animal = AnimalBuilder.random().withUuid(null).build();
+    public void shouldGenerateAnIdWhenCreatingAJpaAnimalForAnAnimalWithNoId() {
+        Animal animal = AnimalBuilder.random().withIdentifier(null).build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertNotNull(jpaAnimalToAnimal.getUuid());
+        assertNotNull(jpaAnimalToAnimal.getIdentifier());
     }
 
     @Test
@@ -68,14 +68,14 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldCreateAnAnimalWithUuid() {
-        UUID uuid = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withUuid(uuid).build();
+    public void shouldCreateAnAnimalWithId() {
+        UUID animalId = UUID.randomUUID();
+        Animal animal = AnimalBuilder.random().withIdentifier(animalId).build();
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
         Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
 
-        assertThat(jpaAnimalToAnimal.getUuid(), is(uuid));
+        assertThat(jpaAnimalToAnimal.getIdentifier(), is(animalId));
     }
 
     @Test

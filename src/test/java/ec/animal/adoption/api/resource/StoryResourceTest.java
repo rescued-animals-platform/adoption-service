@@ -58,48 +58,48 @@ public class StoryResourceTest {
     @Mock
     private Jwt token;
 
-    private UUID organizationUuid;
+    private UUID organizationId;
     private Organization organization;
-    private UUID animalUuid;
+    private UUID animalId;
     private StoryResource storyResource;
 
     @BeforeEach
     public void setUp() {
-        organizationUuid = UUID.randomUUID();
-        organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        animalUuid = UUID.randomUUID();
+        organizationId = UUID.randomUUID();
+        organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        animalId = UUID.randomUUID();
         storyResource = new StoryResource(storyService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAStoryForAnimal() {
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
         Story story = mock(Story.class);
-        when(storyService.createFor(animalUuid, organization, story)).thenReturn(expectedStory);
+        when(storyService.createFor(animalId, organization, story)).thenReturn(expectedStory);
 
-        Story createdStory = storyResource.create(animalUuid, story, token);
+        Story createdStory = storyResource.create(animalId, story, token);
 
         assertEquals(expectedStory, createdStory);
     }
 
     @Test
     void shouldUpdateStoryForAnimal() {
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
         Story story = mock(Story.class);
-        when(storyService.updateFor(animalUuid, organization, story)).thenReturn(expectedStory);
+        when(storyService.updateFor(animalId, organization, story)).thenReturn(expectedStory);
 
-        Story updatedStory = storyResource.update(animalUuid, story, token);
+        Story updatedStory = storyResource.update(animalId, story, token);
 
         assertEquals(expectedStory, updatedStory);
     }
 
     @Test
     public void shouldGetStoryForAnimal() {
-        when(storyService.getBy(animalUuid)).thenReturn(expectedStory);
+        when(storyService.getBy(animalId)).thenReturn(expectedStory);
 
-        Story story = storyResource.get(animalUuid);
+        Story story = storyResource.get(animalId);
 
         assertThat(story, is(expectedStory));
     }

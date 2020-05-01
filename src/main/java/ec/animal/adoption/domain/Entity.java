@@ -26,19 +26,19 @@ import java.util.UUID;
 
 public class Entity {
 
-    @JsonProperty("uuid")
-    private final UUID uuid;
+    @JsonProperty("id")
+    private final UUID identifier;
 
     @JsonProperty("registrationDate")
     private final LocalDateTime registrationDate;
 
-    protected Entity(final UUID uuid, final LocalDateTime registrationDate) {
-        this.uuid = uuid;
+    protected Entity(final UUID identifier, final LocalDateTime registrationDate) {
+        this.identifier = identifier;
         this.registrationDate = registrationDate;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getIdentifier() {
+        return identifier;
     }
 
     public LocalDateTime getRegistrationDate() {
@@ -57,7 +57,7 @@ public class Entity {
 
         Entity entity = (Entity) o;
 
-        if (uuid != null ? !uuid.equals(entity.uuid) : entity.uuid != null) {
+        if (identifier != null ? !identifier.equals(entity.identifier) : entity.identifier != null) {
             return false;
         }
         return registrationDate != null ? registrationDate.equals(entity.registrationDate) : entity.registrationDate == null;
@@ -66,7 +66,7 @@ public class Entity {
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
+        int result = identifier != null ? identifier.hashCode() : 0;
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);
         return result;
     }

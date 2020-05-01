@@ -22,17 +22,17 @@ public class AdminTokenUtils {
         this.organizationIdClaimName = organizationIdClaimName;
     }
 
-    public UUID extractOrganizationUuidFrom(final Jwt token) {
-        String organizationUuid = token.getClaimAsString(organizationIdClaimName);
+    public UUID extractOrganizationIdFrom(final Jwt token) {
+        String organizationId = token.getClaimAsString(organizationIdClaimName);
         try {
-            if (organizationUuid == null) {
+            if (organizationId == null) {
                 LOGGER.info("Token doesn't have the organization_id claim");
                 throw new UnauthorizedException();
             }
 
-            return UUID.fromString(organizationUuid);
+            return UUID.fromString(organizationId);
         } catch (IllegalArgumentException ex) {
-            LOGGER.info("Organization uuid found in token claim is not a valid uuid", ex);
+            LOGGER.info("Organization id found in token claim is not a valid UUID", ex);
             throw new UnauthorizedException(ex);
         }
     }

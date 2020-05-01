@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class StoryBuilder {
 
-    private UUID uuid;
+    private UUID storyId;
     private LocalDateTime registrationDate;
     private String text;
 
@@ -38,8 +38,8 @@ public class StoryBuilder {
         return storyBuilder;
     }
 
-    public StoryBuilder withUuid(final UUID uuid) {
-        this.uuid = uuid;
+    public StoryBuilder withIdentifier(final UUID storyId) {
+        this.storyId = storyId;
         return this;
     }
 
@@ -54,6 +54,6 @@ public class StoryBuilder {
     }
 
     public Story build() {
-        return new Story(this.uuid, this.registrationDate, this.text);
+        return new Story(this.storyId, this.registrationDate, this.text);
     }
 }

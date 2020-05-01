@@ -46,16 +46,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity(name = "characteristics")
+@SuppressWarnings("PMD.ShortVariable")
 public class JpaCharacteristics implements Serializable {
 
     private transient static final long serialVersionUID = -132432659169428820L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID uuid;
+    private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "animal_uuid")
+    @JoinColumn(name = "animal_id")
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
@@ -75,7 +76,7 @@ public class JpaCharacteristics implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinColumn(name = "characteristics_uuid", nullable = false)
+    @JoinColumn(name = "characteristics_id", nullable = false)
     private List<JpaFriendlyWith> friendlyWith;
 
     private JpaCharacteristics() {
@@ -84,7 +85,7 @@ public class JpaCharacteristics implements Serializable {
 
     public JpaCharacteristics(final Characteristics characteristics, final JpaAnimal jpaAnimal) {
         this();
-        this.setUuid(characteristics.getUuid());
+        this.setId(characteristics.getIdentifier());
         this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(characteristics.getRegistrationDate());
         this.size = characteristics.getSize().name();
@@ -94,8 +95,8 @@ public class JpaCharacteristics implements Serializable {
                                            .collect(Collectors.toList());
     }
 
-    private void setUuid(final UUID uuid) {
-        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    private void setId(final UUID id) {
+        this.id = id == null ? UUID.randomUUID() : id;
     }
 
     private void setRegistrationDate(final LocalDateTime registrationDate) {
@@ -110,7 +111,7 @@ public class JpaCharacteristics implements Serializable {
 
     public Characteristics toCharacteristics() {
         return new Characteristics(
-                this.uuid,
+                this.id,
                 this.registrationDate,
                 Size.valueOf(this.size),
                 PhysicalActivity.valueOf(this.physicalActivity),
@@ -135,12 +136,12 @@ public class JpaCharacteristics implements Serializable {
 
         JpaCharacteristics that = (JpaCharacteristics) o;
 
-        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return uuid != null ? uuid.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

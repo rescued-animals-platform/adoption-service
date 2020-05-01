@@ -54,35 +54,35 @@ public class CharacteristicsResourceTest {
     @Mock
     private Characteristics expectedCharacteristics;
 
-    private UUID animalUuid;
+    private UUID animalId;
     private CharacteristicsResource characteristicsResource;
 
     @BeforeEach
     public void setUp() {
-        animalUuid = UUID.randomUUID();
+        animalId = UUID.randomUUID();
         characteristicsResource = new CharacteristicsResource(characteristicsService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateCharacteristicsForAnimalFromOrganization() {
-        UUID organizationUuid = UUID.randomUUID();
+        UUID organizationId = UUID.randomUUID();
         Jwt token = mock(Jwt.class);
-        when(adminTokenUtils.extractOrganizationUuidFrom(token)).thenReturn(organizationUuid);
-        Organization organization = OrganizationBuilder.random().withUuid(organizationUuid).build();
-        when(organizationService.getBy(organizationUuid)).thenReturn(organization);
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
         Characteristics characteristics = mock(Characteristics.class);
-        when(characteristicsService.createFor(animalUuid, organization, characteristics)).thenReturn(expectedCharacteristics);
+        when(characteristicsService.createFor(animalId, organization, characteristics)).thenReturn(expectedCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsResource.create(animalUuid, characteristics, token);
+        Characteristics createdCharacteristics = characteristicsResource.create(animalId, characteristics, token);
 
         assertThat(createdCharacteristics, is(expectedCharacteristics));
     }
 
     @Test
     public void shouldGetCharacteristicsForAnimal() {
-        when(characteristicsService.getBy(animalUuid)).thenReturn(expectedCharacteristics);
+        when(characteristicsService.getBy(animalId)).thenReturn(expectedCharacteristics);
 
-        Characteristics characteristics = characteristicsResource.get(animalUuid);
+        Characteristics characteristics = characteristicsResource.get(animalId);
 
         assertThat(characteristics, is(expectedCharacteristics));
     }

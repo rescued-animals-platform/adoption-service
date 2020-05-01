@@ -31,13 +31,13 @@ class AdminTokenUtilsTest {
     }
 
     @Test
-    void shouldReturnOrganizationUuidFromTokenClaim() {
-        UUID expectedOrganizationUuid = UUID.randomUUID();
-        when(token.getClaimAsString(organizationIdClaimName)).thenReturn(expectedOrganizationUuid.toString());
+    void shouldReturnOrganizationIdFromTokenClaim() {
+        UUID expectedOrganizationId = UUID.randomUUID();
+        when(token.getClaimAsString(organizationIdClaimName)).thenReturn(expectedOrganizationId.toString());
 
-        UUID actualOrganizationUuid = adminTokenUtils.extractOrganizationUuidFrom(token);
+        UUID actualOrganizationId = adminTokenUtils.extractOrganizationIdFrom(token);
 
-        assertEquals(expectedOrganizationUuid, actualOrganizationUuid);
+        assertEquals(expectedOrganizationId, actualOrganizationId);
     }
 
     @Test
@@ -45,16 +45,16 @@ class AdminTokenUtilsTest {
         when(token.getClaimAsString(organizationIdClaimName)).thenReturn(null);
 
         assertThrows(UnauthorizedException.class, () -> {
-            adminTokenUtils.extractOrganizationUuidFrom(token);
+            adminTokenUtils.extractOrganizationIdFrom(token);
         });
     }
 
     @Test
-    void shouldThrowUnauthorizedExceptionWhenOrganizationIdFromClaimIsNotAValidUuid() {
+    void shouldThrowUnauthorizedExceptionWhenOrganizationIdFromClaimIsNotAValidUUID() {
         when(token.getClaimAsString(organizationIdClaimName)).thenReturn(randomAlphabetic(10));
 
         assertThrows(UnauthorizedException.class, () -> {
-            adminTokenUtils.extractOrganizationUuidFrom(token);
+            adminTokenUtils.extractOrganizationIdFrom(token);
         });
     }
 }
