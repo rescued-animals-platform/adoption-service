@@ -241,7 +241,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                        lookingForHuman.getStateName(), dog.name(), high.name(), tiny.name(), pageable
+                        lookingForHuman.getName(), dog.name(), high.name(), tiny.name(), pageable
                 );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 
@@ -266,7 +266,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                        adopted.getStateName(), cat.name(), low.name(), medium.name(), pageable
+                        adopted.getName(), cat.name(), low.name(), medium.name(), pageable
                 );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 

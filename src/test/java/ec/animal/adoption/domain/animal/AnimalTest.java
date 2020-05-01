@@ -81,7 +81,7 @@ public class AnimalTest {
         State randomState = getRandomState();
         Animal animal = AnimalBuilder.random().withState(randomState).build();
 
-        assertThat(animal.getStateName(), is(randomState.getStateName()));
+        assertThat(animal.getStateName(), is(randomState.getName()));
     }
 
     @Test
@@ -246,7 +246,7 @@ public class AnimalTest {
 
         String serializedAnimal = objectMapper.writeValueAsString(animal);
 
-        assertThat(serializedAnimal, not(containsString(String.format("\"stateName\":\"%s\"", state.getStateName()))));
+        assertThat(serializedAnimal, not(containsString(String.format("\"stateName\":\"%s\"", state.getName()))));
     }
 
     @Test
@@ -278,7 +278,7 @@ public class AnimalTest {
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
-                "\",\"state\":{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}}";
+                "\",\"state\":{\"name\":\"lookingForHuman\",\"date\":" + serializedLocalDateTime + "}}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
@@ -299,8 +299,8 @@ public class AnimalTest {
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
-                "\",\"state\":{\"unavailable\":{\"notes\":\"" + notes +
-                "\",\"date\":" + serializedLocalDateTime + "}}}";
+                "\",\"state\":{\"name\":\"unavailable\",\"notes\":\"" + notes +
+                "\",\"date\":" + serializedLocalDateTime + "}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 
@@ -321,8 +321,8 @@ public class AnimalTest {
         String serializedAnimalWithState = CLINICAL_RECORD_JSON + animal.getClinicalRecord() +
                 NAME_JSON + animal.getName() + SPECIES_JSON + animal.getSpecies().name() +
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON + animal.getSex().name() +
-                "\",\"state\":{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId +
-                "\",\"date\":" + serializedLocalDateTime + "}}}";
+                "\",\"state\":{\"name\":\"adopted\",\"adoptionFormId\":\"" + adoptionFormId +
+                "\",\"date\":" + serializedLocalDateTime + "}}";
 
         Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithState, Animal.class);
 

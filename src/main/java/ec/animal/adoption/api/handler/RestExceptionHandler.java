@@ -25,7 +25,6 @@ import ec.animal.adoption.api.model.error.ValidationApiSubError;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
 import ec.animal.adoption.domain.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -42,6 +41,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,12 +89,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
-    @ExceptionHandler(InvalidStateException.class)
-    public ResponseEntity<Object> handleInvalidStateException(final InvalidStateException exception) {
-        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, exception.getMessage()), badRequest);
-    }
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorizedException(final UnauthorizedException exception) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
@@ -132,6 +126,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final List<ApiSubError> apiSubErrors = exception.getBindingResult().getFieldErrors()
                                                         .stream()
                                                         .map(f -> new ValidationApiSubError(f.getField(), f.getDefaultMessage()))
+                                                        .collect(Collectors.toList());
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ApiError apiError = new ApiError(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrors);
+
+        return buildResponseEntity(apiError, badRequest);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException exception) {
+        final List<ApiSubError> apiSubErrors = exception.getConstraintViolations()
+                                                        .stream()
+                                                        .map(c -> new ValidationApiSubError(c.getPropertyPath().toString(), c.getMessage()))
                                                         .collect(Collectors.toList());
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiError apiError = new ApiError(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrors);

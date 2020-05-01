@@ -21,10 +21,12 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
+@JsonTypeName("unavailable")
 public class Unavailable extends State {
 
     private transient static final long serialVersionUID = -512442656134428600L;
@@ -44,10 +46,5 @@ public class Unavailable extends State {
 
     public String getNotes() {
         return notes;
-    }
-
-    @Override
-    public String getStateName() {
-        return "unavailable";
     }
 }

@@ -216,7 +216,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                     .uri(uri, state.getStateName(), species, physicalActivity, size)
+                     .uri(uri, state.getName(), species, physicalActivity, size)
                      .exchange()
                      .expectStatus()
                      .isOk()

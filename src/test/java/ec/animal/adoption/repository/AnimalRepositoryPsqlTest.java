@@ -210,11 +210,11 @@ public class AnimalRepositoryPsqlTest {
                 jpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
         when(jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                lookingForHuman.getStateName(), dog.name(), high.name(), tiny.name(), pageable)
+                lookingForHuman.getName(), dog.name(), high.name(), tiny.name(), pageable)
         ).thenReturn(new PageImpl<>(jpaAnimals));
 
         PagedEntity<Animal> pageOfAnimals = animalRepositoryPsql.getAllBy(
-                lookingForHuman.getStateName(), dog, high, tiny, pageable
+                lookingForHuman.getName(), dog, high, tiny, pageable
         );
 
         assertEquals(expectedPageOfAnimals, pageOfAnimals);

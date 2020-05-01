@@ -29,11 +29,13 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
+import ec.animal.adoption.validator.ValidStateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,7 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
+@Validated
 public class AnimalResource {
 
     private final AnimalService animalService;
@@ -89,7 +92,7 @@ public class AnimalResource {
 
     @GetMapping("/animals")
     public PagedEntity<AnimalDto> listAllWithFilters(
-            @RequestParam("state") final String stateName,
+            @RequestParam("state") @ValidStateName final String stateName,
             @RequestParam("species") final Species species,
             @RequestParam("physicalActivity") final PhysicalActivity physicalActivity,
             @RequestParam("animalSize") final Size size,

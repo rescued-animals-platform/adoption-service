@@ -31,17 +31,13 @@ import static java.time.LocalDateTime.now;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LookingForHumanTest {
 
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
-
-    @Test
-    public void shouldReturnStateName() {
-        assertThat(new LookingForHuman(now()).getStateName(), is("lookingForHuman"));
-    }
 
     @Test
     public void shouldBeAnInstanceOfState() {
@@ -51,11 +47,18 @@ public class LookingForHumanTest {
     }
 
     @Test
+    void shouldReturnLookingForHumanName() {
+        State lookingForHumanState = new LookingForHuman(now());
+
+        assertEquals(lookingForHumanState.getName(), "lookingForHuman");
+    }
+
+    @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" +
-                serializedLocalDateTime + "}}";
+        String expectedSerializedLookingForHumanState = "{\"name\":\"lookingForHuman\",\"date\":" +
+                serializedLocalDateTime + "}";
         LookingForHuman lookingForHumanState = new LookingForHuman(localDateTime);
 
         String serializedLookingForHumanState = objectMapper.writeValueAsString(lookingForHumanState);
@@ -65,7 +68,7 @@ public class LookingForHumanTest {
 
     @Test
     public void shouldBeDeserializableWithoutDate() throws IOException {
-        String serializedLookingForHumanState = "{\"lookingForHuman\":{}}";
+        String serializedLookingForHumanState = "{\"name\":\"lookingForHuman\"}";
 
         LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
                 serializedLookingForHumanState, LookingForHuman.class
@@ -79,7 +82,7 @@ public class LookingForHumanTest {
     public void shouldNotDeserializeWithDate() throws IOException {
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String serializedLookingForHumanState = "{\"lookingForHuman\":{\"date\":" + serializedLocalDateTime + "}}";
+        String serializedLookingForHumanState = "{\"name\":\"lookingForHuman\",\"date\":" + serializedLocalDateTime + "}";
 
         LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
                 serializedLookingForHumanState, LookingForHuman.class

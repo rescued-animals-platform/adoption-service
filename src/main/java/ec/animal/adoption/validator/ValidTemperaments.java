@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ValidTemperaments {
 
-    String message() default "At least one temperaments is required";
+    String message() default "At least one temperament is required";
 
     Class<?>[] groups() default {};
 

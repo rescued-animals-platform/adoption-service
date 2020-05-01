@@ -17,21 +17,25 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.exception;
+package ec.animal.adoption.validator;
 
-import org.junit.jupiter.api.Test;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+@Constraint(validatedBy = {StateNameValidator.class})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ValidStateName {
 
-public class InvalidStateExceptionTest {
+    String message() default "Invalid state";
 
-    @Test
-    public void shouldReturnMessage() {
-        String stateName = randomAlphabetic(10);
-        InvalidStateException invalidStateException = new InvalidStateException(stateName);
+    Class<?>[] groups() default {};
 
-        assertThat(invalidStateException.getMessage(), is(String.format("%s is not a valid state", stateName)));
-    }
+    Class<? extends Payload>[] payload() default {};
 }

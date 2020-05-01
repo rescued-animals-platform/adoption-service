@@ -24,10 +24,10 @@ import ec.animal.adoption.api.model.error.ValidationApiSubError;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
 import ec.animal.adoption.domain.exception.UnauthorizedException;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +43,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -179,6 +183,39 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
+    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForConstraintViolationException() {
+        ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
+        when(constraintViolationException.getConstraintViolations()).thenReturn(new HashSet<>());
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleConstraintViolationException(
+                constraintViolationException
+        );
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForConstraintViolationException() {
+        ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
+        Set<ConstraintViolation<?>> constraintViolations = createConstraintViolations();
+        when(constraintViolationException.getConstraintViolations()).thenReturn(constraintViolations);
+        String debugMessage = randomAlphabetic(10);
+        when(constraintViolationException.getMessage()).thenReturn(debugMessage);
+        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
+                .setSubErrors(constraintViolations.stream()
+                                                  .map(violation -> new ValidationApiSubError(violation.getPropertyPath().toString(), violation.getMessage()))
+                                                  .collect(Collectors.toList()));
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleConstraintViolationException(
+                constraintViolationException
+        );
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
+        ApiError apiError = (ApiError) responseEntity.getBody();
+        assertThat(apiError, is(expectedApiError));
+    }
+
+    @Test
     public void shouldReturnAResponseEntityWithHttpStatusNotFoundForEntityNotFoundException() {
         EntityNotFoundException entityNoyFoundException = mock(EntityNotFoundException.class);
 
@@ -275,29 +312,6 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidStateException() {
-        InvalidStateException invalidStateException = mock(InvalidStateException.class);
-
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidStateException(invalidStateException);
-
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-    }
-
-    @Test
-    public void shouldReturnAResponseEntityWithApiErrorForInvalidStateException() {
-        String stateName = randomAlphabetic(10);
-        String invalidMessage = String.format("%s is not a valid state", stateName);
-        InvalidStateException invalidStateException = new InvalidStateException(stateName);
-        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, invalidMessage);
-
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidStateException(invalidStateException);
-
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
-    }
-
-    @Test
     public void shouldReturnAResponseEntityWithHttpStatusForbiddenForUnauthorizedException() {
         UnauthorizedException unauthorizedException = mock(UnauthorizedException.class);
 
@@ -351,5 +365,21 @@ public class RestExceptionHandlerTest {
         fieldErrors.add(fieldError);
         fieldErrors.add(anotherFieldError);
         return fieldErrors;
+    }
+
+    private static Set<ConstraintViolation<?>> createConstraintViolations() {
+        Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
+
+        ConstraintViolation<?> constraintViolation = mock(ConstraintViolation.class);
+        when(constraintViolation.getPropertyPath()).thenReturn(PathImpl.createPathFromString(randomAlphabetic(10)));
+        when(constraintViolation.getMessage()).thenReturn(randomAlphabetic(10));
+
+        ConstraintViolation<?> anotherConstraintViolation = mock(ConstraintViolation.class);
+        when(anotherConstraintViolation.getPropertyPath()).thenReturn(PathImpl.createPathFromString(randomAlphabetic(10)));
+        when(anotherConstraintViolation.getMessage()).thenReturn(randomAlphabetic(10));
+
+        constraintViolations.add(constraintViolation);
+        constraintViolations.add(anotherConstraintViolation);
+        return constraintViolations;
     }
 }

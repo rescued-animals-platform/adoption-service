@@ -142,7 +142,7 @@ public class Animal extends Entity {
 
     @JsonIgnore
     public String getStateName() {
-        return state.getStateName();
+        return state.getName();
     }
 
     public void setPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {

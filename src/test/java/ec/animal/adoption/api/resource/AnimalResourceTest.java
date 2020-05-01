@@ -133,7 +133,7 @@ public class AnimalResourceTest {
     @Test
     public void shouldReturnAllAnimalDtosWithFiltersAndPagination() {
         State state = getRandomState();
-        String stateName = state.getStateName();
+        String stateName = state.getName();
         Species species = getRandomSpecies();
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();

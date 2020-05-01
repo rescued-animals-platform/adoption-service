@@ -20,30 +20,38 @@
 package ec.animal.adoption.domain.state;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateTest {
 
-    @Test
-    public void shouldReturnTrueForValidLookingForHumanStateName() {
-        assertTrue(State.isValidStateName("lookingForHuman"));
+    @ParameterizedTest
+    @ValueSource(strings = {"lookingForHuman", "adopted", "unavailable"})
+    public void shouldReturnTrueForValidStateNames(final String stateName) {
+        assertTrue(State.isStateNameValid(stateName));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"LookingForHuman",
+                            "LOOKING_FOR_HUMAN",
+                            "looking_for_human",
+                            "Adopted",
+                            "ADOPTED",
+                            "Unavailable",
+                            "UNAVAILABLE",
+                            "akshudbjw27367",
+                            "Un-available",
+                            "anyOther",
+                            ""})
+    public void shouldReturnFalseForInvalidStateNames(final String stateName) {
+        assertFalse(State.isStateNameValid(stateName));
     }
 
     @Test
-    public void shouldReturnTrueForValidAdoptedStateName() {
-        assertTrue(State.isValidStateName("adopted"));
-    }
-
-    @Test
-    public void shouldReturnTrueForValidUnavailableStateName() {
-        assertTrue(State.isValidStateName("unavailable"));
-    }
-
-    @Test
-    public void shouldReturnFalseForInvalidStateName() {
-        assertFalse(State.isValidStateName(randomAlphabetic(10)));
+    void shouldReturnFalseForNullStateName() {
+        assertFalse(State.isStateNameValid(null));
     }
 }

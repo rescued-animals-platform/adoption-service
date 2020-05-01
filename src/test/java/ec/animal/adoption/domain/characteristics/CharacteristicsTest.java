@@ -45,7 +45,7 @@ public class CharacteristicsTest {
 
     private static final String SIZE_IS_REQUIRED = "Size is required";
     private static final String PHYSICAL_ACTIVITY_IS_REQUIRED = "Physical activity is required";
-    private static final String AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED = "At least one temperaments is required";
+    private static final String AT_LEAST_ONE_TEMPERAMENT_IS_REQUIRED = "At least one temperament is required";
 
     @Test
     public void shouldEliminateDuplicatesOnFriendlyWith() {

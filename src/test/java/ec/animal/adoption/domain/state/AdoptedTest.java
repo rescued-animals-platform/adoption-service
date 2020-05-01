@@ -32,17 +32,13 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AdoptedTest {
 
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
-
-    @Test
-    public void shouldReturnStateName() {
-        assertThat(new Adopted(now(), randomAlphabetic(10)).getStateName(), is("adopted"));
-    }
 
     @Test
     public void shouldBeAnInstanceOfState() {
@@ -52,12 +48,19 @@ public class AdoptedTest {
     }
 
     @Test
+    void shouldReturnAdoptedName() {
+        State adoptedState = new Adopted(now(), randomAlphabetic(10));
+
+        assertEquals(adoptedState.getName(), "adopted");
+    }
+
+    @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         String adoptionFormId = randomAlphabetic(10);
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedAdoptedState = "{\"adopted\":{\"date\":" + serializedLocalDateTime +
-                ",\"adoptionFormId\":\"" + adoptionFormId + "\"}}";
+        String expectedSerializedAdoptedState = "{\"name\":\"adopted\",\"date\":" + serializedLocalDateTime +
+                ",\"adoptionFormId\":\"" + adoptionFormId + "\"}";
         Adopted adoptedState = new Adopted(localDateTime, adoptionFormId);
 
         String serializedAdoptedState = objectMapper.writeValueAsString(adoptedState);
@@ -67,7 +70,7 @@ public class AdoptedTest {
 
     @Test
     public void shouldBeDeserializableWithoutAdoptionFormIdAndDate() throws IOException {
-        String serializedAdoptedState = "{\"adopted\":{}}";
+        String serializedAdoptedState = "{\"name\":\"adopted\"}";
 
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
@@ -79,7 +82,7 @@ public class AdoptedTest {
     @Test
     public void shouldBeDeserializableWithAdoptionFormIdOnly() throws IOException {
         String adoptionFormId = randomAlphabetic(10);
-        String serializedAdoptedState = "{\"adopted\":{\"adoptionFormId\":\"" + adoptionFormId + "\"}}";
+        String serializedAdoptedState = "{\"name\":\"adopted\",\"adoptionFormId\":\"" + adoptionFormId + "\"}";
 
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
@@ -92,7 +95,7 @@ public class AdoptedTest {
     public void shouldBeDeserializableWithDateOnly() throws IOException {
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String serializedAdoptedState = "{\"adopted\":{\"date\":" + serializedLocalDateTime + "}}";
+        String serializedAdoptedState = "{\"name\":\"adopted\",\"date\":" + serializedLocalDateTime + "}";
 
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 

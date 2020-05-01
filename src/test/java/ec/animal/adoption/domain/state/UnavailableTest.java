@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -45,11 +46,6 @@ public class UnavailableTest {
     private final ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
     @Test
-    public void shouldReturnStateName() {
-        assertThat(new Unavailable(now(), randomAlphabetic(10)).getStateName(), is("unavailable"));
-    }
-
-    @Test
     public void shouldBeAnInstanceOfState() {
         Unavailable unavailableState = new Unavailable(now(), randomAlphabetic(20));
 
@@ -57,12 +53,19 @@ public class UnavailableTest {
     }
 
     @Test
+    void shouldReturnUnavailableName() {
+        State unavailableState = new Unavailable(now(), randomAlphabetic(20));
+
+        assertEquals(unavailableState.getName(), "unavailable");
+    }
+
+    @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         String notes = randomAlphabetic(20);
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
-                ",\"notes\":\"" + notes + "\"}}";
+        String expectedSerializedUnavailableState = "{\"name\":\"unavailable\",\"date\":" + serializedLocalDateTime +
+                ",\"notes\":\"" + notes + "\"}";
         Unavailable unavailableState = new Unavailable(localDateTime, notes);
 
         String serializedUnavailableState = objectMapper.writeValueAsString(unavailableState);
@@ -75,8 +78,8 @@ public class UnavailableTest {
         String notes = randomAlphabetic(20);
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String serializedUnavailableState = "{\"unavailable\":{\"date\":" + serializedLocalDateTime +
-                ",\"notes\":\"" + notes + "\"}}";
+        String serializedUnavailableState = "{\"name\":\"unavailable\",\"date\":" + serializedLocalDateTime +
+                ",\"notes\":\"" + notes + "\"}";
 
         Unavailable deserializedUnavailableState = objectMapper.readValue(
                 serializedUnavailableState, Unavailable.class
@@ -90,7 +93,7 @@ public class UnavailableTest {
     @Test
     public void shouldBeDeserializableWithNotesOnly() throws IOException {
         String notes = randomAlphabetic(20);
-        String serializedUnavailableState = "{\"unavailable\":{\"notes\":\"" + notes + "\"}}";
+        String serializedUnavailableState = "{\"name\":\"unavailable\",\"notes\":\"" + notes + "\"}";
 
         Unavailable deserializedUnavailableState = objectMapper.readValue(
                 serializedUnavailableState, Unavailable.class

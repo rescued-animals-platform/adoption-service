@@ -21,9 +21,11 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.time.LocalDateTime;
 
+@JsonTypeName("lookingForHuman")
 public class LookingForHuman extends State {
 
     private transient static final long serialVersionUID = -612446656134428617L;
@@ -31,10 +33,5 @@ public class LookingForHuman extends State {
     @JsonCreator
     public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {
         super(date);
-    }
-
-    @Override
-    public String getStateName() {
-        return "lookingForHuman";
     }
 }

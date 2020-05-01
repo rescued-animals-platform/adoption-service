@@ -24,9 +24,7 @@ import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.state.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,10 +64,6 @@ public class AnimalService {
             final Size size,
             final Pageable pageable
     ) {
-        if (!State.isValidStateName(stateName)) {
-            throw new InvalidStateException(stateName);
-        }
-
         return animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable).map(AnimalDto::new);
     }
 }

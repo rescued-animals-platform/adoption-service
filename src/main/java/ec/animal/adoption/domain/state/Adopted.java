@@ -21,9 +21,11 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.time.LocalDateTime;
 
+@JsonTypeName("adopted")
 public class Adopted extends State {
 
     private transient static final long serialVersionUID = -212446656134428610L;
@@ -42,10 +44,5 @@ public class Adopted extends State {
 
     public String getAdoptionFormId() {
         return adoptionFormId;
-    }
-
-    @Override
-    public String getStateName() {
-        return "adopted";
     }
 }

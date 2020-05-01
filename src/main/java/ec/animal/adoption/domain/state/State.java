@@ -24,17 +24,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.base.CaseFormat;
+import org.reflections.Reflections;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes({
-                      @JsonSubTypes.Type(value = LookingForHuman.class, name = "lookingForHuman"),
-                      @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
-                      @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable")
-              })
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "name")
+@JsonSubTypes({@JsonSubTypes.Type(value = LookingForHuman.class),
+               @JsonSubTypes.Type(value = Adopted.class),
+               @JsonSubTypes.Type(value = Unavailable.class)})
 public abstract class State implements Serializable {
 
     private transient static final long serialVersionUID = -312436659134428610L;
@@ -46,14 +47,25 @@ public abstract class State implements Serializable {
         this.date = date;
     }
 
-    public static boolean isValidStateName(final String stateName) {
-        return "lookingForHuman".equals(stateName) || "adopted".equals(stateName) || "unavailable".equals(stateName);
-    }
-
     public LocalDateTime getDate() {
         return date;
     }
 
     @JsonIgnore
-    public abstract String getStateName();
+    public String getName() {
+        return convertUpperCamelToLowerCamelCase(this.getClass().getSimpleName());
+    }
+
+    public static boolean isStateNameValid(final String stateName) {
+        Reflections reflections = new Reflections(State.class.getPackageName());
+        Set<Class<? extends State>> states = reflections.getSubTypesOf(State.class);
+
+        return states.stream().map(Class::getSimpleName)
+                     .map(State::convertUpperCamelToLowerCamelCase)
+                     .anyMatch(n -> n.equals(stateName));
+    }
+
+    private static String convertUpperCamelToLowerCamelCase(final String value) {
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, value);
+    }
 }

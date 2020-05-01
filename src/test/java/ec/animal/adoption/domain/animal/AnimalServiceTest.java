@@ -27,7 +27,6 @@ import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.domain.exception.InvalidStateException;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
@@ -48,13 +47,11 @@ import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -139,17 +136,8 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldThrowInvalidStateExceptionWhenStateNameIsNotValid() {
-        String invalidStateName = randomAlphabetic(10);
-
-        assertThrows(InvalidStateException.class, () -> {
-            animalService.listAllWithFilters(invalidStateName, species, physicalActivity, size, mock(Pageable.class));
-        });
-    }
-
-    @Test
     public void shouldReturnAllAnimalDtosWithFiltersAndSmallPrimaryPictureUrl() {
-        String stateName = state.getStateName();
+        String stateName = state.getName();
         animalsFilteredByState.forEach(animal -> animal.setPrimaryLinkPicture(
                 LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build()
         ));
@@ -170,8 +158,8 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldReturnAllAnimalDataTransferObjectsWithFiltersAndNoSmallPrimaryPictureUrl() {
-        String stateName = state.getStateName();
-        when(animalRepository.getAllBy(state.getStateName(), species, physicalActivity, size, pageable))
+        String stateName = state.getName();
+        when(animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable))
                 .thenReturn(new PagedEntity<>(animalsFilteredByState));
 
         PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(

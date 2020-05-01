@@ -20,6 +20,7 @@ dependencies {
     implementation("com.cloudinary:cloudinary-http44:1.25.0")
     implementation("commons-io:commons-io:2.6")
     implementation("org.postgresql:postgresql:42.2.12")
+    implementation("org.reflections:reflections:0.9.12")
 
     runtimeOnly("org.flywaydb:flyway-core:6.3.2")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:6.3")
