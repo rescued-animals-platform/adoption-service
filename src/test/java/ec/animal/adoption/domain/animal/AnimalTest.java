@@ -185,7 +185,7 @@ public class AnimalTest {
         assertThat(serializedAnimal, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
         assertThat(serializedAnimal, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
         assertThat(serializedAnimal, containsString(String.format("\"name\":\"%s\"", animal.getName())));
-        assertThat(serializedAnimal, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
+        assertThat(serializedAnimal, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().getName())));
         assertThat(serializedAnimal, containsString(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().getName())));
         assertThat(serializedAnimal, containsString(String.format("\"sex\":\"%s\"", animal.getSex().getName())));
         assertThat(serializedAnimal, containsString(String.format("\"state\":%s", expectedSerializedState)));

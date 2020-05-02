@@ -19,6 +19,35 @@
 
 package ec.animal.adoption.domain.animal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum Species {
-    DOG, CAT
+    DOG("Dog"), CAT("Cat");
+
+    private final String name;
+
+    Species(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Species forValue(final String value) {
+        try {
+            return Species.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(Species.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

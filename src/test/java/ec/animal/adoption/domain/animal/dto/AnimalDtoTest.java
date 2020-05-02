@@ -57,7 +57,7 @@ public class AnimalDtoTest {
 
         assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
-                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().name()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"sex\":\"%s\"", animal.getSex().getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"smallPrimaryPictureUrl\":\"%s\"", smallPrimaryPictureUrl))));
@@ -74,7 +74,7 @@ public class AnimalDtoTest {
 
         assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
-                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().name()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"sex\":\"%s\"", animal.getSex().getName()))),
                   () -> assertFalse(serializedAnimalDto.contains("\"smallPrimaryPictureUrl\":")));
