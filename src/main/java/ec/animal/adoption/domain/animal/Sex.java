@@ -19,6 +19,35 @@
 
 package ec.animal.adoption.domain.animal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum Sex {
-    MALE, FEMALE;
+    MALE("Male"), FEMALE("Female");
+
+    private final String name;
+
+    Sex(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Sex forValue(final String value) {
+        try {
+            return Sex.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(Sex.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

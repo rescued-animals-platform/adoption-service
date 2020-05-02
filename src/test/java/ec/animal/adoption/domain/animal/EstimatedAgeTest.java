@@ -2,18 +2,31 @@ package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EstimatedAgeTest {
 
     public static final String EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD = "expectedNamesForEstimatedAge";
+
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        objectMapper = TestUtils.getObjectMapper();
+    }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
@@ -24,8 +37,6 @@ class EstimatedAgeTest {
     @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
     void shouldSerializeEstimatedAgeUsingName(final EstimatedAge estimatedAge, final String expectedName) throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-
         String estimatedAgeAsJson = objectMapper.writeValueAsString(estimatedAge);
 
         assertEquals(String.format("\"%s\"", expectedName), estimatedAgeAsJson);
@@ -35,7 +46,6 @@ class EstimatedAgeTest {
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
     void shouldDeserializeEstimatedAgeUsingName(final EstimatedAge estimatedAge, final String expectedName) throws JsonProcessingException {
         String estimatedAgeWithNameAsJson = String.format("\"%s\"", expectedName);
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
         EstimatedAge deSerializedEstimatedAge = objectMapper.readValue(estimatedAgeWithNameAsJson, EstimatedAge.class);
 
@@ -46,11 +56,20 @@ class EstimatedAgeTest {
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
     void shouldDeserializeEstimatedAgeUsingEnumName(final EstimatedAge estimatedAge) throws JsonProcessingException {
         String estimatedAgeWithEnumNameAsJson = String.format("\"%s\"", estimatedAge.name());
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
 
         EstimatedAge deSerializedEstimatedAge = objectMapper.readValue(estimatedAgeWithEnumNameAsJson, EstimatedAge.class);
 
         assertEquals(estimatedAge, deSerializedEstimatedAge);
+    }
+
+    @Test
+    void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
+        String invalidEstimatedAgeAsJson = String.format("\"%s\"", randomAlphabetic(10));
+
+        ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
+            objectMapper.readValue(invalidEstimatedAgeAsJson, EstimatedAge.class);
+        });
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
