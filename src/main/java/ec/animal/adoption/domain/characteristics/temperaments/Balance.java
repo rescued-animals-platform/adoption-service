@@ -19,6 +19,39 @@
 
 package ec.animal.adoption.domain.characteristics.temperaments;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum Balance {
-    VERY_BALANCED, BALANCED, NEITHER_BALANCED_NOR_POSSESSIVE, POSSESSIVE, VERY_POSSESSIVE;
+    VERY_BALANCED("Very balanced"),
+    BALANCED("Balanced"),
+    NEITHER_BALANCED_NOR_POSSESSIVE("Neither balanced nor possessive"),
+    POSSESSIVE("Possessive"),
+    VERY_POSSESSIVE("Very possessive");
+
+    private final String name;
+
+    Balance(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Balance forValue(final String value) {
+        try {
+            return Balance.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(Balance.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

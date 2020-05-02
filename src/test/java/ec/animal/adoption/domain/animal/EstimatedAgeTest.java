@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,13 +40,13 @@ class EstimatedAgeTest {
     void shouldSerializeEstimatedAgeUsingName(final EstimatedAge estimatedAge, final String expectedName) throws JsonProcessingException {
         String estimatedAgeAsJson = objectMapper.writeValueAsString(estimatedAge);
 
-        assertEquals(String.format("\"%s\"", expectedName), estimatedAgeAsJson);
+        assertEquals(JSONObject.quote(expectedName), estimatedAgeAsJson);
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
     void shouldDeserializeEstimatedAgeUsingName(final EstimatedAge estimatedAge, final String expectedName) throws JsonProcessingException {
-        String estimatedAgeWithNameAsJson = String.format("\"%s\"", expectedName);
+        String estimatedAgeWithNameAsJson = JSONObject.quote(expectedName);
 
         EstimatedAge deSerializedEstimatedAge = objectMapper.readValue(estimatedAgeWithNameAsJson, EstimatedAge.class);
 
@@ -55,7 +56,7 @@ class EstimatedAgeTest {
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_ESTIMATED_AGE_METHOD)
     void shouldDeserializeEstimatedAgeUsingEnumName(final EstimatedAge estimatedAge) throws JsonProcessingException {
-        String estimatedAgeWithEnumNameAsJson = String.format("\"%s\"", estimatedAge.name());
+        String estimatedAgeWithEnumNameAsJson = JSONObject.quote(estimatedAge.name());
 
         EstimatedAge deSerializedEstimatedAge = objectMapper.readValue(estimatedAgeWithEnumNameAsJson, EstimatedAge.class);
 
@@ -64,7 +65,7 @@ class EstimatedAgeTest {
 
     @Test
     void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
-        String invalidEstimatedAgeAsJson = String.format("\"%s\"", randomAlphabetic(10));
+        String invalidEstimatedAgeAsJson = JSONObject.quote(randomAlphabetic(10));
 
         ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
             objectMapper.readValue(invalidEstimatedAgeAsJson, EstimatedAge.class);

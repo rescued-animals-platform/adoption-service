@@ -19,6 +19,35 @@
 
 package ec.animal.adoption.domain.characteristics;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum PhysicalActivity {
-    HIGH, MEDIUM, LOW;
+    HIGH("High"), MEDIUM("Medium"), LOW("Low");
+
+    private final String name;
+
+    PhysicalActivity(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static PhysicalActivity forValue(final String value) {
+        try {
+            return PhysicalActivity.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(PhysicalActivity.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

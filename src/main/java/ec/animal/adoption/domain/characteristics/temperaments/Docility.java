@@ -19,6 +19,39 @@
 
 package ec.animal.adoption.domain.characteristics.temperaments;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum Docility {
-    VERY_DOCILE, DOCILE, NEITHER_DOCILE_NOR_DOMINANT, DOMINANT, VERY_DOMINANT;
+    VERY_DOCILE("Very docile"),
+    DOCILE("Docile"),
+    NEITHER_DOCILE_NOR_DOMINANT("Neither docile nor dominant"),
+    DOMINANT("Dominant"),
+    VERY_DOMINANT("Very dominant");
+
+    private final String name;
+
+    Docility(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Docility forValue(final String value) {
+        try {
+            return Docility.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(Docility.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

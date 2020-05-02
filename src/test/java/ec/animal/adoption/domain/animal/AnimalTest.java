@@ -68,6 +68,7 @@ public class AnimalTest {
     private static final String ANIMAL_SPECIES_IS_REQUIRED = "Animal species is required";
     private static final String ANIMAL_ESTIMATED_AGE_IS_REQUIRED = "Animal estimated age is required";
     private static final String ANIMAL_SEX_IS_REQUIRED = "Animal sex is required";
+
     private static final String CLINICAL_RECORD_JSON = "{\"clinicalRecord\":\"";
     private static final String NAME_JSON = "\",\"name\":\"";
     private static final String SPECIES_JSON = "\",\"species\":\"";
@@ -204,9 +205,9 @@ public class AnimalTest {
                 ESTIMATED_AGE_JSON + animal.getEstimatedAge().name() + SEX_JSON +
                 animal.getSex().name() + "\",\"primaryLinkPicture\":" + primaryLinkPictureAsJson + "}";
 
-        Animal deserializedAnimal = objectMapper.readValue(serializedAnimalWithPrimaryLinkPicture, Animal.class);
+        Animal deSerializedAnimal = objectMapper.readValue(serializedAnimalWithPrimaryLinkPicture, Animal.class);
 
-        assertTrue(deserializedAnimal.getPrimaryLinkPicture().isEmpty());
+        assertTrue(deSerializedAnimal.getPrimaryLinkPicture().isEmpty());
     }
 
     @Test

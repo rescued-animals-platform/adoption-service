@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,13 +40,13 @@ class SexTest {
     void shouldSerializeSexUsingName(final Sex sex, final String expectedName) throws JsonProcessingException {
         String sexAsJson = objectMapper.writeValueAsString(sex);
 
-        assertEquals(String.format("\"%s\"", expectedName), sexAsJson);
+        assertEquals(JSONObject.quote(expectedName), sexAsJson);
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
     void shouldDeserializeSexUsingName(final Sex sex, final String expectedName) throws JsonProcessingException {
-        String sexWithNameAsJson = String.format("\"%s\"", expectedName);
+        String sexWithNameAsJson = JSONObject.quote(expectedName);
 
         Sex deSerializedSex = objectMapper.readValue(sexWithNameAsJson, Sex.class);
 
@@ -55,7 +56,7 @@ class SexTest {
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
     void shouldDeserializeSexUsingEnumName(final Sex sex) throws JsonProcessingException {
-        String sexWithEnumNameAsJson = String.format("\"%s\"", sex.name());
+        String sexWithEnumNameAsJson = JSONObject.quote(sex.name());
 
         Sex deSerializedSex = objectMapper.readValue(sexWithEnumNameAsJson, Sex.class);
 
@@ -64,7 +65,7 @@ class SexTest {
 
     @Test
     void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
-        String invalidSexAsJson = String.format("\"%s\"", randomAlphabetic(10));
+        String invalidSexAsJson = JSONObject.quote(randomAlphabetic(10));
 
         ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
             objectMapper.readValue(invalidSexAsJson, Sex.class);

@@ -19,6 +19,39 @@
 
 package ec.animal.adoption.domain.characteristics.temperaments;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum Sociability {
-    VERY_SOCIABLE, SOCIABLE, NEITHER_SOCIABLE_NOR_SHY, SHY, VERY_SHY;
+    VERY_SOCIABLE("Very sociable"),
+    SOCIABLE("Sociable"),
+    NEITHER_SOCIABLE_NOR_SHY("Neither sociable nor shy"),
+    SHY("Shy"),
+    VERY_SHY("Very shy");
+
+    private final String name;
+
+    Sociability(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Sociability forValue(final String value) {
+        try {
+            return Sociability.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(Sociability.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

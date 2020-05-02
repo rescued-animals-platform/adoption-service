@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,13 +40,13 @@ class SpeciesTest {
     void shouldSerializeSpeciesUsingName(final Species species, final String expectedName) throws JsonProcessingException {
         String speciesAsJson = objectMapper.writeValueAsString(species);
 
-        assertEquals(String.format("\"%s\"", expectedName), speciesAsJson);
+        assertEquals(JSONObject.quote(expectedName), speciesAsJson);
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
     void shouldDeserializeSpeciesUsingName(final Species species, final String expectedName) throws JsonProcessingException {
-        String speciesWithNameAsJson = String.format("\"%s\"", expectedName);
+        String speciesWithNameAsJson = JSONObject.quote(expectedName);
 
         Species deSerializedSpecies = objectMapper.readValue(speciesWithNameAsJson, Species.class);
 
@@ -55,7 +56,7 @@ class SpeciesTest {
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
     @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
     void shouldDeserializeSpeciesUsingEnumName(final Species species) throws JsonProcessingException {
-        String speciesWithEnumNameAsJson = String.format("\"%s\"", species.name());
+        String speciesWithEnumNameAsJson = JSONObject.quote(species.name());
 
         Species deSerializedSpecies = objectMapper.readValue(speciesWithEnumNameAsJson, Species.class);
 
@@ -64,7 +65,7 @@ class SpeciesTest {
 
     @Test
     void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeserializeFromValue() {
-        String invalidSpeciesAsJson = String.format("\"%s\"", randomAlphabetic(10));
+        String invalidSpeciesAsJson = JSONObject.quote(randomAlphabetic(10));
 
         ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
             objectMapper.readValue(invalidSpeciesAsJson, Species.class);
