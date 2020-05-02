@@ -9,6 +9,6 @@ public class StateNameValidator implements ConstraintValidator<ValidStateName, S
 
     @Override
     public boolean isValid(final String stateName, final ConstraintValidatorContext context) {
-        return State.isStateNameValid(stateName);
+        return stateName == null || State.isStateNameValid(stateName);
     }
 }

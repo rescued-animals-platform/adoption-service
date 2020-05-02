@@ -59,8 +59,8 @@ public class AdoptedTest {
         String adoptionFormId = randomAlphabetic(10);
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedAdoptedState = "{\"name\":\"adopted\",\"date\":" + serializedLocalDateTime +
-                ",\"adoptionFormId\":\"" + adoptionFormId + "\"}";
+        String expectedSerializedAdoptedState = "{\"date\":" + serializedLocalDateTime +
+                ",\"adoptionFormId\":\"" + adoptionFormId + "\",\"name\":\"Adopted\"}";
         Adopted adoptedState = new Adopted(localDateTime, adoptionFormId);
 
         String serializedAdoptedState = objectMapper.writeValueAsString(adoptedState);

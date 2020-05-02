@@ -64,8 +64,8 @@ public class UnavailableTest {
         String notes = randomAlphabetic(20);
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedUnavailableState = "{\"name\":\"unavailable\",\"date\":" + serializedLocalDateTime +
-                ",\"notes\":\"" + notes + "\"}";
+        String expectedSerializedUnavailableState = "{\"date\":" + serializedLocalDateTime +
+                ",\"notes\":\"" + notes + "\",\"name\":\"Unavailable\"}";
         Unavailable unavailableState = new Unavailable(localDateTime, notes);
 
         String serializedUnavailableState = objectMapper.writeValueAsString(unavailableState);

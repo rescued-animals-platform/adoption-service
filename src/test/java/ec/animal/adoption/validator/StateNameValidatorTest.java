@@ -41,8 +41,13 @@ class StateNameValidatorTest {
         assertTrue(stateNameValidator.isValid(stateName, context));
     }
 
+    @Test
+    void shouldBeValidForNullStateName() {
+        assertTrue(stateNameValidator.isValid(null, context));
+    }
+
     @ParameterizedTest(name = "{index} \"{0}\" is an invalid state name")
-    @ValueSource(strings = {"anyOtherState", "ADOPTED", "Un-available"})
+    @ValueSource(strings = {"anyOtherState", "AdOpTeD", "Un-available"})
     public void shouldBeInvalid(final String stateName) {
         assertFalse(stateNameValidator.isValid(stateName, context));
     }

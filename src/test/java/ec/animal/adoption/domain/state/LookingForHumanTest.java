@@ -57,9 +57,9 @@ public class LookingForHumanTest {
     public void shouldBeSerializable() throws JsonProcessingException {
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
-        String expectedSerializedLookingForHumanState = "{\"name\":\"lookingForHuman\",\"date\":" +
-                serializedLocalDateTime + "}";
-        LookingForHuman lookingForHumanState = new LookingForHuman(localDateTime);
+        String expectedSerializedLookingForHumanState = "{\"date\":" + serializedLocalDateTime +
+                ",\"name\":\"Looking for human\"}";
+        State lookingForHumanState = new LookingForHuman(localDateTime);
 
         String serializedLookingForHumanState = objectMapper.writeValueAsString(lookingForHumanState);
 
@@ -70,11 +70,12 @@ public class LookingForHumanTest {
     public void shouldBeDeserializableWithoutDate() throws IOException {
         String serializedLookingForHumanState = "{\"name\":\"lookingForHuman\"}";
 
-        LookingForHuman deserializedLookingForHumanState = objectMapper.readValue(
+        State deserializedLookingForHumanState = objectMapper.readValue(
                 serializedLookingForHumanState, LookingForHuman.class
         );
 
         assertNotNull(deserializedLookingForHumanState);
+        assertEquals("lookingForHuman", deserializedLookingForHumanState.getName());
         assertNull(deserializedLookingForHumanState.getDate());
     }
 

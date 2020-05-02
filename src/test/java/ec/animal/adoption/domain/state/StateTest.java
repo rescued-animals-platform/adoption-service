@@ -23,27 +23,34 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateTest {
 
     @ParameterizedTest(name = "{index} \"{0}\" is a valid state name")
-    @ValueSource(strings = {"lookingForHuman", "adopted", "unavailable"})
+    @ValueSource(strings = {"lookingForHuman",
+                            "LookingForHuman",
+                            "Looking for human",
+                            "looking for human",
+                            "LOOKING_FOR_HUMAN",
+                            "looking_for_human",
+                            "adopted",
+                            "Adopted",
+                            "ADOPTED",
+                            "unavailable",
+                            "Unavailable",
+                            "UNAVAILABLE"})
     public void shouldReturnTrueForValidStateNames(final String stateName) {
         assertTrue(State.isStateNameValid(stateName));
     }
 
     @ParameterizedTest(name = "{index} \"{0}\" is an invalid state name")
-    @ValueSource(strings = {"LookingForHuman",
-                            "LOOKING_FOR_HUMAN",
-                            "looking_for_human",
-                            "Adopted",
-                            "ADOPTED",
-                            "Unavailable",
-                            "UNAVAILABLE",
-                            "akshudbjw27367",
+    @ValueSource(strings = {"LoOking_For_HuMan",
                             "Un-available",
+                            "akshudbjw27367",
                             "anyOther",
                             ""})
     public void shouldReturnFalseForInvalidStateNames(final String stateName) {
@@ -51,7 +58,40 @@ public class StateTest {
     }
 
     @Test
-    void shouldReturnFalseForNullStateName() {
-        assertFalse(State.isStateNameValid(null));
+    void shouldReturnNullForNullStateName() {
+        assertNull(State.normalize(null));
+    }
+
+    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"lookingForHuman\"")
+    @ValueSource(strings = {"lookingForHuman",
+                            "LookingForHuman",
+                            "Looking for human",
+                            "looking for human",
+                            "LOOKING_FOR_HUMAN",
+                            "looking_for_human"})
+    void shouldReturnLookingForHumanNormalizedName(final String stateName) {
+        assertEquals("lookingForHuman", State.normalize(stateName));
+    }
+
+    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"adopted\"")
+    @ValueSource(strings = {"adopted", "Adopted", "ADOPTED"})
+    void shouldReturnAdoptedNormalizedName(final String stateName) {
+        assertEquals("adopted", State.normalize(stateName));
+    }
+
+    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"unavailable\"")
+    @ValueSource(strings = {"unavailable", "Unavailable", "UNAVAILABLE"})
+    void shouldReturnUnavailableNormalizedName(final String stateName) {
+        assertEquals("unavailable", State.normalize(stateName));
+    }
+
+    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"null\"")
+    @ValueSource(strings = {"LoOking_For_HuMan",
+                            "Un-available",
+                            "akshudbjw27367",
+                            "anyOther",
+                            ""})
+    void shouldReturnNullForUnrecognizedStateName(final String stateName) {
+        assertNull(State.normalize(stateName));
     }
 }

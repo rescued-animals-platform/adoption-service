@@ -21,14 +21,16 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.time.LocalDateTime;
 
-@JsonTypeName("lookingForHuman")
 public class LookingForHuman extends State {
 
     private transient static final long serialVersionUID = -612446656134428617L;
+
+    @JsonProperty("name")
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.FinalFieldCouldBeStatic"})
+    private final String name = "Looking for human";
 
     @JsonCreator
     public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {

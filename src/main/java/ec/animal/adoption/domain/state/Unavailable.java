@@ -21,15 +21,17 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
-@JsonTypeName("unavailable")
 public class Unavailable extends State {
 
     private transient static final long serialVersionUID = -512442656134428600L;
+
+    @JsonProperty("name")
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.FinalFieldCouldBeStatic"})
+    private final String name = "Unavailable";
 
     @NotEmpty(message = "Notes are required for unavailable state")
     @JsonProperty("notes")

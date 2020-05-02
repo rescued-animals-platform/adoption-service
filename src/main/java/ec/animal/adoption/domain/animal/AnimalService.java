@@ -25,6 +25,7 @@ import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.state.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,13 +58,13 @@ public class AnimalService {
         return animalRepository.getAllFor(organization, pageable);
     }
 
-    public PagedEntity<AnimalDto> listAllWithFilters(
-            final String stateName,
-            final Species species,
-            final PhysicalActivity physicalActivity,
-            final Size size,
-            final Pageable pageable
-    ) {
-        return animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable).map(AnimalDto::new);
+    public PagedEntity<AnimalDto> listAllWithFilters(final String stateName,
+                                                     final Species species,
+                                                     final PhysicalActivity physicalActivity,
+                                                     final Size size,
+                                                     final Pageable pageable) {
+        String normalizedStateName = State.normalize(stateName);
+        return animalRepository.getAllBy(normalizedStateName, species, physicalActivity, size, pageable)
+                               .map(AnimalDto::new);
     }
 }
