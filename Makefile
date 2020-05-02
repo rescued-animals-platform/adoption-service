@@ -8,6 +8,10 @@ deploy:
 deploy-dependencies-only:
 	@docker-compose up -d adoption-service-db wiremock
 
+redeploy-adoption-service:
+	@docker-compose rm --stop -v --force adoption-service
+	make deploy
+
 undeploy:
 	@docker-compose down --remove-orphans -v
 

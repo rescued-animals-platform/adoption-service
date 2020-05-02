@@ -21,9 +21,11 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.builders.AnimalBuilder;
+import ec.animal.adoption.builders.CharacteristicsBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.LookingForHuman;
@@ -83,6 +85,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
                      .bodyValue(animal)
+                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
                      .expectStatus()
                      .isCreated()
@@ -211,7 +214,9 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();
         int numberOfAnimals = 3;
-        createAnimals(numberOfAnimals, state, species, physicalActivity, size);
+        for (int n = 1; n <= numberOfAnimals; n++) {
+            createAnimalWith(state, species, physicalActivity, size);
+        }
         String uri = GET_ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
                 "&animalSize={size}&page=0&size=3";
 
@@ -284,5 +289,33 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isBadRequest()
                      .expectBody(ApiError.class);
+    }
+
+    private void createAnimalWith(final State state,
+                                  final Species species,
+                                  final PhysicalActivity physicalActivity,
+                                  final Size size) {
+        Animal animal = AnimalBuilder.random().withState(state).withSpecies(species).build();
+        Animal createdAnimal = webTestClient.post()
+                                            .uri(CREATE_ANIMAL_ADMIN_URL)
+                                            .bodyValue(animal)
+                                            .exchange()
+                                            .expectStatus()
+                                            .isCreated()
+                                            .expectBody(Animal.class)
+                                            .returnResult()
+                                            .getResponseBody();
+        assertNotNull(createdAnimal);
+
+        Characteristics characteristics = CharacteristicsBuilder.random()
+                                                                .withPhysicalActivity(physicalActivity)
+                                                                .withSize(size)
+                                                                .build();
+        webTestClient.post()
+                     .uri(CHARACTERISTICS_ADMIN_URL, createdAnimal.getIdentifier())
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated();
     }
 }

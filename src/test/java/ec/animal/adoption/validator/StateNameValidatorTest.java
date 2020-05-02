@@ -35,13 +35,13 @@ class StateNameValidatorTest {
         assertThat(stateNameValidator, is(instanceOf(ConstraintValidator.class)));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} \"{0}\" is a valid state name")
     @ValueSource(strings = {"lookingForHuman", "adopted", "unavailable"})
     public void shouldBeValid(final String stateName) {
         assertTrue(stateNameValidator.isValid(stateName, context));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} \"{0}\" is an invalid state name")
     @ValueSource(strings = {"anyOtherState", "ADOPTED", "Un-available"})
     public void shouldBeInvalid(final String stateName) {
         assertFalse(stateNameValidator.isValid(stateName, context));

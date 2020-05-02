@@ -23,6 +23,7 @@ import ec.animal.adoption.api.model.error.ApiError;
 import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.story.Story;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,13 +38,20 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 
 public class StoryResourceApiTest extends AbstractApiTest {
 
+    private UUID animalId;
+
+    @BeforeEach
+    public void setUp() {
+        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = animal.getIdentifier();
+    }
+
     @Test
     public void shouldReturn201CreatedWithStory() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story story = StoryBuilder.random().build();
 
         webTestClient.post()
-                     .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                     .uri(STORY_ADMIN_URL, animalId)
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
@@ -96,17 +104,16 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story story = StoryBuilder.random().build();
         webTestClient.post()
-                     .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                     .uri(STORY_ADMIN_URL, animalId)
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
-                     .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                     .uri(STORY_ADMIN_URL, animalId)
                      .bodyValue(story)
                      .exchange()
                      .expectStatus()
@@ -116,13 +123,12 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn200OkWithUpdatedStory() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        Story createdStory = createStoryForAnimal(animal.getIdentifier(), StoryBuilder.random().build());
+        Story createdStory = createStoryForAnimal(animalId, StoryBuilder.random().build());
         String newStoryText = randomAlphabetic(10);
         Story newStory = StoryBuilder.random().withText(newStoryText).build();
 
         webTestClient.put()
-                     .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                     .uri(STORY_ADMIN_URL, animalId)
                      .bodyValue(newStory)
                      .exchange()
                      .expectStatus()
@@ -165,10 +171,8 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn404NotFoundWhenUpdatingStoryBeforeCreatingOne() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-
         webTestClient.put()
-                     .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                     .uri(STORY_ADMIN_URL, animalId)
                      .bodyValue(StoryBuilder.random().build())
                      .exchange()
                      .expectStatus()
@@ -189,9 +193,8 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn200OkWithStory() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
         Story createdStory = webTestClient.post()
-                                          .uri(STORY_ADMIN_URL, animal.getIdentifier())
+                                          .uri(STORY_ADMIN_URL, animalId)
                                           .bodyValue(StoryBuilder.random().build())
                                           .exchange()
                                           .expectStatus()
@@ -203,7 +206,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         assertNotNull(createdStory);
 
         webTestClient.get()
-                     .uri(GET_STORY_URL, animal.getIdentifier())
+                     .uri(GET_STORY_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -223,10 +226,8 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-
         webTestClient.get()
-                     .uri(GET_STORY_URL, animal.getIdentifier())
+                     .uri(GET_STORY_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

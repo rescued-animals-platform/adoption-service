@@ -34,10 +34,10 @@ import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getObjectMapper;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnimalDtoTest {
 
@@ -55,14 +55,12 @@ public class AnimalDtoTest {
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
 
-        assertThat(serializedAnimalDto, containsString(String.format("\"id\":\"%s\"", animalId.toString())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
-                                                                     animal.getEstimatedAge().name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"smallPrimaryPictureUrl\":\"%s\"",
-                                                                     smallPrimaryPictureUrl)));
+        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().name()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().getName()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"sex\":\"%s\"", animal.getSex().name()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"smallPrimaryPictureUrl\":\"%s\"", smallPrimaryPictureUrl))));
     }
 
     @Test
@@ -74,13 +72,12 @@ public class AnimalDtoTest {
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDto);
 
-        assertThat(serializedAnimalDto, containsString(String.format("\"id\":\"%s\"", animalId.toString())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"name\":\"%s\"", animal.getName())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"estimatedAge\":\"%s\"",
-                                                                     animal.getEstimatedAge().name())));
-        assertThat(serializedAnimalDto, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
-        assertThat(serializedAnimalDto, not(containsString("smallPrimaryPictureUrl")));
+        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().name()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().getName()))),
+                  () -> assertTrue(serializedAnimalDto.contains(String.format("\"sex\":\"%s\"", animal.getSex().name()))),
+                  () -> assertFalse(serializedAnimalDto.contains("\"smallPrimaryPictureUrl\":")));
     }
 
     @Test

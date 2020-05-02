@@ -19,6 +19,35 @@
 
 package ec.animal.adoption.domain.animal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.stream.Stream;
+
 public enum EstimatedAge {
-    YOUNG, YOUNG_ADULT, SENIOR_ADULT;
+    YOUNG("Young"), YOUNG_ADULT("Young adult"), SENIOR_ADULT("Senior adult");
+
+    private final String name;
+
+    EstimatedAge(final String name) {
+        this.name = name;
+    }
+
+    @JsonCreator
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static EstimatedAge forValue(final String value) {
+        try {
+            return EstimatedAge.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return Stream.of(EstimatedAge.values())
+                         .filter(e -> e.getName().equals(value))
+                         .findFirst()
+                         .orElseThrow(() -> ex);
+        }
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }

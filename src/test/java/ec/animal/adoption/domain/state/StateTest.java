@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateTest {
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} \"{0}\" is a valid state name")
     @ValueSource(strings = {"lookingForHuman", "adopted", "unavailable"})
     public void shouldReturnTrueForValidStateNames(final String stateName) {
         assertTrue(State.isStateNameValid(stateName));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} \"{0}\" is an invalid state name")
     @ValueSource(strings = {"LookingForHuman",
                             "LOOKING_FOR_HUMAN",
                             "looking_for_human",
