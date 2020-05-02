@@ -66,10 +66,11 @@ public abstract class State implements Serializable {
     private final LocalDateTime date;
 
     protected State(final LocalDateTime date) {
-        this.date = date;
+        this.date = date == null ? LocalDateTime.now() : date;
     }
 
-    public LocalDateTime getDate() {
+    @JsonIgnore
+    public LocalDateTime getRegistrationDate() {
         return date;
     }
 

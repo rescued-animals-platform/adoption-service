@@ -33,7 +33,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LookingForHumanTest {
 
@@ -51,6 +50,13 @@ public class LookingForHumanTest {
         State lookingForHumanState = new LookingForHuman(now());
 
         assertEquals(lookingForHumanState.getName(), "lookingForHuman");
+    }
+
+    @Test
+    void shouldSetRegistrationDateIfNull() {
+        State lookingForHumanState = new LookingForHuman(null);
+
+        assertNotNull(lookingForHumanState.getRegistrationDate());
     }
 
     @Test
@@ -76,11 +82,11 @@ public class LookingForHumanTest {
 
         assertNotNull(deserializedLookingForHumanState);
         assertEquals("lookingForHuman", deserializedLookingForHumanState.getName());
-        assertNull(deserializedLookingForHumanState.getDate());
+        assertNotNull(deserializedLookingForHumanState.getRegistrationDate());
     }
 
     @Test
-    public void shouldNotDeserializeWithDate() throws IOException {
+    public void shouldBeDeserializableWithDate() throws IOException {
         LocalDateTime localDateTime = now();
         String serializedLocalDateTime = objectMapper.writeValueAsString(localDateTime);
         String serializedLookingForHumanState = "{\"name\":\"lookingForHuman\",\"date\":" + serializedLocalDateTime + "}";
@@ -90,6 +96,6 @@ public class LookingForHumanTest {
         );
 
         assertNotNull(deserializedLookingForHumanState);
-        assertThat(deserializedLookingForHumanState.getDate(), is(localDateTime));
+        assertThat(deserializedLookingForHumanState.getRegistrationDate(), is(localDateTime));
     }
 }

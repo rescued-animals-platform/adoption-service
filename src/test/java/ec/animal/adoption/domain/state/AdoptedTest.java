@@ -55,6 +55,13 @@ public class AdoptedTest {
     }
 
     @Test
+    void shouldSetRegistrationDateIfNull() {
+        State adoptedState = new Adopted(null, randomAlphabetic(10));
+
+        assertNotNull(adoptedState.getRegistrationDate());
+    }
+
+    @Test
     public void shouldBeSerializable() throws JsonProcessingException {
         String adoptionFormId = randomAlphabetic(10);
         LocalDateTime localDateTime = now();
@@ -75,7 +82,7 @@ public class AdoptedTest {
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
         assertNotNull(deserializedAdoptedState);
-        assertNull(deserializedAdoptedState.getDate());
+        assertNotNull(deserializedAdoptedState.getRegistrationDate());
         assertNull(deserializedAdoptedState.getAdoptionFormId());
     }
 
@@ -87,7 +94,7 @@ public class AdoptedTest {
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
         assertNotNull(deserializedAdoptedState);
-        assertNull(deserializedAdoptedState.getDate());
+        assertNotNull(deserializedAdoptedState.getRegistrationDate());
         assertThat(deserializedAdoptedState.getAdoptionFormId(), is(adoptionFormId));
     }
 
@@ -100,7 +107,7 @@ public class AdoptedTest {
         Adopted deserializedAdoptedState = objectMapper.readValue(serializedAdoptedState, Adopted.class);
 
         assertNotNull(deserializedAdoptedState);
-        assertThat(deserializedAdoptedState.getDate(), is(localDateTime));
+        assertThat(deserializedAdoptedState.getRegistrationDate(), is(localDateTime));
         assertNull(deserializedAdoptedState.getAdoptionFormId());
     }
 }

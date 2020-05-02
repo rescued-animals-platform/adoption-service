@@ -37,7 +37,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UnavailableTest {
 
@@ -57,6 +56,13 @@ public class UnavailableTest {
         State unavailableState = new Unavailable(now(), randomAlphabetic(20));
 
         assertEquals(unavailableState.getName(), "unavailable");
+    }
+
+    @Test
+    void shouldSetRegistrationDateIfNull() {
+        State unavailableState = new Unavailable(null, randomAlphabetic(20));
+
+        assertNotNull(unavailableState.getRegistrationDate());
     }
 
     @Test
@@ -86,7 +92,7 @@ public class UnavailableTest {
         );
 
         assertNotNull(deserializedUnavailableState);
-        assertThat(deserializedUnavailableState.getDate(), is(localDateTime));
+        assertThat(deserializedUnavailableState.getRegistrationDate(), is(localDateTime));
         assertThat(deserializedUnavailableState.getNotes(), is(notes));
     }
 
@@ -100,7 +106,7 @@ public class UnavailableTest {
         );
 
         assertNotNull(deserializedUnavailableState);
-        assertNull(deserializedUnavailableState.getDate());
+        assertNotNull(deserializedUnavailableState.getRegistrationDate());
         assertThat(deserializedUnavailableState.getNotes(), is(notes));
     }
 
