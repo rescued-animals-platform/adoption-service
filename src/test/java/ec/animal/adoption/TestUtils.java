@@ -33,15 +33,12 @@ import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
-import ec.animal.adoption.domain.state.Adopted;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.state.Unavailable;
+import ec.animal.adoption.domain.state.StateName;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -50,11 +47,10 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class TestUtils {
 
-    private static final List<State> STATES = Arrays.asList(
-            new LookingForHuman(LocalDateTime.now()),
-            new Adopted(LocalDateTime.now(), randomAlphabetic(10)),
-            new Unavailable(LocalDateTime.now(), randomAlphabetic(10))
-    );
+    private static final List<State> STATES = Arrays.asList(State.lookingForHuman(),
+                                                            State.adopted(randomAlphabetic(10)),
+                                                            State.unavailable(randomAlphabetic(10)));
+    private static final StateName[] STATE_NAMES = StateName.values();
     private static final Species[] SPECIES = Species.values();
     private static final EstimatedAge[] ESTIMATED_AGES = EstimatedAge.values();
     private static final Sex[] SEXES = Sex.values();
@@ -69,6 +65,10 @@ public class TestUtils {
 
     public static State getRandomState() {
         return STATES.get(getRandomIndex(STATES.size()));
+    }
+
+    public static StateName getRandomStateName() {
+        return STATE_NAMES[getRandomIndex(STATE_NAMES.length)];
     }
 
     public static Species getRandomSpecies() {

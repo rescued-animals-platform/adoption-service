@@ -21,12 +21,12 @@ package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Species {
     DOG("Dog"), CAT("Cat");
 
+    @JsonValue
     private final String name;
 
     Species(final String name) {
@@ -36,18 +36,13 @@ public enum Species {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Species forValue(final String value) {
-        try {
-            return Species.valueOf(value);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(Species.values())
-                         .filter(e -> e.getName().equals(value))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (Species) EnumUtils.forValue(value)
+                                  .apply(Species.values())
+                                  .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

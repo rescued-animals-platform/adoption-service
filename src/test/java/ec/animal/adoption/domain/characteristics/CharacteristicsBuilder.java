@@ -17,12 +17,9 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
+package ec.animal.adoption.domain.characteristics;
 
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
-import ec.animal.adoption.domain.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
 import java.time.LocalDateTime;

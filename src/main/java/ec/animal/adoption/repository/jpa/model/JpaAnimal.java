@@ -19,21 +19,19 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.StateName;
 import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -43,7 +41,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
+import static java.util.Optional.ofNullable;
+
 @Entity(name = "animal")
 @SuppressWarnings("PMD.ShortVariable")
 public class JpaAnimal implements Serializable {
@@ -74,10 +73,9 @@ public class JpaAnimal implements Serializable {
     @SuppressWarnings({"PMD.SingularField", "PMD.UnusedPrivateField"})
     private String stateName;
 
-    @NotNull
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb", nullable = false)
-    private State state;
+    private String adoptionFormId;
+
+    private String unavailableStateNotes;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jpaAnimal")
     private JpaPrimaryLinkPicture jpaPrimaryLinkPicture;
@@ -97,28 +95,34 @@ public class JpaAnimal implements Serializable {
     }
 
     public JpaAnimal(final Animal animal) {
-        this();
-        this.setId(animal.getIdentifier());
-        this.setRegistrationDate(animal.getRegistrationDate());
+        this.id = animal.getIdentifier();
+        this.registrationDate = animal.getRegistrationDate();
         this.clinicalRecord = animal.getClinicalRecord();
         this.name = animal.getName();
         this.species = animal.getSpecies().name();
         this.estimatedAge = animal.getEstimatedAge().name();
         this.sex = animal.getSex().name();
         this.stateName = animal.getStateName();
-        this.state = animal.getState();
+        this.adoptionFormId = animal.getState().getAdoptionFormId().orElse(null);
+        this.unavailableStateNotes = animal.getState().getNotes().orElse(null);
         this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture().orElse(null));
         this.setJpaCharacteristics(animal.getCharacteristics().orElse(null));
         this.setJpaStory(animal.getStory().orElse(null));
         this.jpaOrganization = new JpaOrganization(animal.getOrganization());
     }
 
-    private void setId(final UUID id) {
-        this.id = id == null ? UUID.randomUUID() : id;
-    }
-
-    private void setRegistrationDate(final LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
+    public JpaAnimal(final CreateAnimalDto createAnimalDto) {
+        this.id = UUID.randomUUID();
+        this.registrationDate = LocalDateTime.now();
+        this.clinicalRecord = createAnimalDto.getClinicalRecord();
+        this.name = createAnimalDto.getName();
+        this.species = createAnimalDto.getSpecies().name();
+        this.estimatedAge = createAnimalDto.getEstimatedAge().name();
+        this.sex = createAnimalDto.getSex().name();
+        this.stateName = createAnimalDto.getStateNameAsString();
+        this.adoptionFormId = createAnimalDto.getAdoptionFormId().orElse(null);
+        this.unavailableStateNotes = createAnimalDto.getNotes().orElse(null);
+        this.jpaOrganization = new JpaOrganization(createAnimalDto.getOrganization());
     }
 
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
@@ -137,7 +141,7 @@ public class JpaAnimal implements Serializable {
     }
 
     public Animal toAnimal() {
-        Animal animal = new Animal(
+        return new Animal(
                 id,
                 registrationDate,
                 clinicalRecord,
@@ -145,23 +149,12 @@ public class JpaAnimal implements Serializable {
                 Species.valueOf(species),
                 EstimatedAge.valueOf(estimatedAge),
                 Sex.valueOf(sex),
-                state
+                State.from(StateName.valueOf(this.stateName), this.adoptionFormId, this.unavailableStateNotes),
+                ofNullable(jpaPrimaryLinkPicture).map(JpaPrimaryLinkPicture::toLinkPicture).orElse(null),
+                ofNullable(jpaCharacteristics).map(JpaCharacteristics::toCharacteristics).orElse(null),
+                ofNullable(jpaStory).map(JpaStory::toStory).orElse(null),
+                this.jpaOrganization.toOrganization()
         );
-        animal.setOrganization(this.jpaOrganization.toOrganization());
-
-        if (jpaPrimaryLinkPicture != null) {
-            animal.setPrimaryLinkPicture(jpaPrimaryLinkPicture.toLinkPicture());
-        }
-
-        if (jpaCharacteristics != null) {
-            animal.setCharacteristics(jpaCharacteristics.toCharacteristics());
-        }
-
-        if (jpaStory != null) {
-            animal.setStory(jpaStory.toStory());
-        }
-
-        return animal;
     }
 
     @Override

@@ -20,7 +20,7 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
 import ec.animal.adoption.domain.organization.Organization;

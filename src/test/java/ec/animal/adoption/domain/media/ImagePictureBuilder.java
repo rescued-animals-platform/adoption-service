@@ -17,11 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
-
-import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.PictureType;
+package ec.animal.adoption.domain.media;
 
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

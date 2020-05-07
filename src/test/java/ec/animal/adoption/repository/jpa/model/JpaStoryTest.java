@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.builders.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryBuilder;
 import ec.animal.adoption.domain.story.Story;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;

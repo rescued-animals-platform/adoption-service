@@ -47,16 +47,16 @@ public class Story extends Entity {
         this.text = text;
     }
 
-    public String getText() {
-        return this.text;
-    }
-
     public Story updateWith(@NonNull final Story story) {
         if (this.equals(story)) {
             return this;
         }
 
         return new Story(this.getIdentifier(), LocalDateTime.now(), story.getText());
+    }
+
+    public String getText() {
+        return this.text;
     }
 
     @Override

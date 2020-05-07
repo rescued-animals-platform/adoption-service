@@ -16,7 +16,6 @@ dependencies {
     implementation("org.springframework.security:spring-security-config")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix")
 
-    implementation("com.vladmihalcea:hibernate-types-52:2.9.7")
     implementation("com.cloudinary:cloudinary-http44:1.25.0")
     implementation("commons-io:commons-io:2.6")
     implementation("org.postgresql:postgresql:42.2.12")

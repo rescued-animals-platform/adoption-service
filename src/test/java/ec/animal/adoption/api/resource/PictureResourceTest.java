@@ -20,10 +20,10 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.builders.ImageBuilder;
-import ec.animal.adoption.builders.ImagePictureBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.domain.media.ImageBuilder;
+import ec.animal.adoption.domain.media.ImagePictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;

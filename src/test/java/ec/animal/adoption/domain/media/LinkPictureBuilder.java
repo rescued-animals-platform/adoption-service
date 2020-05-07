@@ -17,11 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
-
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.PictureType;
+package ec.animal.adoption.domain.media;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -39,7 +35,7 @@ public class LinkPictureBuilder {
     private MediaLink smallImageMediaLink;
 
     public static LinkPictureBuilder random() {
-        final LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
+        LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
         linkPictureBuilder.name = randomAlphabetic(10);
         linkPictureBuilder.pictureType = getRandomPictureType();
         linkPictureBuilder.largeImageMediaLink = new MediaLink(randomAlphabetic(30));

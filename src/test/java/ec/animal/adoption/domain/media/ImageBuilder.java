@@ -17,10 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
-
-import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.SupportedImageExtension;
+package ec.animal.adoption.domain.media;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

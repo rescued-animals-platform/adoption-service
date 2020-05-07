@@ -1,109 +1,84 @@
-/*
-    Copyright © 2018 Luisa Emme
-
-    This file is part of Adoption Service in the Rescued Animals Platform.
-
-    Adoption Service is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Adoption Service is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package ec.animal.adoption.domain.state;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.base.CaseFormat;
 import org.springframework.lang.NonNull;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.Optional;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "name")
-@JsonSubTypes({@JsonSubTypes.Type(value = LookingForHuman.class, name = "lookingForHuman"),
-               @JsonSubTypes.Type(value = LookingForHuman.class, name = "LookingForHuman"),
-               @JsonSubTypes.Type(value = LookingForHuman.class, name = "Looking for human"),
-               @JsonSubTypes.Type(value = LookingForHuman.class, name = "looking for human"),
-               @JsonSubTypes.Type(value = LookingForHuman.class, name = "LOOKING_FOR_HUMAN"),
-               @JsonSubTypes.Type(value = LookingForHuman.class, name = "looking_for_human"),
-               @JsonSubTypes.Type(value = Adopted.class, name = "adopted"),
-               @JsonSubTypes.Type(value = Adopted.class, name = "Adopted"),
-               @JsonSubTypes.Type(value = Adopted.class, name = "ADOPTED"),
-               @JsonSubTypes.Type(value = Unavailable.class, name = "unavailable"),
-               @JsonSubTypes.Type(value = Unavailable.class, name = "Unavailable"),
-               @JsonSubTypes.Type(value = Unavailable.class, name = "UNAVAILABLE")})
-public abstract class State implements Serializable {
+import static ec.animal.adoption.domain.state.StateName.ADOPTED;
+import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
+import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
 
-    private transient static final long serialVersionUID = -312436659134428610L;
-    private static final Set<String> VALID_LOOKING_FOR_HUMAN_STATE_NAMES = Set.of("lookingForHuman",
-                                                                                  "LookingForHuman",
-                                                                                  "Looking for human",
-                                                                                  "looking for human",
-                                                                                  "LOOKING_FOR_HUMAN",
-                                                                                  "looking_for_human");
-    private static final Set<String> VALID_ADOPTED_STATE_NAMES = Set.of("adopted",
-                                                                        "Adopted",
-                                                                        "ADOPTED");
-    private static final Set<String> VALID_UNAVAILABLE_STATE_NAMES = Set.of("unavailable",
-                                                                            "Unavailable",
-                                                                            "UNAVAILABLE");
+public final class State {
 
-    @JsonProperty("date")
-    private final LocalDateTime date;
-
-    protected State(final LocalDateTime date) {
-        this.date = date == null ? LocalDateTime.now() : date;
-    }
+    private final StateName name;
 
     @JsonIgnore
-    public LocalDateTime getRegistrationDate() {
-        return date;
-    }
+    private AdoptedDetails adoptedDetails;
 
     @JsonIgnore
-    public String getName() {
-        return convertUpperCamelToLowerCamelCase(this.getClass().getSimpleName());
-    }
+    private UnavailableDetails unavailableDetails;
 
-    public static boolean isStateNameValid(@NonNull final String stateName) {
-        return Stream.of(
-                VALID_LOOKING_FOR_HUMAN_STATE_NAMES,
-                VALID_ADOPTED_STATE_NAMES,
-                VALID_UNAVAILABLE_STATE_NAMES
-        ).anyMatch(validStateNames -> validStateNames.contains(stateName));
-    }
-
-    public static String normalize(final String stateName) {
-        if (stateName == null) {
-            return null;
-        }
-
-        if (VALID_LOOKING_FOR_HUMAN_STATE_NAMES.contains(stateName)) {
-            return convertUpperCamelToLowerCamelCase(LookingForHuman.class.getSimpleName());
-        } else if (VALID_ADOPTED_STATE_NAMES.contains(stateName)) {
-            return convertUpperCamelToLowerCamelCase(Adopted.class.getSimpleName());
-        } else if (VALID_UNAVAILABLE_STATE_NAMES.contains(stateName)) {
-            return convertUpperCamelToLowerCamelCase(Unavailable.class.getSimpleName());
-        } else {
-            return null;
+    @JsonCreator
+    public static State from(@JsonProperty("name") @NonNull final StateName name,
+                             @JsonProperty("adoptionFormId") final String adoptionFormId,
+                             @JsonProperty("notes") final String notes) {
+        switch (name) {
+            case LOOKING_FOR_HUMAN:
+                return State.lookingForHuman();
+            case ADOPTED:
+                return State.adopted(adoptionFormId);
+            case UNAVAILABLE:
+                return State.unavailable(notes);
+            default:
+                throw new IllegalStateException();
         }
     }
 
-    private static String convertUpperCamelToLowerCamelCase(final String value) {
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, value);
+    private State(@NonNull final StateName name) {
+        this.name = name;
+    }
+
+    private State(@NonNull final StateName name, final AdoptedDetails adoptedDetails) {
+        this.name = name;
+        this.adoptedDetails = adoptedDetails;
+    }
+
+    private State(@NonNull final StateName name, final UnavailableDetails unavailableDetails) {
+        this.name = name;
+        this.unavailableDetails = unavailableDetails;
+    }
+
+    public static State lookingForHuman() {
+        return new State(LOOKING_FOR_HUMAN);
+    }
+
+    public static State adopted(final String adoptionFormId) {
+        return new State(ADOPTED, new AdoptedDetails(adoptionFormId));
+    }
+
+    public static State unavailable(@NonNull final String notes) {
+        return new State(UNAVAILABLE, new UnavailableDetails(notes));
+    }
+
+    @JsonIgnore
+    public StateName getName() {
+        return name;
+    }
+
+    @SuppressWarnings("PMD")
+    @JsonProperty("name")
+    private String getReadableName() {
+        return name.toString();
+    }
+
+    public Optional<String> getAdoptionFormId() {
+        return Optional.ofNullable(adoptedDetails).flatMap(AdoptedDetails::getAdoptionFormId);
+    }
+
+    public Optional<String> getNotes() {
+        return Optional.ofNullable(unavailableDetails).map(UnavailableDetails::getNotes);
     }
 }

@@ -19,34 +19,31 @@
 
 package ec.animal.adoption.repository.jpa;
 
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.domain.state.Adopted;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.state.Unavailable;
 import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.story.StoryBuilder;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import static ec.animal.adoption.domain.organization.OrganizationBuilder.DEFAULT_ORGANIZATION_ID;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -124,13 +121,16 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
         assertTrue(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture().isEmpty());
         LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
-                                                                   .withPictureType(PictureType.PRIMARY).build();
-        animalWithNoPrimaryLinkPicture.setPrimaryLinkPicture(expectedPrimaryLinkPicture);
-        JpaAnimal entity = new JpaAnimal(animalWithNoPrimaryLinkPicture);
+                                                                   .withPictureType(PictureType.PRIMARY)
+                                                                   .build();
+        Animal animalWithPrimaryLinkPicture = Animal.AnimalBuilder.copyOf(animalWithNoPrimaryLinkPicture)
+                                                                  .with(expectedPrimaryLinkPicture)
+                                                                  .build();
+        JpaAnimal entity = new JpaAnimal(animalWithPrimaryLinkPicture);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
-        Optional<LinkPicture> primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
+        Animal savedAnimal = jpaAnimal.toAnimal();
+        Optional<LinkPicture> primaryLinkPicture = savedAnimal.getPrimaryLinkPicture();
 
         assertTrue(primaryLinkPicture.isPresent());
         assertThat(primaryLinkPicture.get().getName(), is(expectedPrimaryLinkPicture.getName()));
@@ -145,12 +145,14 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithNoCharacteristics = jpaAnimalWithNoCharacteristics.toAnimal();
         assertTrue(animalWithNoCharacteristics.getCharacteristics().isEmpty());
         Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        animalWithNoCharacteristics.setCharacteristics(expectedCharacteristics);
-        JpaAnimal entity = new JpaAnimal(animalWithNoCharacteristics);
+        Animal animalWithCharacteristics = Animal.AnimalBuilder.copyOf(animalWithNoCharacteristics)
+                                                               .with(expectedCharacteristics)
+                                                               .build();
+        JpaAnimal entity = new JpaAnimal(animalWithCharacteristics);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithCharacteristics = jpaAnimal.toAnimal();
-        Optional<Characteristics> characteristics = animalWithCharacteristics.getCharacteristics();
+        Animal savedAnimal = jpaAnimal.toAnimal();
+        Optional<Characteristics> characteristics = savedAnimal.getCharacteristics();
 
         assertTrue(characteristics.isPresent());
         assertThat(characteristics.get().getSize(), is(expectedCharacteristics.getSize()));
@@ -165,12 +167,14 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithNoStory = jpaAnimalWithNoStory.toAnimal();
         assertTrue(animalWithNoStory.getStory().isEmpty());
         Story expectedStory = StoryBuilder.random().build();
-        animalWithNoStory.setStory(expectedStory);
-        JpaAnimal entity = new JpaAnimal(animalWithNoStory);
+        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animalWithNoStory)
+                                                     .with(expectedStory)
+                                                     .build();
+        JpaAnimal entity = new JpaAnimal(animalWithStory);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithStory = jpaAnimal.toAnimal();
-        Optional<Story> story = animalWithStory.getStory();
+        Animal savedAnimal = jpaAnimal.toAnimal();
+        Optional<Story> story = savedAnimal.getStory();
 
         assertTrue(story.isPresent());
         assertThat(story.get().getText(), is(expectedStory.getText()));
@@ -182,7 +186,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         UUID animalId = jpaAnimal.toAnimal().getIdentifier();
 
         Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByIdAndJpaOrganizationId(
-                animalId, AnimalBuilder.DEFAULT_ORGANIZATION_ID
+                animalId, DEFAULT_ORGANIZATION_ID
         );
 
         assertThat(optionalJpaAnimal.isPresent(), is(true));
@@ -196,7 +200,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Pageable pageable = PageRequest.of(0, 4);
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationId(
-                AnimalBuilder.DEFAULT_ORGANIZATION_ID, pageable
+                DEFAULT_ORGANIZATION_ID, pageable
         );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 
@@ -204,7 +208,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         assertEquals(4, jpaAnimals.size());
         jpaAnimals.forEach(jpaAnimal -> {
             Animal animal = jpaAnimal.toAnimal();
-            assertEquals(AnimalBuilder.DEFAULT_ORGANIZATION_ID, animal.getOrganizationId());
+            assertEquals(DEFAULT_ORGANIZATION_ID, animal.getOrganizationId());
         });
     }
 
@@ -231,17 +235,17 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldReturnPageWithEightJpaAnimalsWithMatchingStateAndSpeciesAndMatchingAllFilters() {
-        State lookingForHuman = new LookingForHuman(LocalDateTime.now());
+        State lookingForHuman = State.lookingForHuman();
         Species dog = Species.DOG;
         PhysicalActivity high = PhysicalActivity.HIGH;
         Size tiny = Size.TINY;
         IntStream.rangeClosed(1, 8).forEach(i -> jpaAnimalRepository.save(getJpaAnimalWith(lookingForHuman, dog, high, tiny)));
-        saveOtherJpaAnimalsWithDifferentState(new Adopted(LocalDateTime.now(), randomAlphabetic(10)));
+        saveOtherJpaAnimalsWithDifferentState(State.adopted(randomAlphabetic(10)));
         Pageable pageable = PageRequest.of(0, 8);
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                        lookingForHuman.getName(), dog.name(), high.name(), tiny.name(), pageable
+                        lookingForHuman.getName().name(), dog.name(), high.name(), tiny.name(), pageable
                 );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 
@@ -251,7 +255,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldReturnPageWithTwentyJpaAnimalsWithMatchingStateAndSpeciesAndMatchingSomeOrAllFilters() {
-        State adopted = new Adopted(LocalDateTime.now(), randomAlphabetic(10));
+        State adopted = State.adopted(randomAlphabetic(10));
         Species cat = Species.CAT;
         PhysicalActivity low = PhysicalActivity.LOW;
         Size medium = Size.MEDIUM;
@@ -261,12 +265,12 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
             jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, low, Size.OUTSIZE));
             jpaAnimalRepository.save(getJpaAnimalWith(adopted, cat, PhysicalActivity.MEDIUM, Size.SMALL));
         });
-        saveOtherJpaAnimalsWithDifferentState(new Unavailable(LocalDateTime.now(), randomAlphabetic(10)));
+        saveOtherJpaAnimalsWithDifferentState(State.unavailable(randomAlphabetic(10)));
         Pageable pageable = PageRequest.of(0, 20);
 
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
-                        adopted.getName(), cat.name(), low.name(), medium.name(), pageable
+                        adopted.getName().name(), cat.name(), low.name(), medium.name(), pageable
                 );
         List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
 

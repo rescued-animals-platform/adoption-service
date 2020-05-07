@@ -23,6 +23,7 @@ import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
@@ -54,21 +55,31 @@ public class AnimalRepositoryPsql implements AnimalRepository {
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Animal save(final Animal animal) {
+    public Animal create(final CreateAnimalDto createAnimalDto) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(createAnimalDto));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
-            LOGGER.error("Exception thrown when saving an animal", exception);
+            LOGGER.error("Exception thrown when creating a new animal", exception);
             throw new EntityAlreadyExistsException(exception);
         }
     }
 
     @Override
-    public boolean exists(final Animal animal) {
-        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(
-                animal.getClinicalRecord(), animal.getOrganizationId()
-        );
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public Animal save(final Animal animal) {
+        try {
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
+            return savedJpaAnimal.toAnimal();
+        } catch (Exception exception) {
+            LOGGER.error("Exception thrown when saving animal with id: {}", animal.getIdentifier(), exception);
+            throw new EntityAlreadyExistsException(exception);
+        }
+    }
+
+    @Override
+    public boolean exists(final String clinicalRecord, final UUID organizationId) {
+        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(clinicalRecord, organizationId);
     }
 
     @Override

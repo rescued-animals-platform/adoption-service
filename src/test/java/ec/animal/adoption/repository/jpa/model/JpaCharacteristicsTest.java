@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.builders.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;

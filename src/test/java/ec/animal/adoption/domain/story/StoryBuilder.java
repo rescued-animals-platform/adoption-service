@@ -17,9 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
-
-import ec.animal.adoption.domain.story.Story;
+package ec.animal.adoption.domain.story;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

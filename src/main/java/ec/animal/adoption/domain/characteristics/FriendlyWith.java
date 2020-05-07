@@ -21,8 +21,7 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum FriendlyWith {
     CHILDREN("Children"),
@@ -31,6 +30,7 @@ public enum FriendlyWith {
     CATS("Cats"),
     OTHER_ANIMALS("Other animals");
 
+    @JsonValue
     private final String name;
 
     FriendlyWith(final String name) {
@@ -40,18 +40,13 @@ public enum FriendlyWith {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static FriendlyWith forValue(final String value) {
-        try {
-            return FriendlyWith.valueOf(value);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(FriendlyWith.values())
-                         .filter(e -> e.getName().equals(value))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (FriendlyWith) EnumUtils.forValue(value)
+                                       .apply(FriendlyWith.values())
+                                       .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +51,7 @@ class SociabilityTest {
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_SOCIABILITY_METHOD)
     void shouldReturnExpectedNameForSociability(final Sociability sociability, final String expectedName) {
-        assertEquals(expectedName, sociability.getName());
+        assertEquals(expectedName, sociability.toString());
     }
 
     @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
@@ -63,16 +82,6 @@ class SociabilityTest {
         assertEquals(sociability, deSerializedSociability);
     }
 
-    @Test
-    void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
-        String invalidSociabilityAsJson = JSONObject.quote(randomAlphabetic(10));
-
-        ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
-            objectMapper.readValue(invalidSociabilityAsJson, Sociability.class);
-        });
-        assertTrue(exception.getCause() instanceof IllegalArgumentException);
-    }
-
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesForSociability() {
         return Stream.of(
@@ -82,5 +91,41 @@ class SociabilityTest {
                 Arguments.of(Sociability.SHY, "Shy"),
                 Arguments.of(Sociability.VERY_SHY, "Very shy")
         );
+    }
+
+    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
+    @MethodSource("expectedNamesWithSpacesForSociability")
+    void shouldTrimSpacesInValueBeforeDeSerializing(final Sociability sociability, final String nameWithSpaces) throws JsonProcessingException {
+        String sociabilityWithSpacesAsJson = JSONObject.quote(nameWithSpaces);
+
+        Sociability deSerializedSociability = objectMapper.readValue(sociabilityWithSpacesAsJson, Sociability.class);
+
+        assertEquals(sociability, deSerializedSociability);
+    }
+
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedNamesWithSpacesForSociability() {
+        return Stream.of(
+                Arguments.of(Sociability.VERY_SOCIABLE, " Very sociable "),
+                Arguments.of(Sociability.VERY_SOCIABLE, " VERY_SOCIABLE   "),
+                Arguments.of(Sociability.SOCIABLE, "   Sociable"),
+                Arguments.of(Sociability.SOCIABLE, "SOCIABLE "),
+                Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "Neither sociable nor shy "),
+                Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "    NEITHER_SOCIABLE_NOR_SHY "),
+                Arguments.of(Sociability.SHY, " Shy "),
+                Arguments.of(Sociability.SHY, " SHY "),
+                Arguments.of(Sociability.VERY_SHY, "     Very shy "),
+                Arguments.of(Sociability.VERY_SHY, " VERY_SHY      ")
+        );
+    }
+
+    @Test
+    void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
+        String invalidSociabilityAsJson = JSONObject.quote(randomAlphabetic(10));
+
+        ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, () -> {
+            objectMapper.readValue(invalidSociabilityAsJson, Sociability.class);
+        });
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
     }
 }

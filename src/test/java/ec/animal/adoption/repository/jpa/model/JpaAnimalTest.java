@@ -19,23 +19,23 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
-import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.story.StoryBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -48,49 +48,29 @@ import static org.mockito.Mockito.mock;
 public class JpaAnimalTest {
 
     @Test
-    public void shouldGenerateAnIdWhenCreatingAJpaAnimalForAnAnimalWithNoId() {
-        Animal animal = AnimalBuilder.random().withIdentifier(null).build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
+    public void shouldBuildAJpaAnimalFromACreateAnimalDtoAndGenerateAnIdentifierAndARegistrationDateForIt() {
+        Organization organization = OrganizationBuilder.random().build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withOrganization(organization).build();
 
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
+        JpaAnimal jpaAnimal = new JpaAnimal(createAnimalDto);
 
-        assertNotNull(jpaAnimalToAnimal.getIdentifier());
+        Animal actualAnimal = jpaAnimal.toAnimal();
+
+        assertAll(() -> assertNotNull(actualAnimal.getIdentifier()),
+                  () -> assertNotNull(actualAnimal.getRegistrationDate()),
+                  () -> assertEquals(createAnimalDto.getClinicalRecord(), actualAnimal.getClinicalRecord()),
+                  () -> assertEquals(createAnimalDto.getName(), actualAnimal.getName()),
+                  () -> assertEquals(createAnimalDto.getSpecies(), actualAnimal.getSpecies()),
+                  () -> assertEquals(createAnimalDto.getEstimatedAge(), actualAnimal.getEstimatedAge()),
+                  () -> assertEquals(createAnimalDto.getSex(), actualAnimal.getSex()),
+                  () -> assertEquals(createAnimalDto.getStateNameAsString(), actualAnimal.getStateName()),
+                  () -> assertEquals(createAnimalDto.getAdoptionFormId(), actualAnimal.getState().getAdoptionFormId()),
+                  () -> assertEquals(createAnimalDto.getNotes(), actualAnimal.getState().getNotes()),
+                  () -> assertEquals(createAnimalDto.getOrganization(), actualAnimal.getOrganization()));
     }
 
     @Test
-    public void shouldGenerateARegistrationDateWhenCreatingAJpaAnimalForAnAnimalWithNoRegistrationDate() {
-        Animal animal = AnimalBuilder.random().withRegistrationDate(null).build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
-
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
-
-        assertNotNull(jpaAnimalToAnimal.getRegistrationDate());
-    }
-
-    @Test
-    public void shouldCreateAnAnimalWithId() {
-        UUID animalId = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withIdentifier(animalId).build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
-
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
-
-        assertThat(jpaAnimalToAnimal.getIdentifier(), is(animalId));
-    }
-
-    @Test
-    public void shouldCreateAnAnimalWithRegistrationDate() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        Animal animal = AnimalBuilder.random().withRegistrationDate(registrationDate).build();
-        JpaAnimal jpaAnimal = new JpaAnimal(animal);
-
-        Animal jpaAnimalToAnimal = jpaAnimal.toAnimal();
-
-        assertThat(jpaAnimalToAnimal.getRegistrationDate(), is(registrationDate));
-    }
-
-    @Test
-    public void shouldCreateAJpaAnimalFromAnAnimal() {
+    public void shouldBuildAJpaAnimalFromAnAnimal() {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsBuilder.random().build();
         Story story = StoryBuilder.random().build();
@@ -105,12 +85,15 @@ public class JpaAnimalTest {
 
         Animal actualAnimal = jpaAnimal.toAnimal();
 
-        assertAll(() -> assertEquals(expectedAnimal.getClinicalRecord(), actualAnimal.getClinicalRecord()),
+        assertAll(() -> assertEquals(expectedAnimal.getIdentifier(), actualAnimal.getIdentifier()),
+                  () -> assertEquals(expectedAnimal.getRegistrationDate(), actualAnimal.getRegistrationDate()),
+                  () -> assertEquals(expectedAnimal.getClinicalRecord(), actualAnimal.getClinicalRecord()),
                   () -> assertEquals(expectedAnimal.getName(), actualAnimal.getName()),
                   () -> assertEquals(expectedAnimal.getSpecies(), actualAnimal.getSpecies()),
                   () -> assertEquals(expectedAnimal.getEstimatedAge(), actualAnimal.getEstimatedAge()),
                   () -> assertEquals(expectedAnimal.getSex(), actualAnimal.getSex()),
-                  () -> assertEquals(expectedAnimal.getState(), actualAnimal.getState()),
+                  () -> Assertions.assertThat(actualAnimal.getState()).usingRecursiveComparison()
+                                  .isEqualTo(expectedAnimal.getState()),
                   () -> assertTrue(actualAnimal.getPrimaryLinkPicture().isPresent()),
                   () -> assertEqualsPrimaryLinkPicture(primaryLinkPicture, actualAnimal.getPrimaryLinkPicture().get()),
                   () -> assertTrue(actualAnimal.getCharacteristics().isPresent()),
@@ -137,7 +120,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldCreateAJpaAnimalWithNoJpaPrimaryLinkPicture() {
+    public void shouldBuildAJpaAnimalWithNoJpaPrimaryLinkPicture() {
         Animal animal = AnimalBuilder.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -148,7 +131,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldCreateAJpaAnimalWithNoJpaCharacteristics() {
+    public void shouldBuildAJpaAnimalWithNoJpaCharacteristics() {
         Animal animal = AnimalBuilder.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -159,7 +142,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldCreateAJpaAnimalWithNoJpaStory() {
+    public void shouldBuildAJpaAnimalWithNoJpaStory() {
         Animal animal = AnimalBuilder.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);

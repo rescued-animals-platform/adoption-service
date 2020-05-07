@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository;
 
-import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.repository.jpa.JpaOrganizationRepository;

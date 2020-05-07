@@ -21,8 +21,7 @@ package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Sociability {
     VERY_SOCIABLE("Very sociable"),
@@ -31,6 +30,7 @@ public enum Sociability {
     SHY("Shy"),
     VERY_SHY("Very shy");
 
+    @JsonValue
     private final String name;
 
     Sociability(final String name) {
@@ -40,18 +40,13 @@ public enum Sociability {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Sociability forValue(final String value) {
-        try {
-            return Sociability.valueOf(value);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(Sociability.values())
-                         .filter(e -> e.getName().equals(value))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (Sociability) EnumUtils.forValue(value)
+                                      .apply(Sociability.values())
+                                      .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

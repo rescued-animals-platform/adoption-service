@@ -20,22 +20,23 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
-import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.StateName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
@@ -46,13 +47,10 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomState;
+import static ec.animal.adoption.TestUtils.getRandomStateName;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,18 +88,17 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldCreateAnAnimal() {
-        Animal animal = AnimalBuilder.random().withOrganization(null).build();
         Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
-        ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        when(animalService.create(any(Animal.class))).thenReturn(expectedAnimal);
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withOrganization(organization).build();
+        CreateAnimalRequest createAnimalRequest = mock(CreateAnimalRequest.class);
+        when(createAnimalRequest.toDomainWith(organization)).thenReturn(createAnimalDto);
+        when(animalService.create(createAnimalDto)).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalResource.create(animal, token);
+        Animal createdAnimal = animalResource.create(createAnimalRequest, token);
 
         assertThat(createdAnimal, is(expectedAnimal));
-        verify(animalService).create(animalArgumentCaptor.capture());
-        assertEquals(organization, animalArgumentCaptor.getValue().getOrganization());
     }
 
     @Test
@@ -132,8 +129,7 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldReturnAllAnimalDtosWithFiltersAndPagination() {
-        State state = getRandomState();
-        String stateName = state.getName();
+        StateName stateName = getRandomStateName();
         Species species = getRandomSpecies();
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();

@@ -17,15 +17,14 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
+package ec.animal.adoption.domain.animal;
 
-import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.EstimatedAge;
-import ec.animal.adoption.domain.animal.Sex;
-import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
 
@@ -40,9 +39,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class AnimalBuilder {
 
-    public static final UUID DEFAULT_ORGANIZATION_ID = UUID.fromString("56009119-44bd-469a-a59b-401ab23d19ca");
-    public static final UUID ANOTHER_ORGANIZATION_ID = UUID.fromString("dd20a44f-8aea-49bb-bfc7-cb57f6a4cd6d");
-
     private UUID animalId;
     private LocalDateTime registrationDate;
     private String clinicalRecord;
@@ -51,13 +47,15 @@ public class AnimalBuilder {
     private EstimatedAge estimatedAge;
     private Sex sex;
     private State state;
+    private Organization organization;
     private LinkPicture primaryLinkPicture;
     private Characteristics characteristics;
     private Story story;
-    private Organization organization;
 
     public static AnimalBuilder random() {
         AnimalBuilder animalBuilder = new AnimalBuilder();
+        animalBuilder.animalId = UUID.randomUUID();
+        animalBuilder.registrationDate = LocalDateTime.now();
         animalBuilder.clinicalRecord = randomAlphabetic(10);
         animalBuilder.name = randomAlphabetic(10);
         animalBuilder.species = getRandomSpecies();
@@ -70,13 +68,19 @@ public class AnimalBuilder {
 
     public static AnimalBuilder randomWithDefaultOrganization() {
         AnimalBuilder animalBuilder = random();
-        animalBuilder.organization = OrganizationBuilder.random().withIdentifier(DEFAULT_ORGANIZATION_ID).build();
+        animalBuilder.organization = OrganizationBuilder.randomDefaultOrganization().build();
         return animalBuilder;
     }
 
     public static AnimalBuilder randomWithAnotherOrganization() {
         AnimalBuilder animalBuilder = random();
-        animalBuilder.organization = OrganizationBuilder.random().withIdentifier(ANOTHER_ORGANIZATION_ID).build();
+        animalBuilder.organization = OrganizationBuilder.randomAnotherOrganization().build();
+        return animalBuilder;
+    }
+
+    public static AnimalBuilder randomWithPrimaryLinkPicture() {
+        AnimalBuilder animalBuilder = random();
+        animalBuilder.primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         return animalBuilder;
     }
 
@@ -120,6 +124,11 @@ public class AnimalBuilder {
         return this;
     }
 
+    public AnimalBuilder withOrganization(final Organization organization) {
+        this.organization = organization;
+        return this;
+    }
+
     public AnimalBuilder withPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
         this.primaryLinkPicture = primaryLinkPicture;
         return this;
@@ -135,28 +144,18 @@ public class AnimalBuilder {
         return this;
     }
 
-    public AnimalBuilder withOrganization(final Organization organization) {
-        this.organization = organization;
-        return this;
-    }
-
     public Animal build() {
-        Animal animal = new Animal(this.animalId,
-                                   this.registrationDate,
-                                   this.clinicalRecord,
-                                   this.name,
-                                   this.species,
-                                   this.estimatedAge,
-                                   this.sex,
-                                   this.state);
-        animal.setCharacteristics(this.characteristics);
-        animal.setStory(this.story);
-        animal.setOrganization(this.organization);
-
-        if (this.primaryLinkPicture != null) {
-            animal.setPrimaryLinkPicture(this.primaryLinkPicture);
-        }
-
-        return animal;
+        return new Animal(this.animalId,
+                          this.registrationDate,
+                          this.clinicalRecord,
+                          this.name,
+                          this.species,
+                          this.estimatedAge,
+                          this.sex,
+                          this.state,
+                          this.primaryLinkPicture,
+                          this.characteristics,
+                          this.story,
+                          this.organization);
     }
 }

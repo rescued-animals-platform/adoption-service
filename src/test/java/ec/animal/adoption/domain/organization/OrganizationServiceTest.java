@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.domain.organization;
 
-import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -21,12 +21,12 @@ package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum EstimatedAge {
     YOUNG("Young"), YOUNG_ADULT("Young adult"), SENIOR_ADULT("Senior adult");
 
+    @JsonValue
     private final String name;
 
     EstimatedAge(final String name) {
@@ -36,18 +36,13 @@ public enum EstimatedAge {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static EstimatedAge forValue(final String value) {
-        try {
-            return EstimatedAge.valueOf(value);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(EstimatedAge.values())
-                         .filter(e -> e.getName().equals(value))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (EstimatedAge) EnumUtils.forValue(value)
+                                       .apply(EstimatedAge.values())
+                                       .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

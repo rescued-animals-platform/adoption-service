@@ -64,8 +64,9 @@ public class PictureService {
         });
 
         LinkPicture linkPicture = mediaRepository.save(imagePicture);
-        animal.setPrimaryLinkPicture(linkPicture);
-        return animalRepository.save(animal).getPrimaryLinkPicture().orElseThrow();
+        Animal animalWithPrimaryLinkPicture = Animal.AnimalBuilder.copyOf(animal).with(linkPicture).build();
+
+        return animalRepository.save(animalWithPrimaryLinkPicture).getPrimaryLinkPicture().orElseThrow();
     }
 
     public LinkPicture getBy(final UUID animalId) {

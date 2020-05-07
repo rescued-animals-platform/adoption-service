@@ -19,24 +19,20 @@
 
 package ec.animal.adoption.domain.animal;
 
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +40,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
@@ -72,8 +67,6 @@ public class AnimalServiceTest {
     @Mock
     private Pageable pageable;
 
-    private State state;
-    private List<Animal> animalsFilteredByState;
     private Species species;
     private PhysicalActivity physicalActivity;
     private Size size;
@@ -81,12 +74,6 @@ public class AnimalServiceTest {
 
     @BeforeEach
     public void setUp() {
-        state = getRandomState();
-        animalsFilteredByState = newArrayList(
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build()
-        );
         species = getRandomSpecies();
         physicalActivity = getRandomPhysicalActivity();
         size = getRandomSize();
@@ -95,22 +82,24 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
-        Animal animal = AnimalBuilder.random().build();
-        when(animalRepository.exists(animal)).thenReturn(false);
-        when(animalRepository.save(animal)).thenReturn(expectedAnimal);
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().build();
+        when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
+                .thenReturn(false);
+        when(animalRepository.create(createAnimalDto)).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalService.create(animal);
+        Animal createdAnimal = animalService.create(createAnimalDto);
 
         assertEquals(expectedAnimal, createdAnimal);
     }
 
     @Test
     public void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
-        Animal animal = AnimalBuilder.random().build();
-        when(animalRepository.exists(animal)).thenReturn(true);
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().build();
+        when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
+                .thenReturn(true);
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalService.create(animal);
+            animalService.create(createAnimalDto);
         });
         verify(animalRepository, never()).save(any(Animal.class));
     }
@@ -141,18 +130,20 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldReturnAllAnimalDtosWithFiltersAndSmallPrimaryPictureUrl() {
-        String stateName = state.getName();
-        animalsFilteredByState.forEach(animal -> animal.setPrimaryLinkPicture(
-                LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build()
-        ));
-        when(animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable))
+        State state = getRandomState();
+        List<Animal> animalsFilteredByState = newArrayList(
+                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
+                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
+                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build()
+        );
+        when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))
                 .thenReturn(new PagedEntity<>(animalsFilteredByState));
         PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
                 animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
         );
 
         PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
-                stateName, species, physicalActivity, size, pageable
+                state.getName(), species, physicalActivity, size, pageable
         );
 
         Assertions.assertThat(pageOfAnimalDtos)
@@ -162,8 +153,13 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldReturnAllAnimalDataTransferObjectsWithFiltersAndNoSmallPrimaryPictureUrl() {
-        String stateName = state.getName();
-        when(animalRepository.getAllBy(stateName, species, physicalActivity, size, pageable))
+        State state = getRandomState();
+        List<Animal> animalsFilteredByState = newArrayList(
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build(),
+                AnimalBuilder.random().withState(state).build()
+        );
+        when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))
                 .thenReturn(new PagedEntity<>(animalsFilteredByState));
 
         PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
@@ -171,38 +167,11 @@ public class AnimalServiceTest {
         );
 
         PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
-                stateName, species, physicalActivity, size, pageable
+                state.getName(), species, physicalActivity, size, pageable
         );
 
         Assertions.assertThat(pageOfAnimalDtos)
                   .usingRecursiveFieldByFieldElementComparator()
                   .isEqualTo(expectedPageOfAnimalDtos);
-    }
-
-    @ParameterizedTest(name = "{index} normalizes \"{0}\" to \"{1}\"")
-    @MethodSource("stateNamesWithNormalizedName")
-    public void shouldNormalizeStateName(final String stateName, final String normalizedStateName) {
-        when(animalRepository.getAllBy(normalizedStateName, species, physicalActivity, size, pageable))
-                .thenReturn(new PagedEntity<>(animalsFilteredByState));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
-                animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
-        );
-
-        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
-                stateName, species, physicalActivity, size, pageable
-        );
-
-        Assertions.assertThat(pageOfAnimalDtos)
-                  .usingRecursiveFieldByFieldElementComparator()
-                  .isEqualTo(expectedPageOfAnimalDtos);
-    }
-
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private static Stream<Arguments> stateNamesWithNormalizedName() {
-        return Stream.of(
-                Arguments.of("Looking for human", "lookingForHuman"),
-                Arguments.of("Adopted", "adopted"),
-                Arguments.of("UNAVAILABLE", "unavailable")
-        );
     }
 }

@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.domain.media;
 
-import ec.animal.adoption.builders.ImageBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

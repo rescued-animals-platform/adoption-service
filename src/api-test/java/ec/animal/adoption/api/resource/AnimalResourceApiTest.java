@@ -19,142 +19,186 @@
 
 package ec.animal.adoption.api.resource;
 
-import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
+import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.EstimatedAge;
+import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
+import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSex;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.UseObjectForClearerAPI"})
 public class AnimalResourceApiTest extends AbstractApiTest {
+
+    private String clinicalRecord;
+    private String name;
+    private Species species;
+    private Sex sex;
+    private EstimatedAge estimatedAge;
+    private CreateAnimalRequestBuilder createAnimalRequestBuilder;
+
+    @BeforeEach
+    void setUp() {
+        clinicalRecord = randomAlphabetic(10);
+        name = randomAlphabetic(10);
+        species = getRandomSpecies();
+        sex = getRandomSex();
+        estimatedAge = getRandomEstimatedAge();
+        createAnimalRequestBuilder = CreateAnimalRequestBuilder.random()
+                                                               .withClinicalRecord(clinicalRecord)
+                                                               .withName(name)
+                                                               .withSpecies(species)
+                                                               .withSex(sex)
+                                                               .withEstimatedAge(estimatedAge);
+    }
 
     @Test
     public void shouldReturn201Created() {
-        Animal animal = AnimalBuilder.random().build();
+        State state = getRandomState();
+        CreateAnimalRequest createAnimalRequest = createAnimalRequestBuilder.withState(state).build();
 
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animal)
+                     .bodyValue(createAnimalRequest)
                      .exchange()
                      .expectStatus()
                      .isCreated()
                      .expectBody(Animal.class)
-                     .consumeWith(animalEntityExchangeResult -> {
-                         Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
+                     .consumeWith(entity -> {
+                         Animal createdAnimal = entity.getResponseBody();
                          assertNotNull(createdAnimal);
-                         assertAll(
-                                 () -> assertNotNull(createdAnimal.getIdentifier()),
-                                 () -> assertNotNull(createdAnimal.getRegistrationDate()),
-                                 () -> assertEquals(animal.getClinicalRecord(), createdAnimal.getClinicalRecord()),
-                                 () -> assertEquals(animal.getName(), createdAnimal.getName()),
-                                 () -> assertEquals(animal.getSpecies(), createdAnimal.getSpecies()),
-                                 () -> assertEquals(animal.getEstimatedAge(), createdAnimal.getEstimatedAge()),
-                                 () -> assertThat(createdAnimal.getState(), instanceOf(animal.getState().getClass()))
-                         );
+                         assertNotNull(createdAnimal.getIdentifier());
+                         assertNotNull(createdAnimal.getRegistrationDate());
+                         assertThat(createdAnimal.getClinicalRecord(), is(clinicalRecord));
+                         assertThat(createdAnimal.getName(), is(name));
+                         assertThat(createdAnimal.getSpecies(), is(species));
+                         assertThat(createdAnimal.getSex(), is(sex));
+                         assertThat(createdAnimal.getEstimatedAge(), is(estimatedAge));
+                         Assertions.assertThat(createdAnimal.getState()).usingRecursiveComparison().isEqualTo(state);
                      });
     }
 
     @Test
     public void shouldReturn201CreatedSettingLookingForHumanAsDefaultStateWhenStateIsNotSent() {
-        Animal animal = AnimalBuilder.random().withState(null).build();
+        CreateAnimalRequest createAnimalRequest = createAnimalRequestBuilder.withState(null).build();
 
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animal)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .bodyValue(createAnimalRequest)
                      .exchange()
                      .expectStatus()
                      .isCreated()
                      .expectBody(Animal.class)
-                     .consumeWith(animalEntityExchangeResult -> {
-                         Animal createdAnimal = animalEntityExchangeResult.getResponseBody();
+                     .consumeWith(entity -> {
+                         Animal createdAnimal = entity.getResponseBody();
                          assertNotNull(createdAnimal);
                          assertNotNull(createdAnimal.getIdentifier());
                          assertNotNull(createdAnimal.getRegistrationDate());
-                         assertThat(createdAnimal.getClinicalRecord(), is(animal.getClinicalRecord()));
-                         assertThat(createdAnimal.getName(), is(animal.getName()));
-                         assertThat(createdAnimal.getSpecies(), is(animal.getSpecies()));
-                         assertThat(createdAnimal.getEstimatedAge(), is(animal.getEstimatedAge()));
-                         assertThat(createdAnimal.getState(), is(instanceOf(LookingForHuman.class)));
+                         assertThat(createdAnimal.getClinicalRecord(), is(clinicalRecord));
+                         assertThat(createdAnimal.getName(), is(name));
+                         assertThat(createdAnimal.getSpecies(), is(species));
+                         assertThat(createdAnimal.getSex(), is(sex));
+                         assertThat(createdAnimal.getEstimatedAge(), is(estimatedAge));
+                         Assertions.assertThat(createdAnimal.getState()).usingRecursiveComparison()
+                                   .isEqualTo(State.lookingForHuman());
                      });
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenJsonCannotBeParsed() {
-        Animal animal = AnimalBuilder.random().build();
-        String wrongRegistrationDate = randomAlphabetic(10);
-        String animalWithWrongData = "{\"clinicalRecord\":\"" + animal.getClinicalRecord() +
-                "\",\"name\":\"" + animal.getName() + "\",\"registrationDate\":\"" + wrongRegistrationDate +
-                "\",\"species\":\"" + animal.getSpecies() + "\",\"estimatedAge\":\"" + animal.getEstimatedAge() +
-                "\",\"sex\":\"12345\"}";
+    public void shouldReturn400BadRequestWhenJsonCannotBeParsed() throws JSONException {
+        String invalidSex = randomAlphabetic(10);
+        String createAnimalRequestWithWrongData = new JSONObject()
+                .put("clinicalRecord", clinicalRecord)
+                .put("name", name)
+                .put("species", species)
+                .put("estimatedAge", estimatedAge)
+                .put("sex", invalidSex)
+                .toString();
 
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animalWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(createAnimalRequestWithWrongData)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenMissingDataIsProvided() {
-        Animal animal = AnimalBuilder.random().build();
-        String animalWithMissingData = "{\"clinicalRecord\":\"\",\"name\":\"" + animal.getName() +
-                "\",\"species\":\"" + animal.getSpecies() + "\"}";
+    public void shouldReturn400BadRequestWhenMissingDataIsProvided() throws JSONException {
+        String createAnimalRequestWithMissingData = new JSONObject()
+                .put("clinicalRecord", clinicalRecord)
+                .put("name", name)
+                .put("species", species)
+                .toString();
 
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animalWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(createAnimalRequestWithMissingData)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
-        Animal animal = AnimalBuilder.random().build();
+        CreateAnimalRequest createAnimalRequest = createAnimalRequestBuilder.build();
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animal)
+                     .bodyValue(createAnimalRequest)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
                      .uri(CREATE_ANIMAL_ADMIN_URL)
-                     .bodyValue(animal)
+                     .bodyValue(createAnimalRequest)
                      .exchange()
                      .expectStatus()
                      .isEqualTo(CONFLICT)
-                     .expectBody(ApiError.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(CONFLICT.name())
+                     .jsonPath("$.message").isEqualTo("The resource already exists")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -167,11 +211,9 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isOk()
                      .expectBody(Animal.class)
-                     .consumeWith(animalEntityExchangeResult -> {
-                         Animal foundAnimal = animalEntityExchangeResult.getResponseBody();
-                         Assertions.assertThat(foundAnimal)
-                                   .usingRecursiveComparison()
-                                   .isEqualTo(createdAnimal);
+                     .consumeWith(entity -> {
+                         Animal foundAnimal = entity.getResponseBody();
+                         Assertions.assertThat(foundAnimal).usingRecursiveComparison().isEqualTo(createdAnimal);
                      });
     }
 
@@ -182,7 +224,10 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiError.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -196,8 +241,8 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isOk()
                      .expectBody(PagedEntity.class)
-                     .consumeWith(animalsEntityExchangeResult -> {
-                         var pagedEntity = animalsEntityExchangeResult.getResponseBody();
+                     .consumeWith(entity -> {
+                         var pagedEntity = entity.getResponseBody();
                          assertNotNull(pagedEntity);
                          assertThat(pagedEntity.isEmpty(), is(false));
                          assertThat(pagedEntity.getNumberOfElements(), is(2));
@@ -221,13 +266,13 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                     .uri(uri, state.getName(), species, physicalActivity, size)
+                     .uri(uri, state.getName().name(), species.name(), physicalActivity.name(), size.name())
                      .exchange()
                      .expectStatus()
                      .isOk()
                      .expectBody(PagedEntity.class)
-                     .consumeWith(animalsEntityExchangeResult -> {
-                         var pagedEntity = animalsEntityExchangeResult.getResponseBody();
+                     .consumeWith(entity -> {
+                         var pagedEntity = entity.getResponseBody();
                          assertNotNull(pagedEntity);
                          assertThat(pagedEntity.isEmpty(), is(false));
                          assertThat(pagedEntity.getNumberOfElements(), is(numberOfAnimals));
@@ -237,58 +282,26 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      });
     }
 
-    @Test
-    public void shouldReturn400BadRequestWhenStateIsInvalid() {
-        String invalidStateName = randomAlphabetic(10);
-        String uri = GET_ANIMALS_URL + "?state={state}&species=DOG&physicalActivity=LOW&animalSize=TINY&page=0&size=3";
+    @ParameterizedTest(name = "{index} returns BAD_REQUEST for filters [state: {0}, species: {1}, physicalActivity: {2}, size: {3}]")
+    @CsvSource(value = {"invalidState,DOG,LOW,TINY",
+                        "ADOPTED,invalidSpecies,HIGH,SMALL",
+                        "UNAVAILABLE,CAT,invalidPhysicalActivity,MEDIUM",
+                        "LOOKING_FOR_HUMAN,DOG,MEDIUM,invalidSize"},
+               delimiter = ',')
+    public void shouldReturn400BadRequestWhenFilterIsInvalid(final String state,
+                                                             final String species,
+                                                             final String physicalActivity,
+                                                             final String size) {
+        String uri = GET_ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
+                "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                     .uri(uri, invalidStateName)
+                     .uri(uri, state, species, physicalActivity, size)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
-    }
-
-    @Test
-    public void shouldReturn400BadRequestWhenSpeciesIsInvalid() {
-        String invalidSpecies = randomAlphabetic(10);
-        String uri = GET_ANIMALS_URL + "?state=adopted&species={species}&physicalActivity=LOW&animalSize=TINY&page=0&size=3";
-
-        webTestClient.get()
-                     .uri(uri, invalidSpecies)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
-    }
-
-    @Test
-    public void shouldReturn400BadRequestWhenPhysicalActivityIsInvalid() {
-        String invalidPhysicalActivity = randomAlphabetic(10);
-        String uri = GET_ANIMALS_URL + "?state=adopted&species=CAT&physicalActivity={physicalActivity}" +
-                "&animalSize=TINY&page=0&size=3";
-
-        webTestClient.get()
-                     .uri(uri, invalidPhysicalActivity)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
-    }
-
-    @Test
-    public void shouldReturn400BadRequestWhenAnimalSizeIsInvalid() {
-        String invalidAnimalSize = randomAlphabetic(10);
-        String uri = GET_ANIMALS_URL + "?state=adopted&species=CAT&physicalActivity=LOW&animalSize={animalSize}" +
-                "&page=0&size=3";
-
-        webTestClient.get()
-                     .uri(uri, invalidAnimalSize)
-                     .exchange()
-                     .expectStatus()
-                     .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody()
+                     .isEmpty();
     }
 
     private void createAnimalWith(final State state,

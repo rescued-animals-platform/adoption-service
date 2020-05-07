@@ -32,7 +32,7 @@ public class Entity {
     @JsonProperty("registrationDate")
     private final LocalDateTime registrationDate;
 
-    protected Entity(final UUID identifier, final LocalDateTime registrationDate) {
+    public Entity(final UUID identifier, final LocalDateTime registrationDate) {
         this.identifier = identifier;
         this.registrationDate = registrationDate;
     }

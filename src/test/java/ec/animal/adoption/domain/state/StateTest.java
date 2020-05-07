@@ -19,79 +19,123 @@
 
 package ec.animal.adoption.domain.state;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.TestUtils;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateTest {
 
-    @ParameterizedTest(name = "{index} \"{0}\" is a valid state name")
-    @ValueSource(strings = {"lookingForHuman",
-                            "LookingForHuman",
-                            "Looking for human",
-                            "looking for human",
-                            "LOOKING_FOR_HUMAN",
-                            "looking_for_human",
-                            "adopted",
-                            "Adopted",
-                            "ADOPTED",
-                            "unavailable",
-                            "Unavailable",
-                            "UNAVAILABLE"})
-    public void shouldReturnTrueForValidStateNames(final String stateName) {
-        assertTrue(State.isStateNameValid(stateName));
-    }
+    private static final String ESCAPED_ADOPTED_DETAILS = "\"adoptedDetails\":";
+    private static final String ESCAPED_UNAVAILABLE_DETAILS = "\"unavailableDetails\":";
+    private String adoptionFormId;
+    private String notes;
 
-    @ParameterizedTest(name = "{index} \"{0}\" is an invalid state name")
-    @ValueSource(strings = {"LoOking_For_HuMan",
-                            "Un-available",
-                            "akshudbjw27367",
-                            "anyOther",
-                            ""})
-    public void shouldReturnFalseForInvalidStateNames(final String stateName) {
-        assertFalse(State.isStateNameValid(stateName));
+    @BeforeEach
+    void setUp() {
+        adoptionFormId = randomAlphabetic(10);
+        notes = randomAlphabetic(10);
     }
 
     @Test
-    void shouldReturnNullForNullStateName() {
-        assertNull(State.normalize(null));
+    void shouldBuildLookingForHumanState() {
+        State expectedState = State.lookingForHuman();
+
+        State state = State.from(StateName.LOOKING_FOR_HUMAN, adoptionFormId, notes);
+
+        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
     }
 
-    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"lookingForHuman\"")
-    @ValueSource(strings = {"lookingForHuman",
-                            "LookingForHuman",
-                            "Looking for human",
-                            "looking for human",
-                            "LOOKING_FOR_HUMAN",
-                            "looking_for_human"})
-    void shouldReturnLookingForHumanNormalizedName(final String stateName) {
-        assertEquals("lookingForHuman", State.normalize(stateName));
+    @Test
+    void shouldBuildAdoptedState() {
+        State expectedState = State.adopted(adoptionFormId);
+
+        State state = State.from(StateName.ADOPTED, adoptionFormId, notes);
+
+        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
     }
 
-    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"adopted\"")
-    @ValueSource(strings = {"adopted", "Adopted", "ADOPTED"})
-    void shouldReturnAdoptedNormalizedName(final String stateName) {
-        assertEquals("adopted", State.normalize(stateName));
+    @Test
+    void shouldBuildUnavailableState() {
+        State expectedState = State.unavailable(notes);
+
+        State state = State.from(StateName.UNAVAILABLE, adoptionFormId, notes);
+
+        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
     }
 
-    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"unavailable\"")
-    @ValueSource(strings = {"unavailable", "Unavailable", "UNAVAILABLE"})
-    void shouldReturnUnavailableNormalizedName(final String stateName) {
-        assertEquals("unavailable", State.normalize(stateName));
+    @Test
+    void shouldReturnEmptyAdoptionFormId() {
+        assertTrue(State.lookingForHuman().getAdoptionFormId().isEmpty());
+        assertTrue(State.unavailable(randomAlphabetic(10)).getAdoptionFormId().isEmpty());
+        assertTrue(State.adopted(null).getAdoptionFormId().isEmpty());
     }
 
-    @ParameterizedTest(name = "{index} \"{0}\" is normalized to \"null\"")
-    @ValueSource(strings = {"LoOking_For_HuMan",
-                            "Un-available",
-                            "akshudbjw27367",
-                            "anyOther",
-                            ""})
-    void shouldReturnNullForUnrecognizedStateName(final String stateName) {
-        assertNull(State.normalize(stateName));
+    @Test
+    void shouldReturnEmptyNotes() {
+        assertTrue(State.lookingForHuman().getNotes().isEmpty());
+        assertTrue(State.adopted(randomAlphabetic(10)).getNotes().isEmpty());
+    }
+
+    @Test
+    void shouldBeSerializableAsLookingForHumanState() throws JsonProcessingException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        State state = State.lookingForHuman();
+
+        String stateAsJson = objectMapper.writeValueAsString(state);
+
+        assertTrue(stateAsJson.contains("\"name\":\"Looking for human\""));
+        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
+        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
+        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
+        assertFalse(stateAsJson.contains("\"notes\":"));
+    }
+
+    @Test
+    void shouldBeSerializableAsAdoptedStateWithAdoptionFormId() throws JsonProcessingException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        State state = State.adopted(adoptionFormId);
+
+        String stateAsJson = objectMapper.writeValueAsString(state);
+
+        assertTrue(stateAsJson.contains("\"name\":\"Adopted\""));
+        assertTrue(stateAsJson.contains(String.format("\"adoptionFormId\":\"%s\"", adoptionFormId)));
+        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
+        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
+        assertFalse(stateAsJson.contains("\"notes\":"));
+    }
+
+    @Test
+    void shouldBeSerializableAsAdoptedStateWithoutAdoptionFormId() throws JsonProcessingException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        State state = State.adopted(null);
+
+        String stateAsJson = objectMapper.writeValueAsString(state);
+
+        assertTrue(stateAsJson.contains("\"name\":\"Adopted\""));
+        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
+        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
+        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
+        assertFalse(stateAsJson.contains("\"notes\":"));
+    }
+
+    @Test
+    void shouldBeSerializableAsUnavailableState() throws JsonProcessingException {
+        ObjectMapper objectMapper = TestUtils.getObjectMapper();
+        State state = State.unavailable(notes);
+
+        String stateAsJson = objectMapper.writeValueAsString(state);
+
+        assertTrue(stateAsJson.contains("\"name\":\"Unavailable\""));
+        assertTrue(stateAsJson.contains(String.format("\"notes\":\"%s\"", notes)));
+        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
+        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
+        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
     }
 }

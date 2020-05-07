@@ -21,8 +21,7 @@ package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Docility {
     VERY_DOCILE("Very docile"),
@@ -31,6 +30,7 @@ public enum Docility {
     DOMINANT("Dominant"),
     VERY_DOMINANT("Very dominant");
 
+    @JsonValue
     private final String name;
 
     Docility(final String name) {
@@ -40,18 +40,13 @@ public enum Docility {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Docility forValue(final String value) {
-        try {
-            return Docility.valueOf(value);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(Docility.values())
-                         .filter(e -> e.getName().equals(value))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (Docility) EnumUtils.forValue(value)
+                                   .apply(Docility.values())
+                                   .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

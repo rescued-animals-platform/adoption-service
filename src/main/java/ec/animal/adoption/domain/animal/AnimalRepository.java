@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
@@ -29,13 +30,15 @@ import java.util.UUID;
 
 public interface AnimalRepository {
 
+    Animal create(final CreateAnimalDto createAnimalDto);
+
     Animal save(final Animal animal);
 
     Animal getBy(final UUID animalId);
 
     Animal getBy(final UUID animalId, final Organization organization);
 
-    boolean exists(final Animal animal);
+    boolean exists(final String clinicalRecord, final UUID organizationId);
 
     PagedEntity<Animal> getAllFor(final Organization organization, final Pageable pageable);
 

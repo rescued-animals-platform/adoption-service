@@ -49,21 +49,21 @@ public class StoryService {
             LOGGER.info("A story already exists for animal {}", animalId);
             throw new EntityAlreadyExistsException();
         });
-        animal.setStory(story);
 
-        return animalRepository.save(animal).getStory().orElseThrow();
+        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animal).with(story).build();
+        return animalRepository.save(animalWithStory).getStory().orElseThrow();
     }
 
     public Story updateFor(final UUID animalId, final Organization organization, final Story story) {
         Animal animal = animalRepository.getBy(animalId, organization);
 
-        if (animal.getStory().isEmpty()) {
-            LOGGER.info("Can't update a non-existent story for animal {}", animalId);
-            throw new EntityNotFoundException();
+        if (animal.has(story)) {
+            LOGGER.info("Attempt to update animal {} with the same story it already has", animalId);
+            return story;
         }
 
-        animal.updateStory(story);
-        return animalRepository.save(animal).getStory().orElseThrow();
+        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animal).with(story).build();
+        return animalRepository.save(animalWithStory).getStory().orElseThrow();
     }
 
     public Story getBy(final UUID animalId) {

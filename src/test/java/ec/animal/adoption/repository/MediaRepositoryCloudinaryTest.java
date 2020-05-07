@@ -21,8 +21,8 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import ec.animal.adoption.builders.ImagePictureBuilder;
-import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.ImagePictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;

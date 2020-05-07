@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.builders.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;

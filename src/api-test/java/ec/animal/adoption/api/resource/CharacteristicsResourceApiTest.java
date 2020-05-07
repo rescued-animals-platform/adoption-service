@@ -20,7 +20,7 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;

@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +51,7 @@ class SexTest {
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
     void shouldReturnExpectedNameForSex(final Sex sex, final String expectedName) {
-        assertEquals(expectedName, sex.getName());
+        assertEquals(expectedName, sex.toString());
     }
 
     @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
@@ -63,6 +82,34 @@ class SexTest {
         assertEquals(sex, deSerializedSex);
     }
 
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedNamesForSex() {
+        return Stream.of(
+                Arguments.of(Sex.MALE, "Male"),
+                Arguments.of(Sex.FEMALE, "Female")
+        );
+    }
+
+    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
+    @MethodSource("expectedNamesWithSpacesForSex")
+    void shouldTrimSpacesInValueBeforeDeSerializing(final Sex sex, final String nameWithSpaces) throws JsonProcessingException {
+        String sexWithSpacesAsJson = JSONObject.quote(nameWithSpaces);
+
+        Sex deSerializedSex = objectMapper.readValue(sexWithSpacesAsJson, Sex.class);
+
+        assertEquals(sex, deSerializedSex);
+    }
+
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedNamesWithSpacesForSex() {
+        return Stream.of(
+                Arguments.of(Sex.MALE, " Male "),
+                Arguments.of(Sex.MALE, " MALE   "),
+                Arguments.of(Sex.FEMALE, "   Female"),
+                Arguments.of(Sex.FEMALE, "FEMALE ")
+        );
+    }
+
     @Test
     void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
         String invalidSexAsJson = JSONObject.quote(randomAlphabetic(10));
@@ -71,13 +118,5 @@ class SexTest {
             objectMapper.readValue(invalidSexAsJson, Sex.class);
         });
         assertTrue(exception.getCause() instanceof IllegalArgumentException);
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForSex() {
-        return Stream.of(
-                Arguments.of(Sex.MALE, "Male"),
-                Arguments.of(Sex.FEMALE, "Female")
-        );
     }
 }

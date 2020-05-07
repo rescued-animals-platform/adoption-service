@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static ec.animal.adoption.builders.AnimalBuilder.DEFAULT_ORGANIZATION_ID;
+import static ec.animal.adoption.domain.organization.OrganizationBuilder.DEFAULT_ORGANIZATION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -25,42 +25,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.state.LookingForHuman;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
+import org.springframework.lang.NonNull;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("PMD.DataClass")
+@SuppressWarnings({"PMD.DataClass", "PMD.NullAssignment", "PMD.ExcessiveParameterList"})
 public class Animal extends Entity {
 
-    @NotEmpty(message = "Animal clinical record is required")
     @JsonProperty("clinicalRecord")
     private final String clinicalRecord;
 
-    @Size(min = 1, message = "Animal name must be a non-empty string")
-    @Pattern(regexp = "^(?!\\s*$).+$", message = "Animal name must be a non-empty string")
     @JsonProperty("name")
     private final String name;
 
-    @NotNull(message = "Animal species is required")
     @JsonProperty("species")
     private final Species species;
 
-    @NotNull(message = "Animal estimated age is required")
     @JsonProperty("estimatedAge")
     private final EstimatedAge estimatedAge;
 
-    @NotNull(message = "Animal sex is required")
     @JsonProperty("sex")
     private final Sex sex;
 
@@ -68,45 +56,26 @@ public class Animal extends Entity {
     private final State state;
 
     @JsonProperty(value = "primaryLinkPicture", access = JsonProperty.Access.READ_ONLY)
-    private LinkPicture primaryLinkPicture;
+    private final LinkPicture primaryLinkPicture;
 
     @JsonProperty(value = "characteristics", access = JsonProperty.Access.READ_ONLY)
-    private Characteristics characteristics;
+    private final Characteristics characteristics;
 
     @JsonProperty(value = "story", access = JsonProperty.Access.READ_ONLY)
-    private Story story;
+    private final Story story;
 
     @JsonIgnore
-    private Organization organization;
+    private final Organization organization;
 
     @JsonCreator
-    private Animal(
-            @JsonProperty("clinicalRecord") final String clinicalRecord,
-            @JsonProperty("name") final String name,
-            @JsonProperty("species") final Species species,
-            @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-            @JsonProperty("sex") final Sex sex,
-            @JsonProperty("state") final State state
-    ) {
-        super(null, null);
-        this.clinicalRecord = clinicalRecord;
-        this.name = name;
-        this.species = species;
-        this.estimatedAge = estimatedAge;
-        this.sex = sex;
-        this.state = Objects.requireNonNullElseGet(state, () -> new LookingForHuman(LocalDateTime.now()));
-    }
-
-    public Animal(
-            final UUID animalId,
-            final LocalDateTime registrationDate,
-            final String clinicalRecord,
-            final String name,
-            final Species species,
-            final EstimatedAge estimatedAge,
-            final Sex sex,
-            final State state
-    ) {
+    private Animal(@JsonProperty("id") @NonNull final UUID animalId,
+                   @JsonProperty("registrationDate") @NonNull final LocalDateTime registrationDate,
+                   @JsonProperty("clinicalRecord") final String clinicalRecord,
+                   @JsonProperty("name") final String name,
+                   @JsonProperty("species") final Species species,
+                   @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
+                   @JsonProperty("sex") final Sex sex,
+                   @JsonProperty("state") final State state) {
         super(animalId, registrationDate);
         this.clinicalRecord = clinicalRecord;
         this.name = name;
@@ -114,6 +83,44 @@ public class Animal extends Entity {
         this.estimatedAge = estimatedAge;
         this.sex = sex;
         this.state = state;
+        this.primaryLinkPicture = null;
+        this.characteristics = null;
+        this.story = null;
+        this.organization = null;
+    }
+
+    public Animal(@NonNull final UUID animalId,
+                  @NonNull final LocalDateTime registrationDate,
+                  final String clinicalRecord,
+                  final String name,
+                  final Species species,
+                  final EstimatedAge estimatedAge,
+                  final Sex sex,
+                  final State state,
+                  final LinkPicture primaryLinkPicture,
+                  final Characteristics characteristics,
+                  final Story story,
+                  final Organization organization) {
+        super(animalId, registrationDate);
+
+        if (primaryLinkPicture != null && !primaryLinkPicture.isPrimary()) {
+            throw new IllegalArgumentException("Picture type should be PRIMARY");
+        }
+
+        this.clinicalRecord = clinicalRecord;
+        this.name = name;
+        this.species = species;
+        this.estimatedAge = estimatedAge;
+        this.sex = sex;
+        this.state = state;
+        this.primaryLinkPicture = primaryLinkPicture;
+        this.characteristics = characteristics;
+        this.story = story;
+        this.organization = organization;
+    }
+
+    public boolean has(final Story story) {
+        return this.story != null && this.story.equals(story);
     }
 
     public String getClinicalRecord() {
@@ -142,39 +149,19 @@ public class Animal extends Entity {
 
     @JsonIgnore
     public String getStateName() {
-        return state.getName();
-    }
-
-    public void setPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
-        if (!PictureType.PRIMARY.equals(primaryLinkPicture.getPictureType())) {
-            throw new IllegalArgumentException("Picture type should be PRIMARY");
-        }
-
-        this.primaryLinkPicture = primaryLinkPicture;
+        return state.getName().name();
     }
 
     public Optional<LinkPicture> getPrimaryLinkPicture() {
         return Optional.ofNullable(primaryLinkPicture);
     }
 
-    public void setCharacteristics(final Characteristics characteristics) {
-        this.characteristics = characteristics;
-    }
-
     public Optional<Characteristics> getCharacteristics() {
         return Optional.ofNullable(characteristics);
     }
 
-    public void setStory(final Story story) {
-        this.story = story;
-    }
-
     public Optional<Story> getStory() {
         return Optional.ofNullable(story);
-    }
-
-    public void setOrganization(final Organization organization) {
-        this.organization = organization;
     }
 
     public Organization getOrganization() {
@@ -184,10 +171,6 @@ public class Animal extends Entity {
     @JsonIgnore
     public UUID getOrganizationId() {
         return this.organization.getOrganizationId();
-    }
-
-    public void updateStory(final Story story) {
-        this.setStory(this.story.updateWith(story));
     }
 
     @Override
@@ -250,5 +233,79 @@ public class Animal extends Entity {
         result = 31 * result + (story != null ? story.hashCode() : 0);
         result = 31 * result + (organization != null ? organization.hashCode() : 0);
         return result;
+    }
+
+    public static class AnimalBuilder {
+
+        private UUID animalId;
+        private LocalDateTime registrationDate;
+        private String clinicalRecord;
+        private String name;
+        private Species species;
+        private EstimatedAge estimatedAge;
+        private Sex sex;
+        private State state;
+        private LinkPicture primaryLinkPicture;
+        private Characteristics characteristics;
+        private Story story;
+        private Organization organization;
+
+        public static AnimalBuilder copyOf(final Animal animal) {
+            AnimalBuilder animalBuilder = new AnimalBuilder();
+            animalBuilder.animalId = animal.getIdentifier();
+            animalBuilder.registrationDate = animal.getRegistrationDate();
+            animalBuilder.clinicalRecord = animal.clinicalRecord;
+            animalBuilder.name = animal.name;
+            animalBuilder.species = animal.species;
+            animalBuilder.estimatedAge = animal.estimatedAge;
+            animalBuilder.sex = animal.sex;
+            animalBuilder.state = animal.state;
+            animalBuilder.primaryLinkPicture = animal.primaryLinkPicture;
+            animalBuilder.characteristics = animal.characteristics;
+            animalBuilder.story = animal.story;
+            animalBuilder.organization = animal.organization;
+
+            return animalBuilder;
+        }
+
+        public AnimalBuilder with(final Organization organization) {
+            this.organization = organization;
+            return this;
+        }
+
+        public AnimalBuilder with(final LinkPicture primaryLinkPicture) {
+            this.primaryLinkPicture = primaryLinkPicture;
+            return this;
+        }
+
+        public AnimalBuilder with(final Characteristics characteristics) {
+            this.characteristics = characteristics;
+            return this;
+        }
+
+        public AnimalBuilder with(final Story story) {
+            if (this.story == null) {
+                this.story = story;
+            } else {
+                this.story = this.story.updateWith(story);
+            }
+
+            return this;
+        }
+
+        public Animal build() {
+            return new Animal(animalId,
+                              registrationDate,
+                              clinicalRecord,
+                              name,
+                              species,
+                              estimatedAge,
+                              sex,
+                              state,
+                              primaryLinkPicture,
+                              characteristics,
+                              story,
+                              organization);
+        }
     }
 }

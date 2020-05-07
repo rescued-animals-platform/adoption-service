@@ -22,7 +22,6 @@ package ec.animal.adoption.domain.media;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.builders.LinkPictureBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LinkPictureTest {
 
@@ -54,6 +55,24 @@ public class LinkPictureTest {
         assertThat(linkPicture.getPictureType(), is(pictureType));
         assertThat(linkPicture.getLargeImageUrl(), is(largeImageUrl));
         assertThat(linkPicture.getSmallImageUrl(), is(smallImageUrl));
+    }
+
+    @Test
+    void shouldReturnTrueWhenItIsPrimary() {
+        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+
+        boolean isPrimary = linkPicture.isPrimary();
+
+        assertTrue(isPrimary);
+    }
+
+    @Test
+    void shouldReturnTrueWhenItIsNotPrimary() {
+        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
+
+        boolean isPrimary = linkPicture.isPrimary();
+
+        assertFalse(isPrimary);
     }
 
     @Test

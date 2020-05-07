@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.builders.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import nl.jqno.equalsverifier.EqualsVerifier;

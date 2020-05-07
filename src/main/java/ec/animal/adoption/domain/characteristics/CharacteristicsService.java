@@ -47,8 +47,8 @@ public class CharacteristicsService {
             throw new EntityAlreadyExistsException();
         });
 
-        animal.setCharacteristics(characteristics);
-        return animalRepository.save(animal).getCharacteristics().orElseThrow();
+        Animal animalWithCharacteristics = Animal.AnimalBuilder.copyOf(animal).with(characteristics).build();
+        return animalRepository.save(animalWithCharacteristics).getCharacteristics().orElseThrow();
     }
 
     public Characteristics getBy(final UUID animalId) {

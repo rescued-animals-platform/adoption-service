@@ -76,6 +76,10 @@ public class LinkPicture extends Entity {
         return name;
     }
 
+    public boolean isPrimary() {
+        return PictureType.PRIMARY.equals(pictureType);
+    }
+
     public PictureType getPictureType() {
         return pictureType;
     }

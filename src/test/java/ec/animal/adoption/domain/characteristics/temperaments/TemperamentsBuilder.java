@@ -17,12 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.builders;
-
-import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+package ec.animal.adoption.domain.characteristics.temperaments;
 
 import static ec.animal.adoption.TestUtils.getRandomBalance;
 import static ec.animal.adoption.TestUtils.getRandomDocility;

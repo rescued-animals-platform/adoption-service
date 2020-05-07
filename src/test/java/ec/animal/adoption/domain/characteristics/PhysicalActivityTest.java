@@ -1,3 +1,22 @@
+/*
+    Copyright © 2018 Luisa Emme
+
+    This file is part of Adoption Service in the Rescued Animals Platform.
+
+    Adoption Service is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Adoption Service is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +51,7 @@ class PhysicalActivityTest {
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD)
     void shouldReturnExpectedNameForPhysicalActivity(final PhysicalActivity physicalActivity, final String expectedName) {
-        assertEquals(expectedName, physicalActivity.getName());
+        assertEquals(expectedName, physicalActivity.toString());
     }
 
     @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
@@ -63,6 +82,37 @@ class PhysicalActivityTest {
         assertEquals(physicalActivity, deSerializedPhysicalActivity);
     }
 
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedNamesForPhysicalActivity() {
+        return Stream.of(
+                Arguments.of(PhysicalActivity.HIGH, "High"),
+                Arguments.of(PhysicalActivity.MEDIUM, "Medium"),
+                Arguments.of(PhysicalActivity.LOW, "Low")
+        );
+    }
+
+    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
+    @MethodSource("expectedNamesWithSpacesForPhysicalActivity")
+    void shouldTrimSpacesInValueBeforeDeSerializing(final PhysicalActivity physicalActivity, final String nameWithSpaces) throws JsonProcessingException {
+        String physicalActivityWithSpacesAsJson = JSONObject.quote(nameWithSpaces);
+
+        PhysicalActivity deSerializedPhysicalActivity = objectMapper.readValue(physicalActivityWithSpacesAsJson, PhysicalActivity.class);
+
+        assertEquals(physicalActivity, deSerializedPhysicalActivity);
+    }
+
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedNamesWithSpacesForPhysicalActivity() {
+        return Stream.of(
+                Arguments.of(PhysicalActivity.LOW, " Low "),
+                Arguments.of(PhysicalActivity.LOW, " LOW   "),
+                Arguments.of(PhysicalActivity.MEDIUM, "   Medium"),
+                Arguments.of(PhysicalActivity.MEDIUM, "MEDIUM "),
+                Arguments.of(PhysicalActivity.HIGH, "HIGH "),
+                Arguments.of(PhysicalActivity.HIGH, "    High ")
+        );
+    }
+
     @Test
     void shouldThrowValueInstantiationExceptionCausedByIllegalArgumentExceptionWhenCanNotDeSerializeFromValue() {
         String invalidPhysicalActivityAsJson = JSONObject.quote(randomAlphabetic(10));
@@ -71,14 +121,5 @@ class PhysicalActivityTest {
             objectMapper.readValue(invalidPhysicalActivityAsJson, PhysicalActivity.class);
         });
         assertTrue(exception.getCause() instanceof IllegalArgumentException);
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForPhysicalActivity() {
-        return Stream.of(
-                Arguments.of(PhysicalActivity.HIGH, "High"),
-                Arguments.of(PhysicalActivity.MEDIUM, "Medium"),
-                Arguments.of(PhysicalActivity.LOW, "Low")
-        );
     }
 }

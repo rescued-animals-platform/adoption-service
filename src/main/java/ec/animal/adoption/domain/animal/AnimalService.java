@@ -21,11 +21,12 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.state.StateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,12 +43,12 @@ public class AnimalService {
         this.animalRepository = animalRepository;
     }
 
-    public Animal create(final Animal animal) {
-        if (animalRepository.exists(animal)) {
+    public Animal create(final CreateAnimalDto createAnimalDto) {
+        if (animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId())) {
             throw new EntityAlreadyExistsException();
         }
 
-        return animalRepository.save(animal);
+        return animalRepository.create(createAnimalDto);
     }
 
     public Animal getBy(final UUID animalId, final Organization organization) {
@@ -58,13 +59,12 @@ public class AnimalService {
         return animalRepository.getAllFor(organization, pageable);
     }
 
-    public PagedEntity<AnimalDto> listAllWithFilters(final String stateName,
+    public PagedEntity<AnimalDto> listAllWithFilters(final StateName stateName,
                                                      final Species species,
                                                      final PhysicalActivity physicalActivity,
                                                      final Size size,
                                                      final Pageable pageable) {
-        String normalizedStateName = State.normalize(stateName);
-        return animalRepository.getAllBy(normalizedStateName, species, physicalActivity, size, pageable)
+        return animalRepository.getAllBy(stateName.name(), species, physicalActivity, size, pageable)
                                .map(AnimalDto::new);
     }
 }

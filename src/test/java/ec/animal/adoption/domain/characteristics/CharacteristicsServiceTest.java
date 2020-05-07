@@ -19,9 +19,8 @@
 
 package ec.animal.adoption.domain.characteristics;
 
-import ec.animal.adoption.builders.AnimalBuilder;
-import ec.animal.adoption.builders.CharacteristicsBuilder;
-import ec.animal.adoption.builders.OrganizationBuilder;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;

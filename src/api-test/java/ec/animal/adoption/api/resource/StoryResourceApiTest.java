@@ -20,9 +20,9 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.builders.StoryBuilder;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.story.StoryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -142,6 +142,23 @@ public class StoryResourceApiTest extends AbstractApiTest {
     }
 
     @Test
+    public void shouldReturn200OkWhenUpdatingStoryBeforeCreatingOne() {
+        Story story = StoryBuilder.random().build();
+
+        webTestClient.put()
+                     .uri(STORY_ADMIN_URL, animalId)
+                     .bodyValue(story)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(Story.class)
+                     .consumeWith(storyEntityExchangeResult -> {
+                         Story updatedStory = storyEntityExchangeResult.getResponseBody();
+                         assertEquals(story, updatedStory);
+                     });
+    }
+
+    @Test
     public void shouldReturn400BadRequestWhenUpdatingAStoryAndJsonCannotBeParsed() {
         String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
 
@@ -166,17 +183,6 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
-    }
-
-    @Test
-    public void shouldReturn404NotFoundWhenUpdatingStoryBeforeCreatingOne() {
-        webTestClient.put()
-                     .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(StoryBuilder.random().build())
-                     .exchange()
-                     .expectStatus()
-                     .isNotFound()
                      .expectBody(ApiError.class);
     }
 

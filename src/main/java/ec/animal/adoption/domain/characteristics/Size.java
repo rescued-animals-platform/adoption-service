@@ -21,6 +21,7 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.stream.Stream;
 
@@ -36,11 +37,12 @@ public enum Size {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Size forValue(final String value) {
+        String normalizedValue = StringUtils.trimToEmpty(value);
         try {
-            return Size.valueOf(value);
+            return Size.valueOf(normalizedValue);
         } catch (IllegalArgumentException ex) {
             return Stream.of(Size.values())
-                         .filter(e -> e.getName().equals(value))
+                         .filter(e -> e.getName().equals(normalizedValue))
                          .findFirst()
                          .orElseThrow(() -> ex);
         }

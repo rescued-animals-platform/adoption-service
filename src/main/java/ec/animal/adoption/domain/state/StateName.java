@@ -20,20 +20,29 @@
 package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
-import java.time.LocalDateTime;
+public enum StateName {
+    LOOKING_FOR_HUMAN("Looking for human"),
+    ADOPTED("Adopted"),
+    UNAVAILABLE("Unavailable");
 
-public class LookingForHuman extends State {
+    private final String name;
 
-    private transient static final long serialVersionUID = -612446656134428617L;
-
-    @JsonProperty("name")
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.FinalFieldCouldBeStatic"})
-    private final String name = "Looking for human";
+    StateName(final String name) {
+        this.name = name;
+    }
 
     @JsonCreator
-    public LookingForHuman(@JsonProperty("date") final LocalDateTime date) {
-        super(date);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static StateName forValue(final String value) {
+        return (StateName) EnumUtils.forValue(value)
+                                    .apply(StateName.values())
+                                    .orElseThrow(IllegalArgumentException::new);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

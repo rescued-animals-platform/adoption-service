@@ -2,6 +2,7 @@ CREATE TABLE characteristics (
   id UUID PRIMARY KEY,
   animal_id UUID NOT NULL UNIQUE,
   registration_date TIMESTAMP DEFAULT current_timestamp,
+  last_updated_at TIMESTAMP DEFAULT current_timestamp,
   size VARCHAR(7) NOT NULL,
   physical_activity VARCHAR(6) NOT NULL,
   sociability VARCHAR(24),

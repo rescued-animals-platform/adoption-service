@@ -20,19 +20,22 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
-import ec.animal.adoption.validator.ValidStateName;
+import ec.animal.adoption.domain.state.StateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
@@ -47,8 +50,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.UUID;
 
-@RestController
 @Validated
+@RestController
 public class AnimalResource {
 
     private final AnimalService animalService;
@@ -64,14 +67,14 @@ public class AnimalResource {
         this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping("/admin/animals")
+    @PostMapping(value = "/admin/animals", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Animal create(@RequestBody @Valid final Animal animal,
+    public Animal create(@RequestBody @Valid final CreateAnimalRequest createAnimalRequest,
                          @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        animal.setOrganization(organization);
-        return animalService.create(animal);
+        CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
+        return animalService.create(createAnimalDto);
     }
 
     @GetMapping("/admin/animals/{id}")
@@ -92,7 +95,7 @@ public class AnimalResource {
 
     @GetMapping("/animals")
     public PagedEntity<AnimalDto> listAllWithFilters(
-            @RequestParam("state") @ValidStateName final String stateName,
+            @RequestParam("state") final StateName stateName,
             @RequestParam("species") final Species species,
             @RequestParam("physicalActivity") final PhysicalActivity physicalActivity,
             @RequestParam("animalSize") final Size size,
