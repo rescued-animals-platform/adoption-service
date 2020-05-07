@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
@@ -59,12 +58,11 @@ public class AnimalService {
         return animalRepository.getAllFor(organization, pageable);
     }
 
-    public PagedEntity<AnimalDto> listAllWithFilters(final StateName stateName,
-                                                     final Species species,
-                                                     final PhysicalActivity physicalActivity,
-                                                     final Size size,
-                                                     final Pageable pageable) {
-        return animalRepository.getAllBy(stateName.name(), species, physicalActivity, size, pageable)
-                               .map(AnimalDto::new);
+    public PagedEntity<Animal> listAllWithFilters(final StateName stateName,
+                                                  final Species species,
+                                                  final PhysicalActivity physicalActivity,
+                                                  final Size size,
+                                                  final Pageable pageable) {
+        return animalRepository.getAllBy(stateName.name(), species, physicalActivity, size, pageable);
     }
 }

@@ -33,7 +33,7 @@ import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CreateStateResponseTest {
+class StateResponseTest {
 
     private ObjectMapper objectMapper;
 
@@ -45,9 +45,9 @@ class CreateStateResponseTest {
     @Test
     void shouldBeSerializableForLookingForHumanStateResponse() throws JsonProcessingException {
         State state = State.lookingForHuman();
-        CreateStateResponse createStateResponse = CreateStateResponse.from(state);
+        StateResponse stateResponse = StateResponse.from(state);
 
-        String createStateResponseAsJson = objectMapper.writeValueAsString(createStateResponse);
+        String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
         assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
     }
@@ -56,9 +56,9 @@ class CreateStateResponseTest {
     void shouldBeSerializableForAdoptedStateResponse() throws JsonProcessingException {
         String adoptionFormId = randomAlphabetic(10);
         State state = State.adopted(adoptionFormId);
-        CreateStateResponse createStateResponse = CreateStateResponse.from(state);
+        StateResponse stateResponse = StateResponse.from(state);
 
-        String createStateResponseAsJson = objectMapper.writeValueAsString(createStateResponse);
+        String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
         assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
         assertTrue(createStateResponseAsJson.contains(String.format("\"adoptionFormId\":\"%s\"", adoptionFormId)));
@@ -68,9 +68,9 @@ class CreateStateResponseTest {
     void shouldBeSerializableForUnavailableStateResponse() throws JsonProcessingException {
         String notes = randomAlphabetic(10);
         State state = State.unavailable(notes);
-        CreateStateResponse createStateResponse = CreateStateResponse.from(state);
+        StateResponse stateResponse = StateResponse.from(state);
 
-        String createStateResponseAsJson = objectMapper.writeValueAsString(createStateResponse);
+        String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
         assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
         assertTrue(createStateResponseAsJson.contains(String.format("\"notes\":\"%s\"", notes)));
@@ -79,15 +79,15 @@ class CreateStateResponseTest {
     @Test
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         State state = getRandomState();
-        CreateStateResponse expectedCreateStateResponse = CreateStateResponse.from(state);
+        StateResponse expectedStateResponse = StateResponse.from(state);
         String createStateResponseAsJson = new JSONObject()
                 .put("name", state.getName().toString())
                 .put("adoptionFormId", state.getAdoptionFormId().orElse(null))
                 .put("notes", state.getNotes().orElse(null))
                 .toString();
 
-        CreateStateResponse createStateResponse = objectMapper.readValue(createStateResponseAsJson, CreateStateResponse.class);
+        StateResponse stateResponse = objectMapper.readValue(createStateResponseAsJson, StateResponse.class);
 
-        Assertions.assertThat(createStateResponse).usingRecursiveComparison().isEqualTo(expectedCreateStateResponse);
+        Assertions.assertThat(stateResponse).usingRecursiveComparison().isEqualTo(expectedStateResponse);
     }
 }

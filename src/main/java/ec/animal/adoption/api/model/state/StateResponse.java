@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.state.State;
 
 @SuppressWarnings("PMD")
-public class CreateStateResponse {
+public class StateResponse {
 
     @JsonProperty("name")
     private final String name;
@@ -36,17 +36,17 @@ public class CreateStateResponse {
     private final String notes;
 
     @JsonCreator
-    private CreateStateResponse(@JsonProperty("name") final String name,
-                                @JsonProperty("adoptionFormId") final String adoptionFormId,
-                                @JsonProperty("notes") final String notes) {
+    private StateResponse(@JsonProperty("name") final String name,
+                          @JsonProperty("adoptionFormId") final String adoptionFormId,
+                          @JsonProperty("notes") final String notes) {
         this.name = name;
         this.adoptionFormId = adoptionFormId;
         this.notes = notes;
     }
 
-    public static CreateStateResponse from(final State state) {
-        return new CreateStateResponse(state.getName().toString(),
-                                       state.getAdoptionFormId().orElse(null),
-                                       state.getNotes().orElse(null));
+    public static StateResponse from(final State state) {
+        return new StateResponse(state.getName().toString(),
+                                 state.getAdoptionFormId().orElse(null),
+                                 state.getNotes().orElse(null));
     }
 }

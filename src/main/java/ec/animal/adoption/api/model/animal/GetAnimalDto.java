@@ -17,8 +17,9 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.animal.dto;
+package ec.animal.adoption.api.model.animal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
@@ -29,7 +30,7 @@ import ec.animal.adoption.domain.media.LinkPicture;
 import java.util.UUID;
 
 @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-public class AnimalDto {
+public class GetAnimalDto {
 
     @JsonProperty("id")
     private final UUID animalId;
@@ -49,7 +50,22 @@ public class AnimalDto {
     @JsonProperty("smallPrimaryPictureUrl")
     private final String smallPrimaryPictureUrl;
 
-    public AnimalDto(final Animal animal) {
+    @JsonCreator
+    private GetAnimalDto(@JsonProperty("id") final UUID animalId,
+                         @JsonProperty("name") final String name,
+                         @JsonProperty("species") final Species species,
+                         @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
+                         @JsonProperty("sex") final Sex sex,
+                         @JsonProperty("smallPrimaryPictureUrl") final String smallPrimaryPictureUrl) {
+        this.animalId = animalId;
+        this.name = name;
+        this.species = species;
+        this.estimatedAge = estimatedAge;
+        this.sex = sex;
+        this.smallPrimaryPictureUrl = smallPrimaryPictureUrl;
+    }
+
+    public GetAnimalDto(final Animal animal) {
         this.animalId = animal.getIdentifier();
         this.name = animal.getName();
         this.species = animal.getSpecies();

@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -39,7 +38,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
@@ -129,49 +127,44 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalDtosWithFiltersAndSmallPrimaryPictureUrl() {
+    public void shouldReturnAllAnimalsWithFiltersAndSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
                 AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
                 AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
                 AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build()
         );
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(animalsFilteredByState);
         when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))
-                .thenReturn(new PagedEntity<>(animalsFilteredByState));
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
-                animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
-        );
+                .thenReturn(expectedPageOfAnimals);
 
-        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
+        PagedEntity<Animal> pageOfAnimals = animalService.listAllWithFilters(
                 state.getName(), species, physicalActivity, size, pageable
         );
 
-        Assertions.assertThat(pageOfAnimalDtos)
+        Assertions.assertThat(pageOfAnimals)
                   .usingRecursiveFieldByFieldElementComparator()
-                  .isEqualTo(expectedPageOfAnimalDtos);
+                  .isEqualTo(expectedPageOfAnimals);
     }
 
     @Test
-    public void shouldReturnAllAnimalDataTransferObjectsWithFiltersAndNoSmallPrimaryPictureUrl() {
+    public void shouldReturnAllAnimalsWithFiltersAndNoSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
                 AnimalBuilder.random().withState(state).build(),
                 AnimalBuilder.random().withState(state).build(),
                 AnimalBuilder.random().withState(state).build()
         );
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(animalsFilteredByState);
         when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))
-                .thenReturn(new PagedEntity<>(animalsFilteredByState));
+                .thenReturn(expectedPageOfAnimals);
 
-        PagedEntity<AnimalDto> expectedPageOfAnimalDtos = new PagedEntity<>(
-                animalsFilteredByState.stream().map(AnimalDto::new).collect(Collectors.toList())
-        );
-
-        PagedEntity<AnimalDto> pageOfAnimalDtos = animalService.listAllWithFilters(
+        PagedEntity<Animal> pageOfAnimals = animalService.listAllWithFilters(
                 state.getName(), species, physicalActivity, size, pageable
         );
 
-        Assertions.assertThat(pageOfAnimalDtos)
+        Assertions.assertThat(pageOfAnimals)
                   .usingRecursiveFieldByFieldElementComparator()
-                  .isEqualTo(expectedPageOfAnimalDtos);
+                  .isEqualTo(expectedPageOfAnimals);
     }
 }

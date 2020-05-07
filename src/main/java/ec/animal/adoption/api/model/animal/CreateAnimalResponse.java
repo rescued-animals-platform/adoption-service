@@ -21,7 +21,7 @@ package ec.animal.adoption.api.model.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.api.model.state.CreateStateResponse;
+import ec.animal.adoption.api.model.state.StateResponse;
 import ec.animal.adoption.domain.animal.Animal;
 
 import java.time.LocalDateTime;
@@ -52,7 +52,7 @@ public class CreateAnimalResponse {
     private final String sex;
 
     @JsonProperty("state")
-    private final CreateStateResponse state;
+    private final StateResponse state;
 
     @JsonCreator
     public CreateAnimalResponse(@JsonProperty("id") final UUID animalId,
@@ -62,7 +62,7 @@ public class CreateAnimalResponse {
                                 @JsonProperty("species") final String species,
                                 @JsonProperty("estimatedAge") final String estimatedAge,
                                 @JsonProperty("sex") final String sex,
-                                @JsonProperty("state") final CreateStateResponse state) {
+                                @JsonProperty("state") final StateResponse state) {
         this.animalId = animalId;
         this.registrationDate = registrationDate;
         this.clinicalRecord = clinicalRecord;
@@ -81,7 +81,7 @@ public class CreateAnimalResponse {
                                         animal.getSpecies().toString(),
                                         animal.getEstimatedAge().toString(),
                                         animal.getSex().toString(),
-                                        CreateStateResponse.from(animal.getState()));
+                                        StateResponse.from(animal.getState()));
     }
 
     public UUID getAnimalId() {

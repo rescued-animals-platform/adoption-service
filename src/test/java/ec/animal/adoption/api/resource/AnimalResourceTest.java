@@ -27,7 +27,7 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.api.model.animal.GetAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -45,8 +45,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.List;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
@@ -70,9 +72,6 @@ public class AnimalResourceTest {
 
     @Mock
     private PagedEntity<Animal> expectedPageOfAnimals;
-
-    @Mock
-    private PagedEntity<AnimalDto> expectedPageOfAnimalDtosFiltered;
 
     @Mock
     private Jwt token;
@@ -137,13 +136,22 @@ public class AnimalResourceTest {
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();
         Pageable pageable = mock(Pageable.class);
+        List<Animal> animalsFiltered = newArrayList(
+                AnimalBuilder.randomWithPrimaryLinkPicture().build(),
+                AnimalBuilder.randomWithPrimaryLinkPicture().build(),
+                AnimalBuilder.randomWithPrimaryLinkPicture().build()
+        );
+        PagedEntity<Animal> pageOfAnimalsFiltered = new PagedEntity<>(animalsFiltered);
         when(animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable))
-                .thenReturn(expectedPageOfAnimalDtosFiltered);
+                .thenReturn(pageOfAnimalsFiltered);
+        PagedEntity<GetAnimalDto> expectedPageOfAnimalDtosFiltered = pageOfAnimalsFiltered.map(GetAnimalDto::new);
 
-        PagedEntity<AnimalDto> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
+        PagedEntity<GetAnimalDto> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
                 stateName, species, physicalActivity, size, pageable
         );
 
-        assertThat(pageOfAnimalDtosFiltered, is(expectedPageOfAnimalDtosFiltered));
+        Assertions.assertThat(pageOfAnimalDtosFiltered)
+                  .usingRecursiveFieldByFieldElementComparator()
+                  .isEqualTo(expectedPageOfAnimalDtosFiltered);
     }
 }

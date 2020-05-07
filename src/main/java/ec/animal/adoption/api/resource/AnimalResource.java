@@ -26,7 +26,7 @@ import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.api.model.animal.GetAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
@@ -97,13 +97,14 @@ public class AnimalResource {
     }
 
     @GetMapping("/animals")
-    public PagedEntity<AnimalDto> listAllWithFilters(
+    public PagedEntity<GetAnimalDto> listAllWithFilters(
             @RequestParam("state") final StateName stateName,
             @RequestParam("species") final Species species,
             @RequestParam("physicalActivity") final PhysicalActivity physicalActivity,
             @RequestParam("animalSize") final Size size,
             final Pageable pageable
     ) {
-        return animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable);
+        return animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable)
+                            .map(GetAnimalDto::new);
     }
 }
