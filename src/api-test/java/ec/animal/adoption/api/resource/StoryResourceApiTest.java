@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,8 +42,8 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @BeforeEach
     public void setUp() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animal.getIdentifier();
+        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = createAnimalResponse.getAnimalId();
     }
 
     @Test

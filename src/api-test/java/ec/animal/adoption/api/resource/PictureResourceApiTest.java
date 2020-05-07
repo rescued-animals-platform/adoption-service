@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +50,8 @@ public class PictureResourceApiTest extends AbstractApiTest {
 
     @BeforeEach
     public void setUp() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animal.getIdentifier();
+        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = createAnimalResponse.getAnimalId();
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();

@@ -21,6 +21,7 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
@@ -69,12 +70,14 @@ public class AnimalResource {
 
     @PostMapping(value = "/admin/animals", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Animal create(@RequestBody @Valid final CreateAnimalRequest createAnimalRequest,
-                         @AuthenticationPrincipal final Jwt token) {
+    public CreateAnimalResponse create(@RequestBody @Valid final CreateAnimalRequest createAnimalRequest,
+                                       @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
         CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
-        return animalService.create(createAnimalDto);
+        Animal animal = animalService.create(createAnimalDto);
+
+        return CreateAnimalResponse.from(animal);
     }
 
     @GetMapping("/admin/animals/{id}")

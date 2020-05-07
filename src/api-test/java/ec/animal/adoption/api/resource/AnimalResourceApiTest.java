@@ -21,9 +21,9 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
@@ -32,7 +32,7 @@ import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.State;
-import org.assertj.core.api.Assertions;
+import ec.animal.adoption.domain.state.StateName;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +52,7 @@ import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -84,7 +85,8 @@ public class AnimalResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn201Created() {
-        State state = getRandomState();
+        String adoptionFormId = randomAlphabetic(10);
+        State state = State.adopted(adoptionFormId);
         CreateAnimalRequest createAnimalRequest = createAnimalRequestBuilder.withState(state).build();
 
         webTestClient.post()
@@ -93,19 +95,18 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isCreated()
-                     .expectBody(Animal.class)
-                     .consumeWith(entity -> {
-                         Animal createdAnimal = entity.getResponseBody();
-                         assertNotNull(createdAnimal);
-                         assertNotNull(createdAnimal.getIdentifier());
-                         assertNotNull(createdAnimal.getRegistrationDate());
-                         assertThat(createdAnimal.getClinicalRecord(), is(clinicalRecord));
-                         assertThat(createdAnimal.getName(), is(name));
-                         assertThat(createdAnimal.getSpecies(), is(species));
-                         assertThat(createdAnimal.getSex(), is(sex));
-                         assertThat(createdAnimal.getEstimatedAge(), is(estimatedAge));
-                         Assertions.assertThat(createdAnimal.getState()).usingRecursiveComparison().isEqualTo(state);
-                     });
+                     .expectBody()
+                     .jsonPath("$.id").isNotEmpty()
+                     .jsonPath("$.registrationDate").isNotEmpty()
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.toString())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toString())
+                     .jsonPath("$.sex").isEqualTo(sex.toString())
+                     .jsonPath("$.state[?(@.name == '%s' && @.adoptionFormId == '%s')]",
+                               state.getName().toString(),
+                               adoptionFormId)
+                     .exists();
     }
 
     @Test
@@ -118,20 +119,15 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isCreated()
-                     .expectBody(Animal.class)
-                     .consumeWith(entity -> {
-                         Animal createdAnimal = entity.getResponseBody();
-                         assertNotNull(createdAnimal);
-                         assertNotNull(createdAnimal.getIdentifier());
-                         assertNotNull(createdAnimal.getRegistrationDate());
-                         assertThat(createdAnimal.getClinicalRecord(), is(clinicalRecord));
-                         assertThat(createdAnimal.getName(), is(name));
-                         assertThat(createdAnimal.getSpecies(), is(species));
-                         assertThat(createdAnimal.getSex(), is(sex));
-                         assertThat(createdAnimal.getEstimatedAge(), is(estimatedAge));
-                         Assertions.assertThat(createdAnimal.getState()).usingRecursiveComparison()
-                                   .isEqualTo(State.lookingForHuman());
-                     });
+                     .expectBody()
+                     .jsonPath("$.id").isNotEmpty()
+                     .jsonPath("$.registrationDate").isNotEmpty()
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.toString())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toString())
+                     .jsonPath("$.sex").isEqualTo(sex.toString())
+                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.toString());
     }
 
     @Test
@@ -203,17 +199,23 @@ public class AnimalResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn200OkWithAnimal() {
-        Animal createdAnimal = createRandomAnimalWithDefaultLookingForHumanState();
+        CreateAnimalResponse createAnimalResponse = createAnimal(createAnimalRequestBuilder.build());
 
         webTestClient.get()
-                     .uri(GET_ANIMAL_ADMIN_URL, createdAnimal.getIdentifier())
+                     .uri(GET_ANIMAL_ADMIN_URL, createAnimalResponse.getAnimalId())
                      .exchange()
                      .expectStatus()
                      .isOk()
                      .expectBody(Animal.class)
                      .consumeWith(entity -> {
                          Animal foundAnimal = entity.getResponseBody();
-                         Assertions.assertThat(foundAnimal).usingRecursiveComparison().isEqualTo(createdAnimal);
+                         assertNotNull(foundAnimal);
+                         assertEquals(createAnimalResponse.getAnimalId(), foundAnimal.getIdentifier());
+                         assertEquals(clinicalRecord, foundAnimal.getClinicalRecord());
+                         assertEquals(name, foundAnimal.getName());
+                         assertEquals(species, foundAnimal.getSpecies());
+                         assertEquals(sex, foundAnimal.getSex());
+                         assertEquals(estimatedAge, foundAnimal.getEstimatedAge());
                      });
     }
 
@@ -260,7 +262,14 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         Size size = getRandomSize();
         int numberOfAnimals = 3;
         for (int n = 1; n <= numberOfAnimals; n++) {
-            createAnimalWith(state, species, physicalActivity, size);
+            UUID animalId = createAnimal(CreateAnimalRequestBuilder.random()
+                                                                   .withState(state)
+                                                                   .withSpecies(species)
+                                                                   .build()).getAnimalId();
+            createCharacteristics(animalId, CharacteristicsBuilder.random()
+                                                                  .withPhysicalActivity(physicalActivity)
+                                                                  .withSize(size)
+                                                                  .build());
         }
         String uri = GET_ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
                 "&animalSize={size}&page=0&size=3";
@@ -304,28 +313,24 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .isEmpty();
     }
 
-    private void createAnimalWith(final State state,
-                                  final Species species,
-                                  final PhysicalActivity physicalActivity,
-                                  final Size size) {
-        Animal animal = AnimalBuilder.random().withState(state).withSpecies(species).build();
-        Animal createdAnimal = webTestClient.post()
-                                            .uri(CREATE_ANIMAL_ADMIN_URL)
-                                            .bodyValue(animal)
-                                            .exchange()
-                                            .expectStatus()
-                                            .isCreated()
-                                            .expectBody(Animal.class)
-                                            .returnResult()
-                                            .getResponseBody();
-        assertNotNull(createdAnimal);
+    private static CreateAnimalResponse createAnimal(final CreateAnimalRequest createAnimalRequest) {
+        CreateAnimalResponse createAnimalResponse = webTestClient.post()
+                                                                 .uri(CREATE_ANIMAL_ADMIN_URL)
+                                                                 .bodyValue(createAnimalRequest)
+                                                                 .exchange()
+                                                                 .expectStatus()
+                                                                 .isCreated()
+                                                                 .expectBody(CreateAnimalResponse.class)
+                                                                 .returnResult()
+                                                                 .getResponseBody();
+        assertNotNull(createAnimalResponse);
 
-        Characteristics characteristics = CharacteristicsBuilder.random()
-                                                                .withPhysicalActivity(physicalActivity)
-                                                                .withSize(size)
-                                                                .build();
+        return createAnimalResponse;
+    }
+
+    private static void createCharacteristics(final UUID animalId, final Characteristics characteristics) {
         webTestClient.post()
-                     .uri(CHARACTERISTICS_ADMIN_URL, createdAnimal.getIdentifier())
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
                      .bodyValue(characteristics)
                      .exchange()
                      .expectStatus()

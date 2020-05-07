@@ -21,7 +21,7 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
-import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -57,7 +57,7 @@ public abstract class AbstractApiTest {
                                      .build();
     }
 
-    Animal createRandomAnimalWithDefaultLookingForHumanState() {
+    CreateAnimalResponse createRandomAnimalWithDefaultLookingForHumanState() {
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random().withState(State.lookingForHuman()).build();
         return webTestClient.post()
                             .uri(CREATE_ANIMAL_ADMIN_URL)
@@ -65,7 +65,7 @@ public abstract class AbstractApiTest {
                             .exchange()
                             .expectStatus()
                             .isCreated()
-                            .expectBody(Animal.class)
+                            .expectBody(CreateAnimalResponse.class)
                             .returnResult()
                             .getResponseBody();
     }

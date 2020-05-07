@@ -19,10 +19,10 @@
 
 package ec.animal.adoption.api.resource;
 
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
@@ -44,8 +44,8 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     @BeforeEach
     public void setUp() {
-        Animal animal = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animal.getIdentifier();
+        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = createAnimalResponse.getAnimalId();
     }
 
     @Test

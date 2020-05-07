@@ -21,8 +21,10 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
+import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
@@ -34,6 +36,7 @@ import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.state.StateName;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,9 +69,6 @@ public class AnimalResourceTest {
     private AdminTokenUtils adminTokenUtils;
 
     @Mock
-    private Animal expectedAnimal;
-
-    @Mock
     private PagedEntity<Animal> expectedPageOfAnimals;
 
     @Mock
@@ -78,16 +78,19 @@ public class AnimalResourceTest {
     private Jwt token;
 
     private UUID organizationId;
+    private Animal expectedAnimal;
     private AnimalResource animalResource;
 
     @BeforeEach
     public void setUp() {
         organizationId = UUID.randomUUID();
+        expectedAnimal = AnimalBuilder.random().build();
         animalResource = new AnimalResource(animalService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
+        CreateAnimalResponse expectedCreateAnimalResponse = CreateAnimalResponse.from(expectedAnimal);
         Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
@@ -96,9 +99,9 @@ public class AnimalResourceTest {
         when(createAnimalRequest.toDomainWith(organization)).thenReturn(createAnimalDto);
         when(animalService.create(createAnimalDto)).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalResource.create(createAnimalRequest, token);
+        CreateAnimalResponse createAnimalResponse = animalResource.create(createAnimalRequest, token);
 
-        assertThat(createdAnimal, is(expectedAnimal));
+        Assertions.assertThat(createAnimalResponse).usingRecursiveComparison().isEqualTo(expectedCreateAnimalResponse);
     }
 
     @Test
