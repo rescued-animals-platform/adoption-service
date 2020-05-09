@@ -20,11 +20,15 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.api.model.characteristics.CharacteristicsRequest;
+import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +38,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,9 +52,6 @@ public class CharacteristicsResourceTest {
 
     @Mock
     private AdminTokenUtils adminTokenUtils;
-
-    @Mock
-    private Characteristics expectedCharacteristics;
 
     private UUID animalId;
     private CharacteristicsResource characteristicsResource;
@@ -70,20 +69,33 @@ public class CharacteristicsResourceTest {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        Characteristics characteristics = mock(Characteristics.class);
-        when(characteristicsService.createFor(animalId, organization, characteristics)).thenReturn(expectedCharacteristics);
+        CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
+        Characteristics characteristicsFromRequest = CharacteristicsBuilder.random().build();
+        when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
+        Characteristics createdCharacteristics = CharacteristicsBuilder.random().build();
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(createdCharacteristics);
+        when(characteristicsService.createFor(animalId, organization, characteristicsFromRequest))
+                .thenReturn(createdCharacteristics);
 
-        Characteristics createdCharacteristics = characteristicsResource.create(animalId, characteristics, token);
+        CharacteristicsResponse characteristicsResponse = characteristicsResource.create(animalId,
+                                                                                         characteristicsRequest,
+                                                                                         token);
 
-        assertThat(createdCharacteristics, is(expectedCharacteristics));
+        Assertions.assertThat(characteristicsResponse)
+                  .usingRecursiveComparison()
+                  .isEqualTo(expectedCharacteristicsResponse);
     }
 
     @Test
     public void shouldGetCharacteristicsForAnimal() {
+        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
         when(characteristicsService.getBy(animalId)).thenReturn(expectedCharacteristics);
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(expectedCharacteristics);
 
-        Characteristics characteristics = characteristicsResource.get(animalId);
+        CharacteristicsResponse characteristicsResponse = characteristicsResource.get(animalId);
 
-        assertThat(characteristics, is(expectedCharacteristics));
+        Assertions.assertThat(characteristicsResponse)
+                  .usingRecursiveComparison()
+                  .isEqualTo(expectedCharacteristicsResponse);
     }
 }

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -38,7 +39,7 @@ public class Story extends Entity {
 
     @JsonCreator
     private Story(@JsonProperty("text") final String text) {
-        super(null, null);
+        super();
         this.text = text;
     }
 
@@ -57,6 +58,18 @@ public class Story extends Entity {
 
     public String getText() {
         return this.text;
+    }
+
+    @Override
+    @Nullable
+    public UUID getIdentifier() {
+        return super.identifier;
+    }
+
+    @Override
+    @Nullable
+    public LocalDateTime getRegistrationDate() {
+        return super.registrationDate;
     }
 
     @Override

@@ -20,13 +20,14 @@
 package ec.animal.adoption.api.model.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.StateName;
-import ec.animal.adoption.validator.ValidCreateStateRequest;
+import ec.animal.adoption.api.validator.ValidStateRequest;
 
-@ValidCreateStateRequest
-public class CreateStateRequest {
+@ValidStateRequest
+public class StateRequest {
 
     @JsonProperty("name")
     private final StateName name;
@@ -38,15 +39,15 @@ public class CreateStateRequest {
     private final String notes;
 
     @JsonCreator
-    public CreateStateRequest(@JsonProperty("name") final StateName name,
-                              @JsonProperty("adoptionFormId") final String adoptionFormId,
-                              @JsonProperty("notes") final String notes) {
+    public StateRequest(@JsonProperty("name") final StateName name,
+                        @JsonProperty("adoptionFormId") final String adoptionFormId,
+                        @JsonProperty("notes") final String notes) {
         this.name = name;
         this.adoptionFormId = adoptionFormId;
         this.notes = notes;
     }
 
-    public State toCreateStateDtoDomain() {
+    public State toDomain() {
         switch (this.name) {
             case LOOKING_FOR_HUMAN:
                 return State.lookingForHuman();
@@ -59,10 +60,12 @@ public class CreateStateRequest {
         }
     }
 
+    @JsonIgnore
     public boolean hasName() {
         return name != null;
     }
 
+    @JsonIgnore
     public boolean isUnavailableAndDoesNotHaveNotes() {
         return StateName.UNAVAILABLE.equals(name) && notes == null;
     }

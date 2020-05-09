@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SizeTest {
 
-    public static final String EXPECTED_NAMES_FOR_SIZE_METHOD = "expectedNamesForSize";
+    private static final String EXPECTED_NAMES_FOR_SIZE_METHOD = "expectedNamesForSize";
 
     private ObjectMapper objectMapper;
 
@@ -51,7 +51,7 @@ class SizeTest {
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
     @MethodSource(EXPECTED_NAMES_FOR_SIZE_METHOD)
     void shouldReturnExpectedNameForSize(final Size size, final String expectedName) {
-        assertEquals(expectedName, size.getName());
+        assertEquals(expectedName, size.toString());
     }
 
     @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")

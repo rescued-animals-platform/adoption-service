@@ -19,11 +19,12 @@
 
 package ec.animal.adoption.domain.characteristics;
 
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import com.google.common.collect.Sets;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Set;
 import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
@@ -37,14 +38,16 @@ public class CharacteristicsBuilder {
     private Size size;
     private PhysicalActivity physicalActivity;
     private Temperaments temperaments;
-    private FriendlyWith[] friendlyWith;
+    private Set<FriendlyWith> friendlyWith;
 
     public static CharacteristicsBuilder random() {
         final CharacteristicsBuilder characteristicsBuilder = new CharacteristicsBuilder();
+        characteristicsBuilder.characteristicsId = UUID.randomUUID();
+        characteristicsBuilder.registrationDate = LocalDateTime.now();
         characteristicsBuilder.size = getRandomSize();
         characteristicsBuilder.physicalActivity = getRandomPhysicalActivity();
         characteristicsBuilder.temperaments = TemperamentsBuilder.random().build();
-        characteristicsBuilder.friendlyWith = new FriendlyWith[]{getRandomFriendlyWith()};
+        characteristicsBuilder.friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
         return characteristicsBuilder;
     }
 
@@ -74,7 +77,7 @@ public class CharacteristicsBuilder {
     }
 
     public CharacteristicsBuilder withFriendlyWith(final FriendlyWith... friendlyWith) {
-        this.friendlyWith = Arrays.copyOf(friendlyWith, friendlyWith.length);
+        this.friendlyWith = Sets.newHashSet(friendlyWith);
         return this;
     }
 

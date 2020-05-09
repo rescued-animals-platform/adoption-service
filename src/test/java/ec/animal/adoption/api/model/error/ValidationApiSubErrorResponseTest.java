@@ -22,53 +22,37 @@ package ec.animal.adoption.api.model.error;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ApiErrorTest {
+public class ValidationApiSubErrorResponseTest {
 
-    private ApiError apiError;
+    @Test
+    public void shouldBeAnInstanceOfApiSubError() {
+        ValidationApiSubErrorResponse validationApiSubError = new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10));
 
-    @BeforeEach
-    public void setUp() {
-        String debugMessage = randomAlphabetic(10);
-        HttpStatus status = HttpStatus.BAD_GATEWAY;
-        String message = randomAlphabetic(10);
-        List<ApiSubError> subErrors = new ArrayList<>();
-        subErrors.add(new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10)));
-        subErrors.add(new ValidationApiSubError(randomAlphabetic(10), randomAlphabetic(10)));
-        apiError = new ApiError(status, message, debugMessage);
-        apiError.setSubErrors(subErrors);
+        assertThat(validationApiSubError, is(instanceOf(ApiSubErrorResponse.class)));
     }
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(ApiError.class)
-                      .usingGetClass()
-                      .withIgnoredFields("timestamp")
-                      .suppress(Warning.NONFINAL_FIELDS)
-                      .verify();
+        EqualsVerifier.forClass(ValidationApiSubErrorResponse.class).usingGetClass().verify();
     }
 
     @Test
     public void shouldBeSerializableAndDeserializable() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String serializedApiError = objectMapper.writeValueAsString(apiError);
+        ValidationApiSubErrorResponse validationApiSubError = new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10));
 
-        ApiError deserializedApiError = objectMapper.readValue(
-                serializedApiError, ApiError.class
-        );
+        String serializedValidationError = objectMapper.writeValueAsString(validationApiSubError);
+        ValidationApiSubErrorResponse deserializedValidationApiSubError = objectMapper.readValue(serializedValidationError, ValidationApiSubErrorResponse.class);
 
-        assertThat(deserializedApiError, is(apiError));
+        assertThat(deserializedValidationApiSubError, is(validationApiSubError));
     }
 }

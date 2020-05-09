@@ -21,7 +21,7 @@ package ec.animal.adoption.api.model.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.api.model.state.CreateStateRequest;
+import ec.animal.adoption.api.model.state.StateRequest;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
@@ -62,7 +62,7 @@ public class CreateAnimalRequest {
 
     @Valid
     @JsonProperty("state")
-    private final CreateStateRequest state;
+    private final StateRequest state;
 
     @JsonCreator
     CreateAnimalRequest(@JsonProperty("clinicalRecord") final String clinicalRecord,
@@ -70,7 +70,7 @@ public class CreateAnimalRequest {
                         @JsonProperty("species") final Species species,
                         @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
                         @JsonProperty("sex") final Sex sex,
-                        @JsonProperty("state") final CreateStateRequest state) {
+                        @JsonProperty("state") final StateRequest state) {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -81,7 +81,7 @@ public class CreateAnimalRequest {
 
     public CreateAnimalDto toDomainWith(final Organization organization) {
         State state = Optional.ofNullable(this.state)
-                              .map(CreateStateRequest::toCreateStateDtoDomain)
+                              .map(StateRequest::toDomain)
                               .orElse(null);
 
         return new CreateAnimalDto(this.clinicalRecord,

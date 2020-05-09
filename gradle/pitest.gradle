@@ -3,6 +3,7 @@ pitest {
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [
             'ec.animal.adoption.AdoptionServiceApplication',
+            'ec.animal.adoption.domain.PagedEntity',
             'ec.animal.adoption.configuration.*'
     ]
     excludedMethods = ['equals', 'hashCode']

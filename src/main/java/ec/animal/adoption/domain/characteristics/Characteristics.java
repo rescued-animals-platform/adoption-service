@@ -19,84 +19,78 @@
 
 package ec.animal.adoption.domain.characteristics;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.validator.ValidTemperaments;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"id", "registrationDate"})
 @SuppressWarnings("PMD.DataClass")
 public class Characteristics extends Entity {
 
-    @NotNull(message = "Size is required")
-    @JsonProperty("size")
     private final Size size;
-
-    @NotNull(message = "Physical activity is required")
-    @JsonProperty("physicalActivity")
     private final PhysicalActivity physicalActivity;
-
-    @ValidTemperaments
-    @JsonProperty("temperaments")
     private final Temperaments temperaments;
-
-    @JsonProperty("friendlyWith")
     private final Set<FriendlyWith> friendlyWith;
 
-    @JsonCreator
-    private Characteristics(
-            @JsonProperty("size") final Size size,
-            @JsonProperty("physicalActivity") final PhysicalActivity physicalActivity,
-            @JsonProperty("temperaments") final Temperaments temperaments,
-            @JsonProperty("friendlyWith") final FriendlyWith... friendlyWith
-    ) {
-        super(null, null);
-        this.size = size;
-        this.physicalActivity = physicalActivity;
-        this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
-        this.temperaments = temperaments;
-    }
-
-    public Characteristics(
-            final UUID characteristicsId,
-            final LocalDateTime registrationDate,
-            final Size size,
-            final PhysicalActivity physicalActivity,
-            final Temperaments temperaments,
-            final FriendlyWith... friendlyWith
-    ) {
+    public Characteristics(@NonNull final UUID characteristicsId,
+                           @NonNull final LocalDateTime registrationDate,
+                           @NonNull final Size size,
+                           @NonNull final PhysicalActivity physicalActivity,
+                           @NonNull final Temperaments temperaments,
+                           @NonNull final Set<FriendlyWith> friendlyWith) {
         super(characteristicsId, registrationDate);
         this.size = size;
         this.physicalActivity = physicalActivity;
-        this.friendlyWith = new HashSet<>(Arrays.asList(friendlyWith));
+        this.friendlyWith = friendlyWith;
         this.temperaments = temperaments;
     }
 
+    public Characteristics(@NonNull final Size size,
+                           @NonNull final PhysicalActivity physicalActivity,
+                           @NonNull final Temperaments temperaments,
+                           @NonNull final Set<FriendlyWith> friendlyWith) {
+        super();
+        this.size = size;
+        this.physicalActivity = physicalActivity;
+        this.friendlyWith = friendlyWith;
+        this.temperaments = temperaments;
+    }
+
+    @NonNull
     public Size getSize() {
         return size;
     }
 
+    @NonNull
     public PhysicalActivity getPhysicalActivity() {
         return physicalActivity;
     }
 
+    @NonNull
     public Temperaments getTemperaments() {
         return temperaments;
     }
 
-    public List<FriendlyWith> getFriendlyWith() {
-        return new ArrayList<>(friendlyWith);
+    @NonNull
+    public Set<FriendlyWith> getFriendlyWith() {
+        return new HashSet<>(friendlyWith);
+    }
+
+    @Override
+    @Nullable
+    public UUID getIdentifier() {
+        return super.identifier;
+    }
+
+    @Override
+    @Nullable
+    public LocalDateTime getRegistrationDate() {
+        return super.registrationDate;
     }
 
     @Override

@@ -21,7 +21,7 @@ package ec.animal.adoption.api.model.animal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.api.model.state.CreateStateRequest;
+import ec.animal.adoption.api.model.state.StateRequest;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
@@ -110,13 +110,13 @@ class CreateAnimalRequestTest {
     @Test
     void shouldBuildCreateAnimalDtoFromCreateAnimalRequestWhenCreateStateRequestIsNotNull() {
         String adoptionFormId = randomAlphabetic(10);
-        CreateStateRequest createStateRequest = new CreateStateRequest(ADOPTED, adoptionFormId, null);
+        StateRequest stateRequest = new StateRequest(ADOPTED, adoptionFormId, null);
         CreateAnimalRequest createAnimalRequest = new CreateAnimalRequest(clinicalRecord,
                                                                           name,
                                                                           species,
                                                                           estimatedAge,
                                                                           sex,
-                                                                          createStateRequest);
+                                                                          stateRequest);
         Organization organization = OrganizationBuilder.random().build();
 
         CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
@@ -215,7 +215,7 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldAllowNullState() {
+    public void shouldAllowNullStateRequest() {
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random().withState(null).build();
 
         Set<ConstraintViolation<CreateAnimalRequest>> constraintViolations = getValidator().validate(createAnimalRequest);
@@ -224,10 +224,10 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldValidateCreateStateRequestWhenPresent() {
-        CreateStateRequest createStateRequest = new CreateStateRequest(null, null, null);
+    public void shouldValidateStateRequestWhenPresent() {
+        StateRequest stateRequest = new StateRequest(null, null, null);
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random()
-                                                                            .withCreateStateRequest(createStateRequest)
+                                                                            .withCreateStateRequest(stateRequest)
                                                                             .build();
 
         Set<ConstraintViolation<CreateAnimalRequest>> constraintViolations = getValidator().validate(createAnimalRequest);
@@ -239,7 +239,7 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithNoState() throws IOException, JSONException {
+    public void shouldDeserializeCreateAnimalRequestWithNoStateRequest() throws IOException, JSONException {
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random()
                                                                             .withClinicalRecord(clinicalRecord)
                                                                             .withName(name)
@@ -262,7 +262,7 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithLookingForHumanState() throws IOException, JSONException {
+    public void shouldDeserializeCreateAnimalRequestWithLookingForHumanStateRequest() throws IOException, JSONException {
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random()
                                                                             .withClinicalRecord(clinicalRecord)
                                                                             .withName(name)
@@ -287,7 +287,7 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithAdoptedState() throws IOException, JSONException {
+    public void shouldDeserializeCreateAnimalRequestWithAdoptedStateRequest() throws IOException, JSONException {
         String adoptionFormId = randomAlphabetic(10);
         State adoptedState = State.adopted(adoptionFormId);
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random()
@@ -315,7 +315,7 @@ class CreateAnimalRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithUnavailableState() throws IOException, JSONException {
+    public void shouldDeserializeCreateAnimalRequestWithUnavailableStateRequest() throws IOException, JSONException {
         String notes = randomAlphabetic(50);
         State unavailableState = State.unavailable(notes);
         CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random()

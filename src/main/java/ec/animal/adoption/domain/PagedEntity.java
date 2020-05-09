@@ -38,17 +38,15 @@ public class PagedEntity<T> extends PageImpl<T> {
 
     @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.UnusedFormalParameter"})
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    private PagedEntity(
-            final @JsonProperty("content") List<T> content,
-            final @JsonProperty("number") int number,
-            final @JsonProperty("size") int size,
-            final @JsonProperty("totalElements") long totalElements,
-            final @JsonProperty("last") boolean last,
-            final @JsonProperty("totalPages") int totalPages,
-            final @JsonProperty("sort") JsonNode sort,
-            final @JsonProperty("first") boolean first,
-            final @JsonProperty("numberOfElements") int numberOfElements
-    ) {
+    private PagedEntity(final @JsonProperty("content") List<T> content,
+                        final @JsonProperty("number") int number,
+                        final @JsonProperty("size") int size,
+                        final @JsonProperty("totalElements") long totalElements,
+                        final @JsonProperty("last") boolean last,
+                        final @JsonProperty("totalPages") int totalPages,
+                        final @JsonProperty("sort") JsonNode sort,
+                        final @JsonProperty("first") boolean first,
+                        final @JsonProperty("numberOfElements") int numberOfElements) {
         super(content, PageRequest.of(number, size), totalElements);
     }
 

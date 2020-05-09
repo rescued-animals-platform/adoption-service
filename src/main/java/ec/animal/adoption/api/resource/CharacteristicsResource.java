@@ -20,6 +20,8 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.characteristics.CharacteristicsRequest;
+import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
 import ec.animal.adoption.domain.organization.Organization;
@@ -56,18 +58,22 @@ public class CharacteristicsResource {
 
     @PostMapping("/admin/animals/{id}/characteristics")
     @ResponseStatus(HttpStatus.CREATED)
-    public Characteristics create(
-            @PathVariable("id") final UUID animalId,
-            @RequestBody @Valid final Characteristics characteristics,
-            @AuthenticationPrincipal final Jwt token
-    ) {
+    public CharacteristicsResponse create(@PathVariable("id") final UUID animalId,
+                                          @RequestBody @Valid final CharacteristicsRequest characteristicsRequest,
+                                          @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return characteristicsService.createFor(animalId, organization, characteristics);
+        Characteristics characteristics = characteristicsService.createFor(animalId,
+                                                                           organization,
+                                                                           characteristicsRequest.toDomain());
+
+        return CharacteristicsResponse.from(characteristics);
     }
 
     @GetMapping("/animals/{id}/characteristics")
-    public Characteristics get(@PathVariable("id") final UUID animalId) {
-        return characteristicsService.getBy(animalId);
+    public CharacteristicsResponse get(@PathVariable("id") final UUID animalId) {
+        Characteristics characteristics = characteristicsService.getBy(animalId);
+
+        return CharacteristicsResponse.from(characteristics);
     }
 }

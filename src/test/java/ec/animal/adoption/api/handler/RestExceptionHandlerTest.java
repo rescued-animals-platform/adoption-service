@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.api.handler;
 
-import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.api.model.error.ValidationApiSubError;
+import ec.animal.adoption.api.model.error.ApiErrorResponse;
+import ec.animal.adoption.api.model.error.ValidationApiSubErrorResponse;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
@@ -102,7 +102,7 @@ public class RestExceptionHandlerTest {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
         String debugMessage = randomAlphabetic(10);
         when(httpMessageNotReadableException.getMessage()).thenReturn(debugMessage);
-        ApiError expectedApiError = new ApiError(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST, "Malformed JSON request", debugMessage
         );
 
@@ -110,9 +110,9 @@ public class RestExceptionHandlerTest {
                 httpMessageNotReadableException, headers, status, webRequest
         );
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -134,15 +134,15 @@ public class RestExceptionHandlerTest {
         String localizedMessage = randomAlphabetic(10);
         when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(throwable);
-        ApiError expectedApiError = new ApiError(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.CONFLICT, "The resource already exists", localizedMessage
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExistsException(entityAlreadyExistsException);
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -167,9 +167,9 @@ public class RestExceptionHandlerTest {
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         String debugMessage = randomAlphabetic(10);
         when(methodArgumentNotValidException.getMessage()).thenReturn(debugMessage);
-        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage).setSubErrors(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage).setSubErrors(
                 fieldErrors.stream()
-                           .map(fieldError -> new ValidationApiSubError(fieldError.getField(), fieldError.getDefaultMessage()))
+                           .map(fieldError -> new ValidationApiSubErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
                            .collect(Collectors.toList())
         );
 
@@ -177,9 +177,9 @@ public class RestExceptionHandlerTest {
                 methodArgumentNotValidException, headers, status, webRequest
         );
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -201,18 +201,18 @@ public class RestExceptionHandlerTest {
         when(constraintViolationException.getConstraintViolations()).thenReturn(constraintViolations);
         String debugMessage = randomAlphabetic(10);
         when(constraintViolationException.getMessage()).thenReturn(debugMessage);
-        ApiError expectedApiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
                 .setSubErrors(constraintViolations.stream()
-                                                  .map(violation -> new ValidationApiSubError(violation.getPropertyPath().toString(), violation.getMessage()))
+                                                  .map(violation -> new ValidationApiSubErrorResponse(violation.getPropertyPath().toString(), violation.getMessage()))
                                                   .collect(Collectors.toList()));
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleConstraintViolationException(
                 constraintViolationException
         );
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -227,13 +227,13 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForEntityNotFoundException() {
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException();
-        ApiError expectedApiError = new ApiError(HttpStatus.NOT_FOUND, "Unable to find the resource");
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.NOT_FOUND, "Unable to find the resource");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFoundException(entityNotFoundException);
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
         InvalidPictureException invalidPictureException = new InvalidPictureException();
-        ApiError expectedApiError = new ApiError(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
                         map(SupportedImageExtension::getExtension).collect(Collectors.joining(", ")))
@@ -260,9 +260,9 @@ public class RestExceptionHandlerTest {
                 invalidPictureException
         );
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -271,7 +271,7 @@ public class RestExceptionHandlerTest {
         String localizedMessage = randomAlphabetic(10);
         when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
         InvalidPictureException invalidPictureException = new InvalidPictureException(throwable);
-        ApiError expectedApiError = new ApiError(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
                         map(SupportedImageExtension::getExtension).collect(Collectors.joining(", "))),
@@ -282,9 +282,9 @@ public class RestExceptionHandlerTest {
                 invalidPictureException
         );
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -299,16 +299,16 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForMediaStorageException() {
         MediaStorageException mediaStorageException = new MediaStorageException();
-        ApiError expectedApiError = new ApiError(
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.SERVICE_UNAVAILABLE,
                 "Can not fulfill the request now. Please, retry later (client unavailable)"
         );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMediaStorageException(mediaStorageException);
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -323,13 +323,13 @@ public class RestExceptionHandlerTest {
     @Test
     public void shouldReturnAResponseEntityWithApiErrorForUnauthorizedException() {
         UnauthorizedException unauthorizedException = new UnauthorizedException();
-        ApiError expectedApiError = new ApiError(HttpStatus.FORBIDDEN, "Unauthorized");
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, "Unauthorized");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleUnauthorizedException(unauthorizedException);
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     @Test
@@ -345,13 +345,13 @@ public class RestExceptionHandlerTest {
     public void shouldReturnAResponseEntityWithApiErrorForException() {
         String message = randomAlphabetic(10);
         Exception exception = new Exception(message);
-        ApiError expectedApiError = new ApiError(HttpStatus.SERVICE_UNAVAILABLE, message);
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, message);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleGlobalException(exception);
 
-        assertThat(responseEntity.getBody(), is(instanceOf(ApiError.class)));
-        ApiError apiError = (ApiError) responseEntity.getBody();
-        assertThat(apiError, is(expectedApiError));
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
     }
 
     private static List<FieldError> createFieldErrors() {

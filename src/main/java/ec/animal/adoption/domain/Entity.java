@@ -24,26 +24,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Entity {
+public abstract class Entity {
 
     @JsonProperty("id")
-    private final UUID identifier;
+    protected final UUID identifier;
 
     @JsonProperty("registrationDate")
-    private final LocalDateTime registrationDate;
+    protected final LocalDateTime registrationDate;
 
-    public Entity(final UUID identifier, final LocalDateTime registrationDate) {
+    protected Entity(final UUID identifier, final LocalDateTime registrationDate) {
         this.identifier = identifier;
         this.registrationDate = registrationDate;
     }
 
-    public UUID getIdentifier() {
-        return identifier;
+    @SuppressWarnings({"PMD.NullAssignment"})
+    protected Entity() {
+        this.identifier = null;
+        this.registrationDate = null;
     }
 
-    public LocalDateTime getRegistrationDate() {
-        return registrationDate;
-    }
+    public abstract UUID getIdentifier();
+
+    public abstract LocalDateTime getRegistrationDate();
 
     @Override
     @SuppressWarnings("PMD")

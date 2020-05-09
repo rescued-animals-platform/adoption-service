@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.api.model.animal;
 
-import ec.animal.adoption.api.model.state.CreateStateRequest;
+import ec.animal.adoption.api.model.state.StateRequest;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
@@ -41,7 +41,7 @@ public class CreateAnimalRequestBuilder {
     private Species species;
     private EstimatedAge estimatedAge;
     private Sex sex;
-    private CreateStateRequest createStateRequest;
+    private StateRequest stateRequest;
 
     public static CreateAnimalRequestBuilder random() {
         CreateAnimalRequestBuilder createAnimalRequestBuilder = new CreateAnimalRequestBuilder();
@@ -50,9 +50,9 @@ public class CreateAnimalRequestBuilder {
         createAnimalRequestBuilder.species = getRandomSpecies();
         createAnimalRequestBuilder.estimatedAge = getRandomEstimatedAge();
         createAnimalRequestBuilder.sex = getRandomSex();
-        createAnimalRequestBuilder.createStateRequest = new CreateStateRequest(getRandomStateName(),
-                                                                               randomAlphabetic(10),
-                                                                               randomAlphabetic(10));
+        createAnimalRequestBuilder.stateRequest = new StateRequest(getRandomStateName(),
+                                                                   randomAlphabetic(10),
+                                                                   randomAlphabetic(10));
         return createAnimalRequestBuilder;
     }
 
@@ -84,30 +84,30 @@ public class CreateAnimalRequestBuilder {
     @SuppressWarnings("PMD.NullAssignment")
     public CreateAnimalRequestBuilder withState(final State state) {
         if (state == null) {
-            this.createStateRequest = null;
+            this.stateRequest = null;
             return this;
         }
 
         switch (state.getName().name()) {
             case "LOOKING_FOR_HUMAN":
-                this.createStateRequest = new CreateStateRequest(LOOKING_FOR_HUMAN, null, null);
+                this.stateRequest = new StateRequest(LOOKING_FOR_HUMAN, null, null);
                 break;
             case "ADOPTED":
-                this.createStateRequest = new CreateStateRequest(ADOPTED, state.getAdoptionFormId().orElse(null), null);
+                this.stateRequest = new StateRequest(ADOPTED, state.getAdoptionFormId().orElse(null), null);
                 break;
             case "UNAVAILABLE":
-                this.createStateRequest = new CreateStateRequest(UNAVAILABLE, null, state.getNotes().orElse(null));
+                this.stateRequest = new StateRequest(UNAVAILABLE, null, state.getNotes().orElse(null));
                 break;
             default:
-                this.createStateRequest = null;
+                this.stateRequest = null;
                 break;
         }
 
         return this;
     }
 
-    public CreateAnimalRequestBuilder withCreateStateRequest(final CreateStateRequest createStateRequest) {
-        this.createStateRequest = createStateRequest;
+    public CreateAnimalRequestBuilder withCreateStateRequest(final StateRequest stateRequest) {
+        this.stateRequest = stateRequest;
         return this;
     }
 
@@ -117,6 +117,6 @@ public class CreateAnimalRequestBuilder {
                                        this.species,
                                        this.estimatedAge,
                                        this.sex,
-                                       this.createStateRequest);
+                                       this.stateRequest);
     }
 }

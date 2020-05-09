@@ -1,18 +1,19 @@
-package ec.animal.adoption.validator;
+package ec.animal.adoption.api.validator;
 
-import ec.animal.adoption.api.model.state.CreateStateRequest;
+import ec.animal.adoption.api.model.state.StateRequest;
+import org.springframework.lang.NonNull;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class CreateStateRequestValidator implements ConstraintValidator<ValidCreateStateRequest, CreateStateRequest> {
+public class StateRequestValidator implements ConstraintValidator<ValidStateRequest, StateRequest> {
 
     private static final String STATE_NAME_IS_REQUIRED = "State name is required";
     private static final String NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE = "Notes are required for unavailable state";
 
     @Override
-    public boolean isValid(final CreateStateRequest createStateRequest, final ConstraintValidatorContext context) {
-        if (!createStateRequest.hasName()) {
+    public boolean isValid(@NonNull final StateRequest stateRequest, final ConstraintValidatorContext context) {
+        if (!stateRequest.hasName()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(STATE_NAME_IS_REQUIRED)
                    .addPropertyNode("name")
@@ -20,7 +21,7 @@ public class CreateStateRequestValidator implements ConstraintValidator<ValidCre
             return false;
         }
 
-        if (createStateRequest.isUnavailableAndDoesNotHaveNotes()) {
+        if (stateRequest.isUnavailableAndDoesNotHaveNotes()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(NOTES_ARE_REQUIRED_FOR_UNAVAILABLE_STATE)
                    .addPropertyNode("notes")

@@ -17,17 +17,16 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.validator;
+package ec.animal.adoption.api.model.error;
 
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public class TemperamentsValidator implements ConstraintValidator<ValidTemperaments, Temperaments> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+@JsonSubTypes({@JsonSubTypes.Type(value = ValidationApiSubErrorResponse.class, name = "validationError")})
+public interface ApiSubErrorResponse {
 
-    @Override
-    public boolean isValid(final Temperaments temperaments, final ConstraintValidatorContext context) {
-        return temperaments != null && !temperaments.isEmpty();
-    }
 }

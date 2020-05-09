@@ -19,46 +19,34 @@
 
 package ec.animal.adoption.domain.characteristics.temperaments;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.Nullable;
+
+import java.util.Optional;
 
 public class Temperaments {
 
-    @JsonProperty("sociability")
     private final Sociability sociability;
-
-    @JsonProperty("docility")
     private final Docility docility;
-
-    @JsonProperty("balance")
     private final Balance balance;
 
-    @JsonCreator
-    public Temperaments(
-            @JsonProperty("sociability") final Sociability sociability,
-            @JsonProperty("docility") final Docility docility,
-            @JsonProperty("balance") final Balance balance) {
+    public Temperaments(@Nullable final Sociability sociability,
+                        @Nullable final Docility docility,
+                        @Nullable final Balance balance) {
         this.sociability = sociability;
         this.docility = docility;
         this.balance = balance;
     }
 
-    @JsonIgnore
-    public boolean isEmpty() {
-        return sociability == null && docility == null && balance == null;
+    public Optional<Sociability> getSociability() {
+        return Optional.ofNullable(sociability);
     }
 
-    public Sociability getSociability() {
-        return sociability;
+    public Optional<Docility> getDocility() {
+        return Optional.ofNullable(docility);
     }
 
-    public Docility getDocility() {
-        return docility;
-    }
-
-    public Balance getBalance() {
-        return balance;
+    public Optional<Balance> getBalance() {
+        return Optional.ofNullable(balance);
     }
 
     @Override

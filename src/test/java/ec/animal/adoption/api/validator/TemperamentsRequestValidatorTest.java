@@ -17,9 +17,9 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.validator;
+package ec.animal.adoption.api.validator;
 
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,42 +36,36 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TemperamentsValidatorTest {
+public class TemperamentsRequestValidatorTest {
 
     @Mock
     private ConstraintValidatorContext context;
 
-    private TemperamentsValidator temperamentsValidator;
+    private TemperamentsRequestValidator temperamentsRequestValidator;
 
     @BeforeEach
     public void setUp() {
-        temperamentsValidator = new TemperamentsValidator();
+        temperamentsRequestValidator = new TemperamentsRequestValidator();
     }
 
     @Test
     public void shouldBeAnInstanceOfConstraintValidator() {
-        assertThat(temperamentsValidator, is(instanceOf(ConstraintValidator.class)));
+        assertThat(temperamentsRequestValidator, is(instanceOf(ConstraintValidator.class)));
     }
 
     @Test
     public void shouldBeValid() {
-        Temperaments temperaments = mock(Temperaments.class);
-        when(temperaments.isEmpty()).thenReturn(false);
+        TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
+        when(temperamentsRequest.isEmpty()).thenReturn(false);
 
-        assertThat(temperamentsValidator.isValid(temperaments, context), is(true));
-    }
-
-    @Test
-    public void shouldBeInvalidIfTemperamentsIsNull() {
-
-        assertThat(temperamentsValidator.isValid(null, context), is(false));
+        assertThat(temperamentsRequestValidator.isValid(temperamentsRequest, context), is(true));
     }
 
     @Test
     public void shouldBeInvalidIfTemperamentsIsEmpty() {
-        Temperaments temperaments = mock(Temperaments.class);
-        when(temperaments.isEmpty()).thenReturn(true);
+        TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
+        when(temperamentsRequest.isEmpty()).thenReturn(true);
 
-        assertThat(temperamentsValidator.isValid(temperaments, context), is(false));
+        assertThat(temperamentsRequestValidator.isValid(temperamentsRequest, context), is(false));
     }
 }

@@ -19,10 +19,10 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class JpaCharacteristicsTest {
@@ -102,7 +102,7 @@ public class JpaCharacteristicsTest {
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
 
-        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getSociability());
+        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getSociability().isEmpty());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class JpaCharacteristicsTest {
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
 
-        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getDocility());
+        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getDocility().isEmpty());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class JpaCharacteristicsTest {
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
 
-        assertNull(characteristicsFromJpaCharacteristics.getTemperaments().getBalance());
+        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getBalance().isEmpty());
     }
 
     @Test

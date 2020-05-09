@@ -17,25 +17,18 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.validator;
+package ec.animal.adoption.api.validator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
+import org.springframework.lang.NonNull;
 
-@Constraint(validatedBy = {TemperamentsValidator.class})
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ValidTemperaments {
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-    String message() default "At least one temperament is required";
+public class TemperamentsRequestValidator implements ConstraintValidator<ValidTemperamentsRequest, TemperamentsRequest> {
 
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
+    @Override
+    public boolean isValid(@NonNull final TemperamentsRequest temperamentsRequest, final ConstraintValidatorContext context) {
+        return !temperamentsRequest.isEmpty();
+    }
 }

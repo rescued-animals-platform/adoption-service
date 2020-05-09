@@ -20,7 +20,7 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
-import ec.animal.adoption.api.model.error.ApiError;
+import ec.animal.adoption.api.model.error.ApiErrorResponse;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +74,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isEqualTo(CONFLICT)
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -227,7 +227,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     @Test
@@ -237,7 +237,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiError.class);
+                     .expectBody(ApiErrorResponse.class);
     }
 
     private static Story createStoryForAnimal(final UUID animalId, final Story story) {

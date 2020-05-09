@@ -19,9 +19,9 @@
 
 package ec.animal.adoption.api.handler;
 
-import ec.animal.adoption.api.model.error.ApiError;
-import ec.animal.adoption.api.model.error.ApiSubError;
-import ec.animal.adoption.api.model.error.ValidationApiSubError;
+import ec.animal.adoption.api.model.error.ApiErrorResponse;
+import ec.animal.adoption.api.model.error.ApiSubErrorResponse;
+import ec.animal.adoption.api.model.error.ValidationApiSubErrorResponse;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
@@ -58,7 +58,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final HttpStatus conflict = HttpStatus.CONFLICT;
         Optional<Throwable> cause = Optional.ofNullable(exception.getCause());
         return buildResponseEntity(
-                new ApiError(
+                new ApiErrorResponse(
                         conflict,
                         exception.getMessage(),
                         cause.map(Throwable::getLocalizedMessage).orElse(null)
@@ -70,36 +70,36 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(final EntityNotFoundException exception) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
-        return buildResponseEntity(new ApiError(notFound, exception.getMessage()), notFound);
+        return buildResponseEntity(new ApiErrorResponse(notFound, exception.getMessage()), notFound);
     }
 
     @ExceptionHandler(InvalidPictureException.class)
     public ResponseEntity<Object> handleInvalidPictureException(final InvalidPictureException exception) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         Throwable cause = exception.getCause();
-        ApiError apiError = cause == null ? new ApiError(badRequest, exception.getMessage()) :
-                new ApiError(badRequest, exception.getMessage(), cause.getLocalizedMessage());
+        ApiErrorResponse apiErrorResponse = cause == null ? new ApiErrorResponse(badRequest, exception.getMessage()) :
+                new ApiErrorResponse(badRequest, exception.getMessage(), cause.getLocalizedMessage());
 
-        return buildResponseEntity(apiError, badRequest);
+        return buildResponseEntity(apiErrorResponse, badRequest);
     }
 
     @ExceptionHandler(MediaStorageException.class)
     public ResponseEntity<Object> handleMediaStorageException(final MediaStorageException exception) {
         final HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
-        return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
+        return buildResponseEntity(new ApiErrorResponse(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorizedException(final UnauthorizedException exception) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
-        return buildResponseEntity(new ApiError(forbidden, exception.getMessage()), forbidden);
+        return buildResponseEntity(new ApiErrorResponse(forbidden, exception.getMessage()), forbidden);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGlobalException(final Exception exception) {
         LOGGER.error("Uncaught exception", exception);
         final HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
-        return buildResponseEntity(new ApiError(serviceUnavailable, exception.getMessage()), serviceUnavailable);
+        return buildResponseEntity(new ApiErrorResponse(serviceUnavailable, exception.getMessage()), serviceUnavailable);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         final String error = "Malformed JSON request";
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        return buildResponseEntity(new ApiError(badRequest, error, exception.getMessage()), badRequest);
+        return buildResponseEntity(new ApiErrorResponse(badRequest, error, exception.getMessage()), badRequest);
     }
 
     @Override
@@ -123,29 +123,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             @Nullable final HttpStatus status,
             @Nullable final WebRequest request
     ) {
-        final List<ApiSubError> apiSubErrors = exception.getBindingResult().getFieldErrors()
-                                                        .stream()
-                                                        .map(f -> new ValidationApiSubError(f.getField(), f.getDefaultMessage()))
-                                                        .collect(Collectors.toList());
+        final List<ApiSubErrorResponse> apiSubErrorResponses = exception.getBindingResult().getFieldErrors()
+                                                                        .stream()
+                                                                        .map(f -> new ValidationApiSubErrorResponse(f.getField(), f.getDefaultMessage()))
+                                                                        .collect(Collectors.toList());
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        ApiError apiError = new ApiError(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrors);
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrorResponses);
 
-        return buildResponseEntity(apiError, badRequest);
+        return buildResponseEntity(apiErrorResponse, badRequest);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException exception) {
-        final List<ApiSubError> apiSubErrors = exception.getConstraintViolations()
-                                                        .stream()
-                                                        .map(c -> new ValidationApiSubError(c.getPropertyPath().toString(), c.getMessage()))
-                                                        .collect(Collectors.toList());
+        final List<ApiSubErrorResponse> apiSubErrorResponses = exception.getConstraintViolations()
+                                                                        .stream()
+                                                                        .map(c -> new ValidationApiSubErrorResponse(c.getPropertyPath().toString(), c.getMessage()))
+                                                                        .collect(Collectors.toList());
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        ApiError apiError = new ApiError(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrors);
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(badRequest, VALIDATION_FAILED_ERROR_MESSAGE, exception.getMessage()).setSubErrors(apiSubErrorResponses);
 
-        return buildResponseEntity(apiError, badRequest);
+        return buildResponseEntity(apiErrorResponse, badRequest);
     }
 
-    private ResponseEntity<Object> buildResponseEntity(final ApiError apiError, final HttpStatus status) {
-        return new ResponseEntity<>(apiError, status);
+    private ResponseEntity<Object> buildResponseEntity(final ApiErrorResponse apiErrorResponse, final HttpStatus status) {
+        return new ResponseEntity<>(apiErrorResponse, status);
     }
 }

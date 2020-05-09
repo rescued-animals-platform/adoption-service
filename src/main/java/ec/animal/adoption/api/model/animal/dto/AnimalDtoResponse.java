@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.api.model.animal;
+package ec.animal.adoption.api.model.animal.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,8 +29,8 @@ import ec.animal.adoption.domain.media.LinkPicture;
 
 import java.util.UUID;
 
-@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-public class GetAnimalDto {
+@SuppressWarnings("PMD")
+public class AnimalDtoResponse {
 
     @JsonProperty("id")
     private final UUID animalId;
@@ -51,12 +51,12 @@ public class GetAnimalDto {
     private final String smallPrimaryPictureUrl;
 
     @JsonCreator
-    private GetAnimalDto(@JsonProperty("id") final UUID animalId,
-                         @JsonProperty("name") final String name,
-                         @JsonProperty("species") final Species species,
-                         @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-                         @JsonProperty("sex") final Sex sex,
-                         @JsonProperty("smallPrimaryPictureUrl") final String smallPrimaryPictureUrl) {
+    private AnimalDtoResponse(@JsonProperty("id") final UUID animalId,
+                              @JsonProperty("name") final String name,
+                              @JsonProperty("species") final Species species,
+                              @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
+                              @JsonProperty("sex") final Sex sex,
+                              @JsonProperty("smallPrimaryPictureUrl") final String smallPrimaryPictureUrl) {
         this.animalId = animalId;
         this.name = name;
         this.species = species;
@@ -65,7 +65,7 @@ public class GetAnimalDto {
         this.smallPrimaryPictureUrl = smallPrimaryPictureUrl;
     }
 
-    public GetAnimalDto(final Animal animal) {
+    public AnimalDtoResponse(final Animal animal) {
         this.animalId = animal.getIdentifier();
         this.name = animal.getName();
         this.species = animal.getSpecies();

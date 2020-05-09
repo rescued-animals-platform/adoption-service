@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.configuration;
 
-import ec.animal.adoption.validator.JwtAudienceValidator;
+import ec.animal.adoption.api.validator.JwtAudienceValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

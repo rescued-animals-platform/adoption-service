@@ -27,7 +27,7 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.api.model.animal.GetAnimalDto;
+import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -144,9 +144,9 @@ public class AnimalResourceTest {
         PagedEntity<Animal> pageOfAnimalsFiltered = new PagedEntity<>(animalsFiltered);
         when(animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable))
                 .thenReturn(pageOfAnimalsFiltered);
-        PagedEntity<GetAnimalDto> expectedPageOfAnimalDtosFiltered = pageOfAnimalsFiltered.map(GetAnimalDto::new);
+        PagedEntity<AnimalDtoResponse> expectedPageOfAnimalDtosFiltered = pageOfAnimalsFiltered.map(AnimalDtoResponse::new);
 
-        PagedEntity<GetAnimalDto> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
+        PagedEntity<AnimalDtoResponse> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
                 stateName, species, physicalActivity, size, pageable
         );
 

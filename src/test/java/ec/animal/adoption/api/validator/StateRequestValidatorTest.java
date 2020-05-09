@@ -1,6 +1,6 @@
-package ec.animal.adoption.validator;
+package ec.animal.adoption.api.validator;
 
-import ec.animal.adoption.api.model.state.CreateStateRequest;
+import ec.animal.adoption.api.model.state.StateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CreateStateRequestValidatorTest {
+class StateRequestValidatorTest {
 
     @Mock
     private ConstraintValidatorContext context;
@@ -37,20 +37,20 @@ class CreateStateRequestValidatorTest {
     @Mock
     private NodeBuilderCustomizableContext nodeBuilderCustomizableContext;
 
-    private CreateStateRequestValidator createStateRequestValidator;
+    private StateRequestValidator stateRequestValidator;
 
     @BeforeEach
     void setUp() {
-        createStateRequestValidator = new CreateStateRequestValidator();
+        stateRequestValidator = new StateRequestValidator();
     }
 
     @Test
     void shouldReturnFalseWithCustomPathAndMessageWhenStateNameIsNull() {
-        CreateStateRequest createStateRequest = new CreateStateRequest(null, null, null);
+        StateRequest stateRequest = new StateRequest(null, null, null);
         when(context.buildConstraintViolationWithTemplate("State name is required")).thenReturn(constraintViolationBuilder);
         when(constraintViolationBuilder.addPropertyNode("name")).thenReturn(nodeBuilderCustomizableContext);
 
-        boolean isValid = createStateRequestValidator.isValid(createStateRequest, context);
+        boolean isValid = stateRequestValidator.isValid(stateRequest, context);
 
         assertFalse(isValid);
         verify(context).disableDefaultConstraintViolation();
@@ -59,12 +59,12 @@ class CreateStateRequestValidatorTest {
 
     @Test
     void shouldReturnFalseWithCustomPathAndMessageWhenStateNameIsUnavailableAndNotesAreNull() {
-        CreateStateRequest createStateRequest = new CreateStateRequest(UNAVAILABLE, null, null);
+        StateRequest stateRequest = new StateRequest(UNAVAILABLE, null, null);
         when(context.buildConstraintViolationWithTemplate("Notes are required for unavailable state"))
                 .thenReturn(constraintViolationBuilder);
         when(constraintViolationBuilder.addPropertyNode("notes")).thenReturn(nodeBuilderCustomizableContext);
 
-        boolean isValid = createStateRequestValidator.isValid(createStateRequest, context);
+        boolean isValid = stateRequestValidator.isValid(stateRequest, context);
 
         assertFalse(isValid);
         verify(context).disableDefaultConstraintViolation();
@@ -73,24 +73,24 @@ class CreateStateRequestValidatorTest {
 
     @ParameterizedTest(name = "{index} {0} is valid")
     @MethodSource("validCreateStateRequests")
-    void shouldReturnTrueForValidCreateStateRequest(final CreateStateRequest createStateRequest) {
-        assertTrue(createStateRequestValidator.isValid(createStateRequest, context));
+    void shouldReturnTrueForValidCreateStateRequest(final StateRequest stateRequest) {
+        assertTrue(stateRequestValidator.isValid(stateRequest, context));
         verifyNoInteractions(context);
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> validCreateStateRequests() {
         return Stream.of(
-                Arguments.of(new CreateStateRequest(LOOKING_FOR_HUMAN, null, null)),
-                Arguments.of(new CreateStateRequest(LOOKING_FOR_HUMAN, randomAlphabetic(10), null)),
-                Arguments.of(new CreateStateRequest(LOOKING_FOR_HUMAN, null, randomAlphabetic(10))),
-                Arguments.of(new CreateStateRequest(LOOKING_FOR_HUMAN, randomAlphabetic(10), randomAlphabetic(10))),
-                Arguments.of(new CreateStateRequest(ADOPTED, null, null)),
-                Arguments.of(new CreateStateRequest(ADOPTED, randomAlphabetic(10), null)),
-                Arguments.of(new CreateStateRequest(ADOPTED, null, randomAlphabetic(10))),
-                Arguments.of(new CreateStateRequest(ADOPTED, randomAlphabetic(10), randomAlphabetic(10))),
-                Arguments.of(new CreateStateRequest(UNAVAILABLE, null, randomAlphabetic(10))),
-                Arguments.of(new CreateStateRequest(UNAVAILABLE, randomAlphabetic(10), randomAlphabetic(10)))
+                Arguments.of(new StateRequest(LOOKING_FOR_HUMAN, null, null)),
+                Arguments.of(new StateRequest(LOOKING_FOR_HUMAN, randomAlphabetic(10), null)),
+                Arguments.of(new StateRequest(LOOKING_FOR_HUMAN, null, randomAlphabetic(10))),
+                Arguments.of(new StateRequest(LOOKING_FOR_HUMAN, randomAlphabetic(10), randomAlphabetic(10))),
+                Arguments.of(new StateRequest(ADOPTED, null, null)),
+                Arguments.of(new StateRequest(ADOPTED, randomAlphabetic(10), null)),
+                Arguments.of(new StateRequest(ADOPTED, null, randomAlphabetic(10))),
+                Arguments.of(new StateRequest(ADOPTED, randomAlphabetic(10), randomAlphabetic(10))),
+                Arguments.of(new StateRequest(UNAVAILABLE, null, randomAlphabetic(10))),
+                Arguments.of(new StateRequest(UNAVAILABLE, randomAlphabetic(10), randomAlphabetic(10)))
         );
     }
 }

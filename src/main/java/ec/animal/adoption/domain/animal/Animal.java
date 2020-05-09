@@ -174,6 +174,18 @@ public class Animal extends Entity {
     }
 
     @Override
+    @NonNull
+    public UUID getIdentifier() {
+        return super.identifier;
+    }
+
+    @Override
+    @NonNull
+    public LocalDateTime getRegistrationDate() {
+        return super.registrationDate;
+    }
+
+    @Override
     @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {

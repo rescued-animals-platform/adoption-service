@@ -21,13 +21,12 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.stream.Stream;
+import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Size {
     TINY("Tiny"), SMALL("Small"), MEDIUM("Medium"), BIG("Big"), OUTSIZE("Outsize");
 
+    @JsonValue
     private final String name;
 
     Size(final String name) {
@@ -37,19 +36,13 @@ public enum Size {
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Size forValue(final String value) {
-        String normalizedValue = StringUtils.trimToEmpty(value);
-        try {
-            return Size.valueOf(normalizedValue);
-        } catch (IllegalArgumentException ex) {
-            return Stream.of(Size.values())
-                         .filter(e -> e.getName().equals(normalizedValue))
-                         .findFirst()
-                         .orElseThrow(() -> ex);
-        }
+        return (Size) EnumUtils.forValue(value)
+                               .apply(Size.values())
+                               .orElseThrow(IllegalArgumentException::new);
     }
 
-    @JsonValue
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

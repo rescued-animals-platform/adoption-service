@@ -55,14 +55,14 @@ public class CreateAnimalResponse {
     private final StateResponse state;
 
     @JsonCreator
-    public CreateAnimalResponse(@JsonProperty("id") final UUID animalId,
-                                @JsonProperty("registrationDate") final LocalDateTime registrationDate,
-                                @JsonProperty("clinicalRecord") final String clinicalRecord,
-                                @JsonProperty("name") final String name,
-                                @JsonProperty("species") final String species,
-                                @JsonProperty("estimatedAge") final String estimatedAge,
-                                @JsonProperty("sex") final String sex,
-                                @JsonProperty("state") final StateResponse state) {
+    private CreateAnimalResponse(@JsonProperty("id") final UUID animalId,
+                                 @JsonProperty("registrationDate") final LocalDateTime registrationDate,
+                                 @JsonProperty("clinicalRecord") final String clinicalRecord,
+                                 @JsonProperty("name") final String name,
+                                 @JsonProperty("species") final String species,
+                                 @JsonProperty("estimatedAge") final String estimatedAge,
+                                 @JsonProperty("sex") final String sex,
+                                 @JsonProperty("state") final StateResponse state) {
         this.animalId = animalId;
         this.registrationDate = registrationDate;
         this.clinicalRecord = clinicalRecord;

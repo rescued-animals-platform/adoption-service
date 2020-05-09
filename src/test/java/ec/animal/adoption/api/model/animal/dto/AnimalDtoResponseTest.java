@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.api.model.animal;
+package ec.animal.adoption.api.model.animal.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GetAnimalDtoTest {
+public class AnimalDtoResponseTest {
 
     private ObjectMapper objectMapper;
 
@@ -59,9 +59,9 @@ public class GetAnimalDtoTest {
                                                            .withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
                                                            .build();
         Animal animal = AnimalBuilder.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
-        GetAnimalDto getAnimalDto = new GetAnimalDto(animal);
+        AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
 
-        String serializedAnimalDto = objectMapper.writeValueAsString(getAnimalDto);
+        String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
 
         assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
@@ -75,9 +75,9 @@ public class GetAnimalDtoTest {
     public void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalBuilder.random().withIdentifier(animalId).build();
-        GetAnimalDto getAnimalDto = new GetAnimalDto(animal);
+        AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
 
-        String serializedAnimalDto = objectMapper.writeValueAsString(getAnimalDto);
+        String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
 
         assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
@@ -91,7 +91,7 @@ public class GetAnimalDtoTest {
     public void shouldBeDeserializable() throws JSONException, JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
         Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
-        GetAnimalDto expectedGetAnimalDto = new GetAnimalDto(animal);
+        AnimalDtoResponse expectedAnimalDtoResponse = new AnimalDtoResponse(animal);
         String animalDtoAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())
                 .put("name", animal.getName())
@@ -101,8 +101,8 @@ public class GetAnimalDtoTest {
                 .put("smallPrimaryPictureUrl", primaryLinkPicture.getSmallImageUrl())
                 .toString();
 
-        GetAnimalDto getAnimalDto = objectMapper.readValue(animalDtoAsJson, GetAnimalDto.class);
+        AnimalDtoResponse animalDtoResponse = objectMapper.readValue(animalDtoAsJson, AnimalDtoResponse.class);
 
-        Assertions.assertThat(getAnimalDto).usingRecursiveComparison().isEqualTo(expectedGetAnimalDto);
+        Assertions.assertThat(animalDtoResponse).usingRecursiveComparison().isEqualTo(expectedAnimalDtoResponse);
     }
 }

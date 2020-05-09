@@ -25,7 +25,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ApiError {
+public class ApiErrorResponse {
 
     @JsonProperty("timestamp")
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -41,27 +41,27 @@ public class ApiError {
     private String debugMessage;
 
     @JsonProperty("subErrors")
-    private List<ApiSubError> subErrors;
+    private List<ApiSubErrorResponse> subErrors;
 
-    private ApiError() {
+    private ApiErrorResponse() {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiError(final HttpStatus status, final String message, final String debugMessage) {
+    public ApiErrorResponse(final HttpStatus status, final String message, final String debugMessage) {
         this();
         this.status = status;
         this.message = message;
         this.debugMessage = debugMessage;
     }
 
-    public ApiError(final HttpStatus status, final String message) {
+    public ApiErrorResponse(final HttpStatus status, final String message) {
         this();
         this.status = status;
         this.message = message;
         this.debugMessage = "";
     }
 
-    public ApiError setSubErrors(final List<ApiSubError> subErrors) {
+    public ApiErrorResponse setSubErrors(final List<ApiSubErrorResponse> subErrors) {
         this.subErrors = subErrors;
         return this;
     }
@@ -76,18 +76,18 @@ public class ApiError {
             return false;
         }
 
-        ApiError apiError = (ApiError) o;
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) o;
 
-        if (status != apiError.status) {
+        if (status != apiErrorResponse.status) {
             return false;
         }
-        if (message != null ? !message.equals(apiError.message) : apiError.message != null) {
+        if (message != null ? !message.equals(apiErrorResponse.message) : apiErrorResponse.message != null) {
             return false;
         }
-        if (debugMessage != null ? !debugMessage.equals(apiError.debugMessage) : apiError.debugMessage != null) {
+        if (debugMessage != null ? !debugMessage.equals(apiErrorResponse.debugMessage) : apiErrorResponse.debugMessage != null) {
             return false;
         }
-        return subErrors != null ? subErrors.equals(apiError.subErrors) : apiError.subErrors == null;
+        return subErrors != null ? subErrors.equals(apiErrorResponse.subErrors) : apiErrorResponse.subErrors == null;
     }
 
     @Override

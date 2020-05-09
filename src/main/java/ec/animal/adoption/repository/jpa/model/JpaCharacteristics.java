@@ -20,7 +20,6 @@
 package ec.animal.adoption.repository.jpa.model;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
@@ -104,9 +103,9 @@ public class JpaCharacteristics implements Serializable {
     }
 
     private void setTemperaments(final Temperaments temperaments) {
-        this.sociability = temperaments.getSociability() == null ? null : temperaments.getSociability().name();
-        this.docility = temperaments.getDocility() == null ? null : temperaments.getDocility().name();
-        this.balance = temperaments.getBalance() == null ? null : temperaments.getBalance().name();
+        this.sociability = temperaments.getSociability().map(Enum::name).orElse(null);
+        this.docility = temperaments.getDocility().map(Enum::name).orElse(null);
+        this.balance = temperaments.getBalance().map(Enum::name).orElse(null);
     }
 
     public Characteristics toCharacteristics() {
@@ -120,7 +119,7 @@ public class JpaCharacteristics implements Serializable {
                         this.docility == null ? null : Docility.valueOf(this.docility),
                         this.balance == null ? null : Balance.valueOf(this.balance)
                 ),
-                this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith).toArray(FriendlyWith[]::new)
+                this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith).collect(Collectors.toSet())
         );
     }
 

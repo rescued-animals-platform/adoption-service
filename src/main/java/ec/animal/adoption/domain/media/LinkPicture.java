@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,27 +45,23 @@ public class LinkPicture extends Entity {
     private final MediaLink smallImageMediaLink;
 
     @JsonCreator
-    public LinkPicture(
-            @JsonProperty("name") final String name,
-            @JsonProperty("pictureType") final PictureType pictureType,
-            @JsonProperty("largeImageMediaLink") final MediaLink largeImageMediaLink,
-            @JsonProperty("smallImageMediaLink") final MediaLink smallImageMediaLink
-    ) {
-        super(null, null);
+    public LinkPicture(@JsonProperty("name") final String name,
+                       @JsonProperty("pictureType") final PictureType pictureType,
+                       @JsonProperty("largeImageMediaLink") final MediaLink largeImageMediaLink,
+                       @JsonProperty("smallImageMediaLink") final MediaLink smallImageMediaLink) {
+        super();
         this.name = name;
         this.pictureType = pictureType;
         this.largeImageMediaLink = largeImageMediaLink;
         this.smallImageMediaLink = smallImageMediaLink;
     }
 
-    public LinkPicture(
-            final UUID linkPictureId,
-            final LocalDateTime registrationDate,
-            final String name,
-            final PictureType pictureType,
-            final MediaLink largeImageMediaLink,
-            final MediaLink smallImageMediaLink
-    ) {
+    public LinkPicture(final UUID linkPictureId,
+                       final LocalDateTime registrationDate,
+                       final String name,
+                       final PictureType pictureType,
+                       final MediaLink largeImageMediaLink,
+                       final MediaLink smallImageMediaLink) {
         super(linkPictureId, registrationDate);
         this.name = name;
         this.pictureType = pictureType;
@@ -92,6 +89,18 @@ public class LinkPicture extends Entity {
     @JsonIgnore
     public String getSmallImageUrl() {
         return smallImageMediaLink.getUrl();
+    }
+
+    @Override
+    @Nullable
+    public UUID getIdentifier() {
+        return super.identifier;
+    }
+
+    @Override
+    @Nullable
+    public LocalDateTime getRegistrationDate() {
+        return super.registrationDate;
     }
 
     @Override

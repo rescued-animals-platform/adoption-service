@@ -22,11 +22,11 @@ package ec.animal.adoption.api.resource;
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
+import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.api.model.animal.GetAnimalDto;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
@@ -36,7 +36,6 @@ import ec.animal.adoption.domain.state.StateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
@@ -68,7 +67,7 @@ public class AnimalResource {
         this.adminTokenUtils = adminTokenUtils;
     }
 
-    @PostMapping(value = "/admin/animals", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/admin/animals")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateAnimalResponse create(@RequestBody @Valid final CreateAnimalRequest createAnimalRequest,
                                        @AuthenticationPrincipal final Jwt token) {
@@ -97,7 +96,7 @@ public class AnimalResource {
     }
 
     @GetMapping("/animals")
-    public PagedEntity<GetAnimalDto> listAllWithFilters(
+    public PagedEntity<AnimalDtoResponse> listAllWithFilters(
             @RequestParam("state") final StateName stateName,
             @RequestParam("species") final Species species,
             @RequestParam("physicalActivity") final PhysicalActivity physicalActivity,
@@ -105,6 +104,6 @@ public class AnimalResource {
             final Pageable pageable
     ) {
         return animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable)
-                            .map(GetAnimalDto::new);
+                            .map(AnimalDtoResponse::new);
     }
 }

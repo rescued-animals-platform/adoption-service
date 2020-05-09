@@ -22,7 +22,7 @@ package ec.animal.adoption.api.model.error;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ValidationApiSubError implements ApiSubError {
+public class ValidationApiSubErrorResponse implements ApiSubErrorResponse {
 
     @JsonProperty("field")
     private final String field;
@@ -31,7 +31,8 @@ public class ValidationApiSubError implements ApiSubError {
     private final String message;
 
     @JsonCreator
-    public ValidationApiSubError(@JsonProperty("field") final String field, @JsonProperty("message") final String message) {
+    public ValidationApiSubErrorResponse(@JsonProperty("field") final String field,
+                                         @JsonProperty("message") final String message) {
         this.field = field;
         this.message = message;
     }
@@ -46,7 +47,7 @@ public class ValidationApiSubError implements ApiSubError {
             return false;
         }
 
-        ValidationApiSubError that = (ValidationApiSubError) o;
+        ValidationApiSubErrorResponse that = (ValidationApiSubErrorResponse) o;
 
         if (field != null ? !field.equals(that.field) : that.field != null) {
             return false;
