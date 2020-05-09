@@ -19,24 +19,14 @@
 
 package ec.animal.adoption.domain.media;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LinkPictureTest {
@@ -77,47 +67,6 @@ public class LinkPictureTest {
 
     @Test
     public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(LinkPicture.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
-    }
-
-    @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
-        LinkPicture linkPicture = LinkPictureBuilder.random().build();
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
-        LinkPicture deserializedLinkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
-
-        assertThat(deserializedLinkPicture, is(linkPicture));
-    }
-
-    @Test
-    public void shouldNotIncludeIdAndRegistrationDateInSerialization() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        LinkPicture linkPicture = LinkPictureBuilder.random().withIdentifier(UUID.randomUUID())
-                                                    .withRegistrationDate(LocalDateTime.now()).build();
-
-        String serializedLinkPicture = objectMapper.writeValueAsString(linkPicture);
-
-        assertThat(serializedLinkPicture, not(containsString("\"id\":")));
-        assertThat(serializedLinkPicture, not(containsString("\"registrationDate\":")));
-    }
-
-    @Test
-    public void shouldNotIncludeIdAndRegistrationDateInDeserialization() throws IOException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String idAsJson = String.format("\"id\":\"%s\"", UUID.randomUUID());
-        String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
-        String serializedLinkPicture = String.format(
-                "{%s,%s,\"name\":\"anyName\",\"pictureType\":\"PRIMARY\"," +
-                        "\"largeImageMediaLink\":{\"url\":\"anyLargeUrl\"}," +
-                        "\"smallImageMediaLink\":{\"url\":\"anySmallUrl\"}}",
-                idAsJson,
-                registrationDateAsJson
-        );
-
-        LinkPicture linkPicture = objectMapper.readValue(serializedLinkPicture, LinkPicture.class);
-
-        assertNull(linkPicture.getIdentifier());
-        assertNull(linkPicture.getRegistrationDate());
+        EqualsVerifier.forClass(LinkPicture.class).usingGetClass().verify();
     }
 }

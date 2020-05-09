@@ -17,38 +17,23 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.domain.media;
+package ec.animal.adoption.api.model.media;
 
-public class MediaLink {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@SuppressWarnings("PMD")
+public class MediaLinkResponse {
+
+    @JsonProperty("url")
     private final String url;
 
-    public MediaLink(final String url) {
+    @JsonCreator
+    public MediaLinkResponse(@JsonProperty("url") final String url) {
         this.url = url;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        MediaLink mediaLink = (MediaLink) o;
-
-        return url != null ? url.equals(mediaLink.url) : mediaLink.url == null;
-    }
-
-    @Override
-    @SuppressWarnings("PMD")
-    public int hashCode() {
-        return url != null ? url.hashCode() : 0;
+    public static MediaLinkResponse from(final String url) {
+        return new MediaLinkResponse(url);
     }
 }

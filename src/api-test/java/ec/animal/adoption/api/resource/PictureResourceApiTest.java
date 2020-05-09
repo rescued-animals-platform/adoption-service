@@ -20,9 +20,9 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
-import ec.animal.adoption.api.model.error.ApiErrorResponse;
-import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.media.PictureType;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -31,11 +31,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class PictureResourceApiTest extends AbstractApiTest {
 
     private static final String NAME = "name";
@@ -69,15 +70,11 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isCreated()
-                     .expectBody(LinkPicture.class)
-                     .consumeWith(linkPictureEntityExchangeResult -> {
-                         LinkPicture linkPicture = linkPictureEntityExchangeResult.getResponseBody();
-                         assertNotNull(linkPicture);
-                         assertThat(linkPicture.getName(), is(name));
-                         assertThat(linkPicture.getPictureType(), is(pictureType));
-                         assertNotNull(linkPicture.getLargeImageUrl());
-                         assertNotNull(linkPicture.getSmallImageUrl());
-                     });
+                     .expectBody()
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.pictureType").isEqualTo(pictureType.toTranslatedName())
+                     .jsonPath("$.largeImageMediaLink.url").isNotEmpty()
+                     .jsonPath("$.smallImageMediaLink.url").isNotEmpty();
     }
 
     @Test
@@ -88,7 +85,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -106,7 +106,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isEqualTo(CONFLICT)
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(CONFLICT.name())
+                     .jsonPath("$.message").isEqualTo("The resource already exists")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -123,7 +126,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -140,7 +146,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -157,30 +166,38 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     public void shouldReturn200OkWithPrimaryPicture() {
-        LinkPicture createdLinkPicture = webTestClient.post()
-                                                      .uri(PICTURES_ADMIN_URL, animalId)
-                                                      .bodyValue(validMultipartPicturesFormData)
-                                                      .exchange()
-                                                      .expectStatus()
-                                                      .isCreated()
-                                                      .expectBody(LinkPicture.class)
-                                                      .returnResult()
-                                                      .getResponseBody();
+        LinkPictureResponse createdLinkPictureResponse = webTestClient.post()
+                                                                      .uri(PICTURES_ADMIN_URL, animalId)
+                                                                      .bodyValue(validMultipartPicturesFormData)
+                                                                      .exchange()
+                                                                      .expectStatus()
+                                                                      .isCreated()
+                                                                      .expectBody(LinkPictureResponse.class)
+                                                                      .returnResult()
+                                                                      .getResponseBody();
 
-        assertNotNull(createdLinkPicture);
+        assertNotNull(createdLinkPictureResponse);
 
         webTestClient.get()
                      .uri(GET_PICTURES_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
-                     .expectBody(LinkPicture.class)
-                     .isEqualTo(createdLinkPicture);
+                     .expectBody(LinkPictureResponse.class)
+                     .consumeWith(entity -> {
+                         LinkPictureResponse foundLinkPictureResponse = entity.getResponseBody();
+                         Assertions.assertThat(foundLinkPictureResponse)
+                                   .usingRecursiveComparison()
+                                   .isEqualTo(createdLinkPictureResponse);
+                     });
     }
 
     @Test
@@ -190,7 +207,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -200,6 +220,9 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 }

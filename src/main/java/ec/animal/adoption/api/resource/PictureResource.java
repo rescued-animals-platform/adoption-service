@@ -20,6 +20,7 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
@@ -70,26 +71,21 @@ public class PictureResource {
                  consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
                  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public LinkPicture createPrimaryPicture(
-            @PathVariable("id") final UUID animalId,
-            @RequestParam("name") final String name,
-            @RequestParam("pictureType") final PictureType pictureType,
-            @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
-            @RequestPart("smallImage") final MultipartFile smallImageMultipartFile,
-            @AuthenticationPrincipal final Jwt token
-    ) {
+    public LinkPictureResponse createPrimaryPicture(@PathVariable("id") final UUID animalId,
+                                                    @RequestParam("name") final String name,
+                                                    @RequestParam("pictureType") final PictureType pictureType,
+                                                    @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
+                                                    @RequestPart("smallImage") final MultipartFile smallImageMultipartFile,
+                                                    @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return pictureService.createFor(
-                animalId,
-                organization,
-                new ImagePicture(
-                        name,
-                        pictureType,
-                        createImageFromMultipartFile(largeImageMultipartFile),
-                        createImageFromMultipartFile(smallImageMultipartFile)
-                )
-        );
+        ImagePicture imagePicture = new ImagePicture(name,
+                                                     pictureType,
+                                                     createImageFromMultipartFile(largeImageMultipartFile),
+                                                     createImageFromMultipartFile(smallImageMultipartFile));
+        LinkPicture linkPicture = pictureService.createFor(animalId, organization, imagePicture);
+
+        return LinkPictureResponse.from(linkPicture);
     }
 
     private Image createImageFromMultipartFile(final MultipartFile multipartFile) {
@@ -112,7 +108,9 @@ public class PictureResource {
     }
 
     @GetMapping("/animals/{id}/pictures")
-    public LinkPicture get(@PathVariable("id") final UUID animalId) {
-        return pictureService.getBy(animalId);
+    public LinkPictureResponse get(@PathVariable("id") final UUID animalId) {
+        LinkPicture linkPicture = pictureService.getBy(animalId);
+
+        return LinkPictureResponse.from(linkPicture);
     }
 }

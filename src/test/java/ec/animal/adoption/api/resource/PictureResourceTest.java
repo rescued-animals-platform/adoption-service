@@ -20,34 +20,36 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.domain.media.ImageBuilder;
-import ec.animal.adoption.domain.media.ImagePictureBuilder;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.media.Image;
+import ec.animal.adoption.domain.media.ImageBuilder;
 import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.ImagePictureBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureService;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -88,6 +90,9 @@ public class PictureResourceTest {
         smallImage = ImageBuilder.random().build();
         imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY)
                                           .withLargeImage(largeImage).withSmallImage(smallImage).build();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
 
         pictureResource = new PictureResource(pictureService, organizationService, adminTokenUtils);
     }
@@ -111,17 +116,16 @@ public class PictureResourceTest {
                                                             .withPictureType(imagePicture.getPictureType())
                                                             .build();
         when(pictureService.createFor(animalId, organization, imagePicture)).thenReturn(expectedLinkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(expectedLinkPicture);
 
-        LinkPicture linkPicture = pictureResource.createPrimaryPicture(
-                animalId,
-                imagePicture.getName(),
-                imagePicture.getPictureType(),
-                largeImageMultipartFile,
-                smallImageMultipartFile,
-                token
-        );
+        LinkPictureResponse linkPictureResponse = pictureResource.createPrimaryPicture(animalId,
+                                                                                       imagePicture.getName(),
+                                                                                       imagePicture.getPictureType(),
+                                                                                       largeImageMultipartFile,
+                                                                                       smallImageMultipartFile,
+                                                                                       token);
 
-        assertThat(linkPicture, is(expectedLinkPicture));
+        Assertions.assertThat(linkPictureResponse).usingRecursiveComparison().isEqualTo(expectedLinkPictureResponse);
     }
 
     @Test
@@ -249,11 +253,12 @@ public class PictureResourceTest {
     @Test
     public void shouldGetPrimaryPictureForAnimal() {
         UUID animalId = UUID.randomUUID();
-        LinkPicture expectedLinkPicture = mock(LinkPicture.class);
-        when(pictureService.getBy(animalId)).thenReturn(expectedLinkPicture);
+        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        when(pictureService.getBy(animalId)).thenReturn(linkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
 
-        LinkPicture linkPicture = pictureResource.get(animalId);
+        LinkPictureResponse linkPictureResponse = pictureResource.get(animalId);
 
-        assertThat(linkPicture, is(expectedLinkPicture));
+        Assertions.assertThat(linkPictureResponse).usingRecursiveComparison().isEqualTo(expectedLinkPictureResponse);
     }
 }
