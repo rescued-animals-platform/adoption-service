@@ -20,22 +20,22 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
-import ec.animal.adoption.api.model.error.ApiErrorResponse;
-import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.api.model.story.StoryRequest;
+import ec.animal.adoption.api.model.story.StoryResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StoryResourceApiTest extends AbstractApiTest {
 
     private UUID animalId;
@@ -48,33 +48,34 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn201CreatedWithStory() {
-        Story story = StoryBuilder.random().build();
+        String text = randomAlphabetic(10);
+        StoryRequest storyRequest = new StoryRequest(text);
 
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(story)
+                     .bodyValue(storyRequest)
                      .exchange()
                      .expectStatus()
                      .isCreated()
-                     .expectBody(Story.class)
-                     .consumeWith(storyEntityExchangeResult -> {
-                         Story createdStory = storyEntityExchangeResult.getResponseBody();
-                         assertEquals(story, createdStory);
-                     });
+                     .expectBody()
+                     .jsonPath("$.text").isEqualTo(text);
     }
 
     @Test
     public void shouldReturn400BadRequestWhenCreatingAStoryAndJsonCannotBeParsed() {
-        String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
+        String storyWithWrongData = "{\"text\":" + randomAlphabetic(10) + "}";
 
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
                      .bodyValue(storyWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -83,93 +84,99 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
                      .bodyValue(storyWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
     }
 
     @Test
     public void shouldReturn404NotFoundWhenCreatingStoryForNonExistentAnimal() {
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
-                     .bodyValue(StoryBuilder.random().build())
+                     .bodyValue(new StoryRequest(randomAlphabetic(10)))
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingStoryThatAlreadyExist() {
-        Story story = StoryBuilder.random().build();
+        StoryRequest storyRequest = new StoryRequest(randomAlphabetic(10));
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(story)
+                     .bodyValue(storyRequest)
                      .exchange()
                      .expectStatus()
                      .isCreated();
 
         webTestClient.post()
                      .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(story)
+                     .bodyValue(storyRequest)
                      .exchange()
                      .expectStatus()
                      .isEqualTo(CONFLICT)
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(CONFLICT.name())
+                     .jsonPath("$.message").isEqualTo("The resource already exists")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     public void shouldReturn200OkWithUpdatedStory() {
-        Story createdStory = createStoryForAnimal(animalId, StoryBuilder.random().build());
+        createStoryForAnimal(animalId, new StoryRequest(randomAlphabetic(10)));
         String newStoryText = randomAlphabetic(10);
-        Story newStory = StoryBuilder.random().withText(newStoryText).build();
+        StoryRequest updateStoryRequest = new StoryRequest(newStoryText);
 
         webTestClient.put()
                      .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(newStory)
+                     .bodyValue(updateStoryRequest)
                      .exchange()
                      .expectStatus()
                      .isOk()
-                     .expectBody(Story.class)
-                     .consumeWith(storyEntityExchangeResult -> {
-                         Story updatedStory = storyEntityExchangeResult.getResponseBody();
-                         assertNotEquals(createdStory, updatedStory);
-                         assertEquals(newStory, updatedStory);
-                     });
+                     .expectBody()
+                     .jsonPath("$.text").isEqualTo(newStoryText);
     }
 
     @Test
     public void shouldReturn200OkWhenUpdatingStoryBeforeCreatingOne() {
-        Story story = StoryBuilder.random().build();
+        String text = randomAlphabetic(10);
+        StoryRequest storyRequest = new StoryRequest(text);
 
         webTestClient.put()
                      .uri(STORY_ADMIN_URL, animalId)
-                     .bodyValue(story)
+                     .bodyValue(storyRequest)
                      .exchange()
                      .expectStatus()
                      .isOk()
-                     .expectBody(Story.class)
-                     .consumeWith(storyEntityExchangeResult -> {
-                         Story updatedStory = storyEntityExchangeResult.getResponseBody();
-                         assertEquals(story, updatedStory);
-                     });
+                     .expectBody()
+                     .jsonPath("$.text").isEqualTo(text);
     }
 
     @Test
     public void shouldReturn400BadRequestWhenUpdatingAStoryAndJsonCannotBeParsed() {
-        String storyWithWrongData = "{\"another\":\"" + randomAlphabetic(10) + "\"}";
+        String storyWithWrongData = "{\"text\":" + randomAlphabetic(10) + "}";
 
         webTestClient.put()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
                      .bodyValue(storyWithWrongData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -178,46 +185,48 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
         webTestClient.put()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
                      .bodyValue(storyWithMissingData)
-                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                      .exchange()
                      .expectStatus()
                      .isBadRequest()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
     }
 
     @Test
     public void shouldReturn404NotFoundWhenUpdatingStoryForNonExistentAnimal() {
         webTestClient.put()
                      .uri(STORY_ADMIN_URL, UUID.randomUUID())
-                     .bodyValue(StoryBuilder.random().build())
+                     .bodyValue(new StoryRequest(randomAlphabetic(10)))
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     public void shouldReturn200OkWithStory() {
-        Story createdStory = webTestClient.post()
-                                          .uri(STORY_ADMIN_URL, animalId)
-                                          .bodyValue(StoryBuilder.random().build())
-                                          .exchange()
-                                          .expectStatus()
-                                          .isCreated()
-                                          .expectBody(Story.class)
-                                          .returnResult()
-                                          .getResponseBody();
-
-        assertNotNull(createdStory);
+        StoryResponse createdStoryResponse = createStoryForAnimal(animalId, new StoryRequest(randomAlphabetic(10)));
 
         webTestClient.get()
                      .uri(GET_STORY_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
-                     .expectBody(Story.class)
-                     .isEqualTo(createdStory);
+                     .expectBody(StoryResponse.class)
+                     .consumeWith(entity -> {
+                         StoryResponse foundStoryResponse = entity.getResponseBody();
+
+                         Assertions.assertThat(foundStoryResponse)
+                                   .usingRecursiveComparison()
+                                   .isEqualTo(createdStoryResponse);
+                     });
     }
 
     @Test
@@ -227,7 +236,10 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -237,18 +249,24 @@ public class StoryResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isNotFound()
-                     .expectBody(ApiErrorResponse.class);
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
-    private static Story createStoryForAnimal(final UUID animalId, final Story story) {
-        return webTestClient.post()
-                            .uri(STORY_ADMIN_URL, animalId)
-                            .bodyValue(story)
-                            .exchange()
-                            .expectStatus()
-                            .isCreated()
-                            .expectBody(Story.class)
-                            .returnResult()
-                            .getResponseBody();
+    private static StoryResponse createStoryForAnimal(final UUID animalId, final StoryRequest storyRequest) {
+        StoryResponse storyResponse = webTestClient.post()
+                                                   .uri(STORY_ADMIN_URL, animalId)
+                                                   .bodyValue(storyRequest)
+                                                   .exchange()
+                                                   .expectStatus()
+                                                   .isCreated()
+                                                   .expectBody(StoryResponse.class)
+                                                   .returnResult()
+                                                   .getResponseBody();
+        assertNotNull(storyResponse);
+
+        return storyResponse;
     }
 }

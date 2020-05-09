@@ -19,129 +19,90 @@
 
 package ec.animal.adoption.domain.story;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintViolation;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getValidator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StoryTest {
 
-    private static final String STORY_TEXT_IS_REQUIRED = "Story text is required";
-
-    private Story story;
     private String text;
 
     @BeforeEach
     public void setUp() {
         text = randomAlphabetic(100);
-        story = StoryBuilder.random().withText(text).build();
     }
 
     @Test
-    public void shouldCreateAStory() {
-        assertThat(story.getText(), is(text));
-    }
+    public void shouldCreateAStoryWithNoIdentifierNorRegistrationDate() {
+        Story story = new Story(text);
 
-    @Test
-    void shouldUpdateStoryTextAndRegistrationTime() {
-        String newText = randomAlphabetic(50);
-        Story newStory = StoryBuilder.random().withText(newText).build();
-
-        Story updatedStory = story.updateWith(newStory);
-
-        assertAll(() -> assertEquals(story.getIdentifier(), updatedStory.getIdentifier()),
-                  () -> assertNotEquals(story.getRegistrationDate(), updatedStory.getRegistrationDate()),
-                  () -> assertEquals(LocalDateTime.now().toLocalDate(), updatedStory.getRegistrationDate().toLocalDate()),
-                  () -> assertEquals(newText, updatedStory.getText()));
-    }
-
-    @Test
-    void shouldReturnSameStoryWhenUpdatedWithItself() {
-        Story updatedStory = story.updateWith(story);
-
-        assertEquals(story, updatedStory);
-    }
-
-    @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(Story.class).usingGetClass().verify();
-    }
-
-    @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-
-        String serializedStory = objectMapper.writeValueAsString(story);
-        Story deserializedStory = objectMapper.readValue(serializedStory, Story.class);
-
-        assertThat(deserializedStory, is(story));
-    }
-
-    @Test
-    public void shouldNotIncludeIdAndRegistrationDateInSerialization() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        Story story = StoryBuilder.random().withIdentifier(UUID.randomUUID()).withRegistrationDate(LocalDateTime.now())
-                                  .build();
-
-        String serializedStory = objectMapper.writeValueAsString(story);
-
-        assertThat(serializedStory, not(containsString("\"id\":")));
-        assertThat(serializedStory, not(containsString("\"registrationDate\":")));
-    }
-
-    @Test
-    public void shouldNotIncludeIdAndRegistrationDateInDeserialization() throws IOException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        String idAsJson = String.format("\"id\":\"%s\"", UUID.randomUUID());
-        String registrationDateAsJson = String.format("\"registrationDate\":\"%s\"", LocalDateTime.now());
-        String serializedStory = String.format("{%s,%s,\"text\":\"anyTest\"}", idAsJson, registrationDateAsJson);
-
-        Story story = objectMapper.readValue(serializedStory, Story.class);
-
+        assertEquals(text, story.getText());
         assertNull(story.getIdentifier());
         assertNull(story.getRegistrationDate());
     }
 
     @Test
-    public void shouldValidateNonNullText() {
-        Story story = StoryBuilder.random().withText(null).build();
+    public void shouldCreateAStoryWithIdentifierAndRegistrationDate() {
+        UUID storyId = UUID.randomUUID();
+        LocalDateTime registrationDate = LocalDateTime.now();
+        Story story = new Story(storyId, registrationDate, text);
 
-        Set<ConstraintViolation<Story>> constraintViolations = getValidator().validate(story);
-
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Story> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(STORY_TEXT_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("text"));
+        assertEquals(text, story.getText());
+        assertEquals(storyId, story.getIdentifier());
+        assertEquals(registrationDate, story.getRegistrationDate());
     }
 
     @Test
-    public void shouldValidateNonEmptyText() {
-        Story story = StoryBuilder.random().withText("").build();
+    void shouldUpdateStoryText() {
+        Story existingStory = StoryBuilder.random().build();
+        String newText = randomAlphabetic(50);
+        Story newStory = StoryBuilder.random().withText(newText).build();
 
-        Set<ConstraintViolation<Story>> constraintViolations = getValidator().validate(story);
+        Story updatedStory = existingStory.updateWith(newStory);
 
-        assertThat(constraintViolations.size(), is(1));
-        ConstraintViolation<Story> constraintViolation = constraintViolations.iterator().next();
-        assertThat(constraintViolation.getMessage(), is(STORY_TEXT_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("text"));
+        assertAll(() -> assertEquals(existingStory.getIdentifier(), updatedStory.getIdentifier()),
+                  () -> assertEquals(existingStory.getRegistrationDate(), updatedStory.getRegistrationDate()),
+                  () -> assertEquals(newText, updatedStory.getText()));
+    }
+
+    @Test
+    void shouldReturnSameStoryWhenUpdatedWithItself() {
+        Story existingStory = StoryBuilder.random().build();
+
+        Story updatedStory = existingStory.updateWith(existingStory);
+
+        assertEquals(existingStory, updatedStory);
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoIdentifier() {
+        Story story = StoryBuilder.random().withIdentifier(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            story.updateWith(new Story(randomAlphabetic(10)));
+        });
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoRegistrationDate() {
+        Story story = StoryBuilder.random().withRegistrationDate(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            story.updateWith(new Story(randomAlphabetic(10)));
+        });
+    }
+
+    @Test
+    public void shouldVerifyEqualsAndHashCodeMethods() {
+        EqualsVerifier.forClass(Story.class).usingGetClass().verify();
     }
 }

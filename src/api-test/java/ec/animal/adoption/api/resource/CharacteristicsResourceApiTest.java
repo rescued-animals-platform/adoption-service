@@ -163,7 +163,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn409ConflictWhenCreatingCharacteristicsThatAlreadyExist() {
         CharacteristicsRequest characteristicsRequest = CharacteristicsRequestBuilder.random().build();
-        createCharacteristics(animalId, characteristicsRequest);
+        createCharacteristicsForAnimal(animalId, characteristicsRequest);
 
         webTestClient.post()
                      .uri(CHARACTERISTICS_ADMIN_URL, animalId)
@@ -179,7 +179,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     @Test
     public void shouldReturn200OkWithCharacteristics() {
-        CharacteristicsResponse createdCharacteristicsResponse = createCharacteristics(
+        CharacteristicsResponse createdCharacteristicsResponse = createCharacteristicsForAnimal(
                 animalId, CharacteristicsRequestBuilder.random().build()
         );
 
@@ -223,8 +223,9 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.subErrors").doesNotExist();
     }
 
-    private static CharacteristicsResponse createCharacteristics(final UUID animalId,
-                                                                 final CharacteristicsRequest characteristicsRequest) {
+    private static CharacteristicsResponse createCharacteristicsForAnimal(
+            final UUID animalId, final CharacteristicsRequest characteristicsRequest
+    ) {
         CharacteristicsResponse createdCharacteristicsResponse = webTestClient
                 .post()
                 .uri(CHARACTERISTICS_ADMIN_URL, animalId)

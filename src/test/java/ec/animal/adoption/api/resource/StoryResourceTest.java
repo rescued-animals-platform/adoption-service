@@ -20,11 +20,15 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.api.model.story.StoryRequest;
+import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.story.StoryBuilder;
 import ec.animal.adoption.domain.story.StoryService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,9 +38,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,9 +53,6 @@ public class StoryResourceTest {
 
     @Mock
     private AdminTokenUtils adminTokenUtils;
-
-    @Mock
-    private Story expectedStory;
 
     @Mock
     private Jwt token;
@@ -75,32 +74,42 @@ public class StoryResourceTest {
     public void shouldCreateAStoryForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        Story story = mock(Story.class);
-        when(storyService.createFor(animalId, organization, story)).thenReturn(expectedStory);
+        StoryRequest storyRequest = mock(StoryRequest.class);
+        Story storyFromRequest = new Story(randomAlphabetic(10));
+        when(storyRequest.toDomain()).thenReturn(storyFromRequest);
+        Story createdStory = StoryBuilder.random().build();
+        StoryResponse expectedStoryResponse = StoryResponse.from(createdStory);
+        when(storyService.createFor(animalId, organization, storyFromRequest)).thenReturn(createdStory);
 
-        Story createdStory = storyResource.create(animalId, story, token);
+        StoryResponse storyResponse = storyResource.create(animalId, storyRequest, token);
 
-        assertEquals(expectedStory, createdStory);
+        Assertions.assertThat(storyResponse).usingRecursiveComparison().isEqualTo(expectedStoryResponse);
     }
 
     @Test
     void shouldUpdateStoryForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        Story story = mock(Story.class);
-        when(storyService.updateFor(animalId, organization, story)).thenReturn(expectedStory);
+        StoryRequest storyRequest = mock(StoryRequest.class);
+        Story storyFromRequest = new Story(randomAlphabetic(10));
+        when(storyRequest.toDomain()).thenReturn(storyFromRequest);
+        Story updatedStory = StoryBuilder.random().build();
+        StoryResponse expectedStoryResponse = StoryResponse.from(updatedStory);
+        when(storyService.updateFor(animalId, organization, storyFromRequest)).thenReturn(updatedStory);
 
-        Story updatedStory = storyResource.update(animalId, story, token);
+        StoryResponse storyResponse = storyResource.update(animalId, storyRequest, token);
 
-        assertEquals(expectedStory, updatedStory);
+        Assertions.assertThat(storyResponse).usingRecursiveComparison().isEqualTo(expectedStoryResponse);
     }
 
     @Test
     public void shouldGetStoryForAnimal() {
-        when(storyService.getBy(animalId)).thenReturn(expectedStory);
+        Story foundStory = StoryBuilder.random().build();
+        StoryResponse expectedStoryResponse = StoryResponse.from(foundStory);
+        when(storyService.getBy(animalId)).thenReturn(foundStory);
 
-        Story story = storyResource.get(animalId);
+        StoryResponse storyResponse = storyResource.get(animalId);
 
-        assertThat(story, is(expectedStory));
+        Assertions.assertThat(storyResponse).usingRecursiveComparison().isEqualTo(expectedStoryResponse);
     }
 }

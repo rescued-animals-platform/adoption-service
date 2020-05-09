@@ -48,6 +48,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CharacteristicsRequestTest {
@@ -84,7 +85,9 @@ class CharacteristicsRequestTest {
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
                   () -> assertEquals(TemperamentsBuilder.empty().withSociability(Sociability.SHY).build(),
                                      characteristics.getTemperaments()),
-                  () -> assertTrue(characteristics.getFriendlyWith().isEmpty()));
+                  () -> assertTrue(characteristics.getFriendlyWith().isEmpty()),
+                  () -> assertNull(characteristics.getIdentifier()),
+                  () -> assertNull(characteristics.getRegistrationDate()));
     }
 
     @Test
@@ -107,7 +110,9 @@ class CharacteristicsRequestTest {
                   () -> assertEquals(TemperamentsBuilder.empty().withBalance(Balance.BALANCED).build(),
                                      characteristics.getTemperaments()),
                   () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CHILDREN),
-                                     characteristics.getFriendlyWith()));
+                                     characteristics.getFriendlyWith()),
+                  () -> assertNull(characteristics.getIdentifier()),
+                  () -> assertNull(characteristics.getRegistrationDate()));
     }
 
     @Test
@@ -131,7 +136,9 @@ class CharacteristicsRequestTest {
                                      characteristics.getTemperaments()),
                   () -> assertEquals(2, characteristics.getFriendlyWith().size()),
                   () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CATS),
-                                     characteristics.getFriendlyWith()));
+                                     characteristics.getFriendlyWith()),
+                  () -> assertNull(characteristics.getIdentifier()),
+                  () -> assertNull(characteristics.getRegistrationDate()));
     }
 
     @Test

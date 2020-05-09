@@ -32,6 +32,8 @@ public class StoryBuilder {
 
     public static StoryBuilder random() {
         StoryBuilder storyBuilder = new StoryBuilder();
+        storyBuilder.withIdentifier(UUID.randomUUID());
+        storyBuilder.withRegistrationDate(LocalDateTime.now());
         storyBuilder.text = randomAlphabetic(300);
         return storyBuilder;
     }

@@ -20,6 +20,8 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.story.StoryRequest;
+import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.story.Story;
@@ -57,25 +59,31 @@ public class StoryResource {
 
     @PostMapping("/admin/animals/{id}/story")
     @ResponseStatus(HttpStatus.CREATED)
-    public Story create(@PathVariable("id") final UUID animalId,
-                        @RequestBody @Valid final Story story,
-                        @AuthenticationPrincipal final Jwt token) {
+    public StoryResponse create(@PathVariable("id") final UUID animalId,
+                                @RequestBody @Valid final StoryRequest storyRequest,
+                                @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return storyService.createFor(animalId, organization, story);
+        Story story = storyService.createFor(animalId, organization, storyRequest.toDomain());
+
+        return StoryResponse.from(story);
     }
 
     @PutMapping("/admin/animals/{id}/story")
-    public Story update(@PathVariable("id") final UUID animalId,
-                        @RequestBody @Valid final Story story,
-                        @AuthenticationPrincipal final Jwt token) {
+    public StoryResponse update(@PathVariable("id") final UUID animalId,
+                                @RequestBody @Valid final StoryRequest storyRequest,
+                                @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return storyService.updateFor(animalId, organization, story);
+        Story story = storyService.updateFor(animalId, organization, storyRequest.toDomain());
+
+        return StoryResponse.from(story);
     }
 
     @GetMapping("/animals/{id}/story")
-    public Story get(@PathVariable("id") final UUID animalId) {
-        return storyService.getBy(animalId);
+    public StoryResponse get(@PathVariable("id") final UUID animalId) {
+        Story story = storyService.getBy(animalId);
+
+        return StoryResponse.from(story);
     }
 }

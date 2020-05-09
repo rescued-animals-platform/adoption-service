@@ -19,31 +19,29 @@
 
 package ec.animal.adoption.domain.story;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonIgnoreProperties({"id", "registrationDate"})
 public class Story extends Entity {
 
-    @NotEmpty(message = "Story text is required")
-    @JsonProperty("text")
+    private final static Logger LOGGER = LoggerFactory.getLogger(Story.class);
+
     private final String text;
 
-    @JsonCreator
-    private Story(@JsonProperty("text") final String text) {
+    public Story(@NonNull final String text) {
         super();
         this.text = text;
     }
 
-    public Story(final UUID storyId, final LocalDateTime registrationDate, final String text) {
+    public Story(@NonNull final UUID storyId,
+                 @NonNull final LocalDateTime registrationDate,
+                 @NonNull final String text) {
         super(storyId, registrationDate);
         this.text = text;
     }
@@ -53,9 +51,17 @@ public class Story extends Entity {
             return this;
         }
 
-        return new Story(this.getIdentifier(), LocalDateTime.now(), story.getText());
+        UUID storyId = this.getIdentifier();
+        LocalDateTime registrationDate = this.getRegistrationDate();
+        if (storyId == null || registrationDate == null) {
+            LOGGER.error("Error when trying to update a existing story that has no identifier or registration date");
+            throw new IllegalArgumentException();
+        }
+
+        return new Story(storyId, registrationDate, story.getText());
     }
 
+    @NonNull
     public String getText() {
         return this.text;
     }
