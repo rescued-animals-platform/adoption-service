@@ -19,9 +19,6 @@
 
 package ec.animal.adoption.domain.animal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -37,57 +34,16 @@ import java.util.UUID;
 @SuppressWarnings({"PMD.DataClass", "PMD.NullAssignment", "PMD.ExcessiveParameterList"})
 public class Animal extends Entity {
 
-    @JsonProperty("clinicalRecord")
     private final String clinicalRecord;
-
-    @JsonProperty("name")
     private final String name;
-
-    @JsonProperty("species")
     private final Species species;
-
-    @JsonProperty("estimatedAge")
     private final EstimatedAge estimatedAge;
-
-    @JsonProperty("sex")
     private final Sex sex;
-
-    @JsonProperty("state")
     private final State state;
-
-    @JsonProperty(value = "primaryLinkPicture", access = JsonProperty.Access.READ_ONLY)
     private final LinkPicture primaryLinkPicture;
-
-    @JsonProperty(value = "characteristics", access = JsonProperty.Access.READ_ONLY)
     private final Characteristics characteristics;
-
-    @JsonProperty(value = "story", access = JsonProperty.Access.READ_ONLY)
     private final Story story;
-
-    @JsonIgnore
     private final Organization organization;
-
-    @JsonCreator
-    private Animal(@JsonProperty("id") @NonNull final UUID animalId,
-                   @JsonProperty("registrationDate") @NonNull final LocalDateTime registrationDate,
-                   @JsonProperty("clinicalRecord") final String clinicalRecord,
-                   @JsonProperty("name") final String name,
-                   @JsonProperty("species") final Species species,
-                   @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-                   @JsonProperty("sex") final Sex sex,
-                   @JsonProperty("state") final State state) {
-        super(animalId, registrationDate);
-        this.clinicalRecord = clinicalRecord;
-        this.name = name;
-        this.species = species;
-        this.estimatedAge = estimatedAge;
-        this.sex = sex;
-        this.state = state;
-        this.primaryLinkPicture = null;
-        this.characteristics = null;
-        this.story = null;
-        this.organization = null;
-    }
 
     public Animal(@NonNull final UUID animalId,
                   @NonNull final LocalDateTime registrationDate,
@@ -147,7 +103,6 @@ public class Animal extends Entity {
         return state;
     }
 
-    @JsonIgnore
     public String getStateName() {
         return state.getName().name();
     }
@@ -168,7 +123,6 @@ public class Animal extends Entity {
         return organization;
     }
 
-    @JsonIgnore
     public UUID getOrganizationId() {
         return this.organization.getOrganizationId();
     }

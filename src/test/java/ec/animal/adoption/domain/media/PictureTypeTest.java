@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -20,41 +23,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PictureTypeTest {
 
-    public static final String EXPECTED_NAMES_FOR_PICTURE_TYPE_METHOD = "expectedNamesForPictureType";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_PICTURE_TYPE_METHOD)
-    void shouldReturnExpectedNameForPictureType(final PictureType pictureType, final String expectedName) {
-        assertEquals(expectedName, pictureType.toString());
+    @MethodSource("expectedTranslatedNameForPictureType")
+    void shouldReturnExpectedTranslatedNameForPictureType(final PictureType pictureType,
+                                                          final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, pictureType.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_PICTURE_TYPE_METHOD)
-    void shouldSerializePictureTypeUsingName(final PictureType pictureType, final String expectedName) throws JsonProcessingException {
-        String pictureTypeAsJson = objectMapper.writeValueAsString(pictureType);
-
-        assertEquals(JSONObject.quote(expectedName), pictureTypeAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_PICTURE_TYPE_METHOD)
-    void shouldDeserializePictureTypeUsingName(final PictureType pictureType, final String expectedName) throws JsonProcessingException {
-        String pictureTypeWithNameAsJson = JSONObject.quote(expectedName);
-
-        PictureType deSerializedPictureType = objectMapper.readValue(pictureTypeWithNameAsJson, PictureType.class);
-
-        assertEquals(pictureType, deSerializedPictureType);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForPictureType() {
+        return Stream.of(Arguments.of(PictureType.PRIMARY, "PICTURE_TYPE.PRIMARY"),
+                         Arguments.of(PictureType.ALTERNATE, "PICTURE_TYPE.ALTERNATE"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_PICTURE_TYPE_METHOD)
+    @MethodSource("pictureTypes")
     void shouldDeserializePictureTypeUsingEnumName(final PictureType pictureType) throws JsonProcessingException {
         String pictureTypeWithEnumNameAsJson = JSONObject.quote(pictureType.name());
 
@@ -64,11 +57,8 @@ class PictureTypeTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForPictureType() {
-        return Stream.of(
-                Arguments.of(PictureType.PRIMARY, "Primary"),
-                Arguments.of(PictureType.ALTERNATE, "Alternate")
-        );
+    private static Stream<Arguments> pictureTypes() {
+        return Stream.of(Arguments.of(PictureType.PRIMARY), Arguments.of(PictureType.ALTERNATE));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -83,12 +73,8 @@ class PictureTypeTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForPictureType() {
-        return Stream.of(
-                Arguments.of(PictureType.PRIMARY, " Primary "),
-                Arguments.of(PictureType.PRIMARY, " PRIMARY   "),
-                Arguments.of(PictureType.ALTERNATE, "   Alternate"),
-                Arguments.of(PictureType.ALTERNATE, "ALTERNATE ")
-        );
+        return Stream.of(Arguments.of(PictureType.PRIMARY, " PRIMARY   "),
+                         Arguments.of(PictureType.ALTERNATE, "ALTERNATE "));
     }
 
     @Test

@@ -92,12 +92,12 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                      .expectStatus()
                      .isCreated()
                      .expectBody()
-                     .jsonPath("$.size").isEqualTo(size.toString())
-                     .jsonPath("$.physicalActivity").isEqualTo(physicalActivity.toString())
-                     .jsonPath("$.temperaments.sociability").isEqualTo(sociability.toString())
-                     .jsonPath("$.temperaments.docility").isEqualTo(docility.toString())
-                     .jsonPath("$.temperaments.balance").isEqualTo(balance.toString())
-                     .jsonPath("$.friendlyWith[0]").isEqualTo(friendlyWith.toString());
+                     .jsonPath("$.size").isEqualTo(size.toTranslatedName())
+                     .jsonPath("$.physicalActivity").isEqualTo(physicalActivity.toTranslatedName())
+                     .jsonPath("$.temperaments.sociability").isEqualTo(sociability.toTranslatedName())
+                     .jsonPath("$.temperaments.docility").isEqualTo(docility.toTranslatedName())
+                     .jsonPath("$.temperaments.balance").isEqualTo(balance.toTranslatedName())
+                     .jsonPath("$.friendlyWith[0]").isEqualTo(friendlyWith.toTranslatedName());
     }
 
     @Test

@@ -26,11 +26,14 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.StateName;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -43,6 +46,9 @@ class CreateAnimalResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -58,10 +64,10 @@ class CreateAnimalResponseTest {
                 () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"registrationDate\":%s", expectedRegistrationDateAsJson))),
                 () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord()))),
                 () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"name\":\"%s\"", animal.getName()))),
-                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"species\":\"%s\"", animal.getSpecies()))),
-                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge()))),
-                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"sex\":\"%s\"", animal.getSex()))),
-                () -> assertTrue(createAnimalResponseAsJson.contains("\"state\":{\"name\":\"Adopted\"}"))
+                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"species\":\"%s\"", animal.getSpecies().toTranslatedName()))),
+                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().toTranslatedName()))),
+                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"sex\":\"%s\"", animal.getSex().toTranslatedName()))),
+                () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"state\":{\"name\":\"%s\"}", StateName.ADOPTED.toTranslatedName())))
         );
     }
 
@@ -75,10 +81,12 @@ class CreateAnimalResponseTest {
                 .put("registrationDate", animal.getRegistrationDate())
                 .put("clinicalRecord", animal.getClinicalRecord())
                 .put("name", animal.getName())
-                .put("species", animal.getSpecies().toString())
-                .put("estimatedAge", animal.getEstimatedAge().toString())
-                .put("sex", animal.getSex().toString())
-                .put("state", new JSONObject().put("name", StateName.UNAVAILABLE.toString()).put("notes", notes)
+                .put("species", animal.getSpecies().toTranslatedName())
+                .put("estimatedAge", animal.getEstimatedAge().toTranslatedName())
+                .put("sex", animal.getSex().toTranslatedName())
+                .put("state", new JSONObject()
+                        .put("name", StateName.UNAVAILABLE.toTranslatedName())
+                        .put("notes", notes)
                 ).toString();
 
         CreateAnimalResponse createAnimalResponse = objectMapper.readValue(createAnimalResponseAsJson, CreateAnimalResponse.class);

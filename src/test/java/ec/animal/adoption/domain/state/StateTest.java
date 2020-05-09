@@ -19,21 +19,15 @@
 
 package ec.animal.adoption.domain.state;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.TestUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateTest {
 
-    private static final String ESCAPED_ADOPTED_DETAILS = "\"adoptedDetails\":";
-    private static final String ESCAPED_UNAVAILABLE_DETAILS = "\"unavailableDetails\":";
     private String adoptionFormId;
     private String notes;
 
@@ -81,61 +75,5 @@ public class StateTest {
     void shouldReturnEmptyNotes() {
         assertTrue(State.lookingForHuman().getNotes().isEmpty());
         assertTrue(State.adopted(randomAlphabetic(10)).getNotes().isEmpty());
-    }
-
-    @Test
-    void shouldBeSerializableAsLookingForHumanState() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        State state = State.lookingForHuman();
-
-        String stateAsJson = objectMapper.writeValueAsString(state);
-
-        assertTrue(stateAsJson.contains("\"name\":\"Looking for human\""));
-        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
-        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
-        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
-        assertFalse(stateAsJson.contains("\"notes\":"));
-    }
-
-    @Test
-    void shouldBeSerializableAsAdoptedStateWithAdoptionFormId() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        State state = State.adopted(adoptionFormId);
-
-        String stateAsJson = objectMapper.writeValueAsString(state);
-
-        assertTrue(stateAsJson.contains("\"name\":\"Adopted\""));
-        assertTrue(stateAsJson.contains(String.format("\"adoptionFormId\":\"%s\"", adoptionFormId)));
-        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
-        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
-        assertFalse(stateAsJson.contains("\"notes\":"));
-    }
-
-    @Test
-    void shouldBeSerializableAsAdoptedStateWithoutAdoptionFormId() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        State state = State.adopted(null);
-
-        String stateAsJson = objectMapper.writeValueAsString(state);
-
-        assertTrue(stateAsJson.contains("\"name\":\"Adopted\""));
-        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
-        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
-        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
-        assertFalse(stateAsJson.contains("\"notes\":"));
-    }
-
-    @Test
-    void shouldBeSerializableAsUnavailableState() throws JsonProcessingException {
-        ObjectMapper objectMapper = TestUtils.getObjectMapper();
-        State state = State.unavailable(notes);
-
-        String stateAsJson = objectMapper.writeValueAsString(state);
-
-        assertTrue(stateAsJson.contains("\"name\":\"Unavailable\""));
-        assertTrue(stateAsJson.contains(String.format("\"notes\":\"%s\"", notes)));
-        assertFalse(stateAsJson.contains(ESCAPED_ADOPTED_DETAILS));
-        assertFalse(stateAsJson.contains(ESCAPED_UNAVAILABLE_DETAILS));
-        assertFalse(stateAsJson.contains("\"adoptionFormId\":"));
     }
 }

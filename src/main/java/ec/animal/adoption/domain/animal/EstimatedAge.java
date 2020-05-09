@@ -20,18 +20,11 @@
 package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum EstimatedAge {
-    YOUNG("Young"), YOUNG_ADULT("Young adult"), SENIOR_ADULT("Senior adult");
-
-    @JsonValue
-    private final String name;
-
-    EstimatedAge(final String name) {
-        this.name = name;
-    }
+    YOUNG, YOUNG_ADULT, SENIOR_ADULT;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,7 @@ public enum EstimatedAge {
                                        .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("ESTIMATED_AGE", this.name());
     }
 }

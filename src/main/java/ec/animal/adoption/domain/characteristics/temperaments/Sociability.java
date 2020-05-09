@@ -20,22 +20,11 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Sociability {
-    VERY_SOCIABLE("Very sociable"),
-    SOCIABLE("Sociable"),
-    NEITHER_SOCIABLE_NOR_SHY("Neither sociable nor shy"),
-    SHY("Shy"),
-    VERY_SHY("Very shy");
-
-    @JsonValue
-    private final String name;
-
-    Sociability(final String name) {
-        this.name = name;
-    }
+    VERY_SOCIABLE, SOCIABLE, NEITHER_SOCIABLE_NOR_SHY, SHY, VERY_SHY;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -45,8 +34,7 @@ public enum Sociability {
                                       .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("SOCIABILITY", this.name());
     }
 }

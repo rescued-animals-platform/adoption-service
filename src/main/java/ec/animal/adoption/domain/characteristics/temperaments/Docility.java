@@ -20,22 +20,11 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Docility {
-    VERY_DOCILE("Very docile"),
-    DOCILE("Docile"),
-    NEITHER_DOCILE_NOR_DOMINANT("Neither docile nor dominant"),
-    DOMINANT("Dominant"),
-    VERY_DOMINANT("Very dominant");
-
-    @JsonValue
-    private final String name;
-
-    Docility(final String name) {
-        this.name = name;
-    }
+    VERY_DOCILE, DOCILE, NEITHER_DOCILE_NOR_DOMINANT, DOMINANT, VERY_DOMINANT;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -45,8 +34,7 @@ public enum Docility {
                                    .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("DOCILITY", this.name());
     }
 }

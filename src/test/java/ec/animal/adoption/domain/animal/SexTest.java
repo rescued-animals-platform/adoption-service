@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SexTest {
 
-    public static final String EXPECTED_NAMES_FOR_SEX_METHOD = "expectedNamesForSex";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
-    void shouldReturnExpectedNameForSex(final Sex sex, final String expectedName) {
-        assertEquals(expectedName, sex.toString());
+    @MethodSource("expectedTranslatedNameForSex")
+    void shouldReturnExpectedTranslatedNameForSex(final Sex sex, final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, sex.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
-    void shouldSerializeSexUsingName(final Sex sex, final String expectedName) throws JsonProcessingException {
-        String sexAsJson = objectMapper.writeValueAsString(sex);
-
-        assertEquals(JSONObject.quote(expectedName), sexAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
-    void shouldDeserializeSexUsingName(final Sex sex, final String expectedName) throws JsonProcessingException {
-        String sexWithNameAsJson = JSONObject.quote(expectedName);
-
-        Sex deSerializedSex = objectMapper.readValue(sexWithNameAsJson, Sex.class);
-
-        assertEquals(sex, deSerializedSex);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForSex() {
+        return Stream.of(Arguments.of(Sex.MALE, "SEX.MALE"),
+                         Arguments.of(Sex.FEMALE, "SEX.FEMALE"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SEX_METHOD)
+    @MethodSource("sexes")
     void shouldDeserializeSexUsingEnumName(final Sex sex) throws JsonProcessingException {
         String sexWithEnumNameAsJson = JSONObject.quote(sex.name());
 
@@ -83,11 +75,8 @@ class SexTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForSex() {
-        return Stream.of(
-                Arguments.of(Sex.MALE, "Male"),
-                Arguments.of(Sex.FEMALE, "Female")
-        );
+    private static Stream<Arguments> sexes() {
+        return Stream.of(Arguments.of(Sex.FEMALE), Arguments.of(Sex.MALE));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -103,9 +92,7 @@ class SexTest {
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSex() {
         return Stream.of(
-                Arguments.of(Sex.MALE, " Male "),
                 Arguments.of(Sex.MALE, " MALE   "),
-                Arguments.of(Sex.FEMALE, "   Female"),
                 Arguments.of(Sex.FEMALE, "FEMALE ")
         );
     }

@@ -23,7 +23,6 @@ import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
@@ -52,7 +51,6 @@ import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -100,11 +98,11 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.registrationDate").isNotEmpty()
                      .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.species").isEqualTo(species.toString())
-                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toString())
-                     .jsonPath("$.sex").isEqualTo(sex.toString())
+                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName())
+                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
                      .jsonPath("$.state[?(@.name == '%s' && @.adoptionFormId == '%s')]",
-                               state.getName().toString(),
+                               state.getName().toTranslatedName(),
                                adoptionFormId)
                      .exists();
     }
@@ -124,10 +122,10 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.registrationDate").isNotEmpty()
                      .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.species").isEqualTo(species.toString())
-                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toString())
-                     .jsonPath("$.sex").isEqualTo(sex.toString())
-                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.toString());
+                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName())
+                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
+                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.toTranslatedName());
     }
 
     @Test
@@ -206,17 +204,13 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .exchange()
                      .expectStatus()
                      .isOk()
-                     .expectBody(Animal.class)
-                     .consumeWith(entity -> {
-                         Animal foundAnimal = entity.getResponseBody();
-                         assertNotNull(foundAnimal);
-                         assertEquals(createAnimalResponse.getAnimalId(), foundAnimal.getIdentifier());
-                         assertEquals(clinicalRecord, foundAnimal.getClinicalRecord());
-                         assertEquals(name, foundAnimal.getName());
-                         assertEquals(species, foundAnimal.getSpecies());
-                         assertEquals(sex, foundAnimal.getSex());
-                         assertEquals(estimatedAge, foundAnimal.getEstimatedAge());
-                     });
+                     .expectBody()
+                     .jsonPath("$.id").isEqualTo(createAnimalResponse.getAnimalId().toString())
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
+                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName());
     }
 
     @Test

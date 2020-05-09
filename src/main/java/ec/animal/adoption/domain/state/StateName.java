@@ -21,17 +21,10 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ec.animal.adoption.domain.utils.EnumUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 
 public enum StateName {
-    LOOKING_FOR_HUMAN("Looking for human"),
-    ADOPTED("Adopted"),
-    UNAVAILABLE("Unavailable");
-
-    private final String name;
-
-    StateName(final String name) {
-        this.name = name;
-    }
+    LOOKING_FOR_HUMAN, ADOPTED, UNAVAILABLE;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,8 @@ public enum StateName {
                                     .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("STATE_NAME", this.name());
     }
 }

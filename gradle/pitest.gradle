@@ -4,7 +4,7 @@ pitest {
     excludedClasses = [
             'ec.animal.adoption.AdoptionServiceApplication',
             'ec.animal.adoption.domain.PagedEntity',
-            'ec.animal.adoption.configuration.*'
+            'ec.animal.adoption.configuration.*',
     ]
     excludedMethods = ['equals', 'hashCode']
     threads = 5

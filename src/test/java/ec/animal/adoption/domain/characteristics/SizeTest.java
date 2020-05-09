@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SizeTest {
 
-    private static final String EXPECTED_NAMES_FOR_SIZE_METHOD = "expectedNamesForSize";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SIZE_METHOD)
-    void shouldReturnExpectedNameForSize(final Size size, final String expectedName) {
-        assertEquals(expectedName, size.toString());
+    @MethodSource("expectedTranslatedNameForSize")
+    void shouldReturnExpectedTranslatedNameForSize(final Size size, final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, size.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SIZE_METHOD)
-    void shouldSerializeSizeUsingName(final Size size, final String expectedName) throws JsonProcessingException {
-        String sizeAsJson = objectMapper.writeValueAsString(size);
-
-        assertEquals(JSONObject.quote(expectedName), sizeAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SIZE_METHOD)
-    void shouldDeserializeSizeUsingName(final Size size, final String expectedName) throws JsonProcessingException {
-        String sizeWithNameAsJson = JSONObject.quote(expectedName);
-
-        Size deSerializedSize = objectMapper.readValue(sizeWithNameAsJson, Size.class);
-
-        assertEquals(size, deSerializedSize);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForSize() {
+        return Stream.of(
+                Arguments.of(Size.TINY, "SIZE.TINY"),
+                Arguments.of(Size.SMALL, "SIZE.SMALL"),
+                Arguments.of(Size.MEDIUM, "SIZE.MEDIUM"),
+                Arguments.of(Size.BIG, "SIZE.BIG"),
+                Arguments.of(Size.OUTSIZE, "SIZE.OUTSIZE")
+        );
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SIZE_METHOD)
+    @MethodSource("sizes")
     void shouldDeserializeSizeUsingEnumName(final Size size) throws JsonProcessingException {
         String sizeWithEnumNameAsJson = JSONObject.quote(size.name());
 
@@ -83,14 +80,12 @@ class SizeTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForSize() {
-        return Stream.of(
-                Arguments.of(Size.TINY, "Tiny"),
-                Arguments.of(Size.SMALL, "Small"),
-                Arguments.of(Size.MEDIUM, "Medium"),
-                Arguments.of(Size.BIG, "Big"),
-                Arguments.of(Size.OUTSIZE, "Outsize")
-        );
+    private static Stream<Arguments> sizes() {
+        return Stream.of(Arguments.of(Size.TINY),
+                         Arguments.of(Size.SMALL),
+                         Arguments.of(Size.MEDIUM),
+                         Arguments.of(Size.BIG),
+                         Arguments.of(Size.OUTSIZE));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -105,18 +100,11 @@ class SizeTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSize() {
-        return Stream.of(
-                Arguments.of(Size.TINY, " Tiny "),
-                Arguments.of(Size.TINY, " TINY   "),
-                Arguments.of(Size.SMALL, "   Small"),
-                Arguments.of(Size.SMALL, "SMALL "),
-                Arguments.of(Size.MEDIUM, "Medium "),
-                Arguments.of(Size.MEDIUM, "    MEDIUM "),
-                Arguments.of(Size.BIG, " Big "),
-                Arguments.of(Size.BIG, " BIG "),
-                Arguments.of(Size.OUTSIZE, "     Outsize "),
-                Arguments.of(Size.OUTSIZE, " OUTSIZE      ")
-        );
+        return Stream.of(Arguments.of(Size.TINY, " TINY   "),
+                         Arguments.of(Size.SMALL, "SMALL "),
+                         Arguments.of(Size.MEDIUM, "    MEDIUM "),
+                         Arguments.of(Size.BIG, " BIG "),
+                         Arguments.of(Size.OUTSIZE, " OUTSIZE      "));
     }
 
     @Test

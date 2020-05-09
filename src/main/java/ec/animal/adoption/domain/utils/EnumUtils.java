@@ -12,7 +12,7 @@ public final class EnumUtils {
         return enums -> {
             String normalizedValue = StringUtils.trimToEmpty(value);
             return Stream.of(enums)
-                         .filter(anEnum -> anEnum.name().equals(normalizedValue) || anEnum.toString().equals(normalizedValue))
+                         .filter(anEnum -> anEnum.name().equals(normalizedValue))
                          .findFirst();
         };
     }

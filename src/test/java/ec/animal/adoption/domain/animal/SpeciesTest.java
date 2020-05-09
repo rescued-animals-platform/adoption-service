@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpeciesTest {
 
-    public static final String EXPECTED_NAMES_FOR_SPECIES_METHOD = "expectedNamesForSpecies";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
-    void shouldReturnExpectedNameForSpecies(final Species species, final String expectedName) {
-        assertEquals(expectedName, species.toString());
+    @MethodSource("expectedTranslatedNameForSpecies")
+    void shouldReturnExpectedTranslatedNameForSpecies(final Species species, final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, species.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
-    void shouldSerializeSpeciesUsingName(final Species species, final String expectedName) throws JsonProcessingException {
-        String speciesAsJson = objectMapper.writeValueAsString(species);
-
-        assertEquals(JSONObject.quote(expectedName), speciesAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
-    void shouldDeserializeSpeciesUsingName(final Species species, final String expectedName) throws JsonProcessingException {
-        String speciesWithNameAsJson = JSONObject.quote(expectedName);
-
-        Species deSerializedSpecies = objectMapper.readValue(speciesWithNameAsJson, Species.class);
-
-        assertEquals(species, deSerializedSpecies);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForSpecies() {
+        return Stream.of(Arguments.of(Species.DOG, "SPECIES.DOG"),
+                         Arguments.of(Species.CAT, "SPECIES.CAT"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SPECIES_METHOD)
+    @MethodSource("species")
     void shouldDeserializeSpeciesUsingEnumName(final Species species) throws JsonProcessingException {
         String speciesWithEnumNameAsJson = JSONObject.quote(species.name());
 
@@ -83,11 +75,8 @@ class SpeciesTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForSpecies() {
-        return Stream.of(
-                Arguments.of(Species.DOG, "Dog"),
-                Arguments.of(Species.CAT, "Cat")
-        );
+    private static Stream<Arguments> species() {
+        return Stream.of(Arguments.of(Species.DOG), Arguments.of(Species.CAT));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -102,12 +91,7 @@ class SpeciesTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSpecies() {
-        return Stream.of(
-                Arguments.of(Species.DOG, " Dog "),
-                Arguments.of(Species.DOG, " DOG   "),
-                Arguments.of(Species.CAT, "   Cat"),
-                Arguments.of(Species.CAT, "CAT ")
-        );
+        return Stream.of(Arguments.of(Species.DOG, " DOG   "), Arguments.of(Species.CAT, "CAT "));
     }
 
     @Test

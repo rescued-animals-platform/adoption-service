@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SociabilityTest {
 
-    public static final String EXPECTED_NAMES_FOR_SOCIABILITY_METHOD = "expectedNamesForSociability";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SOCIABILITY_METHOD)
-    void shouldReturnExpectedNameForSociability(final Sociability sociability, final String expectedName) {
-        assertEquals(expectedName, sociability.toString());
+    @MethodSource("expectedTranslatedNameForSociability")
+    void shouldReturnExpectedTranslatedNameForSociability(final Sociability sociability, final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, sociability.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_SOCIABILITY_METHOD)
-    void shouldSerializeSociabilityUsingName(final Sociability sociability, final String expectedName) throws JsonProcessingException {
-        String sociabilityAsJson = objectMapper.writeValueAsString(sociability);
-
-        assertEquals(JSONObject.quote(expectedName), sociabilityAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SOCIABILITY_METHOD)
-    void shouldDeserializeSociabilityUsingName(final Sociability sociability, final String expectedName) throws JsonProcessingException {
-        String sociabilityWithNameAsJson = JSONObject.quote(expectedName);
-
-        Sociability deSerializedSociability = objectMapper.readValue(sociabilityWithNameAsJson, Sociability.class);
-
-        assertEquals(sociability, deSerializedSociability);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForSociability() {
+        return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE, "SOCIABILITY.VERY_SOCIABLE"),
+                         Arguments.of(Sociability.SOCIABLE, "SOCIABILITY.SOCIABLE"),
+                         Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "SOCIABILITY.NEITHER_SOCIABLE_NOR_SHY"),
+                         Arguments.of(Sociability.SHY, "SOCIABILITY.SHY"),
+                         Arguments.of(Sociability.VERY_SHY, "SOCIABILITY.VERY_SHY"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_SOCIABILITY_METHOD)
+    @MethodSource("sociabilityValues")
     void shouldDeserializeSociabilityUsingEnumName(final Sociability sociability) throws JsonProcessingException {
         String sociabilityWithEnumNameAsJson = JSONObject.quote(sociability.name());
 
@@ -83,14 +78,12 @@ class SociabilityTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForSociability() {
-        return Stream.of(
-                Arguments.of(Sociability.VERY_SOCIABLE, "Very sociable"),
-                Arguments.of(Sociability.SOCIABLE, "Sociable"),
-                Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "Neither sociable nor shy"),
-                Arguments.of(Sociability.SHY, "Shy"),
-                Arguments.of(Sociability.VERY_SHY, "Very shy")
-        );
+    private static Stream<Arguments> sociabilityValues() {
+        return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE),
+                         Arguments.of(Sociability.SOCIABLE),
+                         Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY),
+                         Arguments.of(Sociability.SHY),
+                         Arguments.of(Sociability.VERY_SHY));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -105,18 +98,11 @@ class SociabilityTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSociability() {
-        return Stream.of(
-                Arguments.of(Sociability.VERY_SOCIABLE, " Very sociable "),
-                Arguments.of(Sociability.VERY_SOCIABLE, " VERY_SOCIABLE   "),
-                Arguments.of(Sociability.SOCIABLE, "   Sociable"),
-                Arguments.of(Sociability.SOCIABLE, "SOCIABLE "),
-                Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "Neither sociable nor shy "),
-                Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "    NEITHER_SOCIABLE_NOR_SHY "),
-                Arguments.of(Sociability.SHY, " Shy "),
-                Arguments.of(Sociability.SHY, " SHY "),
-                Arguments.of(Sociability.VERY_SHY, "     Very shy "),
-                Arguments.of(Sociability.VERY_SHY, " VERY_SHY      ")
-        );
+        return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE, " VERY_SOCIABLE   "),
+                         Arguments.of(Sociability.SOCIABLE, "SOCIABLE "),
+                         Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "    NEITHER_SOCIABLE_NOR_SHY "),
+                         Arguments.of(Sociability.SHY, " SHY "),
+                         Arguments.of(Sociability.VERY_SHY, " VERY_SHY      "));
     }
 
     @Test

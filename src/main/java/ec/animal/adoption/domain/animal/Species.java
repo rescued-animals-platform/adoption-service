@@ -20,18 +20,11 @@
 package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Species {
-    DOG("Dog"), CAT("Cat");
-
-    @JsonValue
-    private final String name;
-
-    Species(final String name) {
-        this.name = name;
-    }
+    DOG, CAT;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,7 @@ public enum Species {
                                   .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("SPECIES", this.name());
     }
 }

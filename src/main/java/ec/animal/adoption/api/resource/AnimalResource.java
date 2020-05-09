@@ -20,6 +20,7 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.animal.AnimalResponse;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
@@ -80,19 +81,23 @@ public class AnimalResource {
     }
 
     @GetMapping("/admin/animals/{id}")
-    public Animal get(@PathVariable("id") final UUID animalId,
-                      @AuthenticationPrincipal final Jwt token) {
+    public AnimalResponse get(@PathVariable("id") final UUID animalId,
+                              @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return animalService.getBy(animalId, organization);
+        Animal animal = animalService.getBy(animalId, organization);
+
+        return AnimalResponse.from(animal);
     }
 
     @GetMapping("/admin/animals")
-    public PagedEntity<Animal> listAll(final Pageable pageable,
-                                       @AuthenticationPrincipal final Jwt token) {
+    public PagedEntity<AnimalResponse> listAll(final Pageable pageable,
+                                               @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        return animalService.listAllFor(organization, pageable);
+        PagedEntity<Animal> animals = animalService.listAllFor(organization, pageable);
+
+        return animals.map(AnimalResponse::from);
     }
 
     @GetMapping("/animals")

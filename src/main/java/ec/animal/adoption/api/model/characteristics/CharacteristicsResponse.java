@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsResponse;
 import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.FriendlyWith;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,11 +55,11 @@ public class CharacteristicsResponse {
     }
 
     public static CharacteristicsResponse from(final Characteristics characteristics) {
-        return new CharacteristicsResponse(characteristics.getSize().toString(),
-                                           characteristics.getPhysicalActivity().toString(),
+        return new CharacteristicsResponse(characteristics.getSize().toTranslatedName(),
+                                           characteristics.getPhysicalActivity().toTranslatedName(),
                                            TemperamentsResponse.from(characteristics.getTemperaments()),
                                            characteristics.getFriendlyWith().stream()
-                                                          .map(Enum::toString)
+                                                          .map(FriendlyWith::toTranslatedName)
                                                           .collect(Collectors.toSet()));
     }
 }

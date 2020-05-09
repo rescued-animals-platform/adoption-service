@@ -20,18 +20,11 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum PhysicalActivity {
-    HIGH("High"), MEDIUM("Medium"), LOW("Low");
-
-    @JsonValue
-    private final String name;
-
-    PhysicalActivity(final String name) {
-        this.name = name;
-    }
+    HIGH, MEDIUM, LOW;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,7 @@ public enum PhysicalActivity {
                                            .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("PHYSICAL_ACTIVITY", this.name());
     }
 }

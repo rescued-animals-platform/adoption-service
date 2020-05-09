@@ -19,9 +19,6 @@
 
 package ec.animal.adoption.domain.animal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -34,15 +31,10 @@ import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -50,13 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnimalTest {
-
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setUp() {
-        objectMapper = TestUtils.getObjectMapper();
-    }
 
     @Test
     public void shouldReturnStateName() {
@@ -147,38 +132,5 @@ public class AnimalTest {
                       .usingGetClass()
                       .withNonnullFields("clinicalRecord", "name", "species", "estimatedAge", "sex", "state")
                       .verify();
-    }
-
-    @Test
-    public void shouldSerializeAnimal() throws JsonProcessingException {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().build();
-        Story story = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.random()
-                                     .withIdentifier(UUID.randomUUID())
-                                     .withPrimaryLinkPicture(primaryLinkPicture)
-                                     .withCharacteristics(characteristics)
-                                     .withStory(story)
-                                     .withRegistrationDate(LocalDateTime.now())
-                                     .build();
-        String expectedSerializedState = objectMapper.writeValueAsString(animal.getState());
-        String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
-        String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
-        String expectedCharacteristics = objectMapper.writeValueAsString(characteristics);
-        String expectedStory = objectMapper.writeValueAsString(story);
-
-        String serializedAnimal = objectMapper.writeValueAsString(animal);
-
-        assertThat(serializedAnimal, containsString(String.format("\"id\":\"%s\"", animal.getIdentifier().toString())));
-        assertThat(serializedAnimal, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
-        assertThat(serializedAnimal, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
-        assertThat(serializedAnimal, containsString(String.format("\"name\":\"%s\"", animal.getName())));
-        assertThat(serializedAnimal, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().toString())));
-        assertThat(serializedAnimal, containsString(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().toString())));
-        assertThat(serializedAnimal, containsString(String.format("\"sex\":\"%s\"", animal.getSex().toString())));
-        assertThat(serializedAnimal, containsString(String.format("\"state\":%s", expectedSerializedState)));
-        assertThat(serializedAnimal, containsString(String.format("\"primaryLinkPicture\":%s", expectedPrimaryLinkPicture)));
-        assertThat(serializedAnimal, containsString(String.format("\"characteristics\":%s", expectedCharacteristics)));
-        assertThat(serializedAnimal, containsString(String.format("\"story\":%s", expectedStory)));
     }
 }

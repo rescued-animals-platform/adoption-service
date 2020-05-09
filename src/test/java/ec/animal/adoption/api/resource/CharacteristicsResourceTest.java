@@ -28,13 +28,16 @@ import ec.animal.adoption.domain.characteristics.CharacteristicsService;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.UUID;
 
@@ -60,6 +63,9 @@ public class CharacteristicsResourceTest {
     public void setUp() {
         animalId = UUID.randomUUID();
         characteristicsResource = new CharacteristicsResource(characteristicsService, organizationService, adminTokenUtils);
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test

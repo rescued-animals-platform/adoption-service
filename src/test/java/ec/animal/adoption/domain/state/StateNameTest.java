@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,33 +42,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StateNameTest {
 
-    public static final String EXPECTED_NAMES_FOR_STATE_NAME_METHOD = "expectedNamesForStateName";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_STATE_NAME_METHOD)
-    void shouldReturnExpectedReadableNameForStateName(final StateName stateName, final String expectedName) {
-        assertEquals(expectedName, stateName.toString());
+    @MethodSource("expectedTranslatedNameForStateName")
+    void shouldReturnExpectedTranslatedNameForStateName(final StateName stateName, final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, stateName.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_STATE_NAME_METHOD)
-    void shouldDeserializeStateNameUsingName(final StateName stateName, final String expectedName) throws JsonProcessingException {
-        String stateNameWithNameAsJson = JSONObject.quote(expectedName);
-
-        StateName deSerializedStateName = objectMapper.readValue(stateNameWithNameAsJson, StateName.class);
-
-        assertEquals(stateName, deSerializedStateName);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForStateName() {
+        return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN, "STATE_NAME.LOOKING_FOR_HUMAN"),
+                         Arguments.of(StateName.ADOPTED, "STATE_NAME.ADOPTED"),
+                         Arguments.of(StateName.UNAVAILABLE, "STATE_NAME.UNAVAILABLE"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_STATE_NAME_METHOD)
+    @MethodSource("stateNames")
     void shouldDeserializeStateNameUsingEnumName(final StateName stateName) throws JsonProcessingException {
         String stateNameWithEnumNameAsJson = JSONObject.quote(stateName.name());
 
@@ -75,12 +76,10 @@ class StateNameTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForStateName() {
-        return Stream.of(
-                Arguments.of(StateName.LOOKING_FOR_HUMAN, "Looking for human"),
-                Arguments.of(StateName.ADOPTED, "Adopted"),
-                Arguments.of(StateName.UNAVAILABLE, "Unavailable")
-        );
+    private static Stream<Arguments> stateNames() {
+        return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN),
+                         Arguments.of(StateName.ADOPTED),
+                         Arguments.of(StateName.UNAVAILABLE));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -95,14 +94,9 @@ class StateNameTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForStateName() {
-        return Stream.of(
-                Arguments.of(StateName.LOOKING_FOR_HUMAN, " Looking for human "),
-                Arguments.of(StateName.LOOKING_FOR_HUMAN, " LOOKING_FOR_HUMAN   "),
-                Arguments.of(StateName.ADOPTED, "   Adopted"),
-                Arguments.of(StateName.ADOPTED, "ADOPTED "),
-                Arguments.of(StateName.UNAVAILABLE, "Unavailable "),
-                Arguments.of(StateName.UNAVAILABLE, "    UNAVAILABLE ")
-        );
+        return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN, " LOOKING_FOR_HUMAN   "),
+                         Arguments.of(StateName.ADOPTED, "ADOPTED "),
+                         Arguments.of(StateName.UNAVAILABLE, "    UNAVAILABLE "));
     }
 
     @Test

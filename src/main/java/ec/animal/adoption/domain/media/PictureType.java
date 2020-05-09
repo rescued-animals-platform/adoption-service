@@ -20,18 +20,11 @@
 package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import ec.animal.adoption.domain.utils.EnumUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 
 public enum PictureType {
-    PRIMARY("Primary"), ALTERNATE("Alternate");
-
-    @JsonValue
-    private final String name;
-
-    PictureType(final String name) {
-        this.name = name;
-    }
+    PRIMARY, ALTERNATE;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,7 @@ public enum PictureType {
                                       .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("PICTURE_TYPE", this.name());
     }
 }

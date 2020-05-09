@@ -20,18 +20,11 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Size {
-    TINY("Tiny"), SMALL("Small"), MEDIUM("Medium"), BIG("Big"), OUTSIZE("Outsize");
-
-    @JsonValue
-    private final String name;
-
-    Size(final String name) {
-        this.name = name;
-    }
+    TINY, SMALL, MEDIUM, BIG, OUTSIZE;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -41,8 +34,7 @@ public enum Size {
                                .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("SIZE", this.name());
     }
 }

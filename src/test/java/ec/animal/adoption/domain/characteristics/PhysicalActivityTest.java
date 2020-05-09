@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PhysicalActivityTest {
 
-    public static final String EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD = "expectedNamesForPhysicalActivity";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD)
-    void shouldReturnExpectedNameForPhysicalActivity(final PhysicalActivity physicalActivity, final String expectedName) {
-        assertEquals(expectedName, physicalActivity.toString());
+    @MethodSource("expectedTranslatedNameForPhysicalActivity")
+    void shouldReturnExpectedTranslatedNameForPhysicalActivity(final PhysicalActivity physicalActivity,
+                                                               final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, physicalActivity.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD)
-    void shouldSerializePhysicalActivityUsingName(final PhysicalActivity physicalActivity, final String expectedName) throws JsonProcessingException {
-        String physicalActivityAsJson = objectMapper.writeValueAsString(physicalActivity);
-
-        assertEquals(JSONObject.quote(expectedName), physicalActivityAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD)
-    void shouldDeserializePhysicalActivityUsingName(final PhysicalActivity physicalActivity, final String expectedName) throws JsonProcessingException {
-        String physicalActivityWithNameAsJson = JSONObject.quote(expectedName);
-
-        PhysicalActivity deSerializedPhysicalActivity = objectMapper.readValue(physicalActivityWithNameAsJson, PhysicalActivity.class);
-
-        assertEquals(physicalActivity, deSerializedPhysicalActivity);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForPhysicalActivity() {
+        return Stream.of(Arguments.of(PhysicalActivity.HIGH, "PHYSICAL_ACTIVITY.HIGH"),
+                         Arguments.of(PhysicalActivity.MEDIUM, "PHYSICAL_ACTIVITY.MEDIUM"),
+                         Arguments.of(PhysicalActivity.LOW, "PHYSICAL_ACTIVITY.LOW"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_PHYSICAL_ACTIVITY_METHOD)
+    @MethodSource("physicalActivities")
     void shouldDeserializePhysicalActivityUsingEnumName(final PhysicalActivity physicalActivity) throws JsonProcessingException {
         String physicalActivityWithEnumNameAsJson = JSONObject.quote(physicalActivity.name());
 
@@ -83,12 +77,10 @@ class PhysicalActivityTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForPhysicalActivity() {
-        return Stream.of(
-                Arguments.of(PhysicalActivity.HIGH, "High"),
-                Arguments.of(PhysicalActivity.MEDIUM, "Medium"),
-                Arguments.of(PhysicalActivity.LOW, "Low")
-        );
+    private static Stream<Arguments> physicalActivities() {
+        return Stream.of(Arguments.of(PhysicalActivity.HIGH),
+                         Arguments.of(PhysicalActivity.MEDIUM),
+                         Arguments.of(PhysicalActivity.LOW));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -103,14 +95,9 @@ class PhysicalActivityTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForPhysicalActivity() {
-        return Stream.of(
-                Arguments.of(PhysicalActivity.LOW, " Low "),
-                Arguments.of(PhysicalActivity.LOW, " LOW   "),
-                Arguments.of(PhysicalActivity.MEDIUM, "   Medium"),
-                Arguments.of(PhysicalActivity.MEDIUM, "MEDIUM "),
-                Arguments.of(PhysicalActivity.HIGH, "HIGH "),
-                Arguments.of(PhysicalActivity.HIGH, "    High ")
-        );
+        return Stream.of(Arguments.of(PhysicalActivity.LOW, " LOW   "),
+                         Arguments.of(PhysicalActivity.MEDIUM, "MEDIUM "),
+                         Arguments.of(PhysicalActivity.HIGH, "HIGH "));
     }
 
     @Test

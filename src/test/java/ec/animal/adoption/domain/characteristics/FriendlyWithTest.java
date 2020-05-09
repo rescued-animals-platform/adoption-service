@@ -23,12 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -39,41 +42,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FriendlyWithTest {
 
-    public static final String EXPECTED_NAMES_FOR_FRIENDLY_WITH_METHOD = "expectedNamesForFriendlyWith";
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_FRIENDLY_WITH_METHOD)
-    void shouldReturnExpectedNameForFriendlyWith(final FriendlyWith friendlyWith, final String expectedName) {
-        assertEquals(expectedName, friendlyWith.toString());
+    @MethodSource("expectedTranslatedNameForFriendlyWith")
+    void shouldReturnExpectedTranslatedNameForFriendlyWith(final FriendlyWith friendlyWith,
+                                                           final String expectedTranslatedName) {
+        assertEquals(expectedTranslatedName, friendlyWith.toTranslatedName());
     }
 
-    @ParameterizedTest(name = "{index} {0} is serialized as \"{1}\"")
-    @MethodSource(EXPECTED_NAMES_FOR_FRIENDLY_WITH_METHOD)
-    void shouldSerializeFriendlyWithUsingName(final FriendlyWith friendlyWith, final String expectedName) throws JsonProcessingException {
-        String friendlyWithAsJson = objectMapper.writeValueAsString(friendlyWith);
-
-        assertEquals(JSONObject.quote(expectedName), friendlyWithAsJson);
-    }
-
-    @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_FRIENDLY_WITH_METHOD)
-    void shouldDeserializeFriendlyWithUsingName(final FriendlyWith friendlyWith, final String expectedName) throws JsonProcessingException {
-        String friendlyWithWithNameAsJson = JSONObject.quote(expectedName);
-
-        FriendlyWith deSerializedFriendlyWith = objectMapper.readValue(friendlyWithWithNameAsJson, FriendlyWith.class);
-
-        assertEquals(friendlyWith, deSerializedFriendlyWith);
+    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
+    private static Stream<Arguments> expectedTranslatedNameForFriendlyWith() {
+        return Stream.of(Arguments.of(FriendlyWith.ADULTS, "FRIENDLY_WITH.ADULTS"),
+                         Arguments.of(FriendlyWith.CATS, "FRIENDLY_WITH.CATS"),
+                         Arguments.of(FriendlyWith.CHILDREN, "FRIENDLY_WITH.CHILDREN"),
+                         Arguments.of(FriendlyWith.DOGS, "FRIENDLY_WITH.DOGS"),
+                         Arguments.of(FriendlyWith.OTHER_ANIMALS, "FRIENDLY_WITH.OTHER_ANIMALS"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")
-    @MethodSource(EXPECTED_NAMES_FOR_FRIENDLY_WITH_METHOD)
+    @MethodSource("friendlyWiths")
     void shouldDeserializeFriendlyWithUsingEnumName(final FriendlyWith friendlyWith) throws JsonProcessingException {
         String friendlyWithWithEnumNameAsJson = JSONObject.quote(friendlyWith.name());
 
@@ -83,14 +79,12 @@ class FriendlyWithTest {
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedNamesForFriendlyWith() {
-        return Stream.of(
-                Arguments.of(FriendlyWith.ADULTS, "Adults"),
-                Arguments.of(FriendlyWith.CATS, "Cats"),
-                Arguments.of(FriendlyWith.CHILDREN, "Children"),
-                Arguments.of(FriendlyWith.DOGS, "Dogs"),
-                Arguments.of(FriendlyWith.OTHER_ANIMALS, "Other animals")
-        );
+    private static Stream<Arguments> friendlyWiths() {
+        return Stream.of(Arguments.of(FriendlyWith.ADULTS),
+                         Arguments.of(FriendlyWith.CATS),
+                         Arguments.of(FriendlyWith.CHILDREN),
+                         Arguments.of(FriendlyWith.DOGS),
+                         Arguments.of(FriendlyWith.OTHER_ANIMALS));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{1}\" value")
@@ -105,18 +99,11 @@ class FriendlyWithTest {
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForFriendlyWith() {
-        return Stream.of(
-                Arguments.of(FriendlyWith.DOGS, " Dogs "),
-                Arguments.of(FriendlyWith.DOGS, " DOGS   "),
-                Arguments.of(FriendlyWith.CATS, "   Cats"),
-                Arguments.of(FriendlyWith.CATS, "CATS "),
-                Arguments.of(FriendlyWith.OTHER_ANIMALS, "Other animals "),
-                Arguments.of(FriendlyWith.OTHER_ANIMALS, "    OTHER_ANIMALS "),
-                Arguments.of(FriendlyWith.ADULTS, " Adults "),
-                Arguments.of(FriendlyWith.ADULTS, " ADULTS "),
-                Arguments.of(FriendlyWith.CHILDREN, "     Children "),
-                Arguments.of(FriendlyWith.CHILDREN, " CHILDREN      ")
-        );
+        return Stream.of(Arguments.of(FriendlyWith.DOGS, " DOGS   "),
+                         Arguments.of(FriendlyWith.CATS, "CATS "),
+                         Arguments.of(FriendlyWith.OTHER_ANIMALS, "    OTHER_ANIMALS "),
+                         Arguments.of(FriendlyWith.ADULTS, " ADULTS "),
+                         Arguments.of(FriendlyWith.CHILDREN, " CHILDREN      "));
     }
 
     @Test

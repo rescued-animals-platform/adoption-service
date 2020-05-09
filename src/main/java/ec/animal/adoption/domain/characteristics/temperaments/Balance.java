@@ -20,22 +20,11 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Balance {
-    VERY_BALANCED("Very balanced"),
-    BALANCED("Balanced"),
-    NEITHER_BALANCED_NOR_POSSESSIVE("Neither balanced nor possessive"),
-    POSSESSIVE("Possessive"),
-    VERY_POSSESSIVE("Very possessive");
-
-    @JsonValue
-    private final String name;
-
-    Balance(final String name) {
-        this.name = name;
-    }
+    VERY_BALANCED, BALANCED, NEITHER_BALANCED_NOR_POSSESSIVE, POSSESSIVE, VERY_POSSESSIVE;
 
     @JsonCreator
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
@@ -45,8 +34,7 @@ public enum Balance {
                                   .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String toTranslatedName() {
+        return TranslatorUtils.toLocale("BALANCE", this.name());
     }
 }

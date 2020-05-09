@@ -23,11 +23,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.state.State;
+import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -40,6 +43,9 @@ class StateResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setUseCodeAsDefaultMessage(true);
+        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -49,7 +55,7 @@ class StateResponseTest {
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
-        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
+        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toTranslatedName())));
     }
 
     @Test
@@ -60,7 +66,7 @@ class StateResponseTest {
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
-        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
+        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toTranslatedName())));
         assertTrue(createStateResponseAsJson.contains(String.format("\"adoptionFormId\":\"%s\"", adoptionFormId)));
     }
 
@@ -72,7 +78,7 @@ class StateResponseTest {
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
-        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toString())));
+        assertTrue(createStateResponseAsJson.contains(String.format("\"name\":\"%s\"", state.getName().toTranslatedName())));
         assertTrue(createStateResponseAsJson.contains(String.format("\"notes\":\"%s\"", notes)));
     }
 
@@ -81,7 +87,7 @@ class StateResponseTest {
         State state = getRandomState();
         StateResponse expectedStateResponse = StateResponse.from(state);
         String createStateResponseAsJson = new JSONObject()
-                .put("name", state.getName().toString())
+                .put("name", state.getName().toTranslatedName())
                 .put("adoptionFormId", state.getAdoptionFormId().orElse(null))
                 .put("notes", state.getNotes().orElse(null))
                 .toString();
