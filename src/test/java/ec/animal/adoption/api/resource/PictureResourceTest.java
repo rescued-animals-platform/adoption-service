@@ -33,16 +33,13 @@ import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationBuilder;
 import ec.animal.adoption.domain.organization.OrganizationService;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -90,9 +87,6 @@ public class PictureResourceTest {
         smallImage = ImageBuilder.random().build();
         imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY)
                                           .withLargeImage(largeImage).withSmallImage(smallImage).build();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
 
         pictureResource = new PictureResource(pictureService, organizationService, adminTokenUtils);
     }

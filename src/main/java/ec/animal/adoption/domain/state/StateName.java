@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.state;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ec.animal.adoption.domain.utils.EnumUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 
 public enum StateName {
     LOOKING_FOR_HUMAN, ADOPTED, UNAVAILABLE;
@@ -32,10 +31,5 @@ public enum StateName {
         return (StateName) EnumUtils.forValue(value)
                                     .apply(StateName.values())
                                     .orElseThrow(IllegalArgumentException::new);
-    }
-
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("STATE_NAME", this.name());
     }
 }

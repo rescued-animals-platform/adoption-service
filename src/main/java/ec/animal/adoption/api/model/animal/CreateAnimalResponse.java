@@ -78,9 +78,9 @@ public class CreateAnimalResponse {
                                         animal.getRegistrationDate(),
                                         animal.getClinicalRecord(),
                                         animal.getName(),
-                                        animal.getSpecies().toTranslatedName(),
-                                        animal.getEstimatedAge().toTranslatedName(),
-                                        animal.getSex().toTranslatedName(),
+                                        animal.getSpecies().name(),
+                                        animal.getEstimatedAge().name(),
+                                        animal.getSex().name(),
                                         StateResponse.from(animal.getState()));
     }
 

@@ -55,11 +55,11 @@ public class CharacteristicsResponse {
     }
 
     public static CharacteristicsResponse from(final Characteristics characteristics) {
-        return new CharacteristicsResponse(characteristics.getSize().toTranslatedName(),
-                                           characteristics.getPhysicalActivity().toTranslatedName(),
+        return new CharacteristicsResponse(characteristics.getSize().name(),
+                                           characteristics.getPhysicalActivity().name(),
                                            TemperamentsResponse.from(characteristics.getTemperaments()),
                                            characteristics.getFriendlyWith().stream()
-                                                          .map(FriendlyWith::toTranslatedName)
+                                                          .map(FriendlyWith::name)
                                                           .collect(Collectors.toSet()));
     }
 }

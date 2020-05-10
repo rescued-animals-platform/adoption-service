@@ -23,15 +23,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -47,24 +44,6 @@ class SociabilityTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
-    }
-
-    @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource("expectedTranslatedNameForSociability")
-    void shouldReturnExpectedTranslatedNameForSociability(final Sociability sociability, final String expectedTranslatedName) {
-        assertEquals(expectedTranslatedName, sociability.toTranslatedName());
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedTranslatedNameForSociability() {
-        return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE, "SOCIABILITY.VERY_SOCIABLE"),
-                         Arguments.of(Sociability.SOCIABLE, "SOCIABILITY.SOCIABLE"),
-                         Arguments.of(Sociability.NEITHER_SOCIABLE_NOR_SHY, "SOCIABILITY.NEITHER_SOCIABLE_NOR_SHY"),
-                         Arguments.of(Sociability.SHY, "SOCIABILITY.SHY"),
-                         Arguments.of(Sociability.VERY_SHY, "SOCIABILITY.VERY_SHY"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")

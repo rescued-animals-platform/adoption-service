@@ -26,11 +26,8 @@ import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 
@@ -47,9 +44,6 @@ class TemperamentsResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -66,9 +60,9 @@ class TemperamentsResponseTest {
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"sociability\":\"%s\"", sociability.toTranslatedName())));
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"docility\":\"%s\"", docility.toTranslatedName())));
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"balance\":\"%s\"", balance.toTranslatedName())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"sociability\":\"%s\"", sociability.name())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"docility\":\"%s\"", docility.name())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"balance\":\"%s\"", balance.name())));
     }
 
     @Test
@@ -79,7 +73,7 @@ class TemperamentsResponseTest {
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"sociability\":\"%s\"", sociability.toTranslatedName())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"sociability\":\"%s\"", sociability.name())));
         assertFalse(temperamentsResponseAsJson.contains("\"docility\":"));
         assertFalse(temperamentsResponseAsJson.contains("\"balance\":"));
     }
@@ -92,7 +86,7 @@ class TemperamentsResponseTest {
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"docility\":\"%s\"", docility.toTranslatedName())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"docility\":\"%s\"", docility.name())));
         assertFalse(temperamentsResponseAsJson.contains("\"sociability\":"));
         assertFalse(temperamentsResponseAsJson.contains("\"balance\":"));
     }
@@ -105,7 +99,7 @@ class TemperamentsResponseTest {
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
-        assertTrue(temperamentsResponseAsJson.contains(String.format("\"balance\":\"%s\"", balance.toTranslatedName())));
+        assertTrue(temperamentsResponseAsJson.contains(String.format("\"balance\":\"%s\"", balance.name())));
         assertFalse(temperamentsResponseAsJson.contains("\"sociability\":"));
         assertFalse(temperamentsResponseAsJson.contains("\"docility\":"));
     }

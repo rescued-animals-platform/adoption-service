@@ -23,15 +23,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -47,22 +44,6 @@ class StateNameTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
-    }
-
-    @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource("expectedTranslatedNameForStateName")
-    void shouldReturnExpectedTranslatedNameForStateName(final StateName stateName, final String expectedTranslatedName) {
-        assertEquals(expectedTranslatedName, stateName.toTranslatedName());
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedTranslatedNameForStateName() {
-        return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN, "STATE_NAME.LOOKING_FOR_HUMAN"),
-                         Arguments.of(StateName.ADOPTED, "STATE_NAME.ADOPTED"),
-                         Arguments.of(StateName.UNAVAILABLE, "STATE_NAME.UNAVAILABLE"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")

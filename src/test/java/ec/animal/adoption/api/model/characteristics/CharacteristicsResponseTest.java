@@ -28,15 +28,12 @@ import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 
@@ -49,9 +46,6 @@ class CharacteristicsResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -64,12 +58,12 @@ class CharacteristicsResponseTest {
 
         String characteristicsResponseAsJson = objectMapper.writeValueAsString(characteristicsResponse);
 
-        assertTrue(characteristicsResponseAsJson.contains(String.format("\"size\":\"%s\"", characteristics.getSize().toTranslatedName())));
+        assertTrue(characteristicsResponseAsJson.contains(String.format("\"size\":\"%s\"", characteristics.getSize().name())));
         assertTrue(characteristicsResponseAsJson.contains(
-                String.format("\"physicalActivity\":\"%s\"", characteristics.getPhysicalActivity().toTranslatedName())
+                String.format("\"physicalActivity\":\"%s\"", characteristics.getPhysicalActivity().name())
         ));
         assertTrue(characteristicsResponseAsJson.contains(String.format("\"temperaments\":%s", expectedTemperamentsResponseAsJson)));
-        assertTrue(characteristicsResponseAsJson.contains(String.format("\"friendlyWith\":[\"%s\"]", FriendlyWith.ADULTS.toTranslatedName())));
+        assertTrue(characteristicsResponseAsJson.contains(String.format("\"friendlyWith\":[\"%s\"]", FriendlyWith.ADULTS.name())));
     }
 
     @Test
@@ -81,10 +75,10 @@ class CharacteristicsResponseTest {
                                                                 .build();
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(characteristics);
         String characteristicsResponseAsJson = new JSONObject()
-                .put("size", characteristics.getSize().toTranslatedName())
-                .put("physicalActivity", characteristics.getPhysicalActivity().toTranslatedName())
-                .put("temperaments", new JSONObject().put("balance", Balance.POSSESSIVE.toTranslatedName()))
-                .put("friendlyWith", new JSONArray().put(FriendlyWith.DOGS.toTranslatedName()))
+                .put("size", characteristics.getSize().name())
+                .put("physicalActivity", characteristics.getPhysicalActivity().name())
+                .put("temperaments", new JSONObject().put("balance", Balance.POSSESSIVE.name()))
+                .put("friendlyWith", new JSONArray().put(FriendlyWith.DOGS.name()))
                 .toString();
 
         CharacteristicsResponse characteristicsResponse = objectMapper.readValue(characteristicsResponseAsJson,

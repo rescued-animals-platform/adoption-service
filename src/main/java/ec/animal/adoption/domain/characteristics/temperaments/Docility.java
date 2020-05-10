@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.characteristics.temperaments;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Docility {
@@ -32,9 +31,5 @@ public enum Docility {
         return (Docility) EnumUtils.forValue(value)
                                    .apply(Docility.values())
                                    .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("DOCILITY", this.name());
     }
 }

@@ -23,15 +23,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -47,24 +44,6 @@ class DocilityTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
-    }
-
-    @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource("expectedTranslatedNameForDocility")
-    void shouldReturnExpectedNameForDocility(final Docility docility, final String expectedTranslatedName) {
-        assertEquals(expectedTranslatedName, docility.toTranslatedName());
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedTranslatedNameForDocility() {
-        return Stream.of(Arguments.of(Docility.VERY_DOCILE, "DOCILITY.VERY_DOCILE"),
-                         Arguments.of(Docility.DOCILE, "DOCILITY.DOCILE"),
-                         Arguments.of(Docility.NEITHER_DOCILE_NOR_DOMINANT, "DOCILITY.NEITHER_DOCILE_NOR_DOMINANT"),
-                         Arguments.of(Docility.DOMINANT, "DOCILITY.DOMINANT"),
-                         Arguments.of(Docility.VERY_DOMINANT, "DOCILITY.VERY_DOMINANT"));
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")

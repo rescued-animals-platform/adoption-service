@@ -23,14 +23,10 @@ import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
 import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
-import java.util.Locale;
 
 import static java.lang.System.getenv;
 
@@ -59,11 +55,6 @@ public abstract class AbstractApiTest {
                                      .baseUrl(host)
                                      .responseTimeout(Duration.ofSeconds(10))
                                      .build();
-
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setDefaultLocale(Locale.ENGLISH);
-        messageSource.setBasename("messages");
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     CreateAnimalResponse createRandomAnimalWithDefaultLookingForHumanState() {

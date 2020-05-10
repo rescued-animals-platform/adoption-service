@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.media;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ec.animal.adoption.domain.utils.EnumUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 
 public enum PictureType {
     PRIMARY, ALTERNATE;
@@ -32,9 +31,5 @@ public enum PictureType {
         return (PictureType) EnumUtils.forValue(value)
                                       .apply(PictureType.values())
                                       .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("PICTURE_TYPE", this.name());
     }
 }

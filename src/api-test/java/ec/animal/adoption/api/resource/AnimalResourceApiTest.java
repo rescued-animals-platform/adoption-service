@@ -98,11 +98,11 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.registrationDate").isNotEmpty()
                      .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
-                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName())
-                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
                      .jsonPath("$.state[?(@.name == '%s' && @.adoptionFormId == '%s')]",
-                               state.getName().toTranslatedName(),
+                               state.getName().name(),
                                adoptionFormId)
                      .exists();
     }
@@ -122,10 +122,10 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.registrationDate").isNotEmpty()
                      .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
-                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName())
-                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
-                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.toTranslatedName());
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.name());
     }
 
     @Test
@@ -208,9 +208,9 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.id").isEqualTo(createAnimalResponse.getAnimalId().toString())
                      .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.species").isEqualTo(species.toTranslatedName())
-                     .jsonPath("$.sex").isEqualTo(sex.toTranslatedName())
-                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.toTranslatedName());
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name());
     }
 
     @Test

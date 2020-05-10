@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Species {
@@ -32,9 +31,5 @@ public enum Species {
         return (Species) EnumUtils.forValue(value)
                                   .apply(Species.values())
                                   .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("SPECIES", this.name());
     }
 }

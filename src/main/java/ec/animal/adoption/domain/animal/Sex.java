@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.animal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum Sex {
@@ -32,9 +31,5 @@ public enum Sex {
         return (Sex) EnumUtils.forValue(value)
                               .apply(Sex.values())
                               .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("SEX", this.name());
     }
 }

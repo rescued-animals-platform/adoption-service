@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.characteristics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import ec.animal.adoption.domain.utils.EnumUtils;
 
 public enum PhysicalActivity {
@@ -32,9 +31,5 @@ public enum PhysicalActivity {
         return (PhysicalActivity) EnumUtils.forValue(value)
                                            .apply(PhysicalActivity.values())
                                            .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public String toTranslatedName() {
-        return TranslatorUtils.toLocale("PHYSICAL_ACTIVITY", this.name());
     }
 }

@@ -49,9 +49,9 @@ public class TemperamentsResponse {
 
     public static TemperamentsResponse from(final Temperaments temperaments) {
         return new TemperamentsResponse(
-                temperaments.getSociability().map(Sociability::toTranslatedName).orElse(null),
-                temperaments.getDocility().map(Docility::toTranslatedName).orElse(null),
-                temperaments.getBalance().map(Balance::toTranslatedName).orElse(null)
+                temperaments.getSociability().map(Sociability::name).orElse(null),
+                temperaments.getDocility().map(Docility::name).orElse(null),
+                temperaments.getBalance().map(Balance::name).orElse(null)
         );
     }
 }

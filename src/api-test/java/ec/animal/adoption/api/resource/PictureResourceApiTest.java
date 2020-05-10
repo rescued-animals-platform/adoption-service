@@ -72,7 +72,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .isCreated()
                      .expectBody()
                      .jsonPath("$.name").isEqualTo(name)
-                     .jsonPath("$.pictureType").isEqualTo(pictureType.toTranslatedName())
+                     .jsonPath("$.pictureType").isEqualTo(pictureType.name())
                      .jsonPath("$.largeImageMediaLink.url").isNotEmpty()
                      .jsonPath("$.smallImageMediaLink.url").isNotEmpty();
     }

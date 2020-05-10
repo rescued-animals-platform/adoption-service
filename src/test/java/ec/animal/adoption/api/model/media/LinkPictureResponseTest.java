@@ -5,14 +5,11 @@ import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 
@@ -25,9 +22,6 @@ class LinkPictureResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -39,7 +33,7 @@ class LinkPictureResponseTest {
 
         assertTrue(linkPictureResponseAsJson.contains(String.format("\"name\":\"%s\"", linkPicture.getName())));
         assertTrue(linkPictureResponseAsJson.contains(
-                String.format("\"pictureType\":\"%s\"", linkPicture.getPictureType().toTranslatedName()))
+                String.format("\"pictureType\":\"%s\"", linkPicture.getPictureType().name()))
         );
         assertTrue(linkPictureResponseAsJson.contains(
                 String.format("\"largeImageMediaLink\":{\"url\":\"%s\"}", linkPicture.getLargeImageUrl()))
@@ -55,7 +49,7 @@ class LinkPictureResponseTest {
         LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
         String linkPictureResponseAsJson = new JSONObject()
                 .put("name", linkPicture.getName())
-                .put("pictureType", linkPicture.getPictureType().toTranslatedName())
+                .put("pictureType", linkPicture.getPictureType().name())
                 .put("largeImageMediaLink", new JSONObject().put("url", linkPicture.getLargeImageUrl()))
                 .put("smallImageMediaLink", new JSONObject().put("url", linkPicture.getSmallImageUrl()))
                 .toString();

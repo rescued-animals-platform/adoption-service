@@ -22,10 +22,10 @@ package ec.animal.adoption.api.model.animal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
+import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.api.model.state.StateResponse;
 import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.media.LinkPicture;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -58,7 +58,7 @@ public class AnimalResponse {
     private final StateResponse state;
 
     @JsonProperty(value = "primaryLinkPicture")
-    private final LinkPicture primaryLinkPicture;
+    private final LinkPictureResponse primaryLinkPicture;
 
     @JsonProperty(value = "characteristics")
     private final CharacteristicsResponse characteristics;
@@ -75,7 +75,7 @@ public class AnimalResponse {
                            @JsonProperty("estimatedAge") final String estimatedAge,
                            @JsonProperty("sex") final String sex,
                            @JsonProperty("state") final StateResponse state,
-                           @JsonProperty(value = "primaryLinkPicture") final LinkPicture primaryLinkPicture,
+                           @JsonProperty(value = "primaryLinkPicture") final LinkPictureResponse primaryLinkPicture,
                            @JsonProperty(value = "characteristics") final CharacteristicsResponse characteristics,
                            @JsonProperty(value = "story") final StoryResponse story) {
         this.animalId = animalId;
@@ -96,11 +96,11 @@ public class AnimalResponse {
                                   animal.getRegistrationDate(),
                                   animal.getClinicalRecord(),
                                   animal.getName(),
-                                  animal.getSpecies().toTranslatedName(),
-                                  animal.getEstimatedAge().toTranslatedName(),
-                                  animal.getSex().toTranslatedName(),
+                                  animal.getSpecies().name(),
+                                  animal.getEstimatedAge().name(),
+                                  animal.getSex().name(),
                                   StateResponse.from(animal.getState()),
-                                  animal.getPrimaryLinkPicture().orElse(null),
+                                  animal.getPrimaryLinkPicture().map(LinkPictureResponse::from).orElse(null),
                                   animal.getCharacteristics().map(CharacteristicsResponse::from).orElse(null),
                                   animal.getStory().map(StoryResponse::from).orElse(null));
     }

@@ -45,7 +45,7 @@ public class StateResponse {
     }
 
     public static StateResponse from(final State state) {
-        return new StateResponse(state.getName().toTranslatedName(),
+        return new StateResponse(state.getName().name(),
                                  state.getAdoptionFormId().orElse(null),
                                  state.getNotes().orElse(null));
     }

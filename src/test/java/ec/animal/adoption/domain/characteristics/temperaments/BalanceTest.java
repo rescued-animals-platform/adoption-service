@@ -23,15 +23,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -47,26 +44,6 @@ class BalanceTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
-    }
-
-    @ParameterizedTest(name = "{index} {0} name is \"{1}\"")
-    @MethodSource("expectedTranslatedNameForBalance")
-    void shouldReturnExpectedTranslatedNameForBalance(final Balance balance, final String expectedTranslatedName) {
-        assertEquals(expectedTranslatedName, balance.toTranslatedName());
-    }
-
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
-    private static Stream<Arguments> expectedTranslatedNameForBalance() {
-        return Stream.of(
-                Arguments.of(Balance.VERY_BALANCED, "BALANCE.VERY_BALANCED"),
-                Arguments.of(Balance.BALANCED, "BALANCE.BALANCED"),
-                Arguments.of(Balance.NEITHER_BALANCED_NOR_POSSESSIVE, "BALANCE.NEITHER_BALANCED_NOR_POSSESSIVE"),
-                Arguments.of(Balance.POSSESSIVE, "BALANCE.POSSESSIVE"),
-                Arguments.of(Balance.VERY_POSSESSIVE, "BALANCE.VERY_POSSESSIVE")
-        );
     }
 
     @ParameterizedTest(name = "{index} {0} is de-serialized from \"{0}\" value")

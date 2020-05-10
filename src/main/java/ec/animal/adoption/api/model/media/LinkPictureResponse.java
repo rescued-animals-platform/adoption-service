@@ -52,7 +52,7 @@ public class LinkPictureResponse {
 
     public static LinkPictureResponse from(final LinkPicture linkPicture) {
         return new LinkPictureResponse(linkPicture.getName(),
-                                       linkPicture.getPictureType().toTranslatedName(),
+                                       linkPicture.getPictureType().name(),
                                        MediaLinkResponse.from(linkPicture.getLargeImageUrl()),
                                        MediaLinkResponse.from(linkPicture.getSmallImageUrl()));
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
+import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.api.model.state.StateResponse;
 import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.animal.Animal;
@@ -15,11 +16,8 @@ import ec.animal.adoption.domain.media.LinkPictureBuilder;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.story.Story;
 import ec.animal.adoption.domain.story.StoryBuilder;
-import ec.animal.adoption.domain.utils.TranslatorUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -34,9 +32,6 @@ class AnimalResponseTest {
     @BeforeEach
     void setUp() {
         objectMapper = TestUtils.getObjectMapper();
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setUseCodeAsDefaultMessage(true);
-        ReflectionTestUtils.setField(TranslatorUtils.class, "messageSource", messageSource);
     }
 
     @Test
@@ -54,7 +49,7 @@ class AnimalResponseTest {
         AnimalResponse animalResponse = AnimalResponse.from(animal);
         String expectedSerializedState = objectMapper.writeValueAsString(StateResponse.from(animal.getState()));
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
-        String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(primaryLinkPicture);
+        String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(LinkPictureResponse.from(primaryLinkPicture));
         String expectedCharacteristics = objectMapper.writeValueAsString(CharacteristicsResponse.from(characteristics));
         String expectedStory = objectMapper.writeValueAsString(StoryResponse.from(story));
 
@@ -64,13 +59,12 @@ class AnimalResponseTest {
         assertThat(serializedAnimalResponse, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
         assertThat(serializedAnimalResponse, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
         assertThat(serializedAnimalResponse, containsString(String.format("\"name\":\"%s\"", animal.getName())));
-        assertThat(serializedAnimalResponse, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().toTranslatedName())));
-        assertThat(serializedAnimalResponse, containsString(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().toTranslatedName())));
-        assertThat(serializedAnimalResponse, containsString(String.format("\"sex\":\"%s\"", animal.getSex().toTranslatedName())));
+        assertThat(serializedAnimalResponse, containsString(String.format("\"species\":\"%s\"", animal.getSpecies().name())));
+        assertThat(serializedAnimalResponse, containsString(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().name())));
+        assertThat(serializedAnimalResponse, containsString(String.format("\"sex\":\"%s\"", animal.getSex().name())));
         assertThat(serializedAnimalResponse, containsString(String.format("\"state\":%s", expectedSerializedState)));
         assertThat(serializedAnimalResponse, containsString(String.format("\"primaryLinkPicture\":%s", expectedPrimaryLinkPicture)));
         assertThat(serializedAnimalResponse, containsString(String.format("\"characteristics\":%s", expectedCharacteristics)));
         assertThat(serializedAnimalResponse, containsString(String.format("\"story\":%s", expectedStory)));
     }
-
 }
