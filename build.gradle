@@ -2,21 +2,16 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    configurations.maybeCreate("pitest")
-    dependencies {
-        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.8'
-        pitest 'org.pitest:pitest-junit5-plugin:0.12'
-    }
 }
 
 plugins {
     id "java"
     id "idea"
     id "pmd"
-    id "info.solidsoft.pitest" version "1.4.8"
-    id 'com.github.spotbugs' version "4.0.4"
+    id "info.solidsoft.pitest" version "1.5.1"
+    id 'com.github.spotbugs' version "4.2.0"
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
-    id "org.springframework.boot" version "2.2.6.RELEASE"
+    id "org.springframework.boot" version "2.3.0.RELEASE"
 }
 
 apply from: "gradle/idea.gradle"

@@ -1,5 +1,5 @@
 pitest {
-    testPlugin = "junit5"
+    junit5PluginVersion = '0.12'
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [
             'ec.animal.adoption.AdoptionServiceApplication',
