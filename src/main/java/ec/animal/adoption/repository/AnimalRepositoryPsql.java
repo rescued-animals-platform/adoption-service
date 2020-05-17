@@ -23,7 +23,7 @@ import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
@@ -55,9 +55,9 @@ public class AnimalRepositoryPsql implements AnimalRepository {
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Animal create(final CreateAnimalDto createAnimalDto) {
+    public Animal create(final AnimalDto animalDto) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(createAnimalDto));
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animalDto));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
             LOGGER.error("Exception thrown when creating a new animal", exception);
@@ -78,11 +78,6 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    public boolean exists(final String clinicalRecord, final UUID organizationId) {
-        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(clinicalRecord, organizationId);
-    }
-
-    @Override
     public Animal getBy(final UUID animalId) {
         Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalId);
         return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
@@ -94,6 +89,19 @@ public class AnimalRepositoryPsql implements AnimalRepository {
                 animalId, organization.getOrganizationId()
         );
         return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Optional<Animal> getBy(final String clinicalRecord, final Organization organization) {
+        Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
+                clinicalRecord, organization.getOrganizationId()
+        );
+        return jpaAnimal.map(JpaAnimal::toAnimal);
+    }
+
+    @Override
+    public boolean exists(final String clinicalRecord, final UUID organizationId) {
+        return jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(clinicalRecord, organizationId);
     }
 
     @Override

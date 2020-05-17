@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.api.resource;
 
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsRequest;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsRequestBuilder;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
@@ -78,8 +78,8 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                                                         .withBalance(balance)
                                                         .withDocility(docility)
                                                         .build();
-        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = createAnimalResponse.getAnimalId();
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = animalCreateUpdateResponse.getAnimalId();
     }
 
     @Test
@@ -302,7 +302,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
         );
 
         webTestClient.get()
-                     .uri(GET_CHARACTERISTICS_URL, animalId)
+                     .uri(CHARACTERISTICS_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -318,7 +318,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenAnimalIdDoesNotExist() {
         webTestClient.get()
-                     .uri(GET_CHARACTERISTICS_URL, UUID.randomUUID())
+                     .uri(CHARACTERISTICS_URL, UUID.randomUUID())
                      .exchange()
                      .expectStatus()
                      .isNotFound()
@@ -331,7 +331,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenCharacteristicsCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                     .uri(GET_CHARACTERISTICS_URL, animalId)
+                     .uri(CHARACTERISTICS_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

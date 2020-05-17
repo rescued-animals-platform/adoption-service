@@ -19,6 +19,8 @@
 
 package ec.animal.adoption.domain.animal;
 
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -99,6 +101,23 @@ public class AnimalTest {
     }
 
     @Test
+    void shouldReturnTrueWhenIdentifiersFromBothAnimalsMatch() {
+        UUID animalId = UUID.randomUUID();
+        Animal animal = AnimalFactory.random().withIdentifier(animalId).build();
+        Animal anotherAnimal = AnimalFactory.random().withIdentifier(animalId).build();
+
+        assertTrue(animal.isSameAs(anotherAnimal));
+    }
+
+    @Test
+    void shouldReturnFalseWhenIdentifiersDoNotMatch() {
+        Animal animal = AnimalFactory.random().withIdentifier(UUID.randomUUID()).build();
+        Animal anotherAnimal = AnimalFactory.random().withIdentifier(UUID.randomUUID()).build();
+
+        assertFalse(animal.isSameAs(anotherAnimal));
+    }
+
+    @Test
     void shouldReturnTrueWhenAnimalAlreadyHasTheStoryProvided() {
         Story story = StoryFactory.random().build();
         Animal animal = AnimalFactory.random().withStory(story).build();
@@ -144,6 +163,27 @@ public class AnimalTest {
         Animal animal = AnimalFactory.random().withCharacteristics(CharacteristicsFactory.random().build()).build();
 
         assertFalse(animal.has(characteristics));
+    }
+
+    @Test
+    void shouldReturnAnimalWithClinicalRecordNameSpeciesEstimatedAgeSexAndStateFromAnimalDto() {
+        Animal animal = AnimalFactory.random().build();
+        AnimalDto animalDto = AnimalDtoFactory.random().build();
+
+        Animal updatedAnimal = animal.updateWith(animalDto);
+
+        assertEquals(animal.getIdentifier(), updatedAnimal.getIdentifier());
+        assertEquals(animal.getRegistrationDate(), updatedAnimal.getRegistrationDate());
+        assertEquals(animalDto.getClinicalRecord(), updatedAnimal.getClinicalRecord());
+        assertEquals(animalDto.getName(), updatedAnimal.getName());
+        assertEquals(animalDto.getSpecies(), updatedAnimal.getSpecies());
+        assertEquals(animalDto.getEstimatedAge(), updatedAnimal.getEstimatedAge());
+        assertEquals(animalDto.getSex(), updatedAnimal.getSex());
+        assertEquals(animalDto.getState(), updatedAnimal.getState());
+        assertEquals(animal.getPrimaryLinkPicture(), updatedAnimal.getPrimaryLinkPicture());
+        assertEquals(animal.getCharacteristics(), updatedAnimal.getCharacteristics());
+        assertEquals(animal.getStory(), updatedAnimal.getStory());
+        assertEquals(animal.getOrganization(), updatedAnimal.getOrganization());
     }
 
     @Test

@@ -111,12 +111,12 @@ public class CreateAnimalRequestBuilder {
         return this;
     }
 
-    public CreateAnimalRequest build() {
-        return new CreateAnimalRequest(this.clinicalRecord,
-                                       this.name,
-                                       this.species,
-                                       this.estimatedAge,
-                                       this.sex,
-                                       this.stateRequest);
+    public AnimalCreateUpdateRequest build() {
+        return new AnimalCreateUpdateRequest(this.clinicalRecord,
+                                             this.name,
+                                             this.species,
+                                             this.estimatedAge,
+                                             this.sex,
+                                             this.stateRequest);
     }
 }

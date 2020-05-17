@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.api.resource;
 
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.story.StoryRequest;
 import ec.animal.adoption.api.model.story.StoryResponse;
 import org.assertj.core.api.Assertions;
@@ -42,8 +42,8 @@ public class StoryResourceApiTest extends AbstractApiTest {
 
     @BeforeEach
     public void setUp() {
-        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = createAnimalResponse.getAnimalId();
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = animalCreateUpdateResponse.getAnimalId();
     }
 
     @Test
@@ -215,7 +215,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
         StoryResponse createdStoryResponse = createStoryForAnimal(animalId, new StoryRequest(randomAlphabetic(10)));
 
         webTestClient.get()
-                     .uri(GET_STORY_URL, animalId)
+                     .uri(STORY_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -232,7 +232,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenAnimalIdDoesNotExist() {
         webTestClient.get()
-                     .uri(GET_STORY_URL, UUID.randomUUID())
+                     .uri(STORY_URL, UUID.randomUUID())
                      .exchange()
                      .expectStatus()
                      .isNotFound()
@@ -245,7 +245,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenStoryCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                     .uri(GET_STORY_URL, animalId)
+                     .uri(STORY_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CreateAnimalDtoTest {
+class AnimalDtoTest {
 
     private String clinicalRecord;
     private String name;
@@ -60,71 +60,72 @@ class CreateAnimalDtoTest {
 
     @Test
     void shouldCreateACreateAnimalDto() {
-        CreateAnimalDto createAnimalDto = new CreateAnimalDto(clinicalRecord,
-                                                              name,
-                                                              species,
-                                                              estimatedAge,
-                                                              sex,
-                                                              adoptedState,
-                                                              organization);
+        AnimalDto animalDto = new AnimalDto(clinicalRecord,
+                                            name,
+                                            species,
+                                            estimatedAge,
+                                            sex,
+                                            adoptedState,
+                                            organization);
 
-        assertAll(() -> assertEquals(clinicalRecord, createAnimalDto.getClinicalRecord()),
-                  () -> assertEquals(name, createAnimalDto.getName()),
-                  () -> assertEquals(species, createAnimalDto.getSpecies()),
-                  () -> assertEquals(estimatedAge, createAnimalDto.getEstimatedAge()),
-                  () -> assertEquals(sex, createAnimalDto.getSex()),
-                  () -> assertEquals(adoptedState.getName().name(), createAnimalDto.getStateNameAsString()),
-                  () -> assertEquals(organization, createAnimalDto.getOrganization()),
-                  () -> assertEquals(organization.getOrganizationId(), createAnimalDto.getOrganizationId()));
+        assertAll(() -> assertEquals(clinicalRecord, animalDto.getClinicalRecord()),
+                  () -> assertEquals(name, animalDto.getName()),
+                  () -> assertEquals(species, animalDto.getSpecies()),
+                  () -> assertEquals(estimatedAge, animalDto.getEstimatedAge()),
+                  () -> assertEquals(sex, animalDto.getSex()),
+                  () -> assertEquals(adoptedState, animalDto.getState()),
+                  () -> assertEquals(adoptedState.getName().name(), animalDto.getStateNameAsString()),
+                  () -> assertEquals(organization, animalDto.getOrganization()),
+                  () -> assertEquals(organization.getOrganizationId(), animalDto.getOrganizationId()));
 
     }
 
     @Test
     void shouldSetLookingForHumanAsDefaultWhenCreateStateDtoIsNull() {
-        CreateAnimalDto createAnimalDto = new CreateAnimalDto(clinicalRecord,
-                                                              name,
-                                                              species,
-                                                              estimatedAge,
-                                                              sex,
-                                                              null,
-                                                              organization);
+        AnimalDto animalDto = new AnimalDto(clinicalRecord,
+                                            name,
+                                            species,
+                                            estimatedAge,
+                                            sex,
+                                            null,
+                                            organization);
 
-        assertEquals(LOOKING_FOR_HUMAN.name(), createAnimalDto.getStateNameAsString());
+        assertEquals(LOOKING_FOR_HUMAN.name(), animalDto.getStateNameAsString());
     }
 
     @Test
     void shouldReturnAdoptionFormIdFromStateWhenPresent() {
         String adoptionFormId = randomAlphabetic(10);
         State state = State.adopted(adoptionFormId);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
+        AnimalDto animalDto = AnimalDtoFactory.random().withState(state).build();
 
-        assertTrue(createAnimalDto.getAdoptionFormId().isPresent());
-        assertEquals(adoptionFormId, createAnimalDto.getAdoptionFormId().get());
+        assertTrue(animalDto.getAdoptionFormId().isPresent());
+        assertEquals(adoptionFormId, animalDto.getAdoptionFormId().get());
     }
 
     @Test
     void shouldReturnEmptyWhenAdoptionFormIdIsNotPresentInState() {
         State state = State.lookingForHuman();
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
+        AnimalDto animalDto = AnimalDtoFactory.random().withState(state).build();
 
-        assertTrue(createAnimalDto.getAdoptionFormId().isEmpty());
+        assertTrue(animalDto.getAdoptionFormId().isEmpty());
     }
 
     @Test
     void shouldReturnNotesFromStateWhenPresent() {
         String notes = randomAlphabetic(10);
         State state = State.unavailable(notes);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
+        AnimalDto animalDto = AnimalDtoFactory.random().withState(state).build();
 
-        assertTrue(createAnimalDto.getNotes().isPresent());
-        assertEquals(notes, createAnimalDto.getNotes().get());
+        assertTrue(animalDto.getNotes().isPresent());
+        assertEquals(notes, animalDto.getNotes().get());
     }
 
     @Test
     void shouldReturnEmptyWhenNotesIsNotPresentInState() {
         State state = State.adopted(randomAlphabetic(10));
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
+        AnimalDto animalDto = AnimalDtoFactory.random().withState(state).build();
 
-        assertTrue(createAnimalDto.getNotes().isEmpty());
+        assertTrue(animalDto.getNotes().isEmpty());
     }
 }

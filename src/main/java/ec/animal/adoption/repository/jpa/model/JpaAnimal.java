@@ -23,7 +23,7 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.state.State;
@@ -111,18 +111,18 @@ public class JpaAnimal implements Serializable {
         this.jpaOrganization = new JpaOrganization(animal.getOrganization());
     }
 
-    public JpaAnimal(final CreateAnimalDto createAnimalDto) {
+    public JpaAnimal(final AnimalDto animalDto) {
         this.id = UUID.randomUUID();
         this.registrationDate = LocalDateTime.now();
-        this.clinicalRecord = createAnimalDto.getClinicalRecord();
-        this.name = createAnimalDto.getName();
-        this.species = createAnimalDto.getSpecies().name();
-        this.estimatedAge = createAnimalDto.getEstimatedAge().name();
-        this.sex = createAnimalDto.getSex().name();
-        this.stateName = createAnimalDto.getStateNameAsString();
-        this.adoptionFormId = createAnimalDto.getAdoptionFormId().orElse(null);
-        this.unavailableStateNotes = createAnimalDto.getNotes().orElse(null);
-        this.jpaOrganization = new JpaOrganization(createAnimalDto.getOrganization());
+        this.clinicalRecord = animalDto.getClinicalRecord();
+        this.name = animalDto.getName();
+        this.species = animalDto.getSpecies().name();
+        this.estimatedAge = animalDto.getEstimatedAge().name();
+        this.sex = animalDto.getSex().name();
+        this.stateName = animalDto.getStateNameAsString();
+        this.adoptionFormId = animalDto.getAdoptionFormId().orElse(null);
+        this.unavailableStateNotes = animalDto.getNotes().orElse(null);
+        this.jpaOrganization = new JpaOrganization(animalDto.getOrganization());
     }
 
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {

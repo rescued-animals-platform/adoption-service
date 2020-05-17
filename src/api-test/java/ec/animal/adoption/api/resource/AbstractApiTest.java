@@ -19,9 +19,9 @@
 
 package ec.animal.adoption.api.resource;
 
-import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateRequest;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.animal.CreateAnimalRequestBuilder;
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -33,16 +33,15 @@ import static java.lang.System.getenv;
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractApiTest {
 
-    static final String CREATE_ANIMAL_ADMIN_URL = "/adoption/admin/animals";
-    static final String GET_ANIMAL_ADMIN_URL = "/adoption/admin/animals/{id}";
-    static final String GET_ANIMALS_ADMIN_URL = "/adoption/admin/animals";
-    static final String GET_ANIMALS_URL = "/adoption/animals";
+    static final String ANIMALS_ADMIN_URL = "/adoption/admin/animals";
+    static final String ANIMAL_ADMIN_URL = "/adoption/admin/animals/{id}";
+    static final String ANIMALS_URL = "/adoption/animals";
     static final String CHARACTERISTICS_ADMIN_URL = "/adoption/admin/animals/{id}/characteristics";
-    static final String GET_CHARACTERISTICS_URL = "/adoption/animals/{id}/characteristics";
+    static final String CHARACTERISTICS_URL = "/adoption/animals/{id}/characteristics";
     static final String PICTURES_ADMIN_URL = "/adoption/admin/animals/{id}/pictures";
-    static final String GET_PICTURES_URL = "/adoption/animals/{id}/pictures";
+    static final String PICTURES_URL = "/adoption/animals/{id}/pictures";
     static final String STORY_ADMIN_URL = "/adoption/admin/animals/{id}/story";
-    static final String GET_STORY_URL = "/adoption/animals/{id}/story";
+    static final String STORY_URL = "/adoption/animals/{id}/story";
 
     static WebTestClient webTestClient;
 
@@ -57,15 +56,15 @@ public abstract class AbstractApiTest {
                                      .build();
     }
 
-    CreateAnimalResponse createRandomAnimalWithDefaultLookingForHumanState() {
-        CreateAnimalRequest createAnimalRequest = CreateAnimalRequestBuilder.random().withState(State.lookingForHuman()).build();
+    AnimalCreateUpdateResponse createRandomAnimalWithDefaultLookingForHumanState() {
+        AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withState(State.lookingForHuman()).build();
         return webTestClient.post()
-                            .uri(CREATE_ANIMAL_ADMIN_URL)
-                            .bodyValue(createAnimalRequest)
+                            .uri(ANIMALS_ADMIN_URL)
+                            .bodyValue(animalCreateUpdateRequest)
                             .exchange()
                             .expectStatus()
                             .isCreated()
-                            .expectBody(CreateAnimalResponse.class)
+                            .expectBody(AnimalCreateUpdateResponse.class)
                             .returnResult()
                             .getResponseBody();
     }

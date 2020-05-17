@@ -215,6 +215,19 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     }
 
     @Test
+    void shouldFindJpaAnimalByClinicalRecordAndOrganizationId() {
+        JpaAnimal jpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
+        String clinicalRecord = jpaAnimal.toAnimal().getClinicalRecord();
+
+        Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
+                clinicalRecord, DEFAULT_ORGANIZATION_ID
+        );
+
+        assertThat(optionalJpaAnimal.isPresent(), is(true));
+        assertThat(optionalJpaAnimal.get(), is(jpaAnimal));
+    }
+
+    @Test
     void shouldReturnTrueWhenJpaAnimalMatchingClinicalRecordAndOrganizationIdExists() {
         JpaAnimal expectedJpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animal = expectedJpaAnimal.toAnimal();

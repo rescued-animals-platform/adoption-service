@@ -21,8 +21,8 @@ package ec.animal.adoption.repository.jpa.model;
 
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalFactory;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -50,23 +50,23 @@ public class JpaAnimalTest {
     @Test
     public void shouldBuildAJpaAnimalFromACreateAnimalDtoAndGenerateAnIdentifierAndARegistrationDateForIt() {
         Organization organization = OrganizationFactory.random().build();
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withOrganization(organization).build();
+        AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
 
-        JpaAnimal jpaAnimal = new JpaAnimal(createAnimalDto);
+        JpaAnimal jpaAnimal = new JpaAnimal(animalDto);
 
         Animal actualAnimal = jpaAnimal.toAnimal();
 
         assertAll(() -> assertNotNull(actualAnimal.getIdentifier()),
                   () -> assertNotNull(actualAnimal.getRegistrationDate()),
-                  () -> assertEquals(createAnimalDto.getClinicalRecord(), actualAnimal.getClinicalRecord()),
-                  () -> assertEquals(createAnimalDto.getName(), actualAnimal.getName()),
-                  () -> assertEquals(createAnimalDto.getSpecies(), actualAnimal.getSpecies()),
-                  () -> assertEquals(createAnimalDto.getEstimatedAge(), actualAnimal.getEstimatedAge()),
-                  () -> assertEquals(createAnimalDto.getSex(), actualAnimal.getSex()),
-                  () -> assertEquals(createAnimalDto.getStateNameAsString(), actualAnimal.getStateName()),
-                  () -> assertEquals(createAnimalDto.getAdoptionFormId(), actualAnimal.getState().getAdoptionFormId()),
-                  () -> assertEquals(createAnimalDto.getNotes(), actualAnimal.getState().getNotes()),
-                  () -> assertEquals(createAnimalDto.getOrganization(), actualAnimal.getOrganization()));
+                  () -> assertEquals(animalDto.getClinicalRecord(), actualAnimal.getClinicalRecord()),
+                  () -> assertEquals(animalDto.getName(), actualAnimal.getName()),
+                  () -> assertEquals(animalDto.getSpecies(), actualAnimal.getSpecies()),
+                  () -> assertEquals(animalDto.getEstimatedAge(), actualAnimal.getEstimatedAge()),
+                  () -> assertEquals(animalDto.getSex(), actualAnimal.getSex()),
+                  () -> assertEquals(animalDto.getStateNameAsString(), actualAnimal.getStateName()),
+                  () -> assertEquals(animalDto.getAdoptionFormId(), actualAnimal.getState().getAdoptionFormId()),
+                  () -> assertEquals(animalDto.getNotes(), actualAnimal.getState().getNotes()),
+                  () -> assertEquals(animalDto.getOrganization(), actualAnimal.getOrganization()));
     }
 
     @Test

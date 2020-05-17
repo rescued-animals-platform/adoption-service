@@ -20,23 +20,26 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AnimalRepository {
 
-    Animal create(final CreateAnimalDto createAnimalDto);
+    Animal create(final AnimalDto animalDto);
 
     Animal save(final Animal animal);
 
     Animal getBy(final UUID animalId);
 
     Animal getBy(final UUID animalId, final Organization organization);
+
+    Optional<Animal> getBy(final String clinicalRecord, final Organization organization);
 
     boolean exists(final String clinicalRecord, final UUID organizationId);
 

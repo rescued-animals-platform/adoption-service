@@ -20,11 +20,12 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
+import ec.animal.adoption.domain.exception.IllegalUpdateException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
@@ -37,6 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -49,6 +51,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,26 +83,78 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
-        when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
+        AnimalDto animalDto = AnimalDtoFactory.random().build();
+        when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(false);
-        when(animalRepository.create(createAnimalDto)).thenReturn(expectedAnimal);
+        when(animalRepository.create(animalDto)).thenReturn(expectedAnimal);
 
-        Animal createdAnimal = animalService.create(createAnimalDto);
+        Animal createdAnimal = animalService.create(animalDto);
 
         assertEquals(expectedAnimal, createdAnimal);
     }
 
     @Test
     public void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
-        when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
+        AnimalDto animalDto = AnimalDtoFactory.random().build();
+        when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(true);
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalService.create(createAnimalDto);
+            animalService.create(animalDto);
         });
         verify(animalRepository, never()).save(any(Animal.class));
+    }
+
+    @Test
+    void shouldUpdateAnimalWhenThereIsNoOtherAnimalInOrganizationWithSameClinicalRecordInUpdateRequest() {
+        UUID animalId = UUID.randomUUID();
+        AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
+        Animal animalToBeUpdated = mock(Animal.class);
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
+        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+                .thenReturn(Optional.empty());
+        Animal expectedUpdatedAnimal = mock(Animal.class);
+        when(animalToBeUpdated.updateWith(animalDtoWithUpdatedData)).thenReturn(expectedUpdatedAnimal);
+        when(animalRepository.save(expectedUpdatedAnimal)).thenReturn(expectedUpdatedAnimal);
+
+        Animal updatedAnimal = animalService.update(animalId, animalDtoWithUpdatedData);
+
+        assertEquals(expectedUpdatedAnimal, updatedAnimal);
+    }
+
+    @Test
+    void shouldUpdateAnimalWhenAnimalFoundByClinicalRecordInOrganizationIsTheSameAnimalFoundById() {
+        UUID animalId = UUID.randomUUID();
+        AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
+        Animal animalToBeUpdated = mock(Animal.class);
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
+        Animal animalWithClinicalRecord = mock(Animal.class);
+        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+                .thenReturn(Optional.of(animalWithClinicalRecord));
+        when(animalToBeUpdated.isSameAs(animalWithClinicalRecord)).thenReturn(true);
+        Animal expectedUpdatedAnimal = mock(Animal.class);
+        when(animalToBeUpdated.updateWith(animalDtoWithUpdatedData)).thenReturn(expectedUpdatedAnimal);
+        when(animalRepository.save(expectedUpdatedAnimal)).thenReturn(expectedUpdatedAnimal);
+
+        Animal updatedAnimal = animalService.update(animalId, animalDtoWithUpdatedData);
+
+        assertEquals(expectedUpdatedAnimal, updatedAnimal);
+    }
+
+    @Test
+    void shouldThrowIllegalUpdateExceptionWhenAnAnimalWithDifferentIdentifierAlreadyExistsInOrganizationWithSameClinicalRecordInUpdateRequest() {
+        UUID animalId = UUID.randomUUID();
+        AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
+        Animal animalToBeUpdated = mock(Animal.class);
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
+        Animal animalWithClinicalRecord = mock(Animal.class);
+        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+                .thenReturn(Optional.of(animalWithClinicalRecord));
+        when(animalToBeUpdated.isSameAs(animalWithClinicalRecord)).thenReturn(false);
+
+        assertThrows(IllegalUpdateException.class, () -> {
+            animalService.update(animalId, animalDtoWithUpdatedData);
+        });
     }
 
     @Test

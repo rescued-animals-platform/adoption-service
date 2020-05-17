@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.api.resource;
 
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.media.PictureType;
 import org.assertj.core.api.Assertions;
@@ -51,8 +51,8 @@ public class PictureResourceApiTest extends AbstractApiTest {
 
     @BeforeEach
     public void setUp() {
-        CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = createAnimalResponse.getAnimalId();
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
+        animalId = animalCreateUpdateResponse.getAnimalId();
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();
@@ -301,7 +301,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
         LinkPictureResponse createdLinkPictureResponse = createPrimaryPictureForAnimal(animalId);
 
         webTestClient.get()
-                     .uri(GET_PICTURES_URL, animalId)
+                     .uri(PICTURES_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isOk()
@@ -317,7 +317,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenAnimalIdDoesNotExist() {
         webTestClient.get()
-                     .uri(GET_PICTURES_URL, UUID.randomUUID())
+                     .uri(PICTURES_URL, UUID.randomUUID())
                      .exchange()
                      .expectStatus()
                      .isNotFound()
@@ -330,7 +330,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn404NotFoundWhenPrimaryPictureCannotBeFoundForValidAnimal() {
         webTestClient.get()
-                     .uri(GET_PICTURES_URL, animalId)
+                     .uri(PICTURES_URL, animalId)
                      .exchange()
                      .expectStatus()
                      .isNotFound()

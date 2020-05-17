@@ -36,7 +36,7 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CreateAnimalResponseTest {
+class AnimalCreateUpdateResponseTest {
 
     private ObjectMapper objectMapper;
 
@@ -49,9 +49,9 @@ class CreateAnimalResponseTest {
     void shouldBeSerializable() throws JsonProcessingException {
         Animal animal = AnimalFactory.random().withState(State.adopted(null)).build();
         String expectedRegistrationDateAsJson = objectMapper.writeValueAsString(animal.getRegistrationDate());
-        CreateAnimalResponse createAnimalResponse = CreateAnimalResponse.from(animal);
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = AnimalCreateUpdateResponse.from(animal);
 
-        String createAnimalResponseAsJson = objectMapper.writeValueAsString(createAnimalResponse);
+        String createAnimalResponseAsJson = objectMapper.writeValueAsString(animalCreateUpdateResponse);
 
         assertAll(
                 () -> assertTrue(createAnimalResponseAsJson.contains(String.format("\"id\":\"%s\"", animal.getIdentifier()))),
@@ -69,7 +69,7 @@ class CreateAnimalResponseTest {
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         String notes = randomAlphabetic(10);
         Animal animal = AnimalFactory.random().withState(State.unavailable(notes)).build();
-        CreateAnimalResponse expectedCreateAnimalResponse = CreateAnimalResponse.from(animal);
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(animal);
         String createAnimalResponseAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())
                 .put("registrationDate", animal.getRegistrationDate())
@@ -83,8 +83,8 @@ class CreateAnimalResponseTest {
                         .put("notes", notes)
                 ).toString();
 
-        CreateAnimalResponse createAnimalResponse = objectMapper.readValue(createAnimalResponseAsJson, CreateAnimalResponse.class);
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = objectMapper.readValue(createAnimalResponseAsJson, AnimalCreateUpdateResponse.class);
 
-        Assertions.assertThat(createAnimalResponse).usingRecursiveComparison().isEqualTo(expectedCreateAnimalResponse);
+        Assertions.assertThat(animalCreateUpdateResponse).usingRecursiveComparison().isEqualTo(expectedAnimalCreateUpdateResponse);
     }
 }

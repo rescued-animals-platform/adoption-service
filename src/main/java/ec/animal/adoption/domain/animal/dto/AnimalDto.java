@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("PMD.DataClass")
-public class CreateAnimalDto {
+public class AnimalDto {
 
     private final String clinicalRecord;
     private final String name;
@@ -41,13 +41,13 @@ public class CreateAnimalDto {
     private final State state;
     private final Organization organization;
 
-    public CreateAnimalDto(@NonNull final String clinicalRecord,
-                           @Nullable final String name,
-                           @NonNull final Species species,
-                           @NonNull final EstimatedAge estimatedAge,
-                           @NonNull final Sex sex,
-                           @Nullable final State state,
-                           @NonNull final Organization organization) {
+    public AnimalDto(@NonNull final String clinicalRecord,
+                     @Nullable final String name,
+                     @NonNull final Species species,
+                     @NonNull final EstimatedAge estimatedAge,
+                     @NonNull final Sex sex,
+                     @Nullable final State state,
+                     @NonNull final Organization organization) {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -80,6 +80,11 @@ public class CreateAnimalDto {
     @NonNull
     public Sex getSex() {
         return sex;
+    }
+
+    @NonNull
+    public State getState() {
+        return state;
     }
 
     @NonNull

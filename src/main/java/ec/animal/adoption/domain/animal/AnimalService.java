@@ -20,16 +20,18 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
+import ec.animal.adoption.domain.exception.IllegalUpdateException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.StateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,12 +44,30 @@ public class AnimalService {
         this.animalRepository = animalRepository;
     }
 
-    public Animal create(final CreateAnimalDto createAnimalDto) {
-        if (animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId())) {
+    public Animal create(final AnimalDto animalDto) {
+        if (animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId())) {
             throw new EntityAlreadyExistsException();
         }
 
-        return animalRepository.create(createAnimalDto);
+        return animalRepository.create(animalDto);
+    }
+
+    public Animal update(final UUID animalId, final AnimalDto animalDto) {
+        Organization organization = animalDto.getOrganization();
+        String clinicalRecordInUpdateRequest = animalDto.getClinicalRecord();
+
+        Animal animalToBeUpdated = animalRepository.getBy(animalId, organization);
+        Optional<Animal> animalInOrganizationWithClinicalRecordInUpdate = animalRepository.getBy(
+                clinicalRecordInUpdateRequest, organization
+        );
+
+        animalInOrganizationWithClinicalRecordInUpdate.ifPresent(animal -> {
+            if (!animalToBeUpdated.isSameAs(animal)) {
+                throw new IllegalUpdateException(animal.getIdentifier(), clinicalRecordInUpdateRequest);
+            }
+        });
+
+        return animalRepository.save(animalToBeUpdated.updateWith(animalDto));
     }
 
     public Animal getBy(final UUID animalId, final Organization organization) {

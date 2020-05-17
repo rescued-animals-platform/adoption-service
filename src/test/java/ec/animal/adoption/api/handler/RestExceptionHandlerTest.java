@@ -23,6 +23,7 @@ import ec.animal.adoption.api.model.error.ApiErrorResponse;
 import ec.animal.adoption.api.model.error.ValidationApiSubErrorResponse;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
+import ec.animal.adoption.domain.exception.IllegalUpdateException;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.exception.MediaStorageException;
 import ec.animal.adoption.domain.exception.UnauthorizedException;
@@ -50,6 +51,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -65,6 +67,8 @@ public class RestExceptionHandlerTest {
     private static final String INVALID_PICTURE_EXCEPTION_MESSAGE = "The image(s) could not be processed. Check they meet the " +
             "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
             "Only PRIMARY picture type is supported.";
+    private static final String ILLEGAL_UPDATE_EXCEPTION_MESSAGE = "Can't update animal with clinical record: %s. " +
+            "An animal with id: %s already has this clinical record";
 
     @Mock
     private WebRequest webRequest;
@@ -230,6 +234,32 @@ public class RestExceptionHandlerTest {
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.NOT_FOUND, "Unable to find the resource");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFoundException(entityNotFoundException);
+
+        assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
+        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
+        assertThat(apiErrorResponse, is(expectedApiErrorResponse));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForIllegalUpdateException() {
+        IllegalUpdateException illegalUpdateException = mock(IllegalUpdateException.class);
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleIllegalUpdateException(illegalUpdateException);
+
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void shouldReturnAResponseEntityWithApiErrorForIllegalUpdateException() {
+        UUID existingAnimalId = UUID.randomUUID();
+        String clinicalRecord = randomAlphabetic(10);
+        IllegalUpdateException illegalUpdateException = new IllegalUpdateException(existingAnimalId, clinicalRecord);
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                String.format(ILLEGAL_UPDATE_EXCEPTION_MESSAGE, clinicalRecord, existingAnimalId)
+        );
+
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleIllegalUpdateException(illegalUpdateException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
         ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();

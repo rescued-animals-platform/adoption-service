@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @SuppressWarnings("PMD")
-public class CreateAnimalResponse {
+public class AnimalCreateUpdateResponse {
 
     @JsonProperty("id")
     private final UUID animalId;
@@ -55,14 +55,14 @@ public class CreateAnimalResponse {
     private final StateResponse state;
 
     @JsonCreator
-    private CreateAnimalResponse(@JsonProperty("id") final UUID animalId,
-                                 @JsonProperty("registrationDate") final LocalDateTime registrationDate,
-                                 @JsonProperty("clinicalRecord") final String clinicalRecord,
-                                 @JsonProperty("name") final String name,
-                                 @JsonProperty("species") final String species,
-                                 @JsonProperty("estimatedAge") final String estimatedAge,
-                                 @JsonProperty("sex") final String sex,
-                                 @JsonProperty("state") final StateResponse state) {
+    private AnimalCreateUpdateResponse(@JsonProperty("id") final UUID animalId,
+                                       @JsonProperty("registrationDate") final LocalDateTime registrationDate,
+                                       @JsonProperty("clinicalRecord") final String clinicalRecord,
+                                       @JsonProperty("name") final String name,
+                                       @JsonProperty("species") final String species,
+                                       @JsonProperty("estimatedAge") final String estimatedAge,
+                                       @JsonProperty("sex") final String sex,
+                                       @JsonProperty("state") final StateResponse state) {
         this.animalId = animalId;
         this.registrationDate = registrationDate;
         this.clinicalRecord = clinicalRecord;
@@ -73,18 +73,26 @@ public class CreateAnimalResponse {
         this.state = state;
     }
 
-    public static CreateAnimalResponse from(final Animal animal) {
-        return new CreateAnimalResponse(animal.getIdentifier(),
-                                        animal.getRegistrationDate(),
-                                        animal.getClinicalRecord(),
-                                        animal.getName(),
-                                        animal.getSpecies().name(),
-                                        animal.getEstimatedAge().name(),
-                                        animal.getSex().name(),
-                                        StateResponse.from(animal.getState()));
+    public static AnimalCreateUpdateResponse from(final Animal animal) {
+        return new AnimalCreateUpdateResponse(animal.getIdentifier(),
+                                              animal.getRegistrationDate(),
+                                              animal.getClinicalRecord(),
+                                              animal.getName(),
+                                              animal.getSpecies().name(),
+                                              animal.getEstimatedAge().name(),
+                                              animal.getSex().name(),
+                                              StateResponse.from(animal.getState()));
     }
 
     public UUID getAnimalId() {
         return animalId;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public String getClinicalRecord() {
+        return clinicalRecord;
     }
 }

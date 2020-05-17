@@ -32,7 +32,7 @@ import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class CreateAnimalDtoFactory {
+public class AnimalDtoFactory {
 
     private String clinicalRecord;
     private String name;
@@ -42,72 +42,72 @@ public class CreateAnimalDtoFactory {
     private State state;
     private Organization organization;
 
-    public static CreateAnimalDtoFactory random() {
-        CreateAnimalDtoFactory createAnimalDtoFactory = new CreateAnimalDtoFactory();
-        createAnimalDtoFactory.clinicalRecord = randomAlphabetic(10);
-        createAnimalDtoFactory.name = randomAlphabetic(10);
-        createAnimalDtoFactory.species = getRandomSpecies();
-        createAnimalDtoFactory.estimatedAge = getRandomEstimatedAge();
-        createAnimalDtoFactory.sex = getRandomSex();
-        createAnimalDtoFactory.state = getRandomState();
-        createAnimalDtoFactory.organization = OrganizationFactory.random().build();
-        return createAnimalDtoFactory;
+    public static AnimalDtoFactory random() {
+        AnimalDtoFactory animalDtoFactory = new AnimalDtoFactory();
+        animalDtoFactory.clinicalRecord = randomAlphabetic(10);
+        animalDtoFactory.name = randomAlphabetic(10);
+        animalDtoFactory.species = getRandomSpecies();
+        animalDtoFactory.estimatedAge = getRandomEstimatedAge();
+        animalDtoFactory.sex = getRandomSex();
+        animalDtoFactory.state = getRandomState();
+        animalDtoFactory.organization = OrganizationFactory.random().build();
+        return animalDtoFactory;
     }
 
-    public static CreateAnimalDtoFactory randomWithDefaultOrganization() {
-        CreateAnimalDtoFactory createAnimalDtoFactory = random();
-        createAnimalDtoFactory.organization = OrganizationFactory.randomDefaultOrganization().build();
-        return createAnimalDtoFactory;
+    public static AnimalDtoFactory randomWithDefaultOrganization() {
+        AnimalDtoFactory animalDtoFactory = random();
+        animalDtoFactory.organization = OrganizationFactory.randomDefaultOrganization().build();
+        return animalDtoFactory;
     }
 
-    public static CreateAnimalDtoFactory randomWithAnotherOrganization() {
-        CreateAnimalDtoFactory createAnimalDtoFactory = random();
-        createAnimalDtoFactory.organization = OrganizationFactory.randomAnotherOrganization().build();
-        return createAnimalDtoFactory;
+    public static AnimalDtoFactory randomWithAnotherOrganization() {
+        AnimalDtoFactory animalDtoFactory = random();
+        animalDtoFactory.organization = OrganizationFactory.randomAnotherOrganization().build();
+        return animalDtoFactory;
     }
 
-    public CreateAnimalDtoFactory withClinicalRecord(final String clinicalRecord) {
+    public AnimalDtoFactory withClinicalRecord(final String clinicalRecord) {
         this.clinicalRecord = clinicalRecord;
         return this;
     }
 
-    public CreateAnimalDtoFactory withName(final String name) {
+    public AnimalDtoFactory withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public CreateAnimalDtoFactory withSpecies(final Species species) {
+    public AnimalDtoFactory withSpecies(final Species species) {
         this.species = species;
         return this;
     }
 
-    public CreateAnimalDtoFactory withEstimatedAge(final EstimatedAge estimatedAge) {
+    public AnimalDtoFactory withEstimatedAge(final EstimatedAge estimatedAge) {
         this.estimatedAge = estimatedAge;
         return this;
     }
 
-    public CreateAnimalDtoFactory withSex(final Sex sex) {
+    public AnimalDtoFactory withSex(final Sex sex) {
         this.sex = sex;
         return this;
     }
 
-    public CreateAnimalDtoFactory withState(final State state) {
+    public AnimalDtoFactory withState(final State state) {
         this.state = state;
         return this;
     }
 
-    public CreateAnimalDtoFactory withOrganization(final Organization organization) {
+    public AnimalDtoFactory withOrganization(final Organization organization) {
         this.organization = organization;
         return this;
     }
 
-    public CreateAnimalDto build() {
-        return new CreateAnimalDto(this.clinicalRecord,
-                                   this.name,
-                                   this.species,
-                                   this.estimatedAge,
-                                   this.sex,
-                                   this.state,
-                                   this.organization);
+    public AnimalDto build() {
+        return new AnimalDto(this.clinicalRecord,
+                             this.name,
+                             this.species,
+                             this.estimatedAge,
+                             this.sex,
+                             this.state,
+                             this.organization);
     }
 }

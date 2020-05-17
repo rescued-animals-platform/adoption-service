@@ -25,7 +25,7 @@ import ec.animal.adoption.api.model.state.StateRequest;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
 
@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
 import java.util.Optional;
 
 @SuppressWarnings("PMD.DataClass")
-public class CreateAnimalRequest {
+public class AnimalCreateUpdateRequest {
 
     @NotEmpty(message = "Animal clinical record is required")
     @JsonProperty("clinicalRecord")
@@ -65,12 +65,12 @@ public class CreateAnimalRequest {
     private final StateRequest state;
 
     @JsonCreator
-    CreateAnimalRequest(@JsonProperty("clinicalRecord") final String clinicalRecord,
-                        @JsonProperty("name") final String name,
-                        @JsonProperty("species") final Species species,
-                        @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-                        @JsonProperty("sex") final Sex sex,
-                        @JsonProperty("state") final StateRequest state) {
+    AnimalCreateUpdateRequest(@JsonProperty("clinicalRecord") final String clinicalRecord,
+                              @JsonProperty("name") final String name,
+                              @JsonProperty("species") final Species species,
+                              @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
+                              @JsonProperty("sex") final Sex sex,
+                              @JsonProperty("state") final StateRequest state) {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -79,17 +79,17 @@ public class CreateAnimalRequest {
         this.state = state;
     }
 
-    public CreateAnimalDto toDomainWith(final Organization organization) {
+    public AnimalDto toDomainWith(final Organization organization) {
         State state = Optional.ofNullable(this.state)
                               .map(StateRequest::toDomain)
                               .orElse(null);
 
-        return new CreateAnimalDto(this.clinicalRecord,
-                                   this.name,
-                                   this.species,
-                                   this.estimatedAge,
-                                   this.sex,
-                                   state,
-                                   organization);
+        return new AnimalDto(this.clinicalRecord,
+                             this.name,
+                             this.species,
+                             this.estimatedAge,
+                             this.sex,
+                             state,
+                             organization);
     }
 }

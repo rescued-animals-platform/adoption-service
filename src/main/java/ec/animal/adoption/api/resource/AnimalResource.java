@@ -20,15 +20,15 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateRequest;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.animal.AnimalResponse;
-import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
@@ -43,6 +43,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -70,14 +71,26 @@ public class AnimalResource {
 
     @PostMapping("/admin/animals")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateAnimalResponse create(@RequestBody @Valid final CreateAnimalRequest createAnimalRequest,
-                                       @AuthenticationPrincipal final Jwt token) {
+    public AnimalCreateUpdateResponse create(@RequestBody @Valid final AnimalCreateUpdateRequest animalCreateUpdateRequest,
+                                             @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
-        Animal animal = animalService.create(createAnimalDto);
+        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
+        Animal animal = animalService.create(animalDto);
 
-        return CreateAnimalResponse.from(animal);
+        return AnimalCreateUpdateResponse.from(animal);
+    }
+
+    @PutMapping("/admin/animals/{id}")
+    public AnimalCreateUpdateResponse update(@PathVariable("id") final UUID animalId,
+                                             @RequestBody @Valid final AnimalCreateUpdateRequest animalCreateUpdateRequest,
+                                             @AuthenticationPrincipal final Jwt token) {
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
+        Animal animal = animalService.update(animalId, animalDto);
+
+        return AnimalCreateUpdateResponse.from(animal);
     }
 
     @GetMapping("/admin/animals/{id}")

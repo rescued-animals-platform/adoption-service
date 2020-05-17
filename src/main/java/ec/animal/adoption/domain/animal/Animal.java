@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.Entity;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.organization.Organization;
@@ -75,12 +76,32 @@ public class Animal extends Entity {
         this.organization = organization;
     }
 
+    public boolean isSameAs(final Animal anotherAnimal) {
+        return this.getIdentifier() == anotherAnimal.getIdentifier();
+    }
+
     public boolean has(final Story story) {
         return this.story != null && this.story.equals(story);
     }
 
     public boolean has(final Characteristics characteristics) {
         return this.characteristics != null && this.characteristics.equals(characteristics);
+    }
+
+    public Animal updateWith(@NonNull final AnimalDto animalDto) {
+        return new Animal(this.getIdentifier(),
+                          this.getRegistrationDate(),
+                          animalDto.getClinicalRecord(),
+                          animalDto.getName(),
+                          animalDto.getSpecies(),
+                          animalDto.getEstimatedAge(),
+                          animalDto.getSex(),
+                          animalDto.getState(),
+                          this.getPrimaryLinkPicture().orElse(null),
+                          this.getCharacteristics().orElse(null),
+                          this.getStory().orElse(null),
+                          this.getOrganization()
+        );
     }
 
     public String getClinicalRecord() {

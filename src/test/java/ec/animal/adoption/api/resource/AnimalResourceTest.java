@@ -20,17 +20,17 @@
 package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateRequest;
+import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.animal.AnimalResponse;
-import ec.animal.adoption.api.model.animal.CreateAnimalRequest;
-import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
@@ -86,18 +86,37 @@ public class AnimalResourceTest {
 
     @Test
     public void shouldCreateAnAnimal() {
-        CreateAnimalResponse expectedCreateAnimalResponse = CreateAnimalResponse.from(expectedAnimal);
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withOrganization(organization).build();
-        CreateAnimalRequest createAnimalRequest = mock(CreateAnimalRequest.class);
-        when(createAnimalRequest.toDomainWith(organization)).thenReturn(createAnimalDto);
-        when(animalService.create(createAnimalDto)).thenReturn(expectedAnimal);
+        AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
+        AnimalCreateUpdateRequest animalCreateUpdateRequest = mock(AnimalCreateUpdateRequest.class);
+        when(animalCreateUpdateRequest.toDomainWith(organization)).thenReturn(animalDto);
+        when(animalService.create(animalDto)).thenReturn(expectedAnimal);
 
-        CreateAnimalResponse createAnimalResponse = animalResource.create(createAnimalRequest, token);
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = animalResource.create(animalCreateUpdateRequest, token);
 
-        Assertions.assertThat(createAnimalResponse).usingRecursiveComparison().isEqualTo(expectedCreateAnimalResponse);
+        Assertions.assertThat(animalCreateUpdateResponse).usingRecursiveComparison().isEqualTo(expectedAnimalCreateUpdateResponse);
+    }
+
+    @Test
+    public void shouldUpdateAnAnimal() {
+        UUID animalId = UUID.randomUUID();
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
+        Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
+        AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
+        AnimalCreateUpdateRequest animalCreateUpdateRequest = mock(AnimalCreateUpdateRequest.class);
+        when(animalCreateUpdateRequest.toDomainWith(organization)).thenReturn(animalDto);
+        when(animalService.update(animalId, animalDto)).thenReturn(expectedAnimal);
+
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = animalResource.update(animalId,
+                                                                                      animalCreateUpdateRequest,
+                                                                                      token);
+
+        Assertions.assertThat(animalCreateUpdateResponse).usingRecursiveComparison().isEqualTo(expectedAnimalCreateUpdateResponse);
     }
 
     @Test

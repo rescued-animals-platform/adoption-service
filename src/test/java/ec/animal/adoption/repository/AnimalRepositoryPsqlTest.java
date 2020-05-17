@@ -24,8 +24,8 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
+import ec.animal.adoption.domain.animal.dto.AnimalDto;
+import ec.animal.adoption.domain.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
@@ -91,13 +91,13 @@ public class AnimalRepositoryPsqlTest {
 
     @Test
     public void shouldCreateAnimal() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
+        AnimalDto animalDto = AnimalDtoFactory.random().build();
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
 
-        Animal createdAnimal = animalRepositoryPsql.create(createAnimalDto);
+        Animal createdAnimal = animalRepositoryPsql.create(animalDto);
 
         assertEquals(expectedAnimal, createdAnimal);
     }
@@ -109,7 +109,7 @@ public class AnimalRepositoryPsqlTest {
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalRepositoryPsql.create(CreateAnimalDtoFactory.random().build());
+            animalRepositoryPsql.create(AnimalDtoFactory.random().build());
         });
     }
 
@@ -134,6 +134,33 @@ public class AnimalRepositoryPsqlTest {
         assertThrows(EntityAlreadyExistsException.class, () -> {
             animalRepositoryPsql.save(animal);
         });
+    }
+
+    @Test
+    public void shouldGetAnimalByClinicalRecordAndOrganization() {
+        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
+        Animal expectedAnimal = AnimalFactory.random().build();
+        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
+        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
+                expectedAnimal.getClinicalRecord(), expectedAnimal.getOrganizationId())
+        ).thenReturn(Optional.of(expectedJpaAnimal));
+
+        Optional<Animal> animalFound = animalRepositoryPsql.getBy(expectedAnimal.getClinicalRecord(), expectedAnimal.getOrganization());
+
+        assertTrue(animalFound.isPresent());
+        assertEquals(expectedAnimal, animalFound.get());
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenAnimalByClinicalRecordAndOrganizationDoesNotExist() {
+        String clinicalRecord = randomAlphabetic(10);
+        Organization organization = OrganizationFactory.random().build();
+        when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(clinicalRecord, organization.getOrganizationId()))
+                .thenReturn(Optional.empty());
+
+        Optional<Animal> animalFound = animalRepositoryPsql.getBy(clinicalRecord, organization);
+
+        assertTrue(animalFound.isEmpty());
     }
 
     @Test
