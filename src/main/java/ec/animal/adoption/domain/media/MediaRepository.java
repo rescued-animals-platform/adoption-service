@@ -19,7 +19,12 @@
 
 package ec.animal.adoption.domain.media;
 
+import ec.animal.adoption.domain.organization.Organization;
+import org.springframework.lang.NonNull;
+
 public interface MediaRepository {
 
-    LinkPicture save(ImagePicture imagePicture);
+    LinkPicture save(@NonNull ImagePicture imagePicture, @NonNull Organization organization);
+
+    void delete(@NonNull LinkPicture existingLinkPicture);
 }

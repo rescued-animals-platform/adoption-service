@@ -62,10 +62,27 @@ public class PictureService {
             throw new EntityAlreadyExistsException();
         });
 
-        LinkPicture linkPicture = mediaRepository.save(imagePicture);
+        LinkPicture linkPicture = mediaRepository.save(imagePicture, organization);
         Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(linkPicture).build();
 
         return animalRepository.save(animalWithPrimaryLinkPicture).getPrimaryLinkPicture().orElseThrow();
+    }
+
+    public LinkPicture updateFor(final UUID animalId,
+                                 final Organization organization,
+                                 final ImagePicture imagePicture) {
+
+        if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
+            LOGGER.info("Invalid picture with type: {}", imagePicture.getPictureType());
+            throw new InvalidPictureException();
+        }
+
+        Animal animal = animalRepository.getBy(animalId, organization);
+        LinkPicture linkPicture = mediaRepository.save(imagePicture, organization);
+        animal.getPrimaryLinkPicture().ifPresent(mediaRepository::delete);
+        Animal animalWithUpdatedPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(linkPicture).build();
+
+        return animalRepository.save(animalWithUpdatedPrimaryLinkPicture).getPrimaryLinkPicture().orElseThrow();
     }
 
     public LinkPicture getBy(final UUID animalId) {

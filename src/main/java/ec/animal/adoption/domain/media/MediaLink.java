@@ -21,10 +21,16 @@ package ec.animal.adoption.domain.media;
 
 public class MediaLink {
 
+    private final String publicId;
     private final String url;
 
-    public MediaLink(final String url) {
+    public MediaLink(final String publicId, final String url) {
+        this.publicId = publicId;
         this.url = url;
+    }
+
+    public String getPublicId() {
+        return publicId;
     }
 
     public String getUrl() {
@@ -43,12 +49,17 @@ public class MediaLink {
 
         MediaLink mediaLink = (MediaLink) o;
 
+        if (publicId != null ? !publicId.equals(mediaLink.publicId) : mediaLink.publicId != null) {
+            return false;
+        }
         return url != null ? url.equals(mediaLink.url) : mediaLink.url == null;
     }
 
     @Override
     @SuppressWarnings("PMD")
     public int hashCode() {
-        return url != null ? url.hashCode() : 0;
+        int result = publicId != null ? publicId.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        return result;
     }
 }

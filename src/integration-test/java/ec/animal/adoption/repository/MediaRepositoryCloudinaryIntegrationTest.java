@@ -20,12 +20,16 @@
 package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.api.exceptions.NotFound;
 import ec.animal.adoption.domain.media.Image;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,33 +41,67 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class MediaRepositoryCloudinaryIntegrationTest {
 
+    private static final String JPEG = ".jpeg";
+
     @Autowired
     private Cloudinary cloudinary;
 
     @Autowired
-    private MediaRepositoryCloudinary cloudinaryMediaStorageClient;
+    private MediaRepositoryCloudinary mediaRepositoryCloudinary;
 
-    @Test
-    public void shouldSaveAnImagePicture() throws IOException {
+    private ImagePicture imagePicture;
+    private String expectedName;
+    private Organization organization;
+
+    @BeforeEach
+    void setUp() throws IOException {
         byte[] largeImageContent = IOUtils.toByteArray(new ClassPathResource("test-image-large.jpeg").getInputStream());
         byte[] smallImageContent = IOUtils.toByteArray(new ClassPathResource("test-image-small.jpeg").getInputStream());
-
-        ImagePicture imagePicture = new ImagePicture(
-                randomAlphabetic(10),
+        expectedName = randomAlphabetic(10);
+        imagePicture = new ImagePicture(
+                expectedName,
                 PictureType.PRIMARY,
-                new Image(".jpeg", largeImageContent, largeImageContent.length),
-                new Image(".jpeg", smallImageContent, smallImageContent.length)
+                new Image(JPEG, largeImageContent, largeImageContent.length),
+                new Image(JPEG, smallImageContent, smallImageContent.length)
         );
+        organization = OrganizationFactory.randomDefaultOrganization().build();
+    }
 
-        LinkPicture linkPicture = cloudinaryMediaStorageClient.save(imagePicture);
+    @Test
+    public void shouldSaveAnImagePicture() {
+        LinkPicture linkPicture = mediaRepositoryCloudinary.save(imagePicture, organization);
 
-        assertNotNull(linkPicture);
+        assertEquals(expectedName, linkPicture.getName());
+        assertEquals(PictureType.PRIMARY, linkPicture.getPictureType());
+        assertNotNull(linkPicture.getLargeImagePublicId());
+        assertNotNull(linkPicture.getLargeImageUrl());
+        assertNotNull(linkPicture.getSmallImagePublicId());
+        assertNotNull(linkPicture.getSmallImageUrl());
+    }
+
+    @Test
+    public void shouldDeleteAnExistingLinkPicture() {
+        LinkPicture existingLinkPicture = mediaRepositoryCloudinary.save(imagePicture, organization);
+
+        assertDoesNotThrow(() -> {
+            mediaRepositoryCloudinary.delete(existingLinkPicture);
+        });
+
+        assertThrows(NotFound.class, () -> {
+            cloudinary.api().resource(existingLinkPicture.getLargeImagePublicId(), Collections.emptyMap());
+        });
+        assertThrows(NotFound.class, () -> {
+            cloudinary.api().resource(existingLinkPicture.getSmallImagePublicId(), Collections.emptyMap());
+        });
     }
 
     @AfterEach

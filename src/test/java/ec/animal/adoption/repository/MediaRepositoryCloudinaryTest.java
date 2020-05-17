@@ -21,13 +21,15 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import ec.animal.adoption.domain.media.ImagePictureFactory;
-import ec.animal.adoption.domain.media.LinkPictureFactory;
-import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.ImagePictureFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.MediaRepository;
+import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
+import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,21 +45,32 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MediaRepositoryCloudinaryTest {
 
+    private static final String URL = "url";
+    private static final String PUBLIC_ID = "public_id";
+
     @Mock
     private Cloudinary cloudinary;
 
+    @Mock
+    private Uploader uploader;
+
+    private Organization organization;
+    private Map<String, String> cloudinarySaveOptions;
+    private Map<String, String> cloudinaryDeleteOptions;
     private MediaRepositoryCloudinary cloudinaryMediaStorageClient;
 
     @BeforeEach
     public void setUp() {
+        organization = OrganizationFactory.random().build();
+        cloudinarySaveOptions = Map.of("folder", organization.getOrganizationId().toString());
+        cloudinaryDeleteOptions = Map.of("invalidate", "true");
+
         cloudinaryMediaStorageClient = new MediaRepositoryCloudinary(cloudinary);
     }
 
@@ -67,55 +80,87 @@ public class MediaRepositoryCloudinaryTest {
     }
 
     @Test
-    public void shouldStorePicture() throws IOException {
+    public void shouldSavePicture() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
         String largeImageUrl = randomAlphabetic(10);
+        String largeImagePublicId = randomAlphabetic(10);
         String smallImageUrl = randomAlphabetic(10);
-        Uploader uploader = mock(Uploader.class);
+        String smallImagePublicId = randomAlphabetic(10);
         when(cloudinary.uploader()).thenReturn(uploader);
-        when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
-                .thenReturn(Map.of("url", largeImageUrl));
-        when(uploader.upload(eq(imagePicture.getSmallImageContent()), anyMap()))
-                .thenReturn(Map.of("url", smallImageUrl));
+        when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))
+                .thenReturn(Map.of(URL, largeImageUrl, PUBLIC_ID, largeImagePublicId));
+        when(uploader.upload(imagePicture.getSmallImageContent(), cloudinarySaveOptions))
+                .thenReturn(Map.of(URL, smallImageUrl, PUBLIC_ID, smallImagePublicId));
+        LinkPicture expectedPicture = new LinkPicture(imagePicture.getName(),
+                                                      imagePicture.getPictureType(),
+                                                      new MediaLink(largeImagePublicId, largeImageUrl),
+                                                      new MediaLink(smallImagePublicId, smallImageUrl));
 
-        LinkPicture expectedPicture = LinkPictureFactory
-                .random()
-                .withName(imagePicture.getName())
-                .withPictureType(imagePicture.getPictureType())
-                .withLargeImageMediaLink(new MediaLink(largeImageUrl))
-                .withSmallImageMediaLink(new MediaLink(smallImageUrl))
-                .build();
+        LinkPicture savedPicture = cloudinaryMediaStorageClient.save(imagePicture, organization);
 
-        LinkPicture storedPicture = cloudinaryMediaStorageClient.save(imagePicture);
-
-        assertEquals(expectedPicture, storedPicture);
+        assertEquals(expectedPicture, savedPicture);
     }
 
     @Test
     public void shouldThrowImageStorageExceptionWhenStoringLargeImage() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
-        Uploader uploader = mock(Uploader.class);
         when(cloudinary.uploader()).thenReturn(uploader);
-        when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
+        when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))
                 .thenThrow(IOException.class);
 
         assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.save(imagePicture);
+            cloudinaryMediaStorageClient.save(imagePicture, organization);
         });
     }
 
     @Test
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
-        Uploader uploader = mock(Uploader.class);
         when(cloudinary.uploader()).thenReturn(uploader);
-        when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
-                .thenReturn(Map.of("url", "large-image-url"));
-        when(uploader.upload(eq(imagePicture.getSmallImageContent()), anyMap()))
+        when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))
+                .thenReturn(Map.of(URL, "large-image-url", PUBLIC_ID, "large-image-public-id"));
+        when(uploader.upload(imagePicture.getSmallImageContent(), cloudinarySaveOptions))
                 .thenThrow(IOException.class);
 
         assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.save(imagePicture);
+            cloudinaryMediaStorageClient.save(imagePicture, organization);
+        });
+    }
+
+    @Test
+    void shouldDeleteExistingLinkPicture() throws IOException {
+        LinkPicture existingLinkPicture = LinkPictureFactory.random().build();
+        when(cloudinary.uploader()).thenReturn(uploader);
+
+        cloudinaryMediaStorageClient.delete(existingLinkPicture);
+
+        verify(uploader).destroy(existingLinkPicture.getLargeImagePublicId(), cloudinaryDeleteOptions);
+        verify(uploader).destroy(existingLinkPicture.getSmallImagePublicId(), cloudinaryDeleteOptions);
+    }
+
+    @Test
+    void shouldThrowImageStorageExceptionWhenDeletionFailsForLargeImage() throws IOException {
+        LinkPicture existingLinkPicture = LinkPictureFactory.random().build();
+        when(cloudinary.uploader()).thenReturn(uploader);
+        when(uploader.destroy(existingLinkPicture.getLargeImagePublicId(), cloudinaryDeleteOptions))
+                .thenThrow(IOException.class);
+
+        assertThrows(CloudinaryImageStorageException.class, () -> {
+            cloudinaryMediaStorageClient.delete(existingLinkPicture);
+        });
+    }
+
+    @Test
+    void shouldThrowImageStorageExceptionWhenDeletionFailsForSmallImage() throws IOException {
+        LinkPicture existingLinkPicture = LinkPictureFactory.random().build();
+        when(cloudinary.uploader()).thenReturn(uploader);
+        when(uploader.destroy(existingLinkPicture.getLargeImagePublicId(), cloudinaryDeleteOptions))
+                .thenReturn(Map.of());
+        when(uploader.destroy(existingLinkPicture.getSmallImagePublicId(), cloudinaryDeleteOptions))
+                .thenThrow(IOException.class);
+
+        assertThrows(CloudinaryImageStorageException.class, () -> {
+            cloudinaryMediaStorageClient.delete(existingLinkPicture);
         });
     }
 }

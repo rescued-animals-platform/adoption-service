@@ -54,8 +54,9 @@ public class JpaPrimaryLinkPicture implements Serializable {
     @NotNull
     private String name;
 
+    private String largeImagePublicId;
     private String largeImageUrl;
-
+    private String smallImagePublicId;
     private String smallImageUrl;
 
     private JpaPrimaryLinkPicture() {
@@ -68,7 +69,9 @@ public class JpaPrimaryLinkPicture implements Serializable {
         this.jpaAnimal = jpaAnimal;
         this.setRegistrationDate(linkPicture.getRegistrationDate());
         this.name = linkPicture.getName();
+        this.largeImagePublicId = linkPicture.getLargeImagePublicId();
         this.largeImageUrl = linkPicture.getLargeImageUrl();
+        this.smallImagePublicId = linkPicture.getSmallImagePublicId();
         this.smallImageUrl = linkPicture.getSmallImageUrl();
     }
 
@@ -86,8 +89,8 @@ public class JpaPrimaryLinkPicture implements Serializable {
                 this.registrationDate,
                 this.name,
                 PictureType.PRIMARY,
-                new MediaLink(this.largeImageUrl),
-                new MediaLink(this.smallImageUrl)
+                new MediaLink(this.largeImagePublicId, this.largeImageUrl),
+                new MediaLink(this.smallImagePublicId, this.smallImageUrl)
         );
     }
 

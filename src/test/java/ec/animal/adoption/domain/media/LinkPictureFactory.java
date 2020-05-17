@@ -36,10 +36,12 @@ public class LinkPictureFactory {
 
     public static LinkPictureFactory random() {
         LinkPictureFactory linkPictureFactory = new LinkPictureFactory();
+        linkPictureFactory.linkPictureId = UUID.randomUUID();
+        linkPictureFactory.registrationDate = LocalDateTime.now();
         linkPictureFactory.name = randomAlphabetic(10);
         linkPictureFactory.pictureType = getRandomPictureType();
-        linkPictureFactory.largeImageMediaLink = new MediaLink(randomAlphabetic(30));
-        linkPictureFactory.smallImageMediaLink = new MediaLink(randomAlphabetic(30));
+        linkPictureFactory.largeImageMediaLink = new MediaLink(randomAlphabetic(10), randomAlphabetic(30));
+        linkPictureFactory.smallImageMediaLink = new MediaLink(randomAlphabetic(10), randomAlphabetic(30));
         return linkPictureFactory;
     }
 

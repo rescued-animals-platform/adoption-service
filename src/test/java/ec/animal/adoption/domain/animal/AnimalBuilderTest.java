@@ -27,6 +27,22 @@ class AnimalBuilderTest {
     }
 
     @Test
+    public void shouldUpdatePrimaryLinkPictureWhenItAlreadyHasOne() {
+        LinkPicture existingPrimaryLinkPicture = mock(LinkPicture.class);
+        when(existingPrimaryLinkPicture.isPrimary()).thenReturn(true);
+        LinkPicture newPrimaryLinkPicture = mock(LinkPicture.class);
+        LinkPicture updatedPrimaryLinkPicture = mock(LinkPicture.class);
+        when(updatedPrimaryLinkPicture.isPrimary()).thenReturn(true);
+        when(existingPrimaryLinkPicture.updateWith(newPrimaryLinkPicture)).thenReturn(updatedPrimaryLinkPicture);
+        Animal animal = AnimalFactory.random().withPrimaryLinkPicture(existingPrimaryLinkPicture).build();
+
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(newPrimaryLinkPicture).build();
+
+        assertTrue(animalWithPrimaryLinkPicture.getPrimaryLinkPicture().isPresent());
+        assertEquals(updatedPrimaryLinkPicture, animalWithPrimaryLinkPicture.getPrimaryLinkPicture().get());
+    }
+
+    @Test
     public void shouldSetStory() {
         Animal animal = AnimalFactory.random().build();
         Story story = StoryFactory.random().build();

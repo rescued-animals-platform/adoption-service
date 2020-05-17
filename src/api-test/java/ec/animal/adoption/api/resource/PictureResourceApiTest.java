@@ -78,6 +78,66 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
+    public void shouldReturn400BadRequestWhenCreatingAPictureThatIsNotPrimary() {
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.ALTERNATE.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+
+        webTestClient.post()
+                     .uri(PICTURES_ADMIN_URL, animalId)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenCreatingAPictureWithInvalidLargeImageFile() {
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+
+        webTestClient.post()
+                     .uri(PICTURES_ADMIN_URL, animalId)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenCreatingAPictureWithInvalidSmallImageFile() {
+        LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
+        invalidMultipartPicturesFormData.add(NAME, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
+
+        webTestClient.post()
+                     .uri(PICTURES_ADMIN_URL, animalId)
+                     .bodyValue(invalidMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isNotEmpty()
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    @Test
     public void shouldReturn404NotFoundWhenCreatingPictureForNonExistentAnimal() {
         webTestClient.post()
                      .uri(PICTURES_ADMIN_URL, UUID.randomUUID())
@@ -113,14 +173,62 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenCreatingAPictureThatIsNotPrimary() {
+    public void shouldReturn200OkWithUpdatedLinkPicture() {
+        createPrimaryPictureForAnimal(animalId);
+        String name = randomAlphabetic(10);
+        PictureType pictureType = PictureType.PRIMARY;
+        LinkedMultiValueMap<String, Object> updateRequestFormData = new LinkedMultiValueMap<>();
+        updateRequestFormData.add(NAME, name);
+        updateRequestFormData.add(PICTURE_TYPE, pictureType.name());
+        updateRequestFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        updateRequestFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+
+        webTestClient.put()
+                     .uri(PICTURES_ADMIN_URL, animalId)
+                     .bodyValue(updateRequestFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.pictureType").isEqualTo(pictureType.name())
+                     .jsonPath("$.largeImageMediaLink.url").isNotEmpty()
+                     .jsonPath("$.smallImageMediaLink.url").isNotEmpty();
+    }
+
+    @Test
+    public void shouldReturn200OkWhenUpdatingLinkPictureBeforeCreatingIt() {
+        String name = randomAlphabetic(10);
+        PictureType pictureType = PictureType.PRIMARY;
+        LinkedMultiValueMap<String, Object> updateRequestFormData = new LinkedMultiValueMap<>();
+        updateRequestFormData.add(NAME, name);
+        updateRequestFormData.add(PICTURE_TYPE, pictureType.name());
+        updateRequestFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
+        updateRequestFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+
+        webTestClient.put()
+                     .uri(PICTURES_ADMIN_URL, animalId)
+                     .bodyValue(updateRequestFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.pictureType").isEqualTo(pictureType.name())
+                     .jsonPath("$.largeImageMediaLink.url").isNotEmpty()
+                     .jsonPath("$.smallImageMediaLink.url").isNotEmpty();
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenUpdatingAPictureThatIsNotPrimary() {
+        createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
         invalidMultipartPicturesFormData.add(NAME, name);
         invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.ALTERNATE.name());
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
-        webTestClient.post()
+        webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
@@ -133,14 +241,15 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestForInvalidLargeImageFile() {
+    public void shouldReturn400BadRequestWhenUpdatingAPictureWithInvalidLargeImageFile() {
+        createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
         invalidMultipartPicturesFormData.add(NAME, name);
         invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
 
-        webTestClient.post()
+        webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
@@ -153,14 +262,15 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestForInvalidSmallImageFile() {
+    public void shouldReturn400BadRequestWhenUpdatingAPictureWithInvalidSmallImageFile() {
+        createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
         invalidMultipartPicturesFormData.add(NAME, name);
         invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
         invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
         invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
 
-        webTestClient.post()
+        webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
                      .bodyValue(invalidMultipartPicturesFormData)
                      .exchange()
@@ -173,18 +283,22 @@ public class PictureResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn200OkWithPrimaryPicture() {
-        LinkPictureResponse createdLinkPictureResponse = webTestClient.post()
-                                                                      .uri(PICTURES_ADMIN_URL, animalId)
-                                                                      .bodyValue(validMultipartPicturesFormData)
-                                                                      .exchange()
-                                                                      .expectStatus()
-                                                                      .isCreated()
-                                                                      .expectBody(LinkPictureResponse.class)
-                                                                      .returnResult()
-                                                                      .getResponseBody();
+    public void shouldReturn404NotFoundWhenUpdatingPictureForNonExistentAnimal() {
+        webTestClient.put()
+                     .uri(PICTURES_ADMIN_URL, UUID.randomUUID())
+                     .bodyValue(validMultipartPicturesFormData)
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
 
-        assertNotNull(createdLinkPictureResponse);
+    @Test
+    public void shouldReturn200OkWithPrimaryPicture() {
+        LinkPictureResponse createdLinkPictureResponse = createPrimaryPictureForAnimal(animalId);
 
         webTestClient.get()
                      .uri(GET_PICTURES_URL, animalId)
@@ -224,5 +338,20 @@ public class PictureResourceApiTest extends AbstractApiTest {
                      .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
                      .jsonPath("$.message").isEqualTo("Unable to find the resource")
                      .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    private LinkPictureResponse createPrimaryPictureForAnimal(final UUID animalId) {
+        LinkPictureResponse createdLinkPictureResponse = webTestClient.post()
+                                                                      .uri(PICTURES_ADMIN_URL, animalId)
+                                                                      .bodyValue(validMultipartPicturesFormData)
+                                                                      .exchange()
+                                                                      .expectStatus()
+                                                                      .isCreated()
+                                                                      .expectBody(LinkPictureResponse.class)
+                                                                      .returnResult()
+                                                                      .getResponseBody();
+        assertNotNull(createdLinkPictureResponse);
+
+        return createdLinkPictureResponse;
     }
 }

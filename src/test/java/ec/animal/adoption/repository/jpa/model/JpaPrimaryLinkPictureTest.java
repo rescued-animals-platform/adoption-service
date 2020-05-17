@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -101,7 +101,9 @@ public class JpaPrimaryLinkPictureTest {
 
         assertThat(jpaPrimaryLinkPictureToLinkPicture.getName(), is(primaryLinkPicture.getName()));
         assertThat(jpaPrimaryLinkPictureToLinkPicture.getPictureType(), is(primaryLinkPicture.getPictureType()));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getLargeImagePublicId(), is(primaryLinkPicture.getLargeImagePublicId()));
         assertThat(jpaPrimaryLinkPictureToLinkPicture.getLargeImageUrl(), is(primaryLinkPicture.getLargeImageUrl()));
+        assertThat(jpaPrimaryLinkPictureToLinkPicture.getSmallImagePublicId(), is(primaryLinkPicture.getSmallImagePublicId()));
         assertThat(jpaPrimaryLinkPictureToLinkPicture.getSmallImageUrl(), is(primaryLinkPicture.getSmallImageUrl()));
     }
 

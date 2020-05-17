@@ -42,8 +42,11 @@ public class AnimalBuilder {
         return animalBuilder;
     }
 
-    public AnimalBuilder with(final LinkPicture primaryLinkPicture) {
-        this.primaryLinkPicture = primaryLinkPicture;
+    public AnimalBuilder with(final LinkPicture linkPicture) {
+        this.primaryLinkPicture = this.primaryLinkPicture == null
+                ? linkPicture
+                : this.primaryLinkPicture.updateWith(linkPicture);
+
         return this;
     }
 

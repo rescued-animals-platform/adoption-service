@@ -54,9 +54,10 @@ public class AnimalDtoResponseTest {
     public void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
+        MediaLink smallImageMediaLink = new MediaLink(randomAlphabetic(10), smallPrimaryPictureUrl);
         LinkPicture primaryLinkPicture = LinkPictureFactory.random()
                                                            .withPictureType(PictureType.PRIMARY)
-                                                           .withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
+                                                           .withSmallImageMediaLink(smallImageMediaLink)
                                                            .build();
         Animal animal = AnimalFactory.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
         AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);

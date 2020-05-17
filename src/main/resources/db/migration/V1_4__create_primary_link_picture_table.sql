@@ -4,7 +4,9 @@ CREATE TABLE primary_link_picture (
   last_updated_at TIMESTAMP DEFAULT current_timestamp,
   animal_id UUID NOT NULL UNIQUE,
   name VARCHAR(50) NOT NULL,
+  large_image_public_id VARCHAR(200),
   large_image_url VARCHAR(300),
+  small_image_public_id VARCHAR(200),
   small_image_url VARCHAR(300),
   CONSTRAINT primary_link_picture_animal FOREIGN KEY(animal_id) REFERENCES animal(id)
 );

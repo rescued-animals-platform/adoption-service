@@ -40,6 +40,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -84,6 +85,26 @@ public class PictureResource {
                                                      createImageFromMultipartFile(largeImageMultipartFile),
                                                      createImageFromMultipartFile(smallImageMultipartFile));
         LinkPicture linkPicture = pictureService.createFor(animalId, organization, imagePicture);
+
+        return LinkPictureResponse.from(linkPicture);
+    }
+
+    @PutMapping(path = "/admin/animals/{id}/pictures",
+                consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+                produces = MediaType.APPLICATION_JSON_VALUE)
+    public LinkPictureResponse updatePrimaryPicture(@PathVariable("id") final UUID animalId,
+                                                    @RequestParam("name") final String name,
+                                                    @RequestParam("pictureType") final PictureType pictureType,
+                                                    @RequestPart("largeImage") final MultipartFile largeImageMultipartFile,
+                                                    @RequestPart("smallImage") final MultipartFile smallImageMultipartFile,
+                                                    @AuthenticationPrincipal final Jwt token) {
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        ImagePicture imagePicture = new ImagePicture(name,
+                                                     pictureType,
+                                                     createImageFromMultipartFile(largeImageMultipartFile),
+                                                     createImageFromMultipartFile(smallImageMultipartFile));
+        LinkPicture linkPicture = pictureService.updateFor(animalId, organization, imagePicture);
 
         return LinkPictureResponse.from(linkPicture);
     }

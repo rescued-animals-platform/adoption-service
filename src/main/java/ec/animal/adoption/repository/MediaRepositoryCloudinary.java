@@ -26,14 +26,17 @@ import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.MediaRepository;
+import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class MediaRepositoryCloudinary implements MediaRepository {
@@ -49,32 +52,54 @@ public class MediaRepositoryCloudinary implements MediaRepository {
 
     @Override
     @HystrixCommand(fallbackMethod = "saveFallback")
-    public LinkPicture save(final ImagePicture imagePicture) {
+    public LinkPicture save(@NonNull final ImagePicture imagePicture, @NonNull final Organization organization) {
         try {
-            MediaLink largeMediaLink = storeMedia(imagePicture.getLargeImageContent());
-            MediaLink smallMediaLink = storeMedia(imagePicture.getSmallImageContent());
+            UUID organizationId = organization.getOrganizationId();
+            MediaLink largeMediaLink = storeMedia(imagePicture.getLargeImageContent(), organizationId);
+            MediaLink smallMediaLink = storeMedia(imagePicture.getSmallImageContent(), organizationId);
 
-            return new LinkPicture(
-                    imagePicture.getName(),
-                    imagePicture.getPictureType(),
-                    largeMediaLink,
-                    smallMediaLink
-            );
+            return new LinkPicture(imagePicture.getName(),
+                                   imagePicture.getPictureType(),
+                                   largeMediaLink,
+                                   smallMediaLink);
         } catch (IOException exception) {
             LOGGER.error("Exception thrown when communicating to Cloudinary", exception);
             throw new CloudinaryImageStorageException(exception);
         }
     }
 
-    private MediaLink storeMedia(final byte[] content) throws IOException {
-        Map<String, String> options = Map.of("folder", "default-organization");
-        String url = cloudinary.uploader().upload(content, options).get("url").toString();
-        return new MediaLink(url);
+    private MediaLink storeMedia(final byte[] content, final UUID organizationId) throws IOException {
+        Map<String, String> options = Map.of("folder", organizationId.toString());
+        Map<?, ?> uploadResponse = cloudinary.uploader().upload(content, options);
+        String publicId = uploadResponse.get("public_id").toString();
+        String url = uploadResponse.get("url").toString();
+        return new MediaLink(publicId, url);
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
-    private LinkPicture saveFallback(final ImagePicture imagePicture) {
-        LOGGER.info("Fallback for Cloudinary");
+    private LinkPicture saveFallback(@NonNull final ImagePicture imagePicture,
+                                     @NonNull final Organization organization) {
+        LOGGER.info("Fallback for Cloudinary save");
         throw new MediaStorageException();
+    }
+
+    @Override
+    @HystrixCommand(fallbackMethod = "deleteFallback")
+    public void delete(@NonNull final LinkPicture existingLinkPicture) {
+        try {
+            Map<String, String> options = Map.of("invalidate", "true");
+            cloudinary.uploader().destroy(existingLinkPicture.getLargeImagePublicId(), options);
+            cloudinary.uploader().destroy(existingLinkPicture.getSmallImagePublicId(), options);
+        } catch (IOException exception) {
+            LOGGER.error("Exception thrown when communicating to Cloudinary to delete resource", exception);
+            throw new CloudinaryImageStorageException(exception);
+        }
+    }
+
+    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
+    private void deleteFallback(@NonNull final LinkPicture existingLinkPicture) {
+        LOGGER.info("Fallback for Cloudinary delete. Couldn't delete one or more resources with public ids: {}, {}",
+                    existingLinkPicture.getLargeImagePublicId(),
+                    existingLinkPicture.getSmallImagePublicId());
     }
 }

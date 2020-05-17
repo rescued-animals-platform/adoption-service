@@ -66,7 +66,8 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldSaveJpaAnimalWithJpaPrimaryLinkPicture() {
         LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
-                                                                   .withPictureType(PictureType.PRIMARY).build();
+                                                                   .withPictureType(PictureType.PRIMARY)
+                                                                   .build();
         Animal animal = AnimalFactory.randomWithDefaultOrganization()
                                      .withPrimaryLinkPicture(expectedPrimaryLinkPicture)
                                      .build();

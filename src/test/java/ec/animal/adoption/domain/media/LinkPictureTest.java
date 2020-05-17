@@ -21,30 +21,77 @@ package ec.animal.adoption.domain.media;
 
 import ec.animal.adoption.TestUtils;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LinkPictureTest {
 
-    @Test
-    public void shouldCreateALinkPicture() {
-        String name = randomAlphabetic(10);
-        PictureType pictureType = TestUtils.getRandomPictureType();
-        String largeImageUrl = randomAlphabetic(30);
-        String smallImageUrl = randomAlphabetic(30);
-        LinkPicture linkPicture = LinkPictureFactory.random().withName(name).withPictureType(pictureType)
-                                                    .withLargeImageMediaLink(new MediaLink(largeImageUrl))
-                                                    .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
+    private String name;
+    private PictureType pictureType;
+    private String largeImagePublicId;
+    private String largeImageUrl;
+    private String smallImagePublicId;
+    private String smallImageUrl;
+    private MediaLink largeImageMediaLink;
+    private MediaLink smallImageMediaLink;
 
-        assertThat(linkPicture.getName(), is(name));
-        assertThat(linkPicture.getPictureType(), is(pictureType));
-        assertThat(linkPicture.getLargeImageUrl(), is(largeImageUrl));
-        assertThat(linkPicture.getSmallImageUrl(), is(smallImageUrl));
+    @BeforeEach
+    void setUp() {
+        name = randomAlphabetic(10);
+        pictureType = TestUtils.getRandomPictureType();
+        largeImagePublicId = randomAlphabetic(10);
+        largeImageUrl = randomAlphabetic(30);
+        smallImagePublicId = randomAlphabetic(10);
+        smallImageUrl = randomAlphabetic(30);
+        largeImageMediaLink = new MediaLink(largeImagePublicId, largeImageUrl);
+        smallImageMediaLink = new MediaLink(smallImagePublicId, smallImageUrl);
+    }
+
+    @Test
+    public void shouldCreateLinkPictureWithNoIdentifierNorRegistrationDate() {
+        LinkPicture linkPicture = new LinkPicture(name, pictureType, largeImageMediaLink, smallImageMediaLink);
+
+        assertNull(linkPicture.getIdentifier());
+        assertNull(linkPicture.getRegistrationDate());
+        assertEquals(name, linkPicture.getName());
+        assertEquals(pictureType, linkPicture.getPictureType());
+        assertEquals(largeImagePublicId, linkPicture.getLargeImagePublicId());
+        assertEquals(largeImageUrl, linkPicture.getLargeImageUrl());
+        assertEquals(smallImagePublicId, linkPicture.getSmallImagePublicId());
+        assertEquals(smallImageUrl, linkPicture.getSmallImageUrl());
+    }
+
+    @Test
+    public void shouldCreateLinkPictureWithIdentifierAndRegistrationDate() {
+        UUID linkPictureId = UUID.randomUUID();
+        LocalDateTime registrationDate = LocalDateTime.now();
+
+        LinkPicture linkPicture = new LinkPicture(linkPictureId,
+                                                  registrationDate,
+                                                  name,
+                                                  pictureType,
+                                                  largeImageMediaLink,
+                                                  smallImageMediaLink);
+
+        assertEquals(linkPictureId, linkPicture.getIdentifier());
+        assertEquals(registrationDate, linkPicture.getRegistrationDate());
+        assertEquals(name, linkPicture.getName());
+        assertEquals(pictureType, linkPicture.getPictureType());
+        assertEquals(largeImagePublicId, linkPicture.getLargeImagePublicId());
+        assertEquals(largeImageUrl, linkPicture.getLargeImageUrl());
+        assertEquals(smallImagePublicId, linkPicture.getSmallImagePublicId());
+        assertEquals(smallImageUrl, linkPicture.getSmallImageUrl());
     }
 
     @Test
@@ -57,12 +104,58 @@ public class LinkPictureTest {
     }
 
     @Test
-    void shouldReturnTrueWhenItIsNotPrimary() {
+    void shouldReturnFalseWhenItIsNotPrimary() {
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.ALTERNATE).build();
 
         boolean isPrimary = linkPicture.isPrimary();
 
         assertFalse(isPrimary);
+    }
+
+    @Test
+    void shouldUpdateNamePictureTypeLargeImageMediaLinkAndSmallImageMediaLinkInLinkPicture() {
+        LinkPicture linkPicture = LinkPictureFactory.random().build();
+        LinkPicture newLinkPicture = new LinkPicture(name, pictureType, largeImageMediaLink, smallImageMediaLink);
+
+        LinkPicture updatedLinkPicture = linkPicture.updateWith(newLinkPicture);
+
+        assertAll(
+                () -> assertEquals(linkPicture.getIdentifier(), updatedLinkPicture.getIdentifier()),
+                () -> assertEquals(linkPicture.getRegistrationDate(), updatedLinkPicture.getRegistrationDate()),
+                () -> assertEquals(name, updatedLinkPicture.getName()),
+                () -> assertEquals(pictureType, updatedLinkPicture.getPictureType()),
+                () -> assertEquals(largeImagePublicId, updatedLinkPicture.getLargeImagePublicId()),
+                () -> assertEquals(largeImageUrl, updatedLinkPicture.getLargeImageUrl()),
+                () -> assertEquals(smallImagePublicId, updatedLinkPicture.getSmallImagePublicId()),
+                () -> assertEquals(smallImageUrl, updatedLinkPicture.getSmallImageUrl())
+        );
+    }
+
+    @Test
+    void shouldReturnSameLinkPictureWhenUpdatedWithItself() {
+        LinkPicture linkPicture = LinkPictureFactory.random().build();
+
+        LinkPicture updatedLinkPicture = linkPicture.updateWith(linkPicture);
+
+        assertEquals(linkPicture, updatedLinkPicture);
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingLinkPictureThatHasNoIdentifier() {
+        LinkPicture linkPicture = LinkPictureFactory.random().withIdentifier(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            linkPicture.updateWith(LinkPictureFactory.random().build());
+        });
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingLinkPictureThatHasNoRegistrationDate() {
+        LinkPicture linkPicture = LinkPictureFactory.random().withRegistrationDate(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            linkPicture.updateWith(LinkPictureFactory.random().build());
+        });
     }
 
     @Test
