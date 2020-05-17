@@ -1,0 +1,77 @@
+package ec.animal.adoption.domain.animal;
+
+import ec.animal.adoption.domain.characteristics.Characteristics;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
+import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.story.StoryFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class AnimalBuilderTest {
+
+    @Test
+    public void shouldSetPrimaryLinkPicture() {
+        Animal animal = AnimalFactory.random().build();
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(primaryLinkPicture).build();
+
+        assertTrue(animalWithPrimaryLinkPicture.getPrimaryLinkPicture().isPresent());
+        assertEquals(primaryLinkPicture, animalWithPrimaryLinkPicture.getPrimaryLinkPicture().get());
+    }
+
+    @Test
+    public void shouldSetStory() {
+        Animal animal = AnimalFactory.random().build();
+        Story story = StoryFactory.random().build();
+
+        Animal animalWithStory = AnimalBuilder.copyOf(animal).with(story).build();
+
+        assertTrue(animalWithStory.getStory().isPresent());
+        assertEquals(story, animalWithStory.getStory().get());
+    }
+
+    @Test
+    public void shouldUpdateStoryWhenItAlreadyHasOne() {
+        Story existingStory = mock(Story.class);
+        Story newStory = mock(Story.class);
+        Story updatedStory = mock(Story.class);
+        when(existingStory.updateWith(newStory)).thenReturn(updatedStory);
+        Animal animal = AnimalFactory.random().withStory(existingStory).build();
+
+        Animal animalWithStory = AnimalBuilder.copyOf(animal).with(newStory).build();
+
+        assertTrue(animalWithStory.getStory().isPresent());
+        assertEquals(updatedStory, animalWithStory.getStory().get());
+    }
+
+    @Test
+    public void shouldSetCharacteristics() {
+        Animal animal = AnimalFactory.random().build();
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+        Animal animalWithCharacteristics = AnimalBuilder.copyOf(animal).with(characteristics).build();
+
+        assertTrue(animalWithCharacteristics.getCharacteristics().isPresent());
+        assertEquals(characteristics, animalWithCharacteristics.getCharacteristics().get());
+    }
+
+    @Test
+    public void shouldUpdateCharacteristicsWhenItAlreadyHasOne() {
+        Characteristics existingCharacteristics = mock(Characteristics.class);
+        Characteristics newCharacteristics = mock(Characteristics.class);
+        Characteristics updatedCharacteristics = mock(Characteristics.class);
+        when(existingCharacteristics.updateWith(newCharacteristics)).thenReturn(updatedCharacteristics);
+        Animal animal = AnimalFactory.random().withCharacteristics(existingCharacteristics).build();
+
+        Animal animalWithCharacteristics = AnimalBuilder.copyOf(animal).with(newCharacteristics).build();
+
+        assertTrue(animalWithCharacteristics.getCharacteristics().isPresent());
+        assertEquals(updatedCharacteristics, animalWithCharacteristics.getCharacteristics().get());
+    }
+}

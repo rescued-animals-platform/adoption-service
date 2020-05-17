@@ -57,26 +57,33 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     private UUID animalId;
+    private Size size;
+    private PhysicalActivity physicalActivity;
+    private Sociability sociability;
+    private Docility docility;
+    private Balance balance;
+    private FriendlyWith friendlyWith;
+    private TemperamentsRequest temperamentsRequest;
 
     @BeforeEach
     public void setUp() {
+        size = getRandomSize();
+        physicalActivity = getRandomPhysicalActivity();
+        sociability = getRandomSociability();
+        docility = getRandomDocility();
+        balance = getRandomBalance();
+        friendlyWith = getRandomFriendlyWith();
+        temperamentsRequest = TemperamentsRequestBuilder.empty()
+                                                        .withSociability(sociability)
+                                                        .withBalance(balance)
+                                                        .withDocility(docility)
+                                                        .build();
         CreateAnimalResponse createAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
         animalId = createAnimalResponse.getAnimalId();
     }
 
     @Test
     public void shouldReturn201CreatedWithCharacteristics() {
-        Size size = getRandomSize();
-        PhysicalActivity physicalActivity = getRandomPhysicalActivity();
-        Sociability sociability = getRandomSociability();
-        Docility docility = getRandomDocility();
-        Balance balance = getRandomBalance();
-        FriendlyWith friendlyWith = getRandomFriendlyWith();
-        TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty()
-                                                                            .withSociability(sociability)
-                                                                            .withBalance(balance)
-                                                                            .withDocility(docility)
-                                                                            .build();
         CharacteristicsRequest characteristicsRequest = CharacteristicsRequestBuilder
                 .random()
                 .withSize(size)
@@ -101,7 +108,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenJsonCannotBeParsed() throws JSONException {
+    public void shouldReturn400BadRequestWhenCreatingCharacteristicsAndJsonCannotBeParsed() throws JSONException {
         String invalidSociability = randomAlphabetic(10);
         String characteristicsRequestWithWrongData = new JSONObject()
                 .put("size", Size.SMALL)
@@ -124,7 +131,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
     }
 
     @Test
-    public void shouldReturn400BadRequestWhenMissingDataIsProvided() throws JSONException {
+    public void shouldReturn400BadRequestWhenCreatingCharacteristicsAndMissingDataIsProvided() throws JSONException {
         String characteristicsRequestWithMissingData = new JSONObject()
                 .put("size", Size.SMALL)
                 .put("temperaments", new JSONObject().put("sociability", Sociability.SHY))
@@ -174,6 +181,117 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                      .expectBody()
                      .jsonPath("$.status").isEqualTo(CONFLICT.name())
                      .jsonPath("$.message").isEqualTo("The resource already exists")
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    @Test
+    public void shouldReturn200OkWithUpdatedCharacteristics() {
+        createCharacteristicsForAnimal(animalId, CharacteristicsRequestBuilder.random().build());
+        CharacteristicsRequest updateCharacteristicsRequest = CharacteristicsRequestBuilder
+                .random()
+                .withSize(size)
+                .withPhysicalActivity(physicalActivity)
+                .withTemperaments(temperamentsRequest)
+                .withFriendlyWith(friendlyWith)
+                .build();
+
+        webTestClient.put()
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
+                     .bodyValue(updateCharacteristicsRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.size").isEqualTo(size.name())
+                     .jsonPath("$.physicalActivity").isEqualTo(physicalActivity.name())
+                     .jsonPath("$.temperaments.sociability").isEqualTo(sociability.name())
+                     .jsonPath("$.temperaments.docility").isEqualTo(docility.name())
+                     .jsonPath("$.temperaments.balance").isEqualTo(balance.name())
+                     .jsonPath("$.friendlyWith[0]").isEqualTo(friendlyWith.name());
+    }
+
+    @Test
+    public void shouldReturn200OkWhenUpdatingCharacteristicsBeforeCreatingThem() {
+        CharacteristicsRequest updateCharacteristicsRequest = CharacteristicsRequestBuilder
+                .random()
+                .withSize(size)
+                .withPhysicalActivity(physicalActivity)
+                .withTemperaments(temperamentsRequest)
+                .withFriendlyWith(friendlyWith)
+                .build();
+
+        webTestClient.put()
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
+                     .bodyValue(updateCharacteristicsRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.size").isEqualTo(size.name())
+                     .jsonPath("$.physicalActivity").isEqualTo(physicalActivity.name())
+                     .jsonPath("$.temperaments.sociability").isEqualTo(sociability.name())
+                     .jsonPath("$.temperaments.docility").isEqualTo(docility.name())
+                     .jsonPath("$.temperaments.balance").isEqualTo(balance.name())
+                     .jsonPath("$.friendlyWith[0]").isEqualTo(friendlyWith.name());
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenUpdatingCharacteristicsAndJsonCannotBeParsed() throws JSONException {
+        String invalidSize = randomAlphabetic(10);
+        String updateCharacteristicsRequestWithWrongData = new JSONObject()
+                .put("size", invalidSize)
+                .put("physicalActivity", PhysicalActivity.LOW)
+                .put("temperaments", new JSONObject().put("sociability", sociability))
+                .put("friendlyWith", new JSONArray().put(FriendlyWith.CATS))
+                .toString();
+
+        webTestClient.put()
+                     .uri(CHARACTERISTICS_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(updateCharacteristicsRequestWithWrongData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
+    }
+
+    @Test
+    public void shouldReturn400BadRequestWhenUpdatingCharacteristicsAndMissingDataIsProvided() throws JSONException {
+        String updateCharacteristicsRequestWithMissingData = new JSONObject()
+                .put("size", Size.SMALL)
+                .put("physicalActivity", PhysicalActivity.LOW)
+                .put("friendlyWith", new JSONArray().put(FriendlyWith.CATS))
+                .toString();
+
+        webTestClient.put()
+                     .uri(CHARACTERISTICS_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(updateCharacteristicsRequestWithMissingData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
+    }
+
+    @Test
+    public void shouldReturn404NotFoundWhenUpdatingCharacteristicsForNonExistentAnimal() {
+        CharacteristicsRequest updateCharacteristicsRequest = CharacteristicsRequestBuilder.random().build();
+
+        webTestClient.put()
+                     .uri(CHARACTERISTICS_ADMIN_URL, UUID.randomUUID())
+                     .bodyValue(updateCharacteristicsRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
                      .jsonPath("$.subErrors").doesNotExist();
     }
 

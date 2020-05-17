@@ -8,14 +8,14 @@ import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.api.model.state.StateResponse;
 import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,10 +36,10 @@ class AnimalResponseTest {
 
     @Test
     public void shouldSerializeAnimalResponse() throws JsonProcessingException {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().build();
-        Story story = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.random()
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+        Story story = StoryFactory.random().build();
+        Animal animal = AnimalFactory.random()
                                      .withIdentifier(UUID.randomUUID())
                                      .withPrimaryLinkPicture(primaryLinkPicture)
                                      .withCharacteristics(characteristics)

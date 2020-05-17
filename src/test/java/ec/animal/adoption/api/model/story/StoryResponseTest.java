@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +36,7 @@ class StoryResponseTest {
 
     @Test
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
-        Story story = StoryBuilder.random().build();
+        Story story = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponse.from(story);
         String storyResponseAsJson = new JSONObject().put("text", story.getText()).toString();
 

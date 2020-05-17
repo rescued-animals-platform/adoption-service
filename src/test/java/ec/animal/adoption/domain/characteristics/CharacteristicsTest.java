@@ -21,8 +21,9 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.google.common.collect.Sets;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -34,29 +35,94 @@ import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CharacteristicsTest {
 
+    private Size size;
+    private PhysicalActivity physicalActivity;
+    private Temperaments temperaments;
+    private Set<FriendlyWith> friendlyWith;
+
+    @BeforeEach
+    void setUp() {
+        size = getRandomSize();
+        physicalActivity = getRandomPhysicalActivity();
+        temperaments = TemperamentsFactory.random().build();
+        friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
+    }
+
     @Test
-    void shouldCreateCharacteristics() {
+    void shouldCreateCharacteristicsWithNoIdentifierNorRegistrationDate() {
+        Characteristics characteristics = new Characteristics(size, physicalActivity, temperaments, friendlyWith);
+
+        assertAll(() -> assertNull(characteristics.getIdentifier()),
+                  () -> assertNull(characteristics.getRegistrationDate()),
+                  () -> assertEquals(size, characteristics.getSize()),
+                  () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
+                  () -> assertEquals(temperaments, characteristics.getTemperaments()),
+                  () -> assertEquals(friendlyWith, characteristics.getFriendlyWith()));
+    }
+
+    @Test
+    void shouldCreateCharacteristicsWithIdentifierAndRegistrationDate() {
         UUID characteristicsId = UUID.randomUUID();
         LocalDateTime registrationDate = LocalDateTime.now();
-        Size size = getRandomSize();
-        PhysicalActivity physicalActivity = getRandomPhysicalActivity();
-        Temperaments temperaments = TemperamentsBuilder.random().build();
-        Set<FriendlyWith> friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
 
         Characteristics characteristics = new Characteristics(characteristicsId, registrationDate, size,
                                                               physicalActivity, temperaments, friendlyWith);
 
+        assertAll(() -> assertEquals(characteristicsId, characteristics.getIdentifier()),
+                  () -> assertEquals(registrationDate, characteristics.getRegistrationDate()),
+                  () -> assertEquals(size, characteristics.getSize()),
+                  () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
+                  () -> assertEquals(temperaments, characteristics.getTemperaments()),
+                  () -> assertEquals(friendlyWith, characteristics.getFriendlyWith()));
+    }
+
+    @Test
+    void shouldUpdateSizePhysicalActivityTemperamentsAndFriendlyWithInCharacteristics() {
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+        Characteristics newCharacteristics = new Characteristics(size, physicalActivity, temperaments, friendlyWith);
+
+        Characteristics updatedCharacteristics = characteristics.updateWith(newCharacteristics);
+
         assertAll(
-                () -> assertEquals(characteristicsId, characteristics.getIdentifier()),
-                () -> assertEquals(registrationDate, characteristics.getRegistrationDate()),
-                () -> assertEquals(size, characteristics.getSize()),
-                () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
-                () -> assertEquals(temperaments, characteristics.getTemperaments()),
-                () -> assertEquals(friendlyWith, characteristics.getFriendlyWith())
+                () -> assertEquals(characteristics.getIdentifier(), updatedCharacteristics.getIdentifier()),
+                () -> assertEquals(characteristics.getRegistrationDate(), updatedCharacteristics.getRegistrationDate()),
+                () -> assertEquals(size, updatedCharacteristics.getSize()),
+                () -> assertEquals(physicalActivity, updatedCharacteristics.getPhysicalActivity()),
+                () -> assertEquals(temperaments, updatedCharacteristics.getTemperaments()),
+                () -> assertEquals(friendlyWith, updatedCharacteristics.getFriendlyWith())
         );
+    }
+
+    @Test
+    void shouldReturnSameCharacteristicsWhenUpdatedWithItself() {
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+
+        Characteristics updatedCharacteristics = characteristics.updateWith(characteristics);
+
+        assertEquals(characteristics, updatedCharacteristics);
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingCharacteristicsThatHaveNoIdentifier() {
+        Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            characteristics.updateWith(CharacteristicsFactory.random().build());
+        });
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenUpdatingCharacteristicsThatHaveNoRegistrationDate() {
+        Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(null).build();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            characteristics.updateWith(CharacteristicsFactory.random().build());
+        });
     }
 
     @Test

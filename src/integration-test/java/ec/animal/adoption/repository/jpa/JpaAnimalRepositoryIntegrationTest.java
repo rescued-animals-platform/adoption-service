@@ -21,17 +21,18 @@ package ec.animal.adoption.repository.jpa;
 
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-import static ec.animal.adoption.domain.organization.OrganizationBuilder.DEFAULT_ORGANIZATION_ID;
+import static ec.animal.adoption.domain.organization.OrganizationFactory.DEFAULT_ORGANIZATION_ID;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,7 +57,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSaveAJpaAnimal() {
-        JpaAnimal entity = new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build());
+        JpaAnimal entity = new JpaAnimal(AnimalFactory.randomWithDefaultOrganization().build());
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
         assertEquals(jpaAnimal, entity);
@@ -64,9 +65,9 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSaveJpaAnimalWithJpaPrimaryLinkPicture() {
-        LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
+        LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
                                                                    .withPictureType(PictureType.PRIMARY).build();
-        Animal animal = AnimalBuilder.randomWithDefaultOrganization()
+        Animal animal = AnimalFactory.randomWithDefaultOrganization()
                                      .withPrimaryLinkPicture(expectedPrimaryLinkPicture)
                                      .build();
         JpaAnimal entity = new JpaAnimal(animal);
@@ -84,8 +85,8 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSaveJpaAnimalWithJpaCharacteristics() {
-        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        Animal animal = AnimalBuilder.randomWithDefaultOrganization()
+        Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
+        Animal animal = AnimalFactory.randomWithDefaultOrganization()
                                      .withCharacteristics(expectedCharacteristics)
                                      .build();
         JpaAnimal entity = new JpaAnimal(animal);
@@ -103,8 +104,8 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSaveJpaAnimalWithJpaStory() {
-        Story expectedStory = StoryBuilder.random().build();
-        Animal animal = AnimalBuilder.randomWithDefaultOrganization().withStory(expectedStory).build();
+        Story expectedStory = StoryFactory.random().build();
+        Animal animal = AnimalFactory.randomWithDefaultOrganization().withStory(expectedStory).build();
         JpaAnimal entity = new JpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -120,12 +121,12 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
         assertTrue(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture().isEmpty());
-        LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
+        LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
                                                                    .withPictureType(PictureType.PRIMARY)
                                                                    .build();
-        Animal animalWithPrimaryLinkPicture = Animal.AnimalBuilder.copyOf(animalWithNoPrimaryLinkPicture)
-                                                                  .with(expectedPrimaryLinkPicture)
-                                                                  .build();
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animalWithNoPrimaryLinkPicture)
+                                                           .with(expectedPrimaryLinkPicture)
+                                                           .build();
         JpaAnimal entity = new JpaAnimal(animalWithPrimaryLinkPicture);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -144,10 +145,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         JpaAnimal jpaAnimalWithNoCharacteristics = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoCharacteristics = jpaAnimalWithNoCharacteristics.toAnimal();
         assertTrue(animalWithNoCharacteristics.getCharacteristics().isEmpty());
-        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
-        Animal animalWithCharacteristics = Animal.AnimalBuilder.copyOf(animalWithNoCharacteristics)
-                                                               .with(expectedCharacteristics)
-                                                               .build();
+        Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
+        Animal animalWithCharacteristics = AnimalBuilder.copyOf(animalWithNoCharacteristics)
+                                                        .with(expectedCharacteristics)
+                                                        .build();
         JpaAnimal entity = new JpaAnimal(animalWithCharacteristics);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -166,10 +167,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         JpaAnimal jpaAnimalWithNoStory = createAndSaveJpaAnimalForDefaultOrganization();
         Animal animalWithNoStory = jpaAnimalWithNoStory.toAnimal();
         assertTrue(animalWithNoStory.getStory().isEmpty());
-        Story expectedStory = StoryBuilder.random().build();
-        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animalWithNoStory)
-                                                     .with(expectedStory)
-                                                     .build();
+        Story expectedStory = StoryFactory.random().build();
+        Animal animalWithStory = AnimalBuilder.copyOf(animalWithNoStory)
+                                              .with(expectedStory)
+                                              .build();
         JpaAnimal entity = new JpaAnimal(animalWithStory);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
@@ -282,11 +283,11 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
                                        final Species species,
                                        final PhysicalActivity physicalActivity,
                                        final Size size) {
-        Characteristics characteristics = CharacteristicsBuilder.random()
+        Characteristics characteristics = CharacteristicsFactory.random()
                                                                 .withPhysicalActivity(physicalActivity)
                                                                 .withSize(size)
                                                                 .build();
-        return new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization()
+        return new JpaAnimal(AnimalFactory.randomWithDefaultOrganization()
                                           .withState(state)
                                           .withSpecies(species)
                                           .withCharacteristics(characteristics)
@@ -295,7 +296,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     private void saveOtherJpaAnimalsWithDifferentState(final State state) {
         IntStream.rangeClosed(1, 10).forEach(n -> jpaAnimalRepository.save(
-                new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().withState(state).build())
+                new JpaAnimal(AnimalFactory.randomWithDefaultOrganization().withState(state).build())
         ));
     }
 }

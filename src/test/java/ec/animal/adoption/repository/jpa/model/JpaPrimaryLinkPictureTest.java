@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
 import ec.animal.adoption.domain.media.PictureType;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -38,7 +38,7 @@ public class JpaPrimaryLinkPictureTest {
 
     @Test
     public void shouldGenerateAnIdWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoId() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withIdentifier(null)
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withIdentifier(null)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -51,7 +51,7 @@ public class JpaPrimaryLinkPictureTest {
 
     @Test
     public void shouldGenerateARegistrationDateWhenCreatingAJpaPrimaryLinkPictureForAPrimaryLinkPictureWithNoRegistrationDate() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(null)
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withRegistrationDate(null)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -65,7 +65,7 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     public void shouldCreateAPrimaryLinkPictureWithId() {
         UUID linkPictureId = UUID.randomUUID();
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withIdentifier(linkPictureId)
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withIdentifier(linkPictureId)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -79,7 +79,7 @@ public class JpaPrimaryLinkPictureTest {
     @Test
     public void shouldCreateAPrimaryLinkPictureWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withRegistrationDate(registrationDate)
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withRegistrationDate(registrationDate)
                                                            .withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
@@ -92,7 +92,7 @@ public class JpaPrimaryLinkPictureTest {
 
     @Test
     public void shouldCreateJpaPrimaryLinkPictureFromPrimaryLinkPicture() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         JpaPrimaryLinkPicture jpaPrimaryLinkPicture = new JpaPrimaryLinkPicture(
                 primaryLinkPicture, mock(JpaAnimal.class)
         );

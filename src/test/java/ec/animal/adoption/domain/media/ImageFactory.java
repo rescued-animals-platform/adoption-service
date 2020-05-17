@@ -25,7 +25,7 @@ import java.util.Random;
 
 import static ec.animal.adoption.TestUtils.getRandomSupportedImageExtension;
 
-public class ImageBuilder {
+public class ImageFactory {
 
     private static final int ONE_MEGA_BYTE_IN_BYTES = 1_048_576;
 
@@ -33,10 +33,10 @@ public class ImageBuilder {
     private byte[] content;
     private long sizeInBytes;
 
-    public static ImageBuilder random() {
-        final ImageBuilder imageBuilder = new ImageBuilder();
+    public static ImageFactory random() {
+        final ImageFactory imageFactory = new ImageFactory();
         final SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
-        imageBuilder.extension = supportedImageExtension.getExtension();
+        imageFactory.extension = supportedImageExtension.getExtension();
 
         final byte[] startingBytes = supportedImageExtension.getStartingBytes();
         final Random random = new Random();
@@ -46,31 +46,31 @@ public class ImageBuilder {
         final ByteBuffer byteBuffer = ByteBuffer.wrap(content);
         byteBuffer.put(startingBytes);
         byteBuffer.put(randomContent);
-        imageBuilder.content = byteBuffer.array();
+        imageFactory.content = byteBuffer.array();
 
         final int sizeInBytes = new Random().nextInt(ONE_MEGA_BYTE_IN_BYTES);
-        imageBuilder.sizeInBytes = sizeInBytes == 0 ? 1 : sizeInBytes;
+        imageFactory.sizeInBytes = sizeInBytes == 0 ? 1 : sizeInBytes;
 
-        return imageBuilder;
+        return imageFactory;
     }
 
-    public ImageBuilder withSupportedImageExtension(final SupportedImageExtension supportedImageExtension) {
+    public ImageFactory withSupportedImageExtension(final SupportedImageExtension supportedImageExtension) {
         this.extension = supportedImageExtension.getExtension();
         this.content = supportedImageExtension.getStartingBytes();
         return this;
     }
 
-    public ImageBuilder withExtension(final String extension) {
+    public ImageFactory withExtension(final String extension) {
         this.extension = extension;
         return this;
     }
 
-    public ImageBuilder withContent(final byte[] content) {
+    public ImageFactory withContent(final byte[] content) {
         this.content = Arrays.copyOf(content, content.length);
         return this;
     }
 
-    public ImageBuilder withSizeInBytes(final long sizeInBytes) {
+    public ImageFactory withSizeInBytes(final long sizeInBytes) {
         this.sizeInBytes = sizeInBytes;
         return this;
     }

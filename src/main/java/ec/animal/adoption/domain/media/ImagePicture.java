@@ -19,7 +19,12 @@
 
 package ec.animal.adoption.domain.media;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ImagePicture {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ImagePicture.class);
 
     private final String name;
     private final PictureType pictureType;
@@ -53,7 +58,13 @@ public class ImagePicture {
     }
 
     public boolean isValid() {
-        return largeImage.isValid() && smallImage.isValid();
+        boolean isLargeImageValid = largeImage.isValid();
+        boolean isSmallImageValid = smallImage.isValid();
+
+        LOGGER.info("Validating image picture: isLargeImageValid={}, isSmallImageValid={}",
+                    isLargeImageValid, isSmallImageValid);
+
+        return isLargeImageValid && isSmallImageValid;
     }
 
     @Override

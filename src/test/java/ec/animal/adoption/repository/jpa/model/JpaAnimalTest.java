@@ -20,18 +20,18 @@
 package ec.animal.adoption.repository.jpa.model;
 
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.assertj.core.api.Assertions;
@@ -49,8 +49,8 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldBuildAJpaAnimalFromACreateAnimalDtoAndGenerateAnIdentifierAndARegistrationDateForIt() {
-        Organization organization = OrganizationBuilder.random().build();
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withOrganization(organization).build();
+        Organization organization = OrganizationFactory.random().build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withOrganization(organization).build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(createAnimalDto);
 
@@ -71,11 +71,11 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldBuildAJpaAnimalFromAnAnimal() {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().build();
-        Story story = StoryBuilder.random().build();
-        Organization organization = OrganizationBuilder.random().build();
-        Animal expectedAnimal = AnimalBuilder.random()
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+        Story story = StoryFactory.random().build();
+        Organization organization = OrganizationFactory.random().build();
+        Animal expectedAnimal = AnimalFactory.random()
                                              .withOrganization(organization)
                                              .withPrimaryLinkPicture(primaryLinkPicture)
                                              .withCharacteristics(characteristics)
@@ -121,7 +121,7 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldBuildAJpaAnimalWithNoJpaPrimaryLinkPicture() {
-        Animal animal = AnimalBuilder.random().build();
+        Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
@@ -132,7 +132,7 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldBuildAJpaAnimalWithNoJpaCharacteristics() {
-        Animal animal = AnimalBuilder.random().build();
+        Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 
@@ -143,7 +143,7 @@ public class JpaAnimalTest {
 
     @Test
     public void shouldBuildAJpaAnimalWithNoJpaStory() {
-        Animal animal = AnimalBuilder.random().build();
+        Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
 

@@ -23,15 +23,15 @@ import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
 import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.ImageBuilder;
+import ec.animal.adoption.domain.media.ImageFactory;
 import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.ImagePictureBuilder;
+import ec.animal.adoption.domain.media.ImagePictureFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureService;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,10 +82,10 @@ public class PictureResourceTest {
     public void setUp() {
         animalId = UUID.randomUUID();
         organizationId = UUID.randomUUID();
-        organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
-        largeImage = ImageBuilder.random().build();
-        smallImage = ImageBuilder.random().build();
-        imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY)
+        organization = OrganizationFactory.random().withIdentifier(organizationId).build();
+        largeImage = ImageFactory.random().build();
+        smallImage = ImageFactory.random().build();
+        imagePicture = ImagePictureFactory.random().withPictureType(PictureType.PRIMARY)
                                           .withLargeImage(largeImage).withSmallImage(smallImage).build();
 
         pictureResource = new PictureResource(pictureService, organizationService, adminTokenUtils);
@@ -105,7 +105,7 @@ public class PictureResourceTest {
         );
         when(smallImageMultipartFile.getBytes()).thenReturn(smallImage.getContent());
         when(smallImageMultipartFile.getSize()).thenReturn(smallImage.getSizeInBytes());
-        LinkPicture expectedLinkPicture = LinkPictureBuilder.random()
+        LinkPicture expectedLinkPicture = LinkPictureFactory.random()
                                                             .withName(imagePicture.getName())
                                                             .withPictureType(imagePicture.getPictureType())
                                                             .build();
@@ -247,7 +247,7 @@ public class PictureResourceTest {
     @Test
     public void shouldGetPrimaryPictureForAnimal() {
         UUID animalId = UUID.randomUUID();
-        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         when(pictureService.getBy(animalId)).thenReturn(linkPicture);
         LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
 

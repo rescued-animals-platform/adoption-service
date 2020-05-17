@@ -37,7 +37,7 @@ public class LinkPictureTest {
         PictureType pictureType = TestUtils.getRandomPictureType();
         String largeImageUrl = randomAlphabetic(30);
         String smallImageUrl = randomAlphabetic(30);
-        LinkPicture linkPicture = LinkPictureBuilder.random().withName(name).withPictureType(pictureType)
+        LinkPicture linkPicture = LinkPictureFactory.random().withName(name).withPictureType(pictureType)
                                                     .withLargeImageMediaLink(new MediaLink(largeImageUrl))
                                                     .withSmallImageMediaLink(new MediaLink(smallImageUrl)).build();
 
@@ -49,7 +49,7 @@ public class LinkPictureTest {
 
     @Test
     void shouldReturnTrueWhenItIsPrimary() {
-        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
 
         boolean isPrimary = linkPicture.isPrimary();
 
@@ -58,7 +58,7 @@ public class LinkPictureTest {
 
     @Test
     void shouldReturnTrueWhenItIsNotPrimary() {
-        LinkPicture linkPicture = LinkPictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
+        LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.ALTERNATE).build();
 
         boolean isPrimary = linkPicture.isPrimary();
 

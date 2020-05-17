@@ -22,9 +22,9 @@ package ec.animal.adoption.api.model.animal.dto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import org.assertj.core.api.Assertions;
@@ -54,11 +54,11 @@ public class AnimalDtoResponseTest {
     public void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random()
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random()
                                                            .withPictureType(PictureType.PRIMARY)
                                                            .withSmallImageMediaLink(new MediaLink(smallPrimaryPictureUrl))
                                                            .build();
-        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
+        Animal animal = AnimalFactory.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
         AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
@@ -74,7 +74,7 @@ public class AnimalDtoResponseTest {
     @Test
     public void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withIdentifier(animalId).build();
+        Animal animal = AnimalFactory.random().withIdentifier(animalId).build();
         AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
@@ -89,8 +89,8 @@ public class AnimalDtoResponseTest {
 
     @Test
     public void shouldBeDeserializable() throws JSONException, JsonProcessingException {
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        Animal animal = AnimalBuilder.random().withPrimaryLinkPicture(primaryLinkPicture).build();
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        Animal animal = AnimalFactory.random().withPrimaryLinkPicture(primaryLinkPicture).build();
         AnimalDtoResponse expectedAnimalDtoResponse = new AnimalDtoResponse(animal);
         String animalDtoAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())

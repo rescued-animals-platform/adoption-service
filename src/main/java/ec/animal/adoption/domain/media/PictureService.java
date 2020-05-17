@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain.media;
 
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
@@ -41,10 +42,8 @@ public class PictureService {
     private final AnimalRepository animalRepository;
 
     @Autowired
-    public PictureService(
-            final MediaRepository mediaRepository,
-            final AnimalRepository animalRepository
-    ) {
+    public PictureService(final MediaRepository mediaRepository,
+                          final AnimalRepository animalRepository) {
         this.mediaRepository = mediaRepository;
         this.animalRepository = animalRepository;
     }
@@ -52,9 +51,9 @@ public class PictureService {
     public LinkPicture createFor(final UUID animalId,
                                  final Organization organization,
                                  final ImagePicture imagePicture) {
+
         if (!PictureType.PRIMARY.equals(imagePicture.getPictureType()) || !imagePicture.isValid()) {
-            LOGGER.info("Invalid picture: type={}, imagePicture.isValid()={}",
-                        imagePicture.getPictureType(), imagePicture.isValid());
+            LOGGER.info("Invalid picture with type: {}", imagePicture.getPictureType());
             throw new InvalidPictureException();
         }
 
@@ -64,7 +63,7 @@ public class PictureService {
         });
 
         LinkPicture linkPicture = mediaRepository.save(imagePicture);
-        Animal animalWithPrimaryLinkPicture = Animal.AnimalBuilder.copyOf(animal).with(linkPicture).build();
+        Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(linkPicture).build();
 
         return animalRepository.save(animalWithPrimaryLinkPicture).getPrimaryLinkPicture().orElseThrow();
     }

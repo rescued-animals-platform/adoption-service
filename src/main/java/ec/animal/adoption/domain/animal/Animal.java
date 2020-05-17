@@ -79,6 +79,10 @@ public class Animal extends Entity {
         return this.story != null && this.story.equals(story);
     }
 
+    public boolean has(final Characteristics characteristics) {
+        return this.characteristics != null && this.characteristics.equals(characteristics);
+    }
+
     public String getClinicalRecord() {
         return clinicalRecord;
     }
@@ -154,10 +158,10 @@ public class Animal extends Entity {
 
         Animal animal = (Animal) o;
 
-        if (!clinicalRecord.equals(animal.clinicalRecord)) {
+        if (clinicalRecord != null ? !clinicalRecord.equals(animal.clinicalRecord) : animal.clinicalRecord != null) {
             return false;
         }
-        if (!name.equals(animal.name)) {
+        if (name != null ? !name.equals(animal.name) : animal.name != null) {
             return false;
         }
         if (species != animal.species) {
@@ -169,7 +173,7 @@ public class Animal extends Entity {
         if (sex != animal.sex) {
             return false;
         }
-        if (!state.equals(animal.state)) {
+        if (state != null ? !state.equals(animal.state) : animal.state != null) {
             return false;
         }
         if (primaryLinkPicture != null ? !primaryLinkPicture.equals(animal.primaryLinkPicture) : animal.primaryLinkPicture != null) {
@@ -188,90 +192,16 @@ public class Animal extends Entity {
     @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + clinicalRecord.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + species.hashCode();
-        result = 31 * result + estimatedAge.hashCode();
-        result = 31 * result + sex.hashCode();
-        result = 31 * result + state.hashCode();
+        result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = 31 * result + (estimatedAge != null ? estimatedAge.hashCode() : 0);
+        result = 31 * result + (sex != null ? sex.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         result = 31 * result + (primaryLinkPicture != null ? primaryLinkPicture.hashCode() : 0);
         result = 31 * result + (characteristics != null ? characteristics.hashCode() : 0);
         result = 31 * result + (story != null ? story.hashCode() : 0);
         result = 31 * result + (organization != null ? organization.hashCode() : 0);
         return result;
-    }
-
-    public static class AnimalBuilder {
-
-        private UUID animalId;
-        private LocalDateTime registrationDate;
-        private String clinicalRecord;
-        private String name;
-        private Species species;
-        private EstimatedAge estimatedAge;
-        private Sex sex;
-        private State state;
-        private LinkPicture primaryLinkPicture;
-        private Characteristics characteristics;
-        private Story story;
-        private Organization organization;
-
-        public static AnimalBuilder copyOf(final Animal animal) {
-            AnimalBuilder animalBuilder = new AnimalBuilder();
-            animalBuilder.animalId = animal.getIdentifier();
-            animalBuilder.registrationDate = animal.getRegistrationDate();
-            animalBuilder.clinicalRecord = animal.clinicalRecord;
-            animalBuilder.name = animal.name;
-            animalBuilder.species = animal.species;
-            animalBuilder.estimatedAge = animal.estimatedAge;
-            animalBuilder.sex = animal.sex;
-            animalBuilder.state = animal.state;
-            animalBuilder.primaryLinkPicture = animal.primaryLinkPicture;
-            animalBuilder.characteristics = animal.characteristics;
-            animalBuilder.story = animal.story;
-            animalBuilder.organization = animal.organization;
-
-            return animalBuilder;
-        }
-
-        public AnimalBuilder with(final Organization organization) {
-            this.organization = organization;
-            return this;
-        }
-
-        public AnimalBuilder with(final LinkPicture primaryLinkPicture) {
-            this.primaryLinkPicture = primaryLinkPicture;
-            return this;
-        }
-
-        public AnimalBuilder with(final Characteristics characteristics) {
-            this.characteristics = characteristics;
-            return this;
-        }
-
-        public AnimalBuilder with(final Story story) {
-            if (this.story == null) {
-                this.story = story;
-            } else {
-                this.story = this.story.updateWith(story);
-            }
-
-            return this;
-        }
-
-        public Animal build() {
-            return new Animal(animalId,
-                              registrationDate,
-                              clinicalRecord,
-                              name,
-                              species,
-                              estimatedAge,
-                              sex,
-                              state,
-                              primaryLinkPicture,
-                              characteristics,
-                              story,
-                              organization);
-        }
     }
 }

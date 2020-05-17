@@ -23,7 +23,7 @@ import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 
 import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
@@ -32,7 +32,7 @@ import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class CreateAnimalDtoBuilder {
+public class CreateAnimalDtoFactory {
 
     private String clinicalRecord;
     private String name;
@@ -42,61 +42,61 @@ public class CreateAnimalDtoBuilder {
     private State state;
     private Organization organization;
 
-    public static CreateAnimalDtoBuilder random() {
-        CreateAnimalDtoBuilder createAnimalDtoBuilder = new CreateAnimalDtoBuilder();
-        createAnimalDtoBuilder.clinicalRecord = randomAlphabetic(10);
-        createAnimalDtoBuilder.name = randomAlphabetic(10);
-        createAnimalDtoBuilder.species = getRandomSpecies();
-        createAnimalDtoBuilder.estimatedAge = getRandomEstimatedAge();
-        createAnimalDtoBuilder.sex = getRandomSex();
-        createAnimalDtoBuilder.state = getRandomState();
-        createAnimalDtoBuilder.organization = OrganizationBuilder.random().build();
-        return createAnimalDtoBuilder;
+    public static CreateAnimalDtoFactory random() {
+        CreateAnimalDtoFactory createAnimalDtoFactory = new CreateAnimalDtoFactory();
+        createAnimalDtoFactory.clinicalRecord = randomAlphabetic(10);
+        createAnimalDtoFactory.name = randomAlphabetic(10);
+        createAnimalDtoFactory.species = getRandomSpecies();
+        createAnimalDtoFactory.estimatedAge = getRandomEstimatedAge();
+        createAnimalDtoFactory.sex = getRandomSex();
+        createAnimalDtoFactory.state = getRandomState();
+        createAnimalDtoFactory.organization = OrganizationFactory.random().build();
+        return createAnimalDtoFactory;
     }
 
-    public static CreateAnimalDtoBuilder randomWithDefaultOrganization() {
-        CreateAnimalDtoBuilder createAnimalDtoBuilder = random();
-        createAnimalDtoBuilder.organization = OrganizationBuilder.randomDefaultOrganization().build();
-        return createAnimalDtoBuilder;
+    public static CreateAnimalDtoFactory randomWithDefaultOrganization() {
+        CreateAnimalDtoFactory createAnimalDtoFactory = random();
+        createAnimalDtoFactory.organization = OrganizationFactory.randomDefaultOrganization().build();
+        return createAnimalDtoFactory;
     }
 
-    public static CreateAnimalDtoBuilder randomWithAnotherOrganization() {
-        CreateAnimalDtoBuilder createAnimalDtoBuilder = random();
-        createAnimalDtoBuilder.organization = OrganizationBuilder.randomAnotherOrganization().build();
-        return createAnimalDtoBuilder;
+    public static CreateAnimalDtoFactory randomWithAnotherOrganization() {
+        CreateAnimalDtoFactory createAnimalDtoFactory = random();
+        createAnimalDtoFactory.organization = OrganizationFactory.randomAnotherOrganization().build();
+        return createAnimalDtoFactory;
     }
 
-    public CreateAnimalDtoBuilder withClinicalRecord(final String clinicalRecord) {
+    public CreateAnimalDtoFactory withClinicalRecord(final String clinicalRecord) {
         this.clinicalRecord = clinicalRecord;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withName(final String name) {
+    public CreateAnimalDtoFactory withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withSpecies(final Species species) {
+    public CreateAnimalDtoFactory withSpecies(final Species species) {
         this.species = species;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withEstimatedAge(final EstimatedAge estimatedAge) {
+    public CreateAnimalDtoFactory withEstimatedAge(final EstimatedAge estimatedAge) {
         this.estimatedAge = estimatedAge;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withSex(final Sex sex) {
+    public CreateAnimalDtoFactory withSex(final Sex sex) {
         this.sex = sex;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withState(final State state) {
+    public CreateAnimalDtoFactory withState(final State state) {
         this.state = state;
         return this;
     }
 
-    public CreateAnimalDtoBuilder withOrganization(final Organization organization) {
+    public CreateAnimalDtoFactory withOrganization(final Organization organization) {
         this.organization = organization;
         return this;
     }

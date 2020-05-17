@@ -20,7 +20,6 @@
 package ec.animal.adoption.domain.media;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,7 +38,7 @@ public class ImagePictureTest {
     public void shouldCreateAnImagePicture() {
         String name = randomAlphabetic(10);
         PictureType pictureType = getRandomPictureType();
-        ImagePicture imagePicture = ImagePictureBuilder.random()
+        ImagePicture imagePicture = ImagePictureFactory.random()
                                                        .withName(name)
                                                        .withPictureType(pictureType)
                                                        .build();
@@ -53,7 +52,7 @@ public class ImagePictureTest {
         Image largeImage = mock(Image.class);
         byte[] content = {};
         when(largeImage.getContent()).thenReturn(content);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(largeImage).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withLargeImage(largeImage).build();
 
         assertThat(imagePicture.getLargeImageContent(), is(content));
     }
@@ -63,19 +62,14 @@ public class ImagePictureTest {
         Image smallImage = mock(Image.class);
         byte[] content = {};
         when(smallImage.getContent()).thenReturn(content);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withSmallImage(smallImage).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withSmallImage(smallImage).build();
 
         assertThat(imagePicture.getSmallImageContent(), is(content));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(ImagePicture.class).suppress(Warning.NONFINAL_FIELDS).usingGetClass().verify();
-    }
-
-    @Test
     public void shouldReturnTrueForValidImagePicture() {
-        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        ImagePicture imagePicture = ImagePictureFactory.random().build();
 
         assertThat(imagePicture.isValid(), is(true));
     }
@@ -84,7 +78,7 @@ public class ImagePictureTest {
     public void shouldReturnFalseWhenPictureImageHasAnInvalidLargeImage() {
         Image invalidLargeImage = mock(Image.class);
         when(invalidLargeImage.isValid()).thenReturn(false);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(invalidLargeImage).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withLargeImage(invalidLargeImage).build();
 
         assertThat(imagePicture.isValid(), is(false));
     }
@@ -93,7 +87,7 @@ public class ImagePictureTest {
     public void shouldReturnFalseWhenPictureImageHasAnInvalidSmallImage() {
         Image invalidSmallImage = mock(Image.class);
         when(invalidSmallImage.isValid()).thenReturn(false);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withSmallImage(invalidSmallImage).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withSmallImage(invalidSmallImage).build();
 
         assertThat(imagePicture.isValid(), is(false));
     }
@@ -102,9 +96,14 @@ public class ImagePictureTest {
     public void shouldReturnFalseWhenBothLargeAndSmallImageInsidePictureImageAreInvalid() {
         Image invalidImage = mock(Image.class);
         when(invalidImage.isValid()).thenReturn(false);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withLargeImage(invalidImage).
+        ImagePicture imagePicture = ImagePictureFactory.random().withLargeImage(invalidImage).
                 withSmallImage(invalidImage).build();
 
         assertThat(imagePicture.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldVerifyEqualsAndHashCodeMethods() {
+        EqualsVerifier.forClass(ImagePicture.class).usingGetClass().verify();
     }
 }

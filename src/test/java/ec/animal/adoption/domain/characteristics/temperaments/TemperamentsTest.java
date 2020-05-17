@@ -33,7 +33,7 @@ public class TemperamentsTest {
     @Test
     public void shouldSetSociability() {
         Sociability sociability = getRandomSociability();
-        Temperaments temperaments = TemperamentsBuilder.random().withSociability(sociability).build();
+        Temperaments temperaments = TemperamentsFactory.random().withSociability(sociability).build();
 
         assertTrue(temperaments.getSociability().isPresent());
         assertEquals(sociability, temperaments.getSociability().get());
@@ -42,7 +42,7 @@ public class TemperamentsTest {
     @Test
     public void shouldSetDocility() {
         Docility docility = getRandomDocility();
-        Temperaments temperaments = TemperamentsBuilder.random().withDocility(docility).build();
+        Temperaments temperaments = TemperamentsFactory.random().withDocility(docility).build();
 
         assertTrue(temperaments.getDocility().isPresent());
         assertEquals(docility, temperaments.getDocility().get());
@@ -51,7 +51,7 @@ public class TemperamentsTest {
     @Test
     public void shouldSetBalance() {
         Balance balance = getRandomBalance();
-        Temperaments temperaments = TemperamentsBuilder.random().withBalance(balance).build();
+        Temperaments temperaments = TemperamentsFactory.random().withBalance(balance).build();
 
         assertTrue(temperaments.getBalance().isPresent());
         assertEquals(balance, temperaments.getBalance().get());

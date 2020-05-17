@@ -25,7 +25,7 @@ import java.util.UUID;
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class LinkPictureBuilder {
+public class LinkPictureFactory {
 
     private UUID linkPictureId;
     private LocalDateTime registrationDate;
@@ -34,41 +34,41 @@ public class LinkPictureBuilder {
     private MediaLink largeImageMediaLink;
     private MediaLink smallImageMediaLink;
 
-    public static LinkPictureBuilder random() {
-        LinkPictureBuilder linkPictureBuilder = new LinkPictureBuilder();
-        linkPictureBuilder.name = randomAlphabetic(10);
-        linkPictureBuilder.pictureType = getRandomPictureType();
-        linkPictureBuilder.largeImageMediaLink = new MediaLink(randomAlphabetic(30));
-        linkPictureBuilder.smallImageMediaLink = new MediaLink(randomAlphabetic(30));
-        return linkPictureBuilder;
+    public static LinkPictureFactory random() {
+        LinkPictureFactory linkPictureFactory = new LinkPictureFactory();
+        linkPictureFactory.name = randomAlphabetic(10);
+        linkPictureFactory.pictureType = getRandomPictureType();
+        linkPictureFactory.largeImageMediaLink = new MediaLink(randomAlphabetic(30));
+        linkPictureFactory.smallImageMediaLink = new MediaLink(randomAlphabetic(30));
+        return linkPictureFactory;
     }
 
-    public LinkPictureBuilder withIdentifier(final UUID linkPictureId) {
+    public LinkPictureFactory withIdentifier(final UUID linkPictureId) {
         this.linkPictureId = linkPictureId;
         return this;
     }
 
-    public LinkPictureBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+    public LinkPictureFactory withRegistrationDate(final LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
 
-    public LinkPictureBuilder withName(final String name) {
+    public LinkPictureFactory withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public LinkPictureBuilder withPictureType(final PictureType pictureType) {
+    public LinkPictureFactory withPictureType(final PictureType pictureType) {
         this.pictureType = pictureType;
         return this;
     }
 
-    public LinkPictureBuilder withLargeImageMediaLink(final MediaLink largeImageMediaLink) {
+    public LinkPictureFactory withLargeImageMediaLink(final MediaLink largeImageMediaLink) {
         this.largeImageMediaLink = largeImageMediaLink;
         return this;
     }
 
-    public LinkPictureBuilder withSmallImageMediaLink(final MediaLink smallImageMediaLink) {
+    public LinkPictureFactory withSmallImageMediaLink(final MediaLink smallImageMediaLink) {
         this.smallImageMediaLink = smallImageMediaLink;
         return this;
     }

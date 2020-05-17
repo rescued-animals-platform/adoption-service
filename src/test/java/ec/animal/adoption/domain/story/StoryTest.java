@@ -63,29 +63,29 @@ public class StoryTest {
 
     @Test
     void shouldUpdateStoryText() {
-        Story existingStory = StoryBuilder.random().build();
+        Story story = StoryFactory.random().build();
         String newText = randomAlphabetic(50);
-        Story newStory = StoryBuilder.random().withText(newText).build();
+        Story newStory = StoryFactory.random().withText(newText).build();
 
-        Story updatedStory = existingStory.updateWith(newStory);
+        Story updatedStory = story.updateWith(newStory);
 
-        assertAll(() -> assertEquals(existingStory.getIdentifier(), updatedStory.getIdentifier()),
-                  () -> assertEquals(existingStory.getRegistrationDate(), updatedStory.getRegistrationDate()),
+        assertAll(() -> assertEquals(story.getIdentifier(), updatedStory.getIdentifier()),
+                  () -> assertEquals(story.getRegistrationDate(), updatedStory.getRegistrationDate()),
                   () -> assertEquals(newText, updatedStory.getText()));
     }
 
     @Test
     void shouldReturnSameStoryWhenUpdatedWithItself() {
-        Story existingStory = StoryBuilder.random().build();
+        Story story = StoryFactory.random().build();
 
-        Story updatedStory = existingStory.updateWith(existingStory);
+        Story updatedStory = story.updateWith(story);
 
-        assertEquals(existingStory, updatedStory);
+        assertEquals(story, updatedStory);
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoIdentifier() {
-        Story story = StoryBuilder.random().withIdentifier(null).build();
+        Story story = StoryFactory.random().withIdentifier(null).build();
 
         assertThrows(IllegalArgumentException.class, () -> {
             story.updateWith(new Story(randomAlphabetic(10)));
@@ -94,7 +94,7 @@ public class StoryTest {
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoRegistrationDate() {
-        Story story = StoryBuilder.random().withRegistrationDate(null).build();
+        Story story = StoryFactory.random().withRegistrationDate(null).build();
 
         assertThrows(IllegalArgumentException.class, () -> {
             story.updateWith(new Story(randomAlphabetic(10)));

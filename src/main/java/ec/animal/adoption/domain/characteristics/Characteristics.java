@@ -21,6 +21,8 @@ package ec.animal.adoption.domain.characteristics;
 
 import ec.animal.adoption.domain.Entity;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -31,6 +33,8 @@ import java.util.UUID;
 
 @SuppressWarnings("PMD.DataClass")
 public class Characteristics extends Entity {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Characteristics.class);
 
     private final Size size;
     private final PhysicalActivity physicalActivity;
@@ -59,6 +63,26 @@ public class Characteristics extends Entity {
         this.physicalActivity = physicalActivity;
         this.friendlyWith = friendlyWith;
         this.temperaments = temperaments;
+    }
+
+    public Characteristics updateWith(@NonNull final Characteristics characteristics) {
+        if (this.equals(characteristics)) {
+            return this;
+        }
+
+        UUID characteristicsId = this.getIdentifier();
+        LocalDateTime registrationDate = this.getRegistrationDate();
+        if (characteristicsId == null || registrationDate == null) {
+            LOGGER.error("Error when trying to update characteristics that have no identifier or registration date");
+            throw new IllegalArgumentException();
+        }
+
+        return new Characteristics(characteristicsId,
+                                   registrationDate,
+                                   characteristics.getSize(),
+                                   characteristics.getPhysicalActivity(),
+                                   characteristics.getTemperaments(),
+                                   characteristics.getFriendlyWith());
     }
 
     @NonNull

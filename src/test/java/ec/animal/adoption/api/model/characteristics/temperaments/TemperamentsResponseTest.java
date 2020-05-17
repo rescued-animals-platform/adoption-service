@@ -25,7 +25,7 @@ import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +51,7 @@ class TemperamentsResponseTest {
         Sociability sociability = getRandomSociability();
         Docility docility = getRandomDocility();
         Balance balance = getRandomBalance();
-        Temperaments temperaments = TemperamentsBuilder.empty()
+        Temperaments temperaments = TemperamentsFactory.empty()
                                                        .withSociability(sociability)
                                                        .withDocility(docility)
                                                        .withBalance(balance)
@@ -68,7 +68,7 @@ class TemperamentsResponseTest {
     @Test
     public void shouldBeSerializableContainingOnlySociability() throws IOException {
         Sociability sociability = getRandomSociability();
-        Temperaments temperaments = TemperamentsBuilder.empty().withSociability(sociability).build();
+        Temperaments temperaments = TemperamentsFactory.empty().withSociability(sociability).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
@@ -81,7 +81,7 @@ class TemperamentsResponseTest {
     @Test
     public void shouldBeSerializableContainingOnlyDocility() throws IOException {
         Docility docility = getRandomDocility();
-        Temperaments temperaments = TemperamentsBuilder.empty().withDocility(docility).build();
+        Temperaments temperaments = TemperamentsFactory.empty().withDocility(docility).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
@@ -94,7 +94,7 @@ class TemperamentsResponseTest {
     @Test
     public void shouldBeSerializableContainingOnlyBalance() throws IOException {
         Balance balance = getRandomBalance();
-        Temperaments temperaments = TemperamentsBuilder.empty().withBalance(balance).build();
+        Temperaments temperaments = TemperamentsFactory.empty().withBalance(balance).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);

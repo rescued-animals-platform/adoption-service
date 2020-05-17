@@ -20,9 +20,9 @@
 package ec.animal.adoption.repository.jpa.model;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldGenerateAnIdWhenCreatingJpaCharacteristicsForCharacteristicsWithNoId() {
-        Characteristics characteristics = CharacteristicsBuilder.random().withIdentifier(null).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(null).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -50,7 +50,7 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldGenerateARegistrationDateWhenCreatingJpaCharacteristicsForCharacteristicsWithNoRegistrationDate() {
-        Characteristics characteristics = CharacteristicsBuilder.random().withRegistrationDate(null).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(null).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -61,7 +61,7 @@ public class JpaCharacteristicsTest {
     @Test
     public void shouldCreateCharacteristicsWithId() {
         UUID characteristicsId = UUID.randomUUID();
-        Characteristics characteristics = CharacteristicsBuilder.random().withIdentifier(characteristicsId).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(characteristicsId).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -72,7 +72,7 @@ public class JpaCharacteristicsTest {
     @Test
     public void shouldCreateCharacteristicsWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
-        Characteristics characteristics = CharacteristicsBuilder.random().withRegistrationDate(registrationDate)
+        Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(registrationDate)
                                                                 .build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
@@ -83,7 +83,7 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldCreateJpaCharacteristicsFromCharacteristics() {
-        Characteristics characteristics = CharacteristicsBuilder.random().build();
+        Characteristics characteristics = CharacteristicsFactory.random().build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
         Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -96,8 +96,8 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldAcceptNullSociability() {
-        Temperaments temperaments = TemperamentsBuilder.random().withSociability(null).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+        Temperaments temperaments = TemperamentsFactory.random().withSociability(null).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -107,8 +107,8 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldAcceptNullDocility() {
-        Temperaments temperaments = TemperamentsBuilder.random().withDocility(null).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+        Temperaments temperaments = TemperamentsFactory.random().withDocility(null).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
@@ -118,8 +118,8 @@ public class JpaCharacteristicsTest {
 
     @Test
     public void shouldAcceptNullBalance() {
-        Temperaments temperaments = TemperamentsBuilder.random().withBalance(null).build();
-        Characteristics characteristics = CharacteristicsBuilder.random().withTemperaments(temperaments).build();
+        Temperaments temperaments = TemperamentsFactory.random().withBalance(null).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
         Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();

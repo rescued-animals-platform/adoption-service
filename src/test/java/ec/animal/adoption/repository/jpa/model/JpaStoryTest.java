@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import ec.animal.adoption.domain.story.Story;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -38,7 +38,7 @@ public class JpaStoryTest {
 
     @Test
     public void shouldGenerateAnIdWhenCreatingAJpaStoryForAStoryWithNoId() {
-        Story story = StoryBuilder.random().withIdentifier(null).build();
+        Story story = StoryFactory.random().withIdentifier(null).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
@@ -48,7 +48,7 @@ public class JpaStoryTest {
 
     @Test
     public void shouldGenerateARegistrationDateWhenCreatingAJpaStoryForAStoryWithNoRegistrationDate() {
-        Story story = StoryBuilder.random().withRegistrationDate(null).build();
+        Story story = StoryFactory.random().withRegistrationDate(null).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
@@ -59,7 +59,7 @@ public class JpaStoryTest {
     @Test
     public void shouldCreateAStoryWithId() {
         UUID storyId = UUID.randomUUID();
-        Story story = StoryBuilder.random().withIdentifier(storyId).build();
+        Story story = StoryFactory.random().withIdentifier(storyId).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
@@ -70,7 +70,7 @@ public class JpaStoryTest {
     @Test
     public void shouldCreateAStoryWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
-        Story story = StoryBuilder.random().withRegistrationDate(registrationDate).build();
+        Story story = StoryFactory.random().withRegistrationDate(registrationDate).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();
@@ -81,7 +81,7 @@ public class JpaStoryTest {
     @Test
     public void shouldCreateJpaStoryFromStory() {
         String text = randomAlphabetic(100);
-        Story story = StoryBuilder.random().withText(text).build();
+        Story story = StoryFactory.random().withText(text).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
         Story jpaStoryToStory = jpaStory.toStory();

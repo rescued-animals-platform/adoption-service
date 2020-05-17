@@ -21,12 +21,12 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +80,7 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
         when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
                 .thenReturn(false);
         when(animalRepository.create(createAnimalDto)).thenReturn(expectedAnimal);
@@ -92,7 +92,7 @@ public class AnimalServiceTest {
 
     @Test
     public void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
         when(animalRepository.exists(createAnimalDto.getClinicalRecord(), createAnimalDto.getOrganizationId()))
                 .thenReturn(true);
 
@@ -105,7 +105,7 @@ public class AnimalServiceTest {
     @Test
     public void shouldReturnAnimalByItsIdentifier() {
         UUID animalId = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
         when(animalRepository.getBy(animalId, organization)).thenReturn(expectedAnimal);
 
         Animal animal = animalService.getBy(animalId, organization);
@@ -116,9 +116,9 @@ public class AnimalServiceTest {
     @Test
     public void shouldReturnAllAnimals() {
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
-                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+                AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
         ));
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
         when(animalRepository.getAllFor(organization, pageable)).thenReturn(expectedPageOfAnimals);
 
         PagedEntity<Animal> pageOfAnimals = animalService.listAllFor(organization, pageable);
@@ -130,9 +130,9 @@ public class AnimalServiceTest {
     public void shouldReturnAllAnimalsWithFiltersAndSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
-                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
-                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build(),
-                AnimalBuilder.randomWithPrimaryLinkPicture().withState(state).build()
+                AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build(),
+                AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build(),
+                AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build()
         );
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(animalsFilteredByState);
         when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))
@@ -151,9 +151,9 @@ public class AnimalServiceTest {
     public void shouldReturnAllAnimalsWithFiltersAndNoSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build(),
-                AnimalBuilder.random().withState(state).build()
+                AnimalFactory.random().withState(state).build(),
+                AnimalFactory.random().withState(state).build(),
+                AnimalFactory.random().withState(state).build()
         );
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(animalsFilteredByState);
         when(animalRepository.getAllBy(state.getName().name(), species, physicalActivity, size, pageable))

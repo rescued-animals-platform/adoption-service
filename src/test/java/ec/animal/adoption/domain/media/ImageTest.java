@@ -35,7 +35,7 @@ public class ImageTest {
     public void shouldCreateAnImage() {
         SupportedImageExtension supportedImageExtension = getRandomSupportedImageExtension();
         long sizeInBytes = new Random().nextInt(100) + 1;
-        Image image = ImageBuilder.random().withSupportedImageExtension(supportedImageExtension).
+        Image image = ImageFactory.random().withSupportedImageExtension(supportedImageExtension).
                 withSizeInBytes(sizeInBytes).build();
 
         assertThat(image.getExtension(), is(supportedImageExtension.getExtension()));
@@ -50,7 +50,7 @@ public class ImageTest {
 
     @Test
     public void shouldBeValidForValidImageContentAndExtensionAndSizeBetweenZeroAndOneMb() {
-        Image image = ImageBuilder.random().build();
+        Image image = ImageFactory.random().build();
 
         assertThat(image.isValid(), is(true));
     }
@@ -58,7 +58,7 @@ public class ImageTest {
     @Test
     public void shouldBeValidForValidImageContentAndExtensionAndSizeEqualToOneMb() {
         int oneMegaByteInBytes = 1_048_576;
-        Image image = ImageBuilder.random().withSizeInBytes(oneMegaByteInBytes).build();
+        Image image = ImageFactory.random().withSizeInBytes(oneMegaByteInBytes).build();
 
         assertThat(image.isValid(), is(true));
     }
@@ -67,14 +67,14 @@ public class ImageTest {
     public void shouldBeInvalidForSizeGreaterThanOneMb() {
         int oneMegaByteInBytes = 1_048_576;
         int size = oneMegaByteInBytes + 1 + new Random().nextInt(100);
-        Image image = ImageBuilder.random().withSizeInBytes(size).build();
+        Image image = ImageFactory.random().withSizeInBytes(size).build();
 
         assertThat(image.isValid(), is(false));
     }
 
     @Test
     public void shouldBeInvalidForSizeEqualsToZero() {
-        Image image = ImageBuilder.random().withSizeInBytes(0).build();
+        Image image = ImageFactory.random().withSizeInBytes(0).build();
 
         assertThat(image.isValid(), is(false));
     }
@@ -82,7 +82,7 @@ public class ImageTest {
     @Test
     public void shouldBeInvalidForSizeLessThanZero() {
         int size = -5000;
-        Image image = ImageBuilder.random().withSizeInBytes(size).build();
+        Image image = ImageFactory.random().withSizeInBytes(size).build();
 
         assertThat(image.isValid(), is(false));
     }
@@ -90,7 +90,7 @@ public class ImageTest {
     @Test
     public void shouldBeInvalidWithRightExtensionInFilenameButWrongImageTypeInContent() {
         byte[] invalidContent = {};
-        Image image = ImageBuilder.random().withContent(invalidContent).build();
+        Image image = ImageFactory.random().withContent(invalidContent).build();
 
         assertThat(image.isValid(), is(false));
     }
@@ -98,7 +98,7 @@ public class ImageTest {
     @Test
     public void shouldBeInvalidWithRightImageTypeInContentButWrongExtensionInFilename() {
         String wrongExtension = randomAlphabetic(10);
-        Image image = ImageBuilder.random().withExtension(wrongExtension).build();
+        Image image = ImageFactory.random().withExtension(wrongExtension).build();
 
         assertThat(image.isValid(), is(false));
     }
@@ -107,7 +107,7 @@ public class ImageTest {
     public void shouldBeInvalidWithWrongImageTypeInContentAndWrongExtensionInFilename() {
         String wrongExtension = randomAlphabetic(10);
         byte[] invalidContent = {};
-        Image image = ImageBuilder.random().withExtension(wrongExtension).withContent(invalidContent).build();
+        Image image = ImageFactory.random().withExtension(wrongExtension).withContent(invalidContent).build();
 
         assertThat(image.isValid(), is(false));
     }

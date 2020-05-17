@@ -23,11 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsResponse;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import org.assertj.core.api.Assertions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,7 +50,7 @@ class CharacteristicsResponseTest {
 
     @Test
     public void shouldBeSerializable() throws IOException {
-        Characteristics characteristics = CharacteristicsBuilder.random().withFriendlyWith(FriendlyWith.ADULTS).build();
+        Characteristics characteristics = CharacteristicsFactory.random().withFriendlyWith(FriendlyWith.ADULTS).build();
         String expectedTemperamentsResponseAsJson = objectMapper.writeValueAsString(
                 TemperamentsResponse.from(characteristics.getTemperaments())
         );
@@ -68,8 +68,8 @@ class CharacteristicsResponseTest {
 
     @Test
     public void shouldBeDeSerializable() throws IOException, JSONException {
-        Temperaments temperaments = TemperamentsBuilder.empty().withBalance(Balance.POSSESSIVE).build();
-        Characteristics characteristics = CharacteristicsBuilder.random()
+        Temperaments temperaments = TemperamentsFactory.empty().withBalance(Balance.POSSESSIVE).build();
+        Characteristics characteristics = CharacteristicsFactory.random()
                                                                 .withTemperaments(temperaments)
                                                                 .withFriendlyWith(FriendlyWith.DOGS)
                                                                 .build();

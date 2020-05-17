@@ -23,10 +23,10 @@ import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsRequest;
 import ec.animal.adoption.api.model.characteristics.CharacteristicsResponse;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.CharacteristicsService;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,26 +53,30 @@ public class CharacteristicsResourceTest {
     @Mock
     private AdminTokenUtils adminTokenUtils;
 
+    @Mock
+    private Jwt token;
+
     private UUID animalId;
+    private UUID organizationId;
+    private Organization organization;
     private CharacteristicsResource characteristicsResource;
 
     @BeforeEach
     public void setUp() {
         animalId = UUID.randomUUID();
+        organizationId = UUID.randomUUID();
+        organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         characteristicsResource = new CharacteristicsResource(characteristicsService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateCharacteristicsForAnimalFromOrganization() {
-        UUID organizationId = UUID.randomUUID();
-        Jwt token = mock(Jwt.class);
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
-        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
         when(organizationService.getBy(organizationId)).thenReturn(organization);
         CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
-        Characteristics characteristicsFromRequest = CharacteristicsBuilder.random().build();
+        Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
         when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
-        Characteristics createdCharacteristics = CharacteristicsBuilder.random().build();
+        Characteristics createdCharacteristics = CharacteristicsFactory.random().build();
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(createdCharacteristics);
         when(characteristicsService.createFor(animalId, organization, characteristicsFromRequest))
                 .thenReturn(createdCharacteristics);
@@ -87,8 +91,29 @@ public class CharacteristicsResourceTest {
     }
 
     @Test
+    void shouldUpdateCharacteristicsForAnimal() {
+        when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
+        when(organizationService.getBy(organizationId)).thenReturn(organization);
+        CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
+        Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
+        when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
+        Characteristics updatedCharacteristics = CharacteristicsFactory.random().build();
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(updatedCharacteristics);
+        when(characteristicsService.updateFor(animalId, organization, characteristicsFromRequest))
+                .thenReturn(updatedCharacteristics);
+
+        CharacteristicsResponse characteristicsResponse = characteristicsResource.update(animalId,
+                                                                                         characteristicsRequest,
+                                                                                         token);
+
+        Assertions.assertThat(characteristicsResponse)
+                  .usingRecursiveComparison()
+                  .isEqualTo(expectedCharacteristicsResponse);
+    }
+
+    @Test
     public void shouldGetCharacteristicsForAnimal() {
-        Characteristics expectedCharacteristics = CharacteristicsBuilder.random().build();
+        Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
         when(characteristicsService.getBy(animalId)).thenReturn(expectedCharacteristics);
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(expectedCharacteristics);
 

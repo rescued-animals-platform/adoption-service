@@ -24,31 +24,31 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class StoryBuilder {
+public class StoryFactory {
 
     private UUID storyId;
     private LocalDateTime registrationDate;
     private String text;
 
-    public static StoryBuilder random() {
-        StoryBuilder storyBuilder = new StoryBuilder();
-        storyBuilder.withIdentifier(UUID.randomUUID());
-        storyBuilder.withRegistrationDate(LocalDateTime.now());
-        storyBuilder.text = randomAlphabetic(300);
-        return storyBuilder;
+    public static StoryFactory random() {
+        StoryFactory storyFactory = new StoryFactory();
+        storyFactory.withIdentifier(UUID.randomUUID());
+        storyFactory.withRegistrationDate(LocalDateTime.now());
+        storyFactory.text = randomAlphabetic(300);
+        return storyFactory;
     }
 
-    public StoryBuilder withIdentifier(final UUID storyId) {
+    public StoryFactory withIdentifier(final UUID storyId) {
         this.storyId = storyId;
         return this;
     }
 
-    public StoryBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+    public StoryFactory withRegistrationDate(final LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
 
-    public StoryBuilder withText(final String text) {
+    public StoryFactory withText(final String text) {
         this.text = text;
         return this;
     }

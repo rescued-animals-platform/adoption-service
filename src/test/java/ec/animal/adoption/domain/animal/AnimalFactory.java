@@ -21,10 +21,10 @@ package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.characteristics.Characteristics;
 import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.story.Story;
 
@@ -37,7 +37,7 @@ import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class AnimalBuilder {
+public class AnimalFactory {
 
     private UUID animalId;
     private LocalDateTime registrationDate;
@@ -52,94 +52,94 @@ public class AnimalBuilder {
     private Characteristics characteristics;
     private Story story;
 
-    public static AnimalBuilder random() {
-        AnimalBuilder animalBuilder = new AnimalBuilder();
-        animalBuilder.animalId = UUID.randomUUID();
-        animalBuilder.registrationDate = LocalDateTime.now();
-        animalBuilder.clinicalRecord = randomAlphabetic(10);
-        animalBuilder.name = randomAlphabetic(10);
-        animalBuilder.species = getRandomSpecies();
-        animalBuilder.estimatedAge = getRandomEstimatedAge();
-        animalBuilder.sex = getRandomSex();
-        animalBuilder.state = getRandomState();
-        animalBuilder.organization = OrganizationBuilder.random().build();
-        return animalBuilder;
+    public static AnimalFactory random() {
+        AnimalFactory animalFactory = new AnimalFactory();
+        animalFactory.animalId = UUID.randomUUID();
+        animalFactory.registrationDate = LocalDateTime.now();
+        animalFactory.clinicalRecord = randomAlphabetic(10);
+        animalFactory.name = randomAlphabetic(10);
+        animalFactory.species = getRandomSpecies();
+        animalFactory.estimatedAge = getRandomEstimatedAge();
+        animalFactory.sex = getRandomSex();
+        animalFactory.state = getRandomState();
+        animalFactory.organization = OrganizationFactory.random().build();
+        return animalFactory;
     }
 
-    public static AnimalBuilder randomWithDefaultOrganization() {
-        AnimalBuilder animalBuilder = random();
-        animalBuilder.organization = OrganizationBuilder.randomDefaultOrganization().build();
-        return animalBuilder;
+    public static AnimalFactory randomWithDefaultOrganization() {
+        AnimalFactory animalFactory = random();
+        animalFactory.organization = OrganizationFactory.randomDefaultOrganization().build();
+        return animalFactory;
     }
 
-    public static AnimalBuilder randomWithAnotherOrganization() {
-        AnimalBuilder animalBuilder = random();
-        animalBuilder.organization = OrganizationBuilder.randomAnotherOrganization().build();
-        return animalBuilder;
+    public static AnimalFactory randomWithAnotherOrganization() {
+        AnimalFactory animalFactory = random();
+        animalFactory.organization = OrganizationFactory.randomAnotherOrganization().build();
+        return animalFactory;
     }
 
-    public static AnimalBuilder randomWithPrimaryLinkPicture() {
-        AnimalBuilder animalBuilder = random();
-        animalBuilder.primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        return animalBuilder;
+    public static AnimalFactory randomWithPrimaryLinkPicture() {
+        AnimalFactory animalFactory = random();
+        animalFactory.primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        return animalFactory;
     }
 
-    public AnimalBuilder withIdentifier(final UUID animalId) {
+    public AnimalFactory withIdentifier(final UUID animalId) {
         this.animalId = animalId;
         return this;
     }
 
-    public AnimalBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+    public AnimalFactory withRegistrationDate(final LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
 
-    public AnimalBuilder withClinicalRecord(final String clinicalRecord) {
+    public AnimalFactory withClinicalRecord(final String clinicalRecord) {
         this.clinicalRecord = clinicalRecord;
         return this;
     }
 
-    public AnimalBuilder withName(final String name) {
+    public AnimalFactory withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public AnimalBuilder withSpecies(final Species species) {
+    public AnimalFactory withSpecies(final Species species) {
         this.species = species;
         return this;
     }
 
-    public AnimalBuilder withEstimatedAge(final EstimatedAge estimatedAge) {
+    public AnimalFactory withEstimatedAge(final EstimatedAge estimatedAge) {
         this.estimatedAge = estimatedAge;
         return this;
     }
 
-    public AnimalBuilder withSex(final Sex sex) {
+    public AnimalFactory withSex(final Sex sex) {
         this.sex = sex;
         return this;
     }
 
-    public AnimalBuilder withState(final State state) {
+    public AnimalFactory withState(final State state) {
         this.state = state;
         return this;
     }
 
-    public AnimalBuilder withOrganization(final Organization organization) {
+    public AnimalFactory withOrganization(final Organization organization) {
         this.organization = organization;
         return this;
     }
 
-    public AnimalBuilder withPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
+    public AnimalFactory withPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
         this.primaryLinkPicture = primaryLinkPicture;
         return this;
     }
 
-    public AnimalBuilder withCharacteristics(final Characteristics characteristics) {
+    public AnimalFactory withCharacteristics(final Characteristics characteristics) {
         this.characteristics = characteristics;
         return this;
     }
 
-    public AnimalBuilder withStory(final Story story) {
+    public AnimalFactory withStory(final Story story) {
         this.story = story;
         return this;
     }

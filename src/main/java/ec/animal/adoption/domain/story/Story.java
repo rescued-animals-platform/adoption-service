@@ -54,7 +54,7 @@ public class Story extends Entity {
         UUID storyId = this.getIdentifier();
         LocalDateTime registrationDate = this.getRegistrationDate();
         if (storyId == null || registrationDate == null) {
-            LOGGER.error("Error when trying to update a existing story that has no identifier or registration date");
+            LOGGER.error("Error when trying to update a story that has no identifier or registration date");
             throw new IllegalArgumentException();
         }
 

@@ -50,7 +50,7 @@ class OrganizationServiceTest {
     @Test
     void shouldReturnOrganizationByItsIdentifier() {
         UUID organizationId = UUID.randomUUID();
-        Organization expectedOrganization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        Organization expectedOrganization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(organizationRepository.getBy(organizationId)).thenReturn(of(expectedOrganization));
 
         Organization actualOrganization = organizationService.getBy(organizationId);

@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.Organization;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ public class JpaOrganizationTest {
 
     @Test
     void shouldMapOrganizationAndJpaOrganizationCorrectly() {
-        Organization expectedOrganization = OrganizationBuilder.random().build();
+        Organization expectedOrganization = OrganizationFactory.random().build();
 
         JpaOrganization jpaOrganization = new JpaOrganization(expectedOrganization);
         Organization actualOrganization = jpaOrganization.toOrganization();

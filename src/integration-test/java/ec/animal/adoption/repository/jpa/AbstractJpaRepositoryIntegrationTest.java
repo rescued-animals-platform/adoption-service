@@ -1,6 +1,6 @@
 package ec.animal.adoption.repository.jpa;
 
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,10 +17,10 @@ public abstract class AbstractJpaRepositoryIntegrationTest {
     JpaAnimalRepository jpaAnimalRepository;
 
     JpaAnimal createAndSaveJpaAnimalForDefaultOrganization() {
-        return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.randomWithDefaultOrganization().build()));
+        return jpaAnimalRepository.save(new JpaAnimal(AnimalFactory.randomWithDefaultOrganization().build()));
     }
 
     JpaAnimal createAndSaveJpaAnimalForAnotherOrganization() {
-        return jpaAnimalRepository.save(new JpaAnimal(AnimalBuilder.randomWithAnotherOrganization().build()));
+        return jpaAnimalRepository.save(new JpaAnimal(AnimalFactory.randomWithAnotherOrganization().build()));
     }
 }

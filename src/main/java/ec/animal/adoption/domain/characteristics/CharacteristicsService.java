@@ -20,10 +20,13 @@
 package ec.animal.adoption.domain.characteristics;
 
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.organization.Organization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,8 @@ import java.util.UUID;
 
 @Service
 public class CharacteristicsService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(CharacteristicsService.class);
 
     private final AnimalRepository animalRepository;
 
@@ -47,8 +52,22 @@ public class CharacteristicsService {
             throw new EntityAlreadyExistsException();
         });
 
-        Animal animalWithCharacteristics = Animal.AnimalBuilder.copyOf(animal).with(characteristics).build();
+        Animal animalWithCharacteristics = AnimalBuilder.copyOf(animal).with(characteristics).build();
         return animalRepository.save(animalWithCharacteristics).getCharacteristics().orElseThrow();
+    }
+
+    public Characteristics updateFor(final UUID animalId,
+                                     final Organization organization,
+                                     final Characteristics characteristics) {
+        Animal animal = animalRepository.getBy(animalId, organization);
+
+        if (animal.has(characteristics)) {
+            LOGGER.info("Attempt to update animal {} with the same characteristics it already has", animalId);
+            return characteristics;
+        }
+
+        Animal animalWithUpdatedCharacteristics = AnimalBuilder.copyOf(animal).with(characteristics).build();
+        return animalRepository.save(animalWithUpdatedCharacteristics).getCharacteristics().orElseThrow();
     }
 
     public Characteristics getBy(final UUID animalId) {

@@ -20,6 +20,7 @@
 package ec.animal.adoption.domain.story;
 
 import ec.animal.adoption.domain.animal.Animal;
+import ec.animal.adoption.domain.animal.AnimalBuilder;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
@@ -50,7 +51,7 @@ public class StoryService {
             throw new EntityAlreadyExistsException();
         });
 
-        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animal).with(story).build();
+        Animal animalWithStory = AnimalBuilder.copyOf(animal).with(story).build();
         return animalRepository.save(animalWithStory).getStory().orElseThrow();
     }
 
@@ -62,8 +63,8 @@ public class StoryService {
             return story;
         }
 
-        Animal animalWithStory = Animal.AnimalBuilder.copyOf(animal).with(story).build();
-        return animalRepository.save(animalWithStory).getStory().orElseThrow();
+        Animal animalWithUpdatedStory = AnimalBuilder.copyOf(animal).with(story).build();
+        return animalRepository.save(animalWithUpdatedStory).getStory().orElseThrow();
     }
 
     public Story getBy(final UUID animalId) {

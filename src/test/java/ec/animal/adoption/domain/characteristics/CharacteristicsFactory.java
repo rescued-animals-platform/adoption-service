@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.characteristics;
 
 import com.google.common.collect.Sets;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -31,7 +31,7 @@ import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 
-public class CharacteristicsBuilder {
+public class CharacteristicsFactory {
 
     private UUID characteristicsId;
     private LocalDateTime registrationDate;
@@ -40,43 +40,43 @@ public class CharacteristicsBuilder {
     private Temperaments temperaments;
     private Set<FriendlyWith> friendlyWith;
 
-    public static CharacteristicsBuilder random() {
-        final CharacteristicsBuilder characteristicsBuilder = new CharacteristicsBuilder();
-        characteristicsBuilder.characteristicsId = UUID.randomUUID();
-        characteristicsBuilder.registrationDate = LocalDateTime.now();
-        characteristicsBuilder.size = getRandomSize();
-        characteristicsBuilder.physicalActivity = getRandomPhysicalActivity();
-        characteristicsBuilder.temperaments = TemperamentsBuilder.random().build();
-        characteristicsBuilder.friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
-        return characteristicsBuilder;
+    public static CharacteristicsFactory random() {
+        final CharacteristicsFactory characteristicsFactory = new CharacteristicsFactory();
+        characteristicsFactory.characteristicsId = UUID.randomUUID();
+        characteristicsFactory.registrationDate = LocalDateTime.now();
+        characteristicsFactory.size = getRandomSize();
+        characteristicsFactory.physicalActivity = getRandomPhysicalActivity();
+        characteristicsFactory.temperaments = TemperamentsFactory.random().build();
+        characteristicsFactory.friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
+        return characteristicsFactory;
     }
 
-    public CharacteristicsBuilder withIdentifier(final UUID characteristicsId) {
+    public CharacteristicsFactory withIdentifier(final UUID characteristicsId) {
         this.characteristicsId = characteristicsId;
         return this;
     }
 
-    public CharacteristicsBuilder withRegistrationDate(final LocalDateTime registrationDate) {
+    public CharacteristicsFactory withRegistrationDate(final LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
         return this;
     }
 
-    public CharacteristicsBuilder withSize(final Size size) {
+    public CharacteristicsFactory withSize(final Size size) {
         this.size = size;
         return this;
     }
 
-    public CharacteristicsBuilder withPhysicalActivity(final PhysicalActivity physicalActivity) {
+    public CharacteristicsFactory withPhysicalActivity(final PhysicalActivity physicalActivity) {
         this.physicalActivity = physicalActivity;
         return this;
     }
 
-    public CharacteristicsBuilder withTemperaments(final Temperaments temperaments) {
+    public CharacteristicsFactory withTemperaments(final Temperaments temperaments) {
         this.temperaments = temperaments;
         return this;
     }
 
-    public CharacteristicsBuilder withFriendlyWith(final FriendlyWith... friendlyWith) {
+    public CharacteristicsFactory withFriendlyWith(final FriendlyWith... friendlyWith) {
         this.friendlyWith = Sets.newHashSet(friendlyWith);
         return this;
     }

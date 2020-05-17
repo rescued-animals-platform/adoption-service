@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +65,19 @@ public class CharacteristicsResource {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
         Characteristics characteristics = characteristicsService.createFor(animalId,
+                                                                           organization,
+                                                                           characteristicsRequest.toDomain());
+
+        return CharacteristicsResponse.from(characteristics);
+    }
+
+    @PutMapping("/admin/animals/{id}/characteristics")
+    public CharacteristicsResponse update(@PathVariable("id") final UUID animalId,
+                                          @RequestBody @Valid final CharacteristicsRequest characteristicsRequest,
+                                          @AuthenticationPrincipal final Jwt token) {
+        UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
+        Organization organization = organizationService.getBy(organizationId);
+        Characteristics characteristics = characteristicsService.updateFor(animalId,
                                                                            organization,
                                                                            characteristicsRequest.toDomain());
 

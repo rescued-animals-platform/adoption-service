@@ -23,7 +23,7 @@ import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class CreateAnimalDtoTest {
         estimatedAge = getRandomEstimatedAge();
         sex = getRandomSex();
         adoptedState = State.adopted(randomAlphabetic(10));
-        organization = OrganizationBuilder.random().build();
+        organization = OrganizationFactory.random().build();
     }
 
     @Test
@@ -96,7 +96,7 @@ class CreateAnimalDtoTest {
     void shouldReturnAdoptionFormIdFromStateWhenPresent() {
         String adoptionFormId = randomAlphabetic(10);
         State state = State.adopted(adoptionFormId);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withState(state).build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
 
         assertTrue(createAnimalDto.getAdoptionFormId().isPresent());
         assertEquals(adoptionFormId, createAnimalDto.getAdoptionFormId().get());
@@ -105,7 +105,7 @@ class CreateAnimalDtoTest {
     @Test
     void shouldReturnEmptyWhenAdoptionFormIdIsNotPresentInState() {
         State state = State.lookingForHuman();
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withState(state).build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
 
         assertTrue(createAnimalDto.getAdoptionFormId().isEmpty());
     }
@@ -114,7 +114,7 @@ class CreateAnimalDtoTest {
     void shouldReturnNotesFromStateWhenPresent() {
         String notes = randomAlphabetic(10);
         State state = State.unavailable(notes);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withState(state).build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
 
         assertTrue(createAnimalDto.getNotes().isPresent());
         assertEquals(notes, createAnimalDto.getNotes().get());
@@ -123,7 +123,7 @@ class CreateAnimalDtoTest {
     @Test
     void shouldReturnEmptyWhenNotesIsNotPresentInState() {
         State state = State.adopted(randomAlphabetic(10));
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withState(state).build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withState(state).build();
 
         assertTrue(createAnimalDto.getNotes().isEmpty());
     }

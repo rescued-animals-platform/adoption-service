@@ -23,10 +23,10 @@ import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.story.StoryRequest;
 import ec.animal.adoption.api.model.story.StoryResponse;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryBuilder;
+import ec.animal.adoption.domain.story.StoryFactory;
 import ec.animal.adoption.domain.story.StoryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +65,7 @@ public class StoryResourceTest {
     @BeforeEach
     public void setUp() {
         organizationId = UUID.randomUUID();
-        organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         animalId = UUID.randomUUID();
         storyResource = new StoryResource(storyService, organizationService, adminTokenUtils);
     }
@@ -77,7 +77,7 @@ public class StoryResourceTest {
         StoryRequest storyRequest = mock(StoryRequest.class);
         Story storyFromRequest = new Story(randomAlphabetic(10));
         when(storyRequest.toDomain()).thenReturn(storyFromRequest);
-        Story createdStory = StoryBuilder.random().build();
+        Story createdStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponse.from(createdStory);
         when(storyService.createFor(animalId, organization, storyFromRequest)).thenReturn(createdStory);
 
@@ -93,7 +93,7 @@ public class StoryResourceTest {
         StoryRequest storyRequest = mock(StoryRequest.class);
         Story storyFromRequest = new Story(randomAlphabetic(10));
         when(storyRequest.toDomain()).thenReturn(storyFromRequest);
-        Story updatedStory = StoryBuilder.random().build();
+        Story updatedStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponse.from(updatedStory);
         when(storyService.updateFor(animalId, organization, storyFromRequest)).thenReturn(updatedStory);
 
@@ -104,7 +104,7 @@ public class StoryResourceTest {
 
     @Test
     public void shouldGetStoryForAnimal() {
-        Story foundStory = StoryBuilder.random().build();
+        Story foundStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponse.from(foundStory);
         when(storyService.getBy(animalId)).thenReturn(foundStory);
 

@@ -31,7 +31,7 @@ import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +83,7 @@ class CharacteristicsRequestTest {
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
-                  () -> assertEquals(TemperamentsBuilder.empty().withSociability(Sociability.SHY).build(),
+                  () -> assertEquals(TemperamentsFactory.empty().withSociability(Sociability.SHY).build(),
                                      characteristics.getTemperaments()),
                   () -> assertTrue(characteristics.getFriendlyWith().isEmpty()),
                   () -> assertNull(characteristics.getIdentifier()),
@@ -107,7 +107,7 @@ class CharacteristicsRequestTest {
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
-                  () -> assertEquals(TemperamentsBuilder.empty().withBalance(Balance.BALANCED).build(),
+                  () -> assertEquals(TemperamentsFactory.empty().withBalance(Balance.BALANCED).build(),
                                      characteristics.getTemperaments()),
                   () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CHILDREN),
                                      characteristics.getFriendlyWith()),
@@ -132,7 +132,7 @@ class CharacteristicsRequestTest {
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
-                  () -> assertEquals(TemperamentsBuilder.empty().withDocility(Docility.DOCILE).build(),
+                  () -> assertEquals(TemperamentsFactory.empty().withDocility(Docility.DOCILE).build(),
                                      characteristics.getTemperaments()),
                   () -> assertEquals(2, characteristics.getFriendlyWith().size()),
                   () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CATS),

@@ -23,35 +23,35 @@ import static ec.animal.adoption.TestUtils.getRandomBalance;
 import static ec.animal.adoption.TestUtils.getRandomDocility;
 import static ec.animal.adoption.TestUtils.getRandomSociability;
 
-public class TemperamentsBuilder {
+public class TemperamentsFactory {
 
     private Sociability sociability;
     private Docility docility;
     private Balance balance;
 
-    public static TemperamentsBuilder random() {
-        final TemperamentsBuilder temperamentsBuilder = new TemperamentsBuilder();
-        temperamentsBuilder.sociability = getRandomSociability();
-        temperamentsBuilder.docility = getRandomDocility();
-        temperamentsBuilder.balance = getRandomBalance();
-        return temperamentsBuilder;
+    public static TemperamentsFactory random() {
+        final TemperamentsFactory temperamentsFactory = new TemperamentsFactory();
+        temperamentsFactory.sociability = getRandomSociability();
+        temperamentsFactory.docility = getRandomDocility();
+        temperamentsFactory.balance = getRandomBalance();
+        return temperamentsFactory;
     }
 
-    public static TemperamentsBuilder empty() {
-        return new TemperamentsBuilder();
+    public static TemperamentsFactory empty() {
+        return new TemperamentsFactory();
     }
 
-    public TemperamentsBuilder withSociability(final Sociability sociability) {
+    public TemperamentsFactory withSociability(final Sociability sociability) {
         this.sociability = sociability;
         return this;
     }
 
-    public TemperamentsBuilder withDocility(final Docility docility) {
+    public TemperamentsFactory withDocility(final Docility docility) {
         this.docility = docility;
         return this;
     }
 
-    public TemperamentsBuilder withBalance(final Balance balance) {
+    public TemperamentsFactory withBalance(final Balance balance) {
         this.balance = balance;
         return this;
     }

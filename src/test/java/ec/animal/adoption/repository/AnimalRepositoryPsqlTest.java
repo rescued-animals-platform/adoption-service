@@ -21,19 +21,19 @@ package ec.animal.adoption.repository;
 
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.repository.jpa.JpaAnimalRepository;
 import ec.animal.adoption.repository.jpa.model.JpaAnimal;
@@ -80,7 +80,7 @@ public class AnimalRepositoryPsqlTest {
 
     @BeforeEach
     public void setUp() {
-        animal = AnimalBuilder.randomWithDefaultOrganization().build();
+        animal = AnimalFactory.randomWithDefaultOrganization().build();
         animalRepositoryPsql = new AnimalRepositoryPsql(jpaAnimalRepository);
     }
 
@@ -91,9 +91,9 @@ public class AnimalRepositoryPsqlTest {
 
     @Test
     public void shouldCreateAnimal() {
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().build();
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalBuilder.random().build();
+        Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
 
@@ -109,14 +109,14 @@ public class AnimalRepositoryPsqlTest {
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalRepositoryPsql.create(CreateAnimalDtoBuilder.random().build());
+            animalRepositoryPsql.create(CreateAnimalDtoFactory.random().build());
         });
     }
 
     @Test
     public void shouldSaveAnimal() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalBuilder.random().build();
+        Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
         when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
 
@@ -163,7 +163,7 @@ public class AnimalRepositoryPsqlTest {
     @Test
     public void shouldGetAnimalByItsIdentifier() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalBuilder.random().build();
+        Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
         when(jpaAnimalRepository.findById(expectedAnimal.getIdentifier())).thenReturn(Optional.of(expectedJpaAnimal));
 
@@ -182,7 +182,7 @@ public class AnimalRepositoryPsqlTest {
     @Test
     public void shouldGetAnimalByItsIdentifierAndOrganization() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalBuilder.random().build();
+        Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
         when(jpaAnimalRepository.findByIdAndJpaOrganizationId(expectedAnimal.getIdentifier(), expectedAnimal.getOrganizationId()))
                 .thenReturn(Optional.of(expectedJpaAnimal));
@@ -195,7 +195,7 @@ public class AnimalRepositoryPsqlTest {
     @Test
     public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierAndOrganizationIsNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
-            animalRepositoryPsql.getBy(UUID.randomUUID(), OrganizationBuilder.random().build());
+            animalRepositoryPsql.getBy(UUID.randomUUID(), OrganizationFactory.random().build());
         });
     }
 
@@ -203,12 +203,12 @@ public class AnimalRepositoryPsqlTest {
     public void shouldReturnAllAnimalsForOrganizationWithPagination() {
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> listOfJpaAnimals = newArrayList(
-                AnimalBuilder.random().build(), AnimalBuilder.random().build(), AnimalBuilder.random().build()
+                AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
         ).stream().map(JpaAnimal::new).collect(Collectors.toList());
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
                 listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
         when(jpaAnimalRepository.findAllByJpaOrganizationId(organization.getOrganizationId(), pageable))
                 .thenReturn(new PageImpl<>(listOfJpaAnimals));
 
@@ -226,11 +226,11 @@ public class AnimalRepositoryPsqlTest {
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> jpaAnimals = new ArrayList<>();
         IntStream.rangeClosed(1, 10).forEach(i -> {
-            Characteristics characteristics = CharacteristicsBuilder.random()
+            Characteristics characteristics = CharacteristicsFactory.random()
                                                                     .withPhysicalActivity(high)
                                                                     .withSize(tiny)
                                                                     .build();
-            Animal animal = AnimalBuilder.random()
+            Animal animal = AnimalFactory.random()
                                          .withState(lookingForHuman)
                                          .withSpecies(dog)
                                          .withCharacteristics(characteristics)

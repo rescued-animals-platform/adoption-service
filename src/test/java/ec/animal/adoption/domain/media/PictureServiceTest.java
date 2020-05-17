@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.domain.media;
 
-import ec.animal.adoption.domain.animal.AnimalBuilder;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.AnimalRepository;
 import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
@@ -66,14 +66,14 @@ public class PictureServiceTest {
     @Test
     public void shouldCreateAPicture() {
         ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
-        LinkPicture primaryLinkPicture = LinkPictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(PictureType.PRIMARY).build();
+        LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         when(mediaRepository.save(imagePicture)).thenReturn(primaryLinkPicture);
         UUID animalId = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().build();
-        Animal animal = AnimalBuilder.random().withIdentifier(animalId).withOrganization(organization).build();
+        Organization organization = OrganizationFactory.random().build();
+        Animal animal = AnimalFactory.random().withIdentifier(animalId).withOrganization(organization).build();
         when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
-        Animal animalWithPrimaryLinkPicture = AnimalBuilder.random()
+        Animal animalWithPrimaryLinkPicture = AnimalFactory.random()
                                                            .withPrimaryLinkPicture(primaryLinkPicture)
                                                            .build();
         when(animalRepository.save(any(Animal.class))).thenReturn(animalWithPrimaryLinkPicture);
@@ -89,16 +89,16 @@ public class PictureServiceTest {
     @Test
     void shouldThrowEntityAlreadyExistsExceptionWhenThereIsAlreadyAPrimaryLinkPictureForAnimal() {
         UUID animalId = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().build();
-        Animal animal = AnimalBuilder.random()
+        Organization organization = OrganizationFactory.random().build();
+        Animal animal = AnimalFactory.random()
                                      .withIdentifier(animalId)
                                      .withOrganization(organization)
-                                     .withPrimaryLinkPicture(LinkPictureBuilder.random()
+                                     .withPrimaryLinkPicture(LinkPictureFactory.random()
                                                                                .withPictureType(PictureType.PRIMARY)
                                                                                .build())
                                      .build();
         when(animalRepository.getBy(animalId, organization)).thenReturn(animal);
-        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.PRIMARY).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(PictureType.PRIMARY).build();
 
         assertThrows(EntityAlreadyExistsException.class, () -> {
             pictureService.createFor(animalId, organization, imagePicture);
@@ -108,10 +108,10 @@ public class PictureServiceTest {
 
     @Test
     public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimary() {
-        ImagePicture imagePicture = ImagePictureBuilder.random().withPictureType(PictureType.ALTERNATE).build();
+        ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(PictureType.ALTERNATE).build();
 
         assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createFor(UUID.randomUUID(), OrganizationBuilder.random().build(), imagePicture);
+            pictureService.createFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
         });
     }
 
@@ -122,16 +122,16 @@ public class PictureServiceTest {
         when(imagePicture.isValid()).thenReturn(false);
 
         assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createFor(UUID.randomUUID(), OrganizationBuilder.random().build(), imagePicture);
+            pictureService.createFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
         });
     }
 
     @Test
     public void shouldGetPrimaryLinkPictureByAnimalId() {
-        LinkPicture expectedPrimaryLinkPicture = LinkPictureBuilder.random()
+        LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
                                                                    .withPictureType(PictureType.PRIMARY).build();
         UUID animalId = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().withIdentifier(animalId)
+        Animal animal = AnimalFactory.random().withIdentifier(animalId)
                                      .withPrimaryLinkPicture(expectedPrimaryLinkPicture).build();
         when(animalRepository.getBy(animalId)).thenReturn(animal);
 
@@ -143,7 +143,7 @@ public class PictureServiceTest {
     @Test
     public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPrimaryLinkPictureForAnimal() {
         UUID animalId = UUID.randomUUID();
-        Animal animal = AnimalBuilder.random().build();
+        Animal animal = AnimalFactory.random().build();
         when(animalRepository.getBy(animalId)).thenReturn(animal);
 
         assertThrows(EntityNotFoundException.class, () -> {

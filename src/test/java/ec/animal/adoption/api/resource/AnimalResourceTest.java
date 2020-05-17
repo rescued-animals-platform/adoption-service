@@ -26,15 +26,15 @@ import ec.animal.adoption.api.model.animal.CreateAnimalResponse;
 import ec.animal.adoption.api.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.domain.PagedEntity;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.animal.AnimalService;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
-import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoBuilder;
+import ec.animal.adoption.domain.animal.dto.CreateAnimalDtoFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import ec.animal.adoption.domain.state.StateName;
 import org.assertj.core.api.Assertions;
@@ -80,17 +80,17 @@ public class AnimalResourceTest {
     @BeforeEach
     public void setUp() {
         organizationId = UUID.randomUUID();
-        expectedAnimal = AnimalBuilder.random().build();
+        expectedAnimal = AnimalFactory.random().build();
         animalResource = new AnimalResource(animalService, organizationService, adminTokenUtils);
     }
 
     @Test
     public void shouldCreateAnAnimal() {
         CreateAnimalResponse expectedCreateAnimalResponse = CreateAnimalResponse.from(expectedAnimal);
-        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        CreateAnimalDto createAnimalDto = CreateAnimalDtoBuilder.random().withOrganization(organization).build();
+        CreateAnimalDto createAnimalDto = CreateAnimalDtoFactory.random().withOrganization(organization).build();
         CreateAnimalRequest createAnimalRequest = mock(CreateAnimalRequest.class);
         when(createAnimalRequest.toDomainWith(organization)).thenReturn(createAnimalDto);
         when(animalService.create(createAnimalDto)).thenReturn(expectedAnimal);
@@ -103,10 +103,10 @@ public class AnimalResourceTest {
     @Test
     public void shouldGetAnAnimalByItsIdentifier() {
         UUID animalId = UUID.randomUUID();
-        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        Animal animal = AnimalBuilder.random().build();
+        Animal animal = AnimalFactory.random().build();
         AnimalResponse expectedAnimalResponse = AnimalResponse.from(animal);
         when(animalService.getBy(animalId, organization)).thenReturn(animal);
 
@@ -118,10 +118,10 @@ public class AnimalResourceTest {
     @Test
     public void shouldReturnAllAnimalsWithPagination() {
         Pageable pageable = mock(Pageable.class);
-        Organization organization = OrganizationBuilder.random().withIdentifier(organizationId).build();
+        Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        PagedEntity<Animal> pageOfAnimals = new PagedEntity<>(Collections.singletonList(AnimalBuilder.random().build()));
+        PagedEntity<Animal> pageOfAnimals = new PagedEntity<>(Collections.singletonList(AnimalFactory.random().build()));
         when(animalService.listAllFor(organization, pageable)).thenReturn(pageOfAnimals);
 
         PagedEntity<AnimalResponse> pageOfAnimalResponses = animalResource.listAll(pageable, token);
@@ -139,9 +139,9 @@ public class AnimalResourceTest {
         Size size = getRandomSize();
         Pageable pageable = mock(Pageable.class);
         List<Animal> animalsFiltered = newArrayList(
-                AnimalBuilder.randomWithPrimaryLinkPicture().build(),
-                AnimalBuilder.randomWithPrimaryLinkPicture().build(),
-                AnimalBuilder.randomWithPrimaryLinkPicture().build()
+                AnimalFactory.randomWithPrimaryLinkPicture().build(),
+                AnimalFactory.randomWithPrimaryLinkPicture().build(),
+                AnimalFactory.randomWithPrimaryLinkPicture().build()
         );
         PagedEntity<Animal> pageOfAnimalsFiltered = new PagedEntity<>(animalsFiltered);
         when(animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable))

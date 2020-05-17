@@ -27,7 +27,7 @@ import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.animal.dto.CreateAnimalDto;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
@@ -93,7 +93,7 @@ class CreateAnimalRequestTest {
                                                                           estimatedAge,
                                                                           sex,
                                                                           null);
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
 
         CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
 
@@ -117,7 +117,7 @@ class CreateAnimalRequestTest {
                                                                           estimatedAge,
                                                                           sex,
                                                                           stateRequest);
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
 
         CreateAnimalDto createAnimalDto = createAnimalRequest.toDomainWith(organization);
 

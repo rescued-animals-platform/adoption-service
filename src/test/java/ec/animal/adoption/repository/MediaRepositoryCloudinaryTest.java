@@ -21,8 +21,8 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import ec.animal.adoption.domain.media.ImagePictureBuilder;
-import ec.animal.adoption.domain.media.LinkPictureBuilder;
+import ec.animal.adoption.domain.media.ImagePictureFactory;
+import ec.animal.adoption.domain.media.LinkPictureFactory;
 import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import ec.animal.adoption.domain.media.ImagePicture;
 import ec.animal.adoption.domain.media.LinkPicture;
@@ -68,7 +68,7 @@ public class MediaRepositoryCloudinaryTest {
 
     @Test
     public void shouldStorePicture() throws IOException {
-        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        ImagePicture imagePicture = ImagePictureFactory.random().build();
         String largeImageUrl = randomAlphabetic(10);
         String smallImageUrl = randomAlphabetic(10);
         Uploader uploader = mock(Uploader.class);
@@ -78,7 +78,7 @@ public class MediaRepositoryCloudinaryTest {
         when(uploader.upload(eq(imagePicture.getSmallImageContent()), anyMap()))
                 .thenReturn(Map.of("url", smallImageUrl));
 
-        LinkPicture expectedPicture = LinkPictureBuilder
+        LinkPicture expectedPicture = LinkPictureFactory
                 .random()
                 .withName(imagePicture.getName())
                 .withPictureType(imagePicture.getPictureType())
@@ -93,7 +93,7 @@ public class MediaRepositoryCloudinaryTest {
 
     @Test
     public void shouldThrowImageStorageExceptionWhenStoringLargeImage() throws IOException {
-        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        ImagePicture imagePicture = ImagePictureFactory.random().build();
         Uploader uploader = mock(Uploader.class);
         when(cloudinary.uploader()).thenReturn(uploader);
         when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))
@@ -106,7 +106,7 @@ public class MediaRepositoryCloudinaryTest {
 
     @Test
     public void shouldThrowImageStorageExceptionWhenStoringSmallImage() throws IOException {
-        ImagePicture imagePicture = ImagePictureBuilder.random().build();
+        ImagePicture imagePicture = ImagePictureFactory.random().build();
         Uploader uploader = mock(Uploader.class);
         when(cloudinary.uploader()).thenReturn(uploader);
         when(uploader.upload(eq(imagePicture.getLargeImageContent()), anyMap()))

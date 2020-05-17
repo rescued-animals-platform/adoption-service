@@ -27,7 +27,7 @@ import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsBuilder;
+import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.state.State;
@@ -260,7 +260,7 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                                                                    .withState(state)
                                                                    .withSpecies(species)
                                                                    .build()).getAnimalId();
-            createCharacteristics(animalId, CharacteristicsBuilder.random()
+            createCharacteristics(animalId, CharacteristicsFactory.random()
                                                                   .withPhysicalActivity(physicalActivity)
                                                                   .withSize(size)
                                                                   .build());

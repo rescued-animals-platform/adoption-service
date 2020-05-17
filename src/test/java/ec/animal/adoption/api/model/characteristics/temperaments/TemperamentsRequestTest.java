@@ -26,7 +26,7 @@ import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsBuilder;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,10 +77,10 @@ class TemperamentsRequestTest {
     @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> validTemperaments() {
         return Stream.of(
-                Arguments.of(TemperamentsBuilder.empty().withSociability(Sociability.SOCIABLE).build()),
-                Arguments.of(TemperamentsBuilder.empty().withBalance(Balance.NEITHER_BALANCED_NOR_POSSESSIVE).build()),
-                Arguments.of(TemperamentsBuilder.empty().withDocility(Docility.VERY_DOMINANT).build()),
-                Arguments.of(TemperamentsBuilder.random().build())
+                Arguments.of(TemperamentsFactory.empty().withSociability(Sociability.SOCIABLE).build()),
+                Arguments.of(TemperamentsFactory.empty().withBalance(Balance.NEITHER_BALANCED_NOR_POSSESSIVE).build()),
+                Arguments.of(TemperamentsFactory.empty().withDocility(Docility.VERY_DOMINANT).build()),
+                Arguments.of(TemperamentsFactory.random().build())
         );
     }
 

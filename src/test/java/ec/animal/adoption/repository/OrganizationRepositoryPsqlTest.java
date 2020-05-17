@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository;
 
-import ec.animal.adoption.domain.organization.OrganizationBuilder;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationRepository;
 import ec.animal.adoption.repository.jpa.JpaOrganizationRepository;
@@ -62,7 +62,7 @@ class OrganizationRepositoryPsqlTest {
 
     @Test
     public void shouldGetOrganizationByItsIdentifier() {
-        Organization organization = OrganizationBuilder.random().build();
+        Organization organization = OrganizationFactory.random().build();
         UUID organizationId = organization.getOrganizationId();
         when(jpaOrganizationRepository.findById(organizationId)).thenReturn(of(new JpaOrganization(organization)));
 

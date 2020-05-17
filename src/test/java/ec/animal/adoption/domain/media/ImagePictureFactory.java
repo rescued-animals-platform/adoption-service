@@ -22,38 +22,38 @@ package ec.animal.adoption.domain.media;
 import static ec.animal.adoption.TestUtils.getRandomPictureType;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class ImagePictureBuilder {
+public class ImagePictureFactory {
 
     private String name;
     private PictureType pictureType;
     private Image largeImage;
     private Image smallImage;
 
-    public static ImagePictureBuilder random() {
-        final ImagePictureBuilder imagePictureBuilder = new ImagePictureBuilder();
-        imagePictureBuilder.name = randomAlphabetic(10);
-        imagePictureBuilder.pictureType = getRandomPictureType();
-        imagePictureBuilder.largeImage = ImageBuilder.random().build();
-        imagePictureBuilder.smallImage = ImageBuilder.random().build();
-        return imagePictureBuilder;
+    public static ImagePictureFactory random() {
+        final ImagePictureFactory imagePictureFactory = new ImagePictureFactory();
+        imagePictureFactory.name = randomAlphabetic(10);
+        imagePictureFactory.pictureType = getRandomPictureType();
+        imagePictureFactory.largeImage = ImageFactory.random().build();
+        imagePictureFactory.smallImage = ImageFactory.random().build();
+        return imagePictureFactory;
     }
 
-    public ImagePictureBuilder withName(final String name) {
+    public ImagePictureFactory withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public ImagePictureBuilder withPictureType(final PictureType pictureType) {
+    public ImagePictureFactory withPictureType(final PictureType pictureType) {
         this.pictureType = pictureType;
         return this;
     }
 
-    public ImagePictureBuilder withLargeImage(final Image largeImage) {
+    public ImagePictureFactory withLargeImage(final Image largeImage) {
         this.largeImage = largeImage;
         return this;
     }
 
-    public ImagePictureBuilder withSmallImage(final Image smallImage) {
+    public ImagePictureFactory withSmallImage(final Image smallImage) {
         this.smallImage = smallImage;
         return this;
     }

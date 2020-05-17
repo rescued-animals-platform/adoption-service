@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.domain.animal.Animal;
-import ec.animal.adoption.domain.animal.AnimalBuilder;
+import ec.animal.adoption.domain.animal.AnimalFactory;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.StateName;
 import org.assertj.core.api.Assertions;
@@ -47,7 +47,7 @@ class CreateAnimalResponseTest {
 
     @Test
     void shouldBeSerializable() throws JsonProcessingException {
-        Animal animal = AnimalBuilder.random().withState(State.adopted(null)).build();
+        Animal animal = AnimalFactory.random().withState(State.adopted(null)).build();
         String expectedRegistrationDateAsJson = objectMapper.writeValueAsString(animal.getRegistrationDate());
         CreateAnimalResponse createAnimalResponse = CreateAnimalResponse.from(animal);
 
@@ -68,7 +68,7 @@ class CreateAnimalResponseTest {
     @Test
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         String notes = randomAlphabetic(10);
-        Animal animal = AnimalBuilder.random().withState(State.unavailable(notes)).build();
+        Animal animal = AnimalFactory.random().withState(State.unavailable(notes)).build();
         CreateAnimalResponse expectedCreateAnimalResponse = CreateAnimalResponse.from(animal);
         String createAnimalResponseAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())
