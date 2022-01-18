@@ -23,10 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static ec.animal.adoption.domain.media.SupportedImageExtension.JPEG;
-import static ec.animal.adoption.domain.media.SupportedImageExtension.JPG;
-import static ec.animal.adoption.domain.media.SupportedImageExtension.PNG;
-import static ec.animal.adoption.domain.media.SupportedImageExtension.getMatchFor;
+import static ec.animal.adoption.domain.media.SupportedImageExtension.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

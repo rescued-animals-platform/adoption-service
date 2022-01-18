@@ -16,13 +16,10 @@ undeploy:
 	@docker-compose down --remove-orphans -v
 
 unit-test:
-	./gradlew clean check --rerun-tasks
+	./gradlew clean build --rerun-tasks
 
 pitest:
 	./gradlew pitest --rerun-tasks
-
-style-check:
-	./gradlew pmdMain spotbugsMain pmdTest pmdIntegrationTest pmdApiTest --rerun-tasks
 
 integration-test: deploy-dependencies-only
 	@docker-compose build adoption-service-builder

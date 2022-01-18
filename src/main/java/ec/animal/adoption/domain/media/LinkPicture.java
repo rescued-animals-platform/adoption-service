@@ -122,7 +122,6 @@ public class LinkPicture extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -149,7 +148,6 @@ public class LinkPicture extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (name != null ? name.hashCode() : 0);

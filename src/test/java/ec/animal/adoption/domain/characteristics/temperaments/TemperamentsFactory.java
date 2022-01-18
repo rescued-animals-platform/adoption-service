@@ -19,9 +19,7 @@
 
 package ec.animal.adoption.domain.characteristics.temperaments;
 
-import static ec.animal.adoption.TestUtils.getRandomBalance;
-import static ec.animal.adoption.TestUtils.getRandomDocility;
-import static ec.animal.adoption.TestUtils.getRandomSociability;
+import static ec.animal.adoption.TestUtils.*;
 
 public class TemperamentsFactory {
 

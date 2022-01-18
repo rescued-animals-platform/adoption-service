@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@SuppressWarnings("PMD.DataClass")
 public class Characteristics extends Entity {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Characteristics.class);
@@ -118,7 +117,6 @@ public class Characteristics extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -145,7 +143,6 @@ public class Characteristics extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (size != null ? size.hashCode() : 0);

@@ -27,9 +27,7 @@ import ec.animal.adoption.domain.characteristics.Size;
 
 import java.util.Arrays;
 
-import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
+import static ec.animal.adoption.TestUtils.*;
 
 public class CharacteristicsRequestBuilder {
 

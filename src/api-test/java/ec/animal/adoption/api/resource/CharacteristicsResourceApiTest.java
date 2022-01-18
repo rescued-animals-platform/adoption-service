@@ -41,19 +41,11 @@ import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomBalance;
-import static ec.animal.adoption.TestUtils.getRandomDocility;
-import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
-import static ec.animal.adoption.TestUtils.getRandomSociability;
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class CharacteristicsResourceApiTest extends AbstractApiTest {
 
     private UUID animalId;

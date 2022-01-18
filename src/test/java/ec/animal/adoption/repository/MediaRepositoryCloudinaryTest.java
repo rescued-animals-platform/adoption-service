@@ -21,12 +21,7 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.ImagePictureFactory;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureFactory;
-import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.MediaRepository;
+import ec.animal.adoption.domain.media.*;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;

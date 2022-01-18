@@ -26,7 +26,6 @@ public enum Docility {
     VERY_DOCILE, DOCILE, NEITHER_DOCILE_NOR_DOMINANT, DOMINANT, VERY_DOMINANT;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Docility forValue(final String value) {
         return (Docility) EnumUtils.forValue(value)
                                    .apply(Docility.values())

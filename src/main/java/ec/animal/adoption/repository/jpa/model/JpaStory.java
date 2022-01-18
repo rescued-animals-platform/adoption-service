@@ -22,18 +22,13 @@ package ec.animal.adoption.repository.jpa.model;
 import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "story")
-@SuppressWarnings("PMD.ShortVariable")
 public class JpaStory implements Serializable {
 
     private transient static final long serialVersionUID = -242532859161428810L;
@@ -44,7 +39,6 @@ public class JpaStory implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
     private LocalDateTime registrationDate;
@@ -77,7 +71,6 @@ public class JpaStory implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -92,7 +85,6 @@ public class JpaStory implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }

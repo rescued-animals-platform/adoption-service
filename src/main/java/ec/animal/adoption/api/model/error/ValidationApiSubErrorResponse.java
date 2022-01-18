@@ -38,7 +38,6 @@ public class ValidationApiSubErrorResponse implements ApiSubErrorResponse {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -56,7 +55,6 @@ public class ValidationApiSubErrorResponse implements ApiSubErrorResponse {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = field != null ? field.hashCode() : 0;
         result = 31 * result + (message != null ? message.hashCode() : 0);

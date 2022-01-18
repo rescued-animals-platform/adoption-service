@@ -26,7 +26,6 @@ public enum EstimatedAge {
     YOUNG, YOUNG_ADULT, SENIOR_ADULT;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static EstimatedAge forValue(final String value) {
         return (EstimatedAge) EnumUtils.forValue(value)
                                        .apply(EstimatedAge.values())

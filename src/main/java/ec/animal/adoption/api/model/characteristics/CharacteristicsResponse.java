@@ -28,7 +28,6 @@ import ec.animal.adoption.domain.characteristics.FriendlyWith;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("PMD")
 public class CharacteristicsResponse {
 
     @JsonProperty("size")

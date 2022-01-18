@@ -38,7 +38,6 @@ public class MediaLink {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -56,7 +55,6 @@ public class MediaLink {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = publicId != null ? publicId.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);

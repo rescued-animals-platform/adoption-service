@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class StateNameTest {
 
@@ -56,7 +54,6 @@ class StateNameTest {
         assertEquals(stateName, deSerializedStateName);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> stateNames() {
         return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN),
                          Arguments.of(StateName.ADOPTED),
@@ -73,7 +70,6 @@ class StateNameTest {
         assertEquals(stateName, deSerializedStateName);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForStateName() {
         return Stream.of(Arguments.of(StateName.LOOKING_FOR_HUMAN, " LOOKING_FOR_HUMAN   "),
                          Arguments.of(StateName.ADOPTED, "ADOPTED "),

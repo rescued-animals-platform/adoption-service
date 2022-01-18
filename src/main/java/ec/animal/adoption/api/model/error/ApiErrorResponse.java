@@ -28,7 +28,6 @@ import java.util.List;
 public class ApiErrorResponse {
 
     @JsonProperty("timestamp")
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final LocalDateTime timestamp;
 
     @JsonProperty("status")
@@ -67,7 +66,6 @@ public class ApiErrorResponse {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -91,7 +89,6 @@ public class ApiErrorResponse {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = status != null ? status.hashCode() : 0;
         result = 31 * result + (message != null ? message.hashCode() : 0);

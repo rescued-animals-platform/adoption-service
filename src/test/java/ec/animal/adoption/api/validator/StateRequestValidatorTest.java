@@ -13,17 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.validation.ConstraintValidatorContext;
 import java.util.stream.Stream;
 
-import static ec.animal.adoption.domain.state.StateName.ADOPTED;
-import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
-import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
+import static ec.animal.adoption.domain.state.StateName.*;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StateRequestValidatorTest {
@@ -78,7 +74,6 @@ class StateRequestValidatorTest {
         verifyNoInteractions(context);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> validCreateStateRequests() {
         return Stream.of(
                 Arguments.of(new StateRequest(LOOKING_FOR_HUMAN, null, null)),

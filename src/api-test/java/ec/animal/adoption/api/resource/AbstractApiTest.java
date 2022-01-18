@@ -30,7 +30,6 @@ import java.time.Duration;
 
 import static java.lang.System.getenv;
 
-@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractApiTest {
 
     static final String ANIMALS_ADMIN_URL = "/adoption/admin/animals";

@@ -25,13 +25,8 @@ import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
 import ec.animal.adoption.domain.state.State;
 
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomSex;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomStateName;
-import static ec.animal.adoption.domain.state.StateName.ADOPTED;
-import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
-import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
+import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.domain.state.StateName.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class CreateAnimalRequestBuilder {
@@ -81,7 +76,6 @@ public class CreateAnimalRequestBuilder {
         return this;
     }
 
-    @SuppressWarnings("PMD.NullAssignment")
     public CreateAnimalRequestBuilder withState(final State state) {
         if (state == null) {
             this.stateRequest = null;

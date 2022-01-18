@@ -26,7 +26,6 @@ public enum PictureType {
     PRIMARY, ALTERNATE;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static PictureType forValue(final String value) {
         return (PictureType) EnumUtils.forValue(value)
                                       .apply(PictureType.values())

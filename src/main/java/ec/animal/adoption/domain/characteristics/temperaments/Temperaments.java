@@ -50,7 +50,6 @@ public class Temperaments {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -71,7 +70,6 @@ public class Temperaments {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = sociability != null ? sociability.hashCode() : 0;
         result = 31 * result + (docility != null ? docility.hashCode() : 0);

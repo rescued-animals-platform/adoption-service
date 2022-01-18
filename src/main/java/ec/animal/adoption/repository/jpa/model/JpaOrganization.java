@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "organization")
-@SuppressWarnings("PMD.ShortVariable")
 public class JpaOrganization implements Serializable {
 
     private transient static final long serialVersionUID = -579031381673428820L;

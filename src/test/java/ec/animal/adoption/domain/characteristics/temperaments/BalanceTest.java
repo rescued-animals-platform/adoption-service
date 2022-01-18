@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BalanceTest {
 
@@ -56,7 +54,6 @@ class BalanceTest {
         assertEquals(balance, deSerializedBalance);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> balances() {
         return Stream.of(Arguments.of(Balance.VERY_BALANCED),
                          Arguments.of(Balance.BALANCED),
@@ -75,7 +72,6 @@ class BalanceTest {
         assertEquals(balance, deSerializedBalance);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForBalance() {
         return Stream.of(
                 Arguments.of(Balance.VERY_BALANCED, " VERY_BALANCED   "),

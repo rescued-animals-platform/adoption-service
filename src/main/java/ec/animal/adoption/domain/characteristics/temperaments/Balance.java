@@ -26,7 +26,6 @@ public enum Balance {
     VERY_BALANCED, BALANCED, NEITHER_BALANCED_NOR_POSSESSIVE, POSSESSIVE, VERY_POSSESSIVE;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Balance forValue(final String value) {
         return (Balance) EnumUtils.forValue(value)
                                   .apply(Balance.values())

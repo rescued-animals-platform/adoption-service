@@ -22,9 +22,7 @@ package ec.animal.adoption.domain.characteristics.temperaments;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import static ec.animal.adoption.TestUtils.getRandomBalance;
-import static ec.animal.adoption.TestUtils.getRandomDocility;
-import static ec.animal.adoption.TestUtils.getRandomSociability;
+import static ec.animal.adoption.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

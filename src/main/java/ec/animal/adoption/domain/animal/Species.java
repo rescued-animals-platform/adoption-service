@@ -26,7 +26,6 @@ public enum Species {
     DOG, CAT;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Species forValue(final String value) {
         return (Species) EnumUtils.forValue(value)
                                   .apply(Species.values())

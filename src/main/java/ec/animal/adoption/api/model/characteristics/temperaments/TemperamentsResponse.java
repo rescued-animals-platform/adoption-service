@@ -26,7 +26,6 @@ import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 
-@SuppressWarnings("PMD")
 public class TemperamentsResponse {
 
     @JsonProperty("sociability")

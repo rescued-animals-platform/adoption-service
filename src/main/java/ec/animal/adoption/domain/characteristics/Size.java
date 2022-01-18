@@ -26,7 +26,6 @@ public enum Size {
     TINY, SMALL, MEDIUM, BIG, OUTSIZE;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Size forValue(final String value) {
         return (Size) EnumUtils.forValue(value)
                                .apply(Size.values())

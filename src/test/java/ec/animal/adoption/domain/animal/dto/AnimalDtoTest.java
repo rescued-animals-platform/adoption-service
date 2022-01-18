@@ -28,14 +28,10 @@ import ec.animal.adoption.domain.state.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomSex;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
+import static ec.animal.adoption.TestUtils.*;
 import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AnimalDtoTest {
 

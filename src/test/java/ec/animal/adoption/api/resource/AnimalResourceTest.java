@@ -51,10 +51,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomStateName;
+import static ec.animal.adoption.TestUtils.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SizeTest {
 
@@ -56,7 +54,6 @@ class SizeTest {
         assertEquals(size, deSerializedSize);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> sizes() {
         return Stream.of(Arguments.of(Size.TINY),
                          Arguments.of(Size.SMALL),
@@ -75,7 +72,6 @@ class SizeTest {
         assertEquals(size, deSerializedSize);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSize() {
         return Stream.of(Arguments.of(Size.TINY, " TINY   "),
                          Arguments.of(Size.SMALL, "SMALL "),

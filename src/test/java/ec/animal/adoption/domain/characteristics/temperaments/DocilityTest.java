@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DocilityTest {
 
@@ -56,7 +54,6 @@ class DocilityTest {
         assertEquals(docility, deSerializedDocility);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> docilityValues() {
         return Stream.of(Arguments.of(Docility.VERY_DOCILE),
                          Arguments.of(Docility.DOCILE),
@@ -75,7 +72,6 @@ class DocilityTest {
         assertEquals(docility, deSerializedDocility);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForDocility() {
         return Stream.of(Arguments.of(Docility.VERY_DOCILE, " VERY_DOCILE   "),
                          Arguments.of(Docility.DOCILE, "DOCILE "),

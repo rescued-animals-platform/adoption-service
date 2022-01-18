@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SpeciesTest {
 
@@ -56,7 +54,6 @@ class SpeciesTest {
         assertEquals(species, deSerializedSpecies);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> species() {
         return Stream.of(Arguments.of(Species.DOG), Arguments.of(Species.CAT));
     }
@@ -71,7 +68,6 @@ class SpeciesTest {
         assertEquals(species, deSerializedSpecies);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSpecies() {
         return Stream.of(Arguments.of(Species.DOG, " DOG   "), Arguments.of(Species.CAT, "CAT "));
     }

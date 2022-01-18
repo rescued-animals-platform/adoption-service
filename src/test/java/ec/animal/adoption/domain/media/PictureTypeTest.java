@@ -14,9 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PictureTypeTest {
 
@@ -37,7 +35,6 @@ class PictureTypeTest {
         assertEquals(pictureType, deSerializedPictureType);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> pictureTypes() {
         return Stream.of(Arguments.of(PictureType.PRIMARY), Arguments.of(PictureType.ALTERNATE));
     }
@@ -52,7 +49,6 @@ class PictureTypeTest {
         assertEquals(pictureType, deSerializedPictureType);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForPictureType() {
         return Stream.of(Arguments.of(PictureType.PRIMARY, " PRIMARY   "),
                          Arguments.of(PictureType.ALTERNATE, "ALTERNATE "));

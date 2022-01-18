@@ -37,9 +37,7 @@ import java.util.UUID;
 
 import static ec.animal.adoption.TestUtils.getObjectMapper;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AnimalDtoResponseTest {
 

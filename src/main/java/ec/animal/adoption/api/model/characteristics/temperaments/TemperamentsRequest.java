@@ -22,11 +22,11 @@ package ec.animal.adoption.api.model.characteristics.temperaments;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.api.validator.ValidTemperamentsRequest;
 import ec.animal.adoption.domain.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.api.validator.ValidTemperamentsRequest;
 
 @ValidTemperamentsRequest
 public class TemperamentsRequest {

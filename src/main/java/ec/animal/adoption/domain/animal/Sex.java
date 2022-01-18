@@ -26,7 +26,6 @@ public enum Sex {
     MALE, FEMALE;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Sex forValue(final String value) {
         return (Sex) EnumUtils.forValue(value)
                               .apply(Sex.values())

@@ -68,7 +68,6 @@ public class ImagePicture {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -92,7 +91,6 @@ public class ImagePicture {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (pictureType != null ? pictureType.hashCode() : 0);

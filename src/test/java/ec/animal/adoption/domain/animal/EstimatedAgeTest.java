@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EstimatedAgeTest {
 
@@ -56,7 +54,6 @@ class EstimatedAgeTest {
         assertEquals(estimatedAge, deSerializedEstimatedAge);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> estimatedAges() {
         return Stream.of(
                 Arguments.of(EstimatedAge.YOUNG),
@@ -75,7 +72,6 @@ class EstimatedAgeTest {
         assertEquals(estimatedAge, deSerializedEstimatedAge);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForEstimatedAge() {
         return Stream.of(
                 Arguments.of(EstimatedAge.YOUNG, " YOUNG   "),

@@ -29,7 +29,6 @@ import ec.animal.adoption.domain.media.LinkPicture;
 
 import java.util.UUID;
 
-@SuppressWarnings("PMD")
 public class AnimalDtoResponse {
 
     @JsonProperty("id")

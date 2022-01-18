@@ -30,7 +30,6 @@ import ec.animal.adoption.domain.animal.Animal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@SuppressWarnings("PMD")
 public class AnimalResponse {
 
     @JsonProperty("id")

@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FriendlyWithTest {
 
@@ -56,7 +54,6 @@ class FriendlyWithTest {
         assertEquals(friendlyWith, deSerializedFriendlyWith);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> friendlyWiths() {
         return Stream.of(Arguments.of(FriendlyWith.ADULTS),
                          Arguments.of(FriendlyWith.CATS),
@@ -75,7 +72,6 @@ class FriendlyWithTest {
         assertEquals(friendlyWith, deSerializedFriendlyWith);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForFriendlyWith() {
         return Stream.of(Arguments.of(FriendlyWith.DOGS, " DOGS   "),
                          Arguments.of(FriendlyWith.CATS, "CATS "),

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.media.LinkPicture;
 
-@SuppressWarnings("PMD")
 public class LinkPictureResponse {
 
     @JsonProperty("name")

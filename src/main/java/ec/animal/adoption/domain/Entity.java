@@ -37,7 +37,6 @@ public abstract class Entity {
         this.registrationDate = registrationDate;
     }
 
-    @SuppressWarnings({"PMD.NullAssignment"})
     protected Entity() {
         this.identifier = null;
         this.registrationDate = null;
@@ -48,7 +47,6 @@ public abstract class Entity {
     public abstract LocalDateTime getRegistrationDate();
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -66,7 +64,6 @@ public abstract class Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = identifier != null ? identifier.hashCode() : 0;
         result = 31 * result + (registrationDate != null ? registrationDate.hashCode() : 0);

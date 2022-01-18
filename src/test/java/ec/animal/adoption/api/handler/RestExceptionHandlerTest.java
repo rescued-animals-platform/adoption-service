@@ -21,12 +21,7 @@ package ec.animal.adoption.api.handler;
 
 import ec.animal.adoption.api.model.error.ApiErrorResponse;
 import ec.animal.adoption.api.model.error.ValidationApiSubErrorResponse;
-import ec.animal.adoption.domain.exception.EntityAlreadyExistsException;
-import ec.animal.adoption.domain.exception.EntityNotFoundException;
-import ec.animal.adoption.domain.exception.IllegalUpdateException;
-import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.exception.MediaStorageException;
-import ec.animal.adoption.domain.exception.UnauthorizedException;
+import ec.animal.adoption.domain.exception.*;
 import ec.animal.adoption.domain.media.SupportedImageExtension;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,12 +41,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

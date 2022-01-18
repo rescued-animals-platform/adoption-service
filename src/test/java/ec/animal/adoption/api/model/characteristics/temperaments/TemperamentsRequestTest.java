@@ -22,11 +22,7 @@ package ec.animal.adoption.api.model.characteristics.temperaments;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
+import ec.animal.adoption.domain.characteristics.temperaments.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +35,7 @@ import javax.validation.ConstraintViolation;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static ec.animal.adoption.TestUtils.getRandomBalance;
-import static ec.animal.adoption.TestUtils.getRandomDocility;
-import static ec.animal.adoption.TestUtils.getRandomSociability;
-import static ec.animal.adoption.TestUtils.getValidator;
+import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +67,6 @@ class TemperamentsRequestTest {
         assertEquals(expectedTemperaments, temperaments);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> validTemperaments() {
         return Stream.of(
                 Arguments.of(TemperamentsFactory.empty().withSociability(Sociability.SOCIABLE).build()),

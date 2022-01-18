@@ -7,10 +7,8 @@ buildscript {
 plugins {
     id "java"
     id "idea"
-    id "pmd"
     id "org.sonarqube" version "3.3"
     id "info.solidsoft.pitest" version "1.7.0"
-    id 'com.github.spotbugs' version "4.2.0"
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id "org.springframework.boot" version "2.3.0.RELEASE"
 }
@@ -19,8 +17,6 @@ apply from: "gradle/idea.gradle"
 apply from: "gradle/dependencies.gradle"
 apply from: "gradle/sourceset.gradle"
 apply from: "gradle/pitest.gradle"
-apply from: "gradle/pmd.gradle"
-apply from: "gradle/spotbugs.gradle"
 apply from: "gradle/sonarqube.gradle"
 
 

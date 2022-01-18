@@ -31,11 +31,7 @@ import ec.animal.adoption.domain.state.StateName;
 import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,7 +40,6 @@ import java.util.UUID;
 import static java.util.Optional.ofNullable;
 
 @Entity(name = "animal")
-@SuppressWarnings("PMD.ShortVariable")
 public class JpaAnimal implements Serializable {
 
     private transient static final long serialVersionUID = -632732651164438810L;
@@ -70,7 +65,6 @@ public class JpaAnimal implements Serializable {
     private String sex;
 
     @NotNull
-    @SuppressWarnings({"PMD.SingularField", "PMD.UnusedPrivateField"})
     private String stateName;
 
     private String adoptionFormId;
@@ -158,7 +152,6 @@ public class JpaAnimal implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -173,7 +166,6 @@ public class JpaAnimal implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }

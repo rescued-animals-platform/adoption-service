@@ -37,17 +37,11 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomSex;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomState;
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AnimalTest {
 

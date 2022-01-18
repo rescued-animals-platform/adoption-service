@@ -26,10 +26,7 @@ import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
 
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomSex;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomState;
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class AnimalDtoFactory {

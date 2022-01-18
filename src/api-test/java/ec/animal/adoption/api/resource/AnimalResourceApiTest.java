@@ -42,22 +42,14 @@ import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSex;
-import static ec.animal.adoption.TestUtils.getRandomSize;
-import static ec.animal.adoption.TestUtils.getRandomSpecies;
-import static ec.animal.adoption.TestUtils.getRandomState;
+import static ec.animal.adoption.TestUtils.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.text.MatchesPattern.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.UseObjectForClearerAPI"})
 public class AnimalResourceApiTest extends AbstractApiTest {
 
     private String clinicalRecord;

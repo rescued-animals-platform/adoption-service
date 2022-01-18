@@ -49,7 +49,6 @@ public class JpaFriendlyWith implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -64,7 +63,6 @@ public class JpaFriendlyWith implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         return friendlyWith != null ? friendlyWith.hashCode() : 0;
     }

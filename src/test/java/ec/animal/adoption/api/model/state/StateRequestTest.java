@@ -4,9 +4,7 @@ import ec.animal.adoption.domain.state.State;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static ec.animal.adoption.domain.state.StateName.ADOPTED;
-import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
-import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
+import static ec.animal.adoption.domain.state.StateName.*;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

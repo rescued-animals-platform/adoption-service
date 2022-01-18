@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings({"PMD.DataClass", "PMD.NullAssignment", "PMD.ExcessiveParameterList"})
 public class Animal extends Entity {
 
     private final String clinicalRecord;
@@ -165,7 +164,6 @@ public class Animal extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -210,7 +208,6 @@ public class Animal extends Entity {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (clinicalRecord != null ? clinicalRecord.hashCode() : 0);

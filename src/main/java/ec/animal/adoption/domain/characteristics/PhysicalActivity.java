@@ -26,7 +26,6 @@ public enum PhysicalActivity {
     HIGH, MEDIUM, LOW;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static PhysicalActivity forValue(final String value) {
         return (PhysicalActivity) EnumUtils.forValue(value)
                                            .apply(PhysicalActivity.values())

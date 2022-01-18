@@ -41,15 +41,10 @@ import org.junit.jupiter.api.Test;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
-import static ec.animal.adoption.TestUtils.getValidator;
+import static ec.animal.adoption.TestUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CharacteristicsRequestTest {
 

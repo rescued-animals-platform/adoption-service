@@ -10,7 +10,6 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractJpaRepositoryIntegrationTest {
 
     @Autowired

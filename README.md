@@ -59,11 +59,7 @@ _**(Always, before running the api tests)**_
     
         make pitest
         
-3. Check code style with:
-        
-        make style-check
-        
-   Task unit-test also checks the code style by default before running the unit tests.
+3. Check code style with SonarLint.
 
 3. Run integration tests with:
 

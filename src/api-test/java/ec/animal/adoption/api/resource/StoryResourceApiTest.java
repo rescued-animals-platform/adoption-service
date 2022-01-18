@@ -31,11 +31,8 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StoryResourceApiTest extends AbstractApiTest {
 
     private UUID animalId;

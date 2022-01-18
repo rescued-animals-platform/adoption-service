@@ -33,9 +33,7 @@ jobs:
             - v2-dependencies-{{ checksum "build.gradle" }}
             - v2-dependencies-
 
-      - run: ./gradlew dependencies
-
-      - run: ./gradlew clean build --rerun-tasks
+      - run: make unit-test
 
       - run: ./gradlew bootJar --rerun-tasks
 

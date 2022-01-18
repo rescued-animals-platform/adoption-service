@@ -36,7 +36,6 @@ public class PagedEntity<T> extends PageImpl<T> {
 
     private transient static final long serialVersionUID = -721000112304438810L;
 
-    @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.UnusedFormalParameter"})
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     private PagedEntity(final @JsonProperty("content") List<T> content,
                         final @JsonProperty("number") int number,

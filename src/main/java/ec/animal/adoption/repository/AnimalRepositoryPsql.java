@@ -54,7 +54,6 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Animal create(final AnimalDto animalDto) {
         try {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animalDto));
@@ -66,7 +65,6 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Animal save(final Animal animal) {
         try {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));

@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SexTest {
 
@@ -56,7 +54,6 @@ class SexTest {
         assertEquals(sex, deSerializedSex);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> sexes() {
         return Stream.of(Arguments.of(Sex.FEMALE), Arguments.of(Sex.MALE));
     }
@@ -71,7 +68,6 @@ class SexTest {
         assertEquals(sex, deSerializedSex);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSex() {
         return Stream.of(
                 Arguments.of(Sex.MALE, " MALE   "),

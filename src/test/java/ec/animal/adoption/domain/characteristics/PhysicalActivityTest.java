@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PhysicalActivityTest {
 
@@ -56,7 +54,6 @@ class PhysicalActivityTest {
         assertEquals(physicalActivity, deSerializedPhysicalActivity);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> physicalActivities() {
         return Stream.of(Arguments.of(PhysicalActivity.HIGH),
                          Arguments.of(PhysicalActivity.MEDIUM),
@@ -73,7 +70,6 @@ class PhysicalActivityTest {
         assertEquals(physicalActivity, deSerializedPhysicalActivity);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForPhysicalActivity() {
         return Stream.of(Arguments.of(PhysicalActivity.LOW, " LOW   "),
                          Arguments.of(PhysicalActivity.MEDIUM, "MEDIUM "),

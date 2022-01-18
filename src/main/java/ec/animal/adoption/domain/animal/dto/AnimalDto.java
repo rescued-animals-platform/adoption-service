@@ -30,7 +30,6 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("PMD.DataClass")
 public class AnimalDto {
 
     private final String clinicalRecord;

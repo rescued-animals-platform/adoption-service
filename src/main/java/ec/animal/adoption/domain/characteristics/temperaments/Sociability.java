@@ -26,7 +26,6 @@ public enum Sociability {
     VERY_SOCIABLE, SOCIABLE, NEITHER_SOCIABLE_NOR_SHY, SHY, VERY_SHY;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Sociability forValue(final String value) {
         return (Sociability) EnumUtils.forValue(value)
                                       .apply(Sociability.values())

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.state.State;
 
-@SuppressWarnings("PMD")
 public class StateResponse {
 
     @JsonProperty("name")

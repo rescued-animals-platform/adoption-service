@@ -26,7 +26,6 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 
 @EnableCircuitBreaker
 @SpringBootApplication
-@SuppressWarnings("PMD")
 public class AdoptionServiceApplication {
 
     public static void main(String[] args) {

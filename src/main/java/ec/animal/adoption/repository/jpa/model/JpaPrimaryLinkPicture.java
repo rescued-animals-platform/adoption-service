@@ -24,18 +24,13 @@ import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "primary_link_picture")
-@SuppressWarnings("PMD.ShortVariable")
 public class JpaPrimaryLinkPicture implements Serializable {
 
     private transient static final long serialVersionUID = -832433659194420810L;
@@ -46,7 +41,6 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private JpaAnimal jpaAnimal;
 
     private LocalDateTime registrationDate;
@@ -95,7 +89,6 @@ public class JpaPrimaryLinkPicture implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -110,7 +103,6 @@ public class JpaPrimaryLinkPicture implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }

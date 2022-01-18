@@ -22,9 +22,9 @@ package ec.animal.adoption.api.model.state;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.animal.adoption.api.validator.ValidStateRequest;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.StateName;
-import ec.animal.adoption.api.validator.ValidStateRequest;
 
 @ValidStateRequest
 public class StateRequest {

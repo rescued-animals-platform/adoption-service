@@ -53,7 +53,6 @@ public class Image {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -74,7 +73,6 @@ public class Image {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         int result = extension != null ? extension.hashCode() : 0;
         result = 31 * result + Arrays.hashCode(content);

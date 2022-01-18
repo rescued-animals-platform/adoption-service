@@ -27,9 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
+import static ec.animal.adoption.TestUtils.*;
 
 public class CharacteristicsFactory {
 

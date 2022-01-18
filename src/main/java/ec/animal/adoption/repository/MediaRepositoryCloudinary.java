@@ -76,7 +76,6 @@ public class MediaRepositoryCloudinary implements MediaRepository {
         return new MediaLink(publicId, url);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private LinkPicture saveFallback(@NonNull final ImagePicture imagePicture,
                                      @NonNull final Organization organization) {
         LOGGER.info("Fallback for Cloudinary save");
@@ -96,7 +95,6 @@ public class MediaRepositoryCloudinary implements MediaRepository {
         }
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod", "PMD.UnusedFormalParameter"})
     private void deleteFallback(@NonNull final LinkPicture existingLinkPicture) {
         LOGGER.info("Fallback for Cloudinary delete. Couldn't delete one or more resources with public ids: {}, {}",
                     existingLinkPicture.getLargeImagePublicId(),

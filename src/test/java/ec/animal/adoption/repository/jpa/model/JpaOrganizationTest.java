@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.Organization;
+import ec.animal.adoption.domain.organization.OrganizationFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;

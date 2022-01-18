@@ -30,13 +30,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
-import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
-import static ec.animal.adoption.TestUtils.getRandomSize;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ec.animal.adoption.TestUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacteristicsTest {
 

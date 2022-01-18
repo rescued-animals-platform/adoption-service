@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.organization;
 
 import java.util.UUID;
 
-@SuppressWarnings("PMD.DataClass")
 public class Organization {
 
     private final UUID organizationId;
@@ -70,7 +69,6 @@ public class Organization {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -85,7 +83,6 @@ public class Organization {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public int hashCode() {
         return organizationId != null ? organizationId.hashCode() : 0;
     }

@@ -26,7 +26,6 @@ public enum StateName {
     LOOKING_FOR_HUMAN, ADOPTED, UNAVAILABLE;
 
     @JsonCreator
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static StateName forValue(final String value) {
         return (StateName) EnumUtils.forValue(value)
                                     .apply(StateName.values())

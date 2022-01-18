@@ -33,9 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SociabilityTest {
 
@@ -56,7 +54,6 @@ class SociabilityTest {
         assertEquals(sociability, deSerializedSociability);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> sociabilityValues() {
         return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE),
                          Arguments.of(Sociability.SOCIABLE),
@@ -75,7 +72,6 @@ class SociabilityTest {
         assertEquals(sociability, deSerializedSociability);
     }
 
-    @SuppressWarnings({"PMD.UnusedPrivateMethod"})
     private static Stream<Arguments> expectedNamesWithSpacesForSociability() {
         return Stream.of(Arguments.of(Sociability.VERY_SOCIABLE, " VERY_SOCIABLE   "),
                          Arguments.of(Sociability.SOCIABLE, "SOCIABLE "),

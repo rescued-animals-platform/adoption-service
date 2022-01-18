@@ -36,7 +36,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Optional;
 
-@SuppressWarnings("PMD.DataClass")
 public class AnimalCreateUpdateRequest {
 
     @NotEmpty(message = "Animal clinical record is required")
