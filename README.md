@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/rescued-animals-platform/adoption-service.svg?style=shield)](https://circleci.com/gh/rescued-animals-platform/adoption-service)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rescued-animals-platform_adoption-service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=rescued-animals-platform_adoption-service)
 
-Tech stack: Java 11, Gradle 6.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Heroku.
+Tech stack: Java 11, Gradle 7.3.3, SpringBoot 2.2.6.RELEASE, Flyway, Docker Engine v19.03.8, PostgresSQL 10.6, Heroku.
 
 # Setting up your development environment (Linux, macOS)
 
