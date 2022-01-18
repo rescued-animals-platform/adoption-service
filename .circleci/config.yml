@@ -5,7 +5,7 @@ version: 2.1
 ####################
 
 orbs:
-  heroku: circleci/heroku@1.0.1
+  heroku: circleci/heroku@1.2.6
 
 executors:
   builder:
@@ -35,7 +35,7 @@ jobs:
 
       - run: ./gradlew dependencies
 
-      - run: ./gradlew cleanTest test --rerun-tasks
+      - run: ./gradlew clean build --rerun-tasks
 
       - run: ./gradlew bootJar --rerun-tasks
 
@@ -101,31 +101,6 @@ jobs:
       - store_artifacts:
           path: build/reports/pitest
 
-  style-check:
-    executor: builder
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ checksum "build.gradle" }}
-            - v2-dependencies-
-
-      - run: make style-check
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v2-dependencies-{{ checksum "build.gradle" }}
-
-      - store_artifacts:
-          path: build/reports/pmd
-
-      - store_artifacts:
-          path: build/reports/spotbugs
-
   sonar:
     executor: builder
 
@@ -140,7 +115,7 @@ jobs:
 
       - run:
           name: Analyze code on SonarCloud
-          command: ./gradlew build sonarqube
+          command: ./gradlew sonarqube
 
       - save_cache:
           paths:
@@ -353,12 +328,6 @@ workflows:
           filters:
             branches:
               only: master
-      - style-check:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
       - sonar:
           context: SonarCloud
           requires:
@@ -381,7 +350,6 @@ workflows:
       - deploy-uat:
           requires:
             - pitest
-            - style-check
             - sonar
             - integration-test
             - api-test
