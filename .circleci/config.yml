@@ -126,6 +126,27 @@ jobs:
       - store_artifacts:
           path: build/reports/spotbugs
 
+  sonar:
+    executor: builder
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
+
+      - run:
+          name: Analyze code on SonarCloud
+          command: ./gradlew build sonarqube
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v2-dependencies-{{ checksum "build.gradle" }}
+
   integration-test:
     executor: builder
 
@@ -338,6 +359,12 @@ workflows:
           filters:
             branches:
               only: master
+      - sonar:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
       - integration-test:
           requires:
             - build
@@ -354,6 +381,7 @@ workflows:
           requires:
             - pitest
             - style-check
+            - sonar
             - integration-test
             - api-test
           filters:

@@ -1,5 +1,5 @@
 pitest {
-    junit5PluginVersion = '0.12'
+    junit5PluginVersion = '0.15'
     targetClasses = ['ec.animal.adoption.*']
     excludedClasses = [
             'ec.animal.adoption.AdoptionServiceApplication',
@@ -9,7 +9,7 @@ pitest {
     excludedMethods = ['equals', 'hashCode']
     threads = 5
     timestampedReports = false
-    outputFormats = ['XML', 'HTML']
+    outputFormats = ['HTML']
     coverageThreshold = 95
     mutationThreshold = 95
     timeoutConstInMillis = 5000
