@@ -7,6 +7,7 @@ buildscript {
 plugins {
     id "java"
     id "idea"
+    id "jacoco"
     id "org.sonarqube" version "3.3"
     id "info.solidsoft.pitest" version "1.7.0"
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
@@ -18,6 +19,7 @@ apply from: "gradle/dependencies.gradle"
 apply from: "gradle/sourceset.gradle"
 apply from: "gradle/pitest.gradle"
 apply from: "gradle/sonarqube.gradle"
+apply from: "gradle/jacoco.gradle"
 
 
 group "ec.animal.adoption"
@@ -43,6 +45,10 @@ configurations {
     apiTestCompileOnly.extendsFrom(testCompileOnly)
     integrationTestRuntimeOnly.extendsFrom(testRuntimeOnly)
     apiTestRuntimeOnly.extendsFrom(testRuntimeOnly)
+}
+
+test {
+    finalizedBy jacocoTestReport
 }
 
 task integrationTest(type: Test) {

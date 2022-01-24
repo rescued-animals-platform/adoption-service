@@ -76,6 +76,7 @@ jobs:
             - system.properties
             - .gitignore
             - .git
+            - build/reports/jacoco
 
   pitest:
     executor: builder
@@ -89,7 +90,9 @@ jobs:
             - v2-dependencies-{{ checksum "build.gradle" }}
             - v2-dependencies-
 
-      - run: ./gradlew clean pitest
+      - run:
+          name: Run pitest analysis
+          command: ./gradlew clean pitest
 
       - save_cache:
           paths:
