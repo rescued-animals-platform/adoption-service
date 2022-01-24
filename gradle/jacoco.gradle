@@ -10,3 +10,13 @@ jacocoTestReport {
         html.required = false
     }
 }
+
+test {
+    jacoco {
+        excludes = [
+                'ec.animal.adoption.AdoptionServiceApplication',
+                'ec.animal.adoption.domain.PagedEntity',
+                'ec.animal.adoption.configuration.*',
+        ]
+    }
+}
