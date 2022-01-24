@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
+@JacocoExcludeGenerated
 public class CloudinaryConfiguration {
 
     @Value("${cloudinary.cloud-name:}")
