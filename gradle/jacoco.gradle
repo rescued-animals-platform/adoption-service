@@ -25,9 +25,9 @@ jacocoTestReport {
 test {
     jacoco {
         excludes += [
-                'ec.animal.adoption.AdoptionServiceApplication',
-                'ec.animal.adoption.domain.PagedEntity',
-                'ec.animal.adoption.configuration.*',
+                'ec/animal/adoption/AdoptionServiceApplication.class',
+                'ec/animal/adoption/domain/PagedEntity.class',
+                'ec/animal/adoption/configuration/**/*',
         ]
     }
 }
