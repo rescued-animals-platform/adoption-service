@@ -42,7 +42,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 
 @EnableWebSecurity
-@JacocoExcludeGenerated
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${auth0.audience}")

@@ -19,7 +19,6 @@
 
 package ec.animal.adoption;
 
-import ec.animal.adoption.configuration.JacocoExcludeGenerated;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +26,6 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 
 @EnableCircuitBreaker
 @SpringBootApplication
-@JacocoExcludeGenerated
 public class AdoptionServiceApplication {
 
     public static void main(String[] args) {

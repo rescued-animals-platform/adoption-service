@@ -10,24 +10,4 @@ jacocoTestReport {
         csv.required = false
         html.required = false
     }
-
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    'ec/animal/adoption/AdoptionServiceApplication.class',
-                    'ec/animal/adoption/domain/PagedEntity.class',
-                    'ec/animal/adoption/configuration/*',
-            ])
-        }))
-    }
-}
-
-test {
-    jacoco {
-        excludes += [
-                'ec/animal/adoption/AdoptionServiceApplication.class',
-                'ec/animal/adoption/domain/PagedEntity.class',
-                'ec/animal/adoption/configuration/**/*',
-        ]
-    }
 }
