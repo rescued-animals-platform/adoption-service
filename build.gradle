@@ -47,10 +47,6 @@ configurations {
     apiTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 }
 
-test {
-    finalizedBy jacocoTestReport
-}
-
 task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath

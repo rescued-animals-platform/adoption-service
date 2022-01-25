@@ -8,6 +8,18 @@ jacocoTestReport {
     reports {
         xml.required = true
         csv.required = false
-        html.required = false
+        html.required = true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "ec/animal/adoption/AdoptionServiceApplication.class",
+                    "ec/animal/adoption/domain/PagedEntity.class",
+                    "ec/animal/adoption/configuration/*",
+            ])
+        }))
     }
 }
+
+test.finalizedBy(project.tasks.jacocoTestReport)

@@ -21,6 +21,9 @@ unit-test:
 pitest:
 	./gradlew pitest --rerun-tasks
 
+sonar:
+	./gradlew clean build sonarqube --rerun-tasks
+
 integration-test: deploy-dependencies-only
 	@docker-compose build adoption-service-builder
 	$(docker_compose_builder) gradle integrationTest --rerun-tasks
