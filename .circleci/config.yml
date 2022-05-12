@@ -23,6 +23,8 @@ jobs:
 
     resource_class: large
 
+    parallelism: 4
+
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
@@ -35,7 +37,11 @@ jobs:
             - v2-dependencies-{{ checksum "build.gradle" }}
             - v2-dependencies-
 
-      - run: make unit-test
+      - run:
+          name: Running unit tests
+          command: |
+            echo $(circleci tests glob "~/repo/src/test/**/*Test.java");
+            ./gradlew clean test --tests $(circleci tests glob "~/repo/src/test/**/*Test.java" | circleci tests split --split-by=timings);
 
       - run: ./gradlew bootJar --rerun-tasks
 
