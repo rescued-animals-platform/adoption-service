@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.exception;
 
 public class UnauthorizedException extends RuntimeException {
 
-    private transient static final long serialVersionUID = -232426153813421923L;
+    private static final transient long serialVersionUID = -232426153813421923L;
 
     public UnauthorizedException() {
         super("Unauthorized");

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class AdminTokenUtils {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(AdminTokenUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminTokenUtils.class);
 
     private final String organizationIdClaimName;
 

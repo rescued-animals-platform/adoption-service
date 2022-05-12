@@ -61,7 +61,7 @@ public class AnimalCreateUpdateRequest {
 
     @Valid
     @JsonProperty("state")
-    private final StateRequest state;
+    private final StateRequest stateRequest;
 
     @JsonCreator
     AnimalCreateUpdateRequest(@JsonProperty("clinicalRecord") final String clinicalRecord,
@@ -69,17 +69,17 @@ public class AnimalCreateUpdateRequest {
                               @JsonProperty("species") final Species species,
                               @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
                               @JsonProperty("sex") final Sex sex,
-                              @JsonProperty("state") final StateRequest state) {
+                              @JsonProperty("state") final StateRequest stateRequest) {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
         this.estimatedAge = estimatedAge;
         this.sex = sex;
-        this.state = state;
+        this.stateRequest = stateRequest;
     }
 
     public AnimalDto toDomainWith(final Organization organization) {
-        State state = Optional.ofNullable(this.state)
+        State state = Optional.ofNullable(this.stateRequest)
                               .map(StateRequest::toDomain)
                               .orElse(null);
 
