@@ -41,6 +41,7 @@ jobs:
           name: Running unit tests
           command: |
             pwd;
+            ls -al;
             echo $(circleci tests glob "~/repo/src/test/**/*Test.java");
 
       - run: ./gradlew bootJar --rerun-tasks
