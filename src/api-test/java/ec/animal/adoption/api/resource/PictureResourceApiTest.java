@@ -36,10 +36,10 @@ import static org.springframework.http.HttpStatus.*;
 
 public class PictureResourceApiTest extends AbstractApiTest {
 
-    private static final String NAME = "name";
-    private static final String PICTURE_TYPE = "pictureType";
-    private static final String LARGE_IMAGE = "largeImage";
-    private static final String SMALL_IMAGE = "smallImage";
+    private static final String NAME_KEY = "name";
+    private static final String PICTURE_TYPE_KEY = "pictureType";
+    private static final String LARGE_IMAGE_KEY = "largeImage";
+    private static final String SMALL_IMAGE_KEY = "smallImage";
 
     private UUID animalId;
     private String name;
@@ -53,10 +53,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        validMultipartPicturesFormData.add(NAME, name);
-        validMultipartPicturesFormData.add(PICTURE_TYPE, pictureType.name());
-        validMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        validMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        validMultipartPicturesFormData.add(NAME_KEY, name);
+        validMultipartPicturesFormData.add(PICTURE_TYPE_KEY, pictureType.name());
+        validMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        validMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
     }
 
     @Test
@@ -77,10 +77,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn400BadRequestWhenCreatingAPictureThatIsNotPrimary() {
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.ALTERNATE.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.ALTERNATE.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.post()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -97,10 +97,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn400BadRequestWhenCreatingAPictureWithInvalidLargeImageFile() {
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.post()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -117,10 +117,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @Test
     public void shouldReturn400BadRequestWhenCreatingAPictureWithInvalidSmallImageFile() {
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("invalid-image-file.txt"));
 
         webTestClient.post()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -175,10 +175,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
         String name = randomAlphabetic(10);
         PictureType pictureType = PictureType.PRIMARY;
         LinkedMultiValueMap<String, Object> updateRequestFormData = new LinkedMultiValueMap<>();
-        updateRequestFormData.add(NAME, name);
-        updateRequestFormData.add(PICTURE_TYPE, pictureType.name());
-        updateRequestFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        updateRequestFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        updateRequestFormData.add(NAME_KEY, name);
+        updateRequestFormData.add(PICTURE_TYPE_KEY, pictureType.name());
+        updateRequestFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        updateRequestFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -198,10 +198,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
         String name = randomAlphabetic(10);
         PictureType pictureType = PictureType.PRIMARY;
         LinkedMultiValueMap<String, Object> updateRequestFormData = new LinkedMultiValueMap<>();
-        updateRequestFormData.add(NAME, name);
-        updateRequestFormData.add(PICTURE_TYPE, pictureType.name());
-        updateRequestFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        updateRequestFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        updateRequestFormData.add(NAME_KEY, name);
+        updateRequestFormData.add(PICTURE_TYPE_KEY, pictureType.name());
+        updateRequestFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        updateRequestFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -220,10 +220,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     public void shouldReturn400BadRequestWhenUpdatingAPictureThatIsNotPrimary() {
         createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.ALTERNATE.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.ALTERNATE.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -241,10 +241,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     public void shouldReturn400BadRequestWhenUpdatingAPictureWithInvalidLargeImageFile() {
         createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("invalid-image-file.txt"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("test-image-small.jpeg"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("test-image-small.jpeg"));
 
         webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)
@@ -262,10 +262,10 @@ public class PictureResourceApiTest extends AbstractApiTest {
     public void shouldReturn400BadRequestWhenUpdatingAPictureWithInvalidSmallImageFile() {
         createPrimaryPictureForAnimal(animalId);
         LinkedMultiValueMap<String, Object> invalidMultipartPicturesFormData = new LinkedMultiValueMap<>();
-        invalidMultipartPicturesFormData.add(NAME, name);
-        invalidMultipartPicturesFormData.add(PICTURE_TYPE, PictureType.PRIMARY.name());
-        invalidMultipartPicturesFormData.add(LARGE_IMAGE, new ClassPathResource("test-image-large.jpeg"));
-        invalidMultipartPicturesFormData.add(SMALL_IMAGE, new ClassPathResource("invalid-image-file.txt"));
+        invalidMultipartPicturesFormData.add(NAME_KEY, name);
+        invalidMultipartPicturesFormData.add(PICTURE_TYPE_KEY, PictureType.PRIMARY.name());
+        invalidMultipartPicturesFormData.add(LARGE_IMAGE_KEY, new ClassPathResource("test-image-large.jpeg"));
+        invalidMultipartPicturesFormData.add(SMALL_IMAGE_KEY, new ClassPathResource("invalid-image-file.txt"));
 
         webTestClient.put()
                      .uri(PICTURES_ADMIN_URL, animalId)

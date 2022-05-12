@@ -39,12 +39,19 @@ import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.util.Set;
 
-import static ec.animal.adoption.TestUtils.*;
-import static ec.animal.adoption.domain.state.StateName.*;
+import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
+import static ec.animal.adoption.TestUtils.getRandomSex;
+import static ec.animal.adoption.TestUtils.getRandomSpecies;
+import static ec.animal.adoption.TestUtils.getValidator;
+import static ec.animal.adoption.domain.state.StateName.ADOPTED;
+import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
+import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnimalCreateUpdateRequestTest {
 
@@ -96,8 +103,7 @@ class AnimalCreateUpdateRequestTest {
                   () -> assertEquals(estimatedAge, animalDto.getEstimatedAge()),
                   () -> assertEquals(sex, animalDto.getSex()),
                   () -> assertEquals(organization, animalDto.getOrganization()),
-                  () -> assertEquals(LOOKING_FOR_HUMAN.name(), animalDto.getStateNameAsString())
-        );
+                  () -> assertEquals(LOOKING_FOR_HUMAN.name(), animalDto.getStateNameAsString()));
     }
 
     @Test
@@ -121,9 +127,10 @@ class AnimalCreateUpdateRequestTest {
                   () -> assertEquals(sex, animalDto.getSex()),
                   () -> assertEquals(organization, animalDto.getOrganization()),
                   () -> assertEquals(ADOPTED.name(), animalDto.getStateNameAsString()),
-                  () -> assertTrue(animalDto.getAdoptionFormId().isPresent()),
-                  () -> assertEquals(adoptionFormId, animalDto.getAdoptionFormId().get())
-        );
+                  () -> {
+                      assertTrue(animalDto.getAdoptionFormId().isPresent());
+                      assertEquals(adoptionFormId, animalDto.getAdoptionFormId().get());
+                  });
     }
 
     @Test
@@ -228,7 +235,7 @@ class AnimalCreateUpdateRequestTest {
         assertThat(constraintViolations.size(), is(1));
         ConstraintViolation<AnimalCreateUpdateRequest> constraintViolation = constraintViolations.iterator().next();
         assertThat(constraintViolation.getMessage(), is(STATE_NAME_IS_REQUIRED));
-        assertThat(constraintViolation.getPropertyPath().toString(), is("state.name"));
+        assertThat(constraintViolation.getPropertyPath().toString(), is("stateRequest.name"));
     }
 
     @Test
