@@ -10,7 +10,7 @@ orbs:
 executors:
   builder:
     docker:
-      - image: circleci/openjdk:11-jdk
+      - image: cimg/openjdk:11.0
     working_directory: ~/repo
 
 ####################
@@ -20,6 +20,8 @@ executors:
 jobs:
   build:
     executor: builder
+
+    resource_class: large
 
     environment:
       JVM_OPTS: -Xmx3200m
@@ -81,6 +83,8 @@ jobs:
   pitest:
     executor: builder
 
+    resource_class: large
+
     steps:
       - attach_workspace:
           at: ~/repo
@@ -105,6 +109,8 @@ jobs:
   sonar:
     executor: builder
 
+    resource_class: large
+
     steps:
       - attach_workspace:
           at: ~/repo
@@ -125,6 +131,8 @@ jobs:
 
   integration-test:
     executor: builder
+
+    resource_class: large
 
     steps:
       - attach_workspace:
@@ -162,6 +170,8 @@ jobs:
   api-test:
     executor: builder
 
+    resource_class: large
+
     steps:
       - attach_workspace:
           at: ~/repo
@@ -198,6 +208,8 @@ jobs:
   deploy-uat:
     executor: heroku/default
 
+    resource_class: large
+
     working_directory: ~/repo
 
     steps:
@@ -215,6 +227,8 @@ jobs:
 
   uat-integration-test:
     executor: builder
+
+    resource_class: large
 
     steps:
       - attach_workspace:
@@ -264,6 +278,8 @@ jobs:
 
   uat-api-test:
     executor: builder
+
+    resource_class: large
 
     steps:
       - attach_workspace:
