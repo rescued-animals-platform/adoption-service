@@ -40,8 +40,8 @@ jobs:
       - run:
           name: Running unit tests
           command: |
+            pwd;
             echo $(circleci tests glob "~/repo/src/test/**/*Test.java");
-            ./gradlew clean test --tests $(circleci tests glob "~/repo/src/test/**/*Test.java" | circleci tests split --split-by=timings);
 
       - run: ./gradlew bootJar --rerun-tasks
 
