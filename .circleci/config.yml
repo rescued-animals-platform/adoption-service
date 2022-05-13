@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Running unit tests
           command: |
-            echo $(circleci tests glob "src/test/java/**Test.java");
+            echo $(circleci tests glob "**/*Test.java");
 
       - run: ./gradlew bootJar --rerun-tasks
 
@@ -344,49 +344,51 @@ workflows:
           filters:
             branches:
               only: master
-      - pitest:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - sonar:
-          context: SonarCloud
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - integration-test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - api-test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - deploy-uat:
-          requires:
-            - pitest
-            - sonar
-            - integration-test
-            - api-test
-          filters:
-            branches:
-              only: master
-      - uat-integration-test:
-          requires:
-            - deploy-uat
-          filters:
-            branches:
-              only: master
-      - uat-api-test:
-          requires:
-            - uat-integration-test
-          filters:
-            branches:
-              only: master
+####################              
+#      - pitest:
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              only: master
+#      - sonar:
+#          context: SonarCloud
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              only: master
+#      - integration-test:
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              only: master
+ #     - api-test:
+ #         requires:
+ #           - build
+ #         filters:
+ #           branches:
+ #             only: master
+ #     - deploy-uat:
+ #         requires:
+ #           - pitest
+ #           - sonar
+ #           - integration-test
+ #           - api-test
+ #         filters:
+ #           branches:
+ #             only: master
+ #     - uat-integration-test:
+ #         requires:
+ #           - deploy-uat
+ #         filters:
+ #           branches:
+ #             only: master
+ #     - uat-api-test:
+ #         requires:
+ #           - uat-integration-test
+ #         filters:
+ #           branches:
+ #             only: master
+####################              
