@@ -21,7 +21,7 @@ jobs:
   build:
     executor: builder
     resource_class: large
-    parallelism: 16
+    parallelism: 4
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
@@ -131,7 +131,6 @@ jobs:
   integration-test:
     executor: builder
     resource_class: large
-    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -169,7 +168,6 @@ jobs:
   api-test:
     executor: builder
     resource_class: large
-    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -225,7 +223,6 @@ jobs:
   uat-integration-test:
     executor: builder
     resource_class: large
-    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -276,7 +273,6 @@ jobs:
   uat-api-test:
     executor: builder
     resource_class: large
-    parallelism: 16
 
     steps:
       - attach_workspace:
