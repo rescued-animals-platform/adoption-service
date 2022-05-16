@@ -20,11 +20,8 @@ executors:
 jobs:
   build:
     executor: builder
-
     resource_class: large
-
-    parallelism: 4
-
+    parallelism: 16
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
@@ -86,7 +83,6 @@ jobs:
 
   pitest:
     executor: builder
-
     resource_class: large
 
     steps:
@@ -112,7 +108,6 @@ jobs:
 
   sonar:
     executor: builder
-
     resource_class: large
 
     steps:
@@ -135,8 +130,8 @@ jobs:
 
   integration-test:
     executor: builder
-
     resource_class: large
+    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -173,8 +168,8 @@ jobs:
 
   api-test:
     executor: builder
-
     resource_class: large
+    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -211,9 +206,7 @@ jobs:
 
   deploy-uat:
     executor: heroku/default
-
     resource_class: large
-
     working_directory: ~/repo
 
     steps:
@@ -231,8 +224,8 @@ jobs:
 
   uat-integration-test:
     executor: builder
-
     resource_class: large
+    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -282,8 +275,8 @@ jobs:
 
   uat-api-test:
     executor: builder
-
     resource_class: large
+    parallelism: 16
 
     steps:
       - attach_workspace:
@@ -343,51 +336,49 @@ workflows:
           filters:
             branches:
               only: master
-####################              
-#      - pitest:
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only: master
-#      - sonar:
-#          context: SonarCloud
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only: master
-#      - integration-test:
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only: master
- #     - api-test:
- #         requires:
- #           - build
- #         filters:
- #           branches:
- #             only: master
- #     - deploy-uat:
- #         requires:
- #           - pitest
- #           - sonar
- #           - integration-test
- #           - api-test
- #         filters:
- #           branches:
- #             only: master
- #     - uat-integration-test:
- #         requires:
- #           - deploy-uat
- #         filters:
- #           branches:
- #             only: master
- #     - uat-api-test:
- #         requires:
- #           - uat-integration-test
- #         filters:
- #           branches:
- #             only: master
-####################              
+      - pitest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - sonar:
+          context: SonarCloud
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - integration-test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - api-test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-uat:
+          requires:
+            - pitest
+            - sonar
+            - integration-test
+            - api-test
+          filters:
+            branches:
+              only: master
+      - uat-integration-test:
+          requires:
+            - deploy-uat
+          filters:
+            branches:
+              only: master
+      - uat-api-test:
+          requires:
+            - uat-integration-test
+          filters:
+            branches:
+              only: master
