@@ -48,6 +48,10 @@ jobs:
             echo "Prepared arguments for Gradle: $GRADLE_ARGS"
             ./gradlew test $GRADLE_ARGS
 
+      - run:
+          name: Generate code coverage report
+          command: ./gradlew jacocoTestReport
+
       - save_cache:
           paths:
             - ~/.gradle
