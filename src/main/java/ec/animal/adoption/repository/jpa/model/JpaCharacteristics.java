@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Entity(name = "characteristics")
 public class JpaCharacteristics implements Serializable {
 
-    private transient static final long serialVersionUID = -132432659169428820L;
+    private static final transient long serialVersionUID = -132432659169428820L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")

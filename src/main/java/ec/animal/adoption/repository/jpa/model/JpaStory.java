@@ -22,7 +22,11 @@ package ec.animal.adoption.repository.jpa.model;
 import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,7 +35,7 @@ import java.util.UUID;
 @Entity(name = "story")
 public class JpaStory implements Serializable {
 
-    private transient static final long serialVersionUID = -242532859161428810L;
+    private static final transient long serialVersionUID = -242532859161428810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")

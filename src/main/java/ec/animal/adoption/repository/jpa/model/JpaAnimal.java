@@ -31,7 +31,11 @@ import ec.animal.adoption.domain.state.StateName;
 import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -42,7 +46,7 @@ import static java.util.Optional.ofNullable;
 @Entity(name = "animal")
 public class JpaAnimal implements Serializable {
 
-    private transient static final long serialVersionUID = -632732651164438810L;
+    private static final transient long serialVersionUID = -632732651164438810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
@@ -121,17 +125,17 @@ public class JpaAnimal implements Serializable {
 
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {
         this.jpaPrimaryLinkPicture = primaryLinkPicture == null ? null :
-                new JpaPrimaryLinkPicture(primaryLinkPicture, this);
+                                     new JpaPrimaryLinkPicture(primaryLinkPicture, this);
     }
 
     private void setJpaCharacteristics(final Characteristics characteristics) {
         this.jpaCharacteristics = characteristics == null ? null :
-                new JpaCharacteristics(characteristics, this);
+                                  new JpaCharacteristics(characteristics, this);
     }
 
     private void setJpaStory(final Story story) {
         this.jpaStory = story == null ? null :
-                new JpaStory(story, this);
+                        new JpaStory(story, this);
     }
 
     public Animal toAnimal() {

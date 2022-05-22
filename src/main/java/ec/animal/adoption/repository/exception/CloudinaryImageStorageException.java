@@ -21,7 +21,7 @@ package ec.animal.adoption.repository.exception;
 
 public class CloudinaryImageStorageException extends RuntimeException {
 
-    private transient static final long serialVersionUID = -341446159169481893L;
+    private static final transient long serialVersionUID = -341446159169481893L;
 
     private static final String MESSAGE = "The image could not be stored";
 

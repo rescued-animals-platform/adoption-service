@@ -24,7 +24,11 @@ import ec.animal.adoption.domain.media.MediaLink;
 import ec.animal.adoption.domain.media.PictureType;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,7 +37,7 @@ import java.util.UUID;
 @Entity(name = "primary_link_picture")
 public class JpaPrimaryLinkPicture implements Serializable {
 
-    private transient static final long serialVersionUID = -832433659194420810L;
+    private static final transient long serialVersionUID = -832433659194420810L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
