@@ -34,10 +34,24 @@ jobs:
             - v2-dependencies-
 
       - run:
-          name: Running unit tests
-          command: make unit-test 
+          name: Running unit tests in parallel
+          # Use "./gradlew clean build" instead if tests are not run in parallel
+          command: |
+            cd src/test/java
+            # Get list of classnames of tests that should run on this node
+            CLASSNAMES=$(circleci tests glob "**/*.java" \
+              | cut -c 1- | sed 's@/@.@g' \
+              | sed 's/.\{5\}$//' \
+              | circleci tests split --split-by=timings --timings-type=classname)
+            cd ../../..
+            # Format the arguments to "./gradlew build"
+            GRADLE_ARGS=$(echo $CLASSNAMES | awk '{for (i=1; i<=NF; i++) print "--tests",$i}')
+            echo "Prepared arguments for Gradle: $GRADLE_ARGS"
+            ./gradlew build $GRADLE_ARGS
 
-      - run: ./gradlew bootJar --rerun-tasks
+      - run:
+          name: Assembling JAR
+          command: ./gradlew bootJar
 
       - save_cache:
           paths:
@@ -62,8 +76,6 @@ jobs:
           paths:
             - src
             - migrations
-            - terraform
-            - pmd
             - scripts
             - docker
             - gradle
@@ -95,7 +107,7 @@ jobs:
 
       - run:
           name: Run pitest analysis
-          command: ./gradlew clean pitest
+          command: ./gradlew pitest
 
       - save_cache:
           paths:
@@ -248,7 +260,7 @@ jobs:
             export SPRING_DATASOURCE_PASSWORD;
             export SPRING_PROFILE=uat;
             export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
-            ./gradlew integrationTest --rerun-tasks
+            ./gradlew integrationTest
 
       - save_cache:
           paths:
@@ -298,7 +310,7 @@ jobs:
             export SPRING_DATASOURCE_PASSWORD;
             export SPRING_PROFILE=uat;
             export ADOPTION_SERVICE_URL=https://servicio-adopciones-uat.herokuapp.com;
-            ./gradlew apiTest --rerun-tasks
+            ./gradlew apiTest
 
       - save_cache:
           paths:
