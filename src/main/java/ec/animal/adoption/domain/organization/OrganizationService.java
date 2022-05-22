@@ -20,8 +20,6 @@
 package ec.animal.adoption.domain.organization;
 
 import ec.animal.adoption.domain.exception.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +28,6 @@ import java.util.UUID;
 
 @Service
 public class OrganizationService {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(OrganizationService.class);
 
     private final OrganizationRepository organizationRepository;
 
@@ -44,7 +40,7 @@ public class OrganizationService {
         Optional<Organization> organization = organizationRepository.getBy(organizationId);
 
         if (organization.isEmpty()) {
-            throw new UnauthorizedException(String.format("Organization with id: %s doesn't exist", organizationId));
+            throw new UnauthorizedException();
         }
 
         return organization.get();

@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.exception;
 
 public class EntityNotFoundException extends RuntimeException {
 
-    private transient static final long serialVersionUID = -242426159819421923L;
+    private static final transient long serialVersionUID = -242426159819421923L;
 
     public EntityNotFoundException() {
         super("Unable to find the resource");

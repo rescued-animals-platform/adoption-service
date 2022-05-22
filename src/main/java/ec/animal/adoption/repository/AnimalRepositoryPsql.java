@@ -44,7 +44,7 @@ import java.util.UUID;
 @Repository
 public class AnimalRepositoryPsql implements AnimalRepository {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(AnimalRepositoryPsql.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnimalRepositoryPsql.class);
 
     private final JpaAnimalRepository jpaAnimalRepository;
 
@@ -59,7 +59,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animalDto));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
-            LOGGER.error("Exception thrown when creating a new animal", exception);
+            LOGGER.error("Exception thrown when creating a new animal");
             throw new EntityAlreadyExistsException(exception);
         }
     }
@@ -70,7 +70,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
             JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
             return savedJpaAnimal.toAnimal();
         } catch (Exception exception) {
-            LOGGER.error("Exception thrown when saving animal with id: {}", animal.getIdentifier(), exception);
+            LOGGER.error("Exception thrown when saving animal with id: {}", animal.getIdentifier());
             throw new EntityAlreadyExistsException(exception);
         }
     }

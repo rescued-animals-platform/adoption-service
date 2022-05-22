@@ -21,7 +21,7 @@ package ec.animal.adoption.domain.exception;
 
 public class MediaStorageException extends RuntimeException {
 
-    private transient static final long serialVersionUID = -232426153813421923L;
+    private static final transient long serialVersionUID = -232426153813421923L;
 
     public MediaStorageException() {
         super("Can not fulfill the request now. Please, retry later (client unavailable)");

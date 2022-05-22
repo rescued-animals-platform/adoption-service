@@ -35,7 +35,7 @@ import java.util.UUID;
 @Service
 public class StoryService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(StoryService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoryService.class);
 
     private final AnimalRepository animalRepository;
 

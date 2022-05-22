@@ -8,6 +8,10 @@ import java.util.stream.Stream;
 
 public final class EnumUtils {
 
+    private EnumUtils() {
+        // Utility class
+    }
+
     public static Function<Enum<?>[], Optional<Enum<?>>> forValue(final String value) {
         return enums -> {
             String normalizedValue = StringUtils.trimToEmpty(value);

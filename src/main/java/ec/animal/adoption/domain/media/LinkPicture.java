@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public class LinkPicture extends Entity {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(LinkPicture.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LinkPicture.class);
 
     private final String name;
     private final PictureType pictureType;

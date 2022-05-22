@@ -33,7 +33,7 @@ import java.util.UUID;
 
 public class Characteristics extends Entity {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Characteristics.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Characteristics.class);
 
     private final Size size;
     private final PhysicalActivity physicalActivity;

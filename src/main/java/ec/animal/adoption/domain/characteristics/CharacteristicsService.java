@@ -35,7 +35,7 @@ import java.util.UUID;
 @Service
 public class CharacteristicsService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CharacteristicsService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacteristicsService.class);
 
     private final AnimalRepository animalRepository;
 

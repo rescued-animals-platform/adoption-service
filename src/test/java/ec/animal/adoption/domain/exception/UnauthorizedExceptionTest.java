@@ -21,7 +21,6 @@ package ec.animal.adoption.domain.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -31,19 +30,16 @@ class UnauthorizedExceptionTest {
 
     @Test
     void shouldReturnCustomMessage() {
-        String contextualInfo = randomAlphabetic(10);
-
-        UnauthorizedException unauthorizedException = new UnauthorizedException(contextualInfo);
+        UnauthorizedException unauthorizedException = new UnauthorizedException();
 
         assertEquals(EXPECTED_MESSAGE, unauthorizedException.getMessage());
     }
 
     @Test
     void shouldReturnCustomMessageAndSetCause() {
-        String contextualInfo = randomAlphabetic(10);
         Throwable expectedCause = mock(Throwable.class);
 
-        UnauthorizedException unauthorizedException = new UnauthorizedException(contextualInfo, expectedCause);
+        UnauthorizedException unauthorizedException = new UnauthorizedException(expectedCause);
 
         assertEquals(EXPECTED_MESSAGE, unauthorizedException.getMessage());
         assertEquals(expectedCause, unauthorizedException.getCause());

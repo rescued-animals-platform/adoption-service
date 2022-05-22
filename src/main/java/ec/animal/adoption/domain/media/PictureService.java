@@ -36,7 +36,7 @@ import java.util.UUID;
 @Service
 public class PictureService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(PictureService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PictureService.class);
 
     private final MediaRepository mediaRepository;
     private final AnimalRepository animalRepository;

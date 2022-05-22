@@ -340,7 +340,7 @@ class RestExceptionHandlerTest {
 
     @Test
     void shouldReturnAResponseEntityWithApiErrorForUnauthorizedException() {
-        UnauthorizedException unauthorizedException = new UnauthorizedException(randomAlphabetic(10));
+        UnauthorizedException unauthorizedException = new UnauthorizedException();
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, "Unauthorized");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleUnauthorizedException(unauthorizedException);

@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public class Story extends Entity {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Story.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Story.class);
 
     private final String text;
 

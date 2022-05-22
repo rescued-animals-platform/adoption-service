@@ -34,7 +34,7 @@ import java.util.function.Function;
 @JsonIgnoreProperties({"pageable"})
 public class PagedEntity<T> extends PageImpl<T> {
 
-    private transient static final long serialVersionUID = -721000112304438810L;
+    private static final transient long serialVersionUID = -721000112304438810L;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     private PagedEntity(final @JsonProperty("content") List<T> content,

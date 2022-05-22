@@ -19,22 +19,16 @@
 
 package ec.animal.adoption.domain.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class UnauthorizedException extends RuntimeException {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UnauthorizedException.class);
     private static final String UNAUTHORIZED = "Unauthorized";
     private static final transient long serialVersionUID = -232426153813421923L;
 
-    public UnauthorizedException(String contextualInfo) {
+    public UnauthorizedException() {
         super(UNAUTHORIZED);
-        LOGGER.info(contextualInfo);
     }
 
-    public UnauthorizedException(String contextualInfo, final Throwable cause) {
+    public UnauthorizedException(final Throwable cause) {
         super(UNAUTHORIZED, cause);
-        LOGGER.info(contextualInfo);
     }
 }
