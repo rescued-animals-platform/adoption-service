@@ -126,7 +126,10 @@ jobs:
 
       - run:
           name: Analyze code on SonarCloud
-          command: ./gradlew sonarqube
+          command: |
+            pwd
+            ls -al
+            ./gradlew sonarqube
 
       - save_cache:
           paths:
