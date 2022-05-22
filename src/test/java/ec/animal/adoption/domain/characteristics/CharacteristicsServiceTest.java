@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CharacteristicsServiceTest {
+class CharacteristicsServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
@@ -55,7 +55,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldCreateCharacteristics() {
+    void shouldCreateCharacteristics() {
         ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().build();
@@ -93,7 +93,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldUpdateCharacteristicsWithADifferentOneWhenTheyAlreadyExist() {
+    void shouldUpdateCharacteristicsWithADifferentOneWhenTheyAlreadyExist() {
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().build();
         Characteristics existingCharacteristics = mock(Characteristics.class);
@@ -155,7 +155,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldGetCharacteristicsByAnimalId() {
+    void shouldGetCharacteristicsByAnimalId() {
         UUID animalId = UUID.randomUUID();
         Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
         Animal animal = AnimalFactory.random().withIdentifier(animalId).withCharacteristics(expectedCharacteristics)
@@ -168,7 +168,7 @@ public class CharacteristicsServiceTest {
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenThereAreNoCharacteristicsForAnimal() {
+    void shouldThrowEntityNotFoundExceptionWhenThereAreNoCharacteristicsForAnimal() {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalFactory.random().build();
         when(animalRepository.getBy(animalId)).thenReturn(animal);

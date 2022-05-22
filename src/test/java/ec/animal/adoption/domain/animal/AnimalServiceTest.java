@@ -42,16 +42,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
+import static ec.animal.adoption.TestUtils.getRandomSpecies;
+import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AnimalServiceTest {
+class AnimalServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
@@ -76,7 +82,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
+    void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
         when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(false);
@@ -88,7 +94,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
+    void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
         when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(true);
@@ -152,7 +158,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAnimalByItsIdentifier() {
+    void shouldReturnAnimalByItsIdentifier() {
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().build();
         when(animalRepository.getBy(animalId, organization)).thenReturn(expectedAnimal);
@@ -163,7 +169,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimals() {
+    void shouldReturnAllAnimals() {
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
                 AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
         ));
@@ -176,7 +182,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsWithFiltersAndSmallPrimaryPictureUrl() {
+    void shouldReturnAllAnimalsWithFiltersAndSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
                 AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build(),
@@ -197,7 +203,7 @@ public class AnimalServiceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsWithFiltersAndNoSmallPrimaryPictureUrl() {
+    void shouldReturnAllAnimalsWithFiltersAndNoSmallPrimaryPictureUrl() {
         State state = getRandomState();
         List<Animal> animalsFilteredByState = newArrayList(
                 AnimalFactory.random().withState(state).build(),

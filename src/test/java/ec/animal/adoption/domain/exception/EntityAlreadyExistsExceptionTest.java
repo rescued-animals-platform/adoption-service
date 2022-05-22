@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class EntityAlreadyExistsExceptionTest {
+class EntityAlreadyExistsExceptionTest {
 
     private static final String EXPECTED_MESSAGE = "The resource already exists";
 
     @Test
-    public void shouldReturnMessageAndSetCause() {
+    void shouldReturnMessageAndSetCause() {
         Throwable expectedCause = mock(Throwable.class);
 
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(expectedCause);
@@ -39,7 +39,7 @@ public class EntityAlreadyExistsExceptionTest {
     }
 
     @Test
-    public void shouldReturnMessage() {
+    void shouldReturnMessage() {
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException();
 
         assertEquals(EXPECTED_MESSAGE, entityAlreadyExistsException.getMessage());

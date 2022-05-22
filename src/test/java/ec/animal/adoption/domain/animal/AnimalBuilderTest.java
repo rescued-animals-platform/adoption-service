@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 class AnimalBuilderTest {
 
     @Test
-    public void shouldSetPrimaryLinkPicture() {
+    void shouldSetPrimaryLinkPicture() {
         Animal animal = AnimalFactory.random().build();
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animal).with(primaryLinkPicture).build();
@@ -27,7 +27,7 @@ class AnimalBuilderTest {
     }
 
     @Test
-    public void shouldUpdatePrimaryLinkPictureWhenItAlreadyHasOne() {
+    void shouldUpdatePrimaryLinkPictureWhenItAlreadyHasOne() {
         LinkPicture existingPrimaryLinkPicture = mock(LinkPicture.class);
         when(existingPrimaryLinkPicture.isPrimary()).thenReturn(true);
         LinkPicture newPrimaryLinkPicture = mock(LinkPicture.class);
@@ -43,7 +43,7 @@ class AnimalBuilderTest {
     }
 
     @Test
-    public void shouldSetStory() {
+    void shouldSetStory() {
         Animal animal = AnimalFactory.random().build();
         Story story = StoryFactory.random().build();
 
@@ -54,7 +54,7 @@ class AnimalBuilderTest {
     }
 
     @Test
-    public void shouldUpdateStoryWhenItAlreadyHasOne() {
+    void shouldUpdateStoryWhenItAlreadyHasOne() {
         Story existingStory = mock(Story.class);
         Story newStory = mock(Story.class);
         Story updatedStory = mock(Story.class);
@@ -68,7 +68,7 @@ class AnimalBuilderTest {
     }
 
     @Test
-    public void shouldSetCharacteristics() {
+    void shouldSetCharacteristics() {
         Animal animal = AnimalFactory.random().build();
         Characteristics characteristics = CharacteristicsFactory.random().build();
         Animal animalWithCharacteristics = AnimalBuilder.copyOf(animal).with(characteristics).build();
@@ -78,7 +78,7 @@ class AnimalBuilderTest {
     }
 
     @Test
-    public void shouldUpdateCharacteristicsWhenItAlreadyHasOne() {
+    void shouldUpdateCharacteristicsWhenItAlreadyHasOne() {
         Characteristics existingCharacteristics = mock(Characteristics.class);
         Characteristics newCharacteristics = mock(Characteristics.class);
         Characteristics updatedCharacteristics = mock(Characteristics.class);

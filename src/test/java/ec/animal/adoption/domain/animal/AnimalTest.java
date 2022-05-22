@@ -37,16 +37,22 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomEstimatedAge;
+import static ec.animal.adoption.TestUtils.getRandomSex;
+import static ec.animal.adoption.TestUtils.getRandomSpecies;
+import static ec.animal.adoption.TestUtils.getRandomState;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AnimalTest {
+class AnimalTest {
 
     @Test
-    public void shouldReturnStateName() {
+    void shouldReturnStateName() {
         State randomState = getRandomState();
         Animal animal = AnimalFactory.random().withState(randomState).build();
 
@@ -54,28 +60,37 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionWhenSettingAnAlternateLinkPicture() {
+    void shouldThrowIllegalArgumentExceptionWhenSettingAnAlternateLinkPicture() {
         LinkPicture alternateLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.ALTERNATE).build();
+        UUID animalId = UUID.randomUUID();
+        LocalDateTime registrationDate = LocalDateTime.now();
+        String clinicalRecord = randomAlphabetic(10);
+        String name = randomAlphabetic(10);
+        Species species = getRandomSpecies();
+        EstimatedAge estimatedAge = getRandomEstimatedAge();
+        Sex sex = getRandomSex();
+        State state = getRandomState();
+        Characteristics characteristics = CharacteristicsFactory.random().build();
+        Story story = StoryFactory.random().build();
+        Organization organization = OrganizationFactory.random().build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new Animal(UUID.randomUUID(),
-                       LocalDateTime.now(),
-                       randomAlphabetic(10),
-                       randomAlphabetic(10),
-                       getRandomSpecies(),
-                       getRandomEstimatedAge(),
-                       getRandomSex(),
-                       getRandomState(),
-                       alternateLinkPicture,
-                       CharacteristicsFactory.random().build(),
-                       StoryFactory.random().build(),
-                       OrganizationFactory.random().build());
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Animal(animalId,
+                                                                                                           registrationDate,
+                                                                                                           clinicalRecord,
+                                                                                                           name,
+                                                                                                           species,
+                                                                                                           estimatedAge,
+                                                                                                           sex,
+                                                                                                           state,
+                                                                                                           alternateLinkPicture,
+                                                                                                           characteristics,
+                                                                                                           story,
+                                                                                                           organization));
         assertEquals("Picture type should be PRIMARY", exception.getMessage());
     }
 
     @Test
-    public void shouldSetOrganization() {
+    void shouldSetOrganization() {
         Organization organization = OrganizationFactory.random().build();
 
         Animal animal = new Animal(UUID.randomUUID(),
@@ -181,7 +196,7 @@ public class AnimalTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Animal.class).usingGetClass().verify();
     }
 }

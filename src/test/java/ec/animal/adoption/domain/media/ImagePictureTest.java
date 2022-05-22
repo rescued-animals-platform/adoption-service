@@ -32,10 +32,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ImagePictureTest {
+class ImagePictureTest {
 
     @Test
-    public void shouldCreateAnImagePicture() {
+    void shouldCreateAnImagePicture() {
         String name = randomAlphabetic(10);
         PictureType pictureType = getRandomPictureType();
         ImagePicture imagePicture = ImagePictureFactory.random()
@@ -48,7 +48,7 @@ public class ImagePictureTest {
     }
 
     @Test
-    public void shouldReturnLargeImageContent() {
+    void shouldReturnLargeImageContent() {
         Image largeImage = mock(Image.class);
         byte[] content = {};
         when(largeImage.getContent()).thenReturn(content);
@@ -58,7 +58,7 @@ public class ImagePictureTest {
     }
 
     @Test
-    public void shouldReturnSmallImageContent() {
+    void shouldReturnSmallImageContent() {
         Image smallImage = mock(Image.class);
         byte[] content = {};
         when(smallImage.getContent()).thenReturn(content);
@@ -68,14 +68,14 @@ public class ImagePictureTest {
     }
 
     @Test
-    public void shouldReturnTrueForValidImagePicture() {
+    void shouldReturnTrueForValidImagePicture() {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
 
         assertThat(imagePicture.isValid(), is(true));
     }
 
     @Test
-    public void shouldReturnFalseWhenPictureImageHasAnInvalidLargeImage() {
+    void shouldReturnFalseWhenPictureImageHasAnInvalidLargeImage() {
         Image invalidLargeImage = mock(Image.class);
         when(invalidLargeImage.isValid()).thenReturn(false);
         ImagePicture imagePicture = ImagePictureFactory.random().withLargeImage(invalidLargeImage).build();
@@ -84,7 +84,7 @@ public class ImagePictureTest {
     }
 
     @Test
-    public void shouldReturnFalseWhenPictureImageHasAnInvalidSmallImage() {
+    void shouldReturnFalseWhenPictureImageHasAnInvalidSmallImage() {
         Image invalidSmallImage = mock(Image.class);
         when(invalidSmallImage.isValid()).thenReturn(false);
         ImagePicture imagePicture = ImagePictureFactory.random().withSmallImage(invalidSmallImage).build();
@@ -93,17 +93,17 @@ public class ImagePictureTest {
     }
 
     @Test
-    public void shouldReturnFalseWhenBothLargeAndSmallImageInsidePictureImageAreInvalid() {
+    void shouldReturnFalseWhenBothLargeAndSmallImageInsidePictureImageAreInvalid() {
         Image invalidImage = mock(Image.class);
         when(invalidImage.isValid()).thenReturn(false);
         ImagePicture imagePicture = ImagePictureFactory.random().withLargeImage(invalidImage).
-                withSmallImage(invalidImage).build();
+                                                       withSmallImage(invalidImage).build();
 
         assertThat(imagePicture.isValid(), is(false));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ImagePicture.class).usingGetClass().verify();
     }
 }

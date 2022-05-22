@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class EntityNotFoundExceptionTest {
+class EntityNotFoundExceptionTest {
 
     @Test
-    public void shouldReturnMessage() {
+    void shouldReturnMessage() {
         String expectedMessage = "Unable to find the resource";
 
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException();

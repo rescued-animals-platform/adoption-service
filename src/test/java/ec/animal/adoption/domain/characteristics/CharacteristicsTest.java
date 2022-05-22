@@ -30,10 +30,15 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CharacteristicsTest {
+class CharacteristicsTest {
 
     private Size size;
     private PhysicalActivity physicalActivity;
@@ -105,23 +110,21 @@ public class CharacteristicsTest {
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingCharacteristicsThatHaveNoIdentifier() {
         Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(null).build();
+        Characteristics characteristicsUpdate = CharacteristicsFactory.random().build();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            characteristics.updateWith(CharacteristicsFactory.random().build());
-        });
+        assertThrows(IllegalArgumentException.class, () -> characteristics.updateWith(characteristicsUpdate));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingCharacteristicsThatHaveNoRegistrationDate() {
         Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(null).build();
+        Characteristics characteristicsUpdate = CharacteristicsFactory.random().build();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            characteristics.updateWith(CharacteristicsFactory.random().build());
-        });
+        assertThrows(IllegalArgumentException.class, () -> characteristics.updateWith(characteristicsUpdate));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Characteristics.class).usingGetClass().verify();
     }
 }
