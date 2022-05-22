@@ -11,7 +11,6 @@ executors:
   builder:
     docker:
       - image: cimg/openjdk:11.0
-    working_directory: ~/repo
 
 ####################
 # Jobs
@@ -59,7 +58,7 @@ jobs:
           path: ~/test-results
 
       - persist_to_workspace:
-          root: ~/repo
+          root: .
           paths:
             - src
             - migrations
@@ -87,7 +86,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - restore_cache:
           keys:
@@ -112,7 +111,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - restore_cache:
           keys:
@@ -134,7 +133,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - setup_remote_docker
 
@@ -171,7 +170,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - setup_remote_docker
 
@@ -205,11 +204,10 @@ jobs:
   deploy-uat:
     executor: heroku/default
     resource_class: large
-    working_directory: ~/repo
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - heroku/deploy-via-git:
           app-name: servicio-adopciones-uat
@@ -226,7 +224,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - heroku/install
 
@@ -276,7 +274,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: .
 
       - heroku/install
 
