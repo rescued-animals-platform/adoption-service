@@ -39,13 +39,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class JpaAnimalTest {
+class JpaAnimalTest {
 
     @Test
-    public void shouldBuildAJpaAnimalFromACreateAnimalDtoAndGenerateAnIdentifierAndARegistrationDateForIt() {
+    void shouldBuildAJpaAnimalFromACreateAnimalDtoAndGenerateAnIdentifierAndARegistrationDateForIt() {
         Organization organization = OrganizationFactory.random().build();
         AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
 
@@ -67,7 +70,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldBuildAJpaAnimalFromAnAnimal() {
+    void shouldBuildAJpaAnimalFromAnAnimal() {
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsFactory.random().build();
         Story story = StoryFactory.random().build();
@@ -117,7 +120,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldBuildAJpaAnimalWithNoJpaPrimaryLinkPicture() {
+    void shouldBuildAJpaAnimalWithNoJpaPrimaryLinkPicture() {
         Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -128,7 +131,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldBuildAJpaAnimalWithNoJpaCharacteristics() {
+    void shouldBuildAJpaAnimalWithNoJpaCharacteristics() {
         Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -139,7 +142,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldBuildAJpaAnimalWithNoJpaStory() {
+    void shouldBuildAJpaAnimalWithNoJpaStory() {
         Animal animal = AnimalFactory.random().build();
 
         JpaAnimal jpaAnimal = new JpaAnimal(animal);
@@ -150,7 +153,7 @@ public class JpaAnimalTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaAnimal.class).usingGetClass()
                       .withPrefabValues(JpaPrimaryLinkPicture.class, mock(JpaPrimaryLinkPicture.class), mock(JpaPrimaryLinkPicture.class))
                       .withPrefabValues(JpaCharacteristics.class, mock(JpaCharacteristics.class), mock(JpaCharacteristics.class))

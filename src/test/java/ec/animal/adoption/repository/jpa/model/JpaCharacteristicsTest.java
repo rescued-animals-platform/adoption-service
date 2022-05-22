@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class JpaCharacteristicsTest {
+class JpaCharacteristicsTest {
 
     @Test
-    public void shouldGenerateAnIdWhenCreatingJpaCharacteristicsForCharacteristicsWithNoId() {
+    void shouldGenerateAnIdWhenCreatingJpaCharacteristicsForCharacteristicsWithNoId() {
         Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(null).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
@@ -49,7 +49,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldGenerateARegistrationDateWhenCreatingJpaCharacteristicsForCharacteristicsWithNoRegistrationDate() {
+    void shouldGenerateARegistrationDateWhenCreatingJpaCharacteristicsForCharacteristicsWithNoRegistrationDate() {
         Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(null).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
@@ -59,7 +59,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsWithId() {
+    void shouldCreateCharacteristicsWithId() {
         UUID characteristicsId = UUID.randomUUID();
         Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(characteristicsId).build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
@@ -70,7 +70,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsWithRegistrationDate() {
+    void shouldCreateCharacteristicsWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
         Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(registrationDate)
                                                                 .build();
@@ -82,7 +82,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldCreateJpaCharacteristicsFromCharacteristics() {
+    void shouldCreateJpaCharacteristicsFromCharacteristics() {
         Characteristics characteristics = CharacteristicsFactory.random().build();
         JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
 
@@ -95,7 +95,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldAcceptNullSociability() {
+    void shouldAcceptNullSociability() {
         Temperaments temperaments = TemperamentsFactory.random().withSociability(null).build();
         Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
@@ -106,7 +106,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldAcceptNullDocility() {
+    void shouldAcceptNullDocility() {
         Temperaments temperaments = TemperamentsFactory.random().withDocility(null).build();
         Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
@@ -117,7 +117,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldAcceptNullBalance() {
+    void shouldAcceptNullBalance() {
         Temperaments temperaments = TemperamentsFactory.random().withBalance(null).build();
         Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
 
@@ -128,7 +128,7 @@ public class JpaCharacteristicsTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaCharacteristics.class).usingGetClass()
                       .withPrefabValues(
                               JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)

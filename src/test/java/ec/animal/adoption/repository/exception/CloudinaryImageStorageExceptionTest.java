@@ -25,10 +25,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-public class CloudinaryImageStorageExceptionTest {
+class CloudinaryImageStorageExceptionTest {
 
     @Test
-    public void shouldReturnMessage() {
+    void shouldReturnMessage() {
         String expectedMessage = "The image could not be stored";
 
         CloudinaryImageStorageException cloudinaryImageStorageException = new CloudinaryImageStorageException(mock(Throwable.class));

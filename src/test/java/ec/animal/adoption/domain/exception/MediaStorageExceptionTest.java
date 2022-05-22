@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class MediaStorageExceptionTest {
+class MediaStorageExceptionTest {
 
     @Test
-    public void shouldReturnMessage() {
+    void shouldReturnMessage() {
         String expectedMessage = "Can not fulfill the request now. Please, retry later (client unavailable)";
 
         MediaStorageException mediaStorageException = new MediaStorageException();

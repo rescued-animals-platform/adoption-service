@@ -34,10 +34,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class JpaStoryTest {
+class JpaStoryTest {
 
     @Test
-    public void shouldGenerateAnIdWhenCreatingAJpaStoryForAStoryWithNoId() {
+    void shouldGenerateAnIdWhenCreatingAJpaStoryForAStoryWithNoId() {
         Story story = StoryFactory.random().withIdentifier(null).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
@@ -47,7 +47,7 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldGenerateARegistrationDateWhenCreatingAJpaStoryForAStoryWithNoRegistrationDate() {
+    void shouldGenerateARegistrationDateWhenCreatingAJpaStoryForAStoryWithNoRegistrationDate() {
         Story story = StoryFactory.random().withRegistrationDate(null).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
 
@@ -57,7 +57,7 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldCreateAStoryWithId() {
+    void shouldCreateAStoryWithId() {
         UUID storyId = UUID.randomUUID();
         Story story = StoryFactory.random().withIdentifier(storyId).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
@@ -68,7 +68,7 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldCreateAStoryWithRegistrationDate() {
+    void shouldCreateAStoryWithRegistrationDate() {
         LocalDateTime registrationDate = LocalDateTime.now();
         Story story = StoryFactory.random().withRegistrationDate(registrationDate).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
@@ -79,7 +79,7 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldCreateJpaStoryFromStory() {
+    void shouldCreateJpaStoryFromStory() {
         String text = randomAlphabetic(100);
         Story story = StoryFactory.random().withText(text).build();
         JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
@@ -90,7 +90,7 @@ public class JpaStoryTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(JpaStory.class).usingGetClass()
                       .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
                       .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY, Warning.SURROGATE_KEY).verify();

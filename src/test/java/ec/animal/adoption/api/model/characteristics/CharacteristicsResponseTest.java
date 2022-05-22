@@ -49,7 +49,7 @@ class CharacteristicsResponseTest {
     }
 
     @Test
-    public void shouldBeSerializable() throws IOException {
+    void shouldBeSerializable() throws IOException {
         Characteristics characteristics = CharacteristicsFactory.random().withFriendlyWith(FriendlyWith.ADULTS).build();
         String expectedTemperamentsResponseAsJson = objectMapper.writeValueAsString(
                 TemperamentsResponse.from(characteristics.getTemperaments())
@@ -67,7 +67,7 @@ class CharacteristicsResponseTest {
     }
 
     @Test
-    public void shouldBeDeSerializable() throws IOException, JSONException {
+    void shouldBeDeSerializable() throws IOException, JSONException {
         Temperaments temperaments = TemperamentsFactory.empty().withBalance(Balance.POSSESSIVE).build();
         Characteristics characteristics = CharacteristicsFactory.random()
                                                                 .withTemperaments(temperaments)

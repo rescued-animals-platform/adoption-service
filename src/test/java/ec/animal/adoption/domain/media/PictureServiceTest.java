@@ -40,11 +40,13 @@ import static ec.animal.adoption.domain.media.PictureType.ALTERNATE;
 import static ec.animal.adoption.domain.media.PictureType.PRIMARY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PictureServiceTest {
+class PictureServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
@@ -62,7 +64,7 @@ public class PictureServiceTest {
     }
 
     @Test
-    public void shouldCreateAPicture() {
+    void shouldCreateAPicture() {
         ArgumentCaptor<Animal> argumentCaptor = ArgumentCaptor.forClass(Animal.class);
         ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(PRIMARY).build();
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PRIMARY).build();
@@ -103,27 +105,27 @@ public class PictureServiceTest {
     }
 
     @Test
-    public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimaryOnCreate() {
+    void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimaryOnCreate() {
         ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(ALTERNATE).build();
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationFactory.random().build();
 
-        assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
-        });
+        assertThrows(InvalidPictureException.class, () -> pictureService.createFor(animalId, organization, imagePicture));
     }
 
     @Test
-    public void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalidOnCreate() {
+    void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalidOnCreate() {
         ImagePicture imagePicture = mock(ImagePicture.class);
         when(imagePicture.getPictureType()).thenReturn(PRIMARY);
         when(imagePicture.isValid()).thenReturn(false);
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationFactory.random().build();
 
-        assertThrows(InvalidPictureException.class, () -> {
-            pictureService.createFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
-        });
+        assertThrows(InvalidPictureException.class, () -> pictureService.createFor(animalId, organization, imagePicture));
     }
 
     @Test
-    public void shouldUpdatePrimaryLinkPictureWithADifferentOneWhenItAlreadyExistsAndDeleteTheExistingOne() {
+    void shouldUpdatePrimaryLinkPictureWithADifferentOneWhenItAlreadyExistsAndDeleteTheExistingOne() {
         UUID animalId = UUID.randomUUID();
         ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(PRIMARY).build();
         LinkPicture newPrimaryLinkPicture = LinkPictureFactory.random().withPictureType(PRIMARY).build();
@@ -174,27 +176,27 @@ public class PictureServiceTest {
     }
 
     @Test
-    public void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimaryOnUpdate() {
+    void shouldThrowInvalidPictureExceptionIfPictureTypeIsNotPrimaryOnUpdate() {
         ImagePicture imagePicture = ImagePictureFactory.random().withPictureType(ALTERNATE).build();
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationFactory.random().build();
 
-        assertThrows(InvalidPictureException.class, () -> {
-            pictureService.updateFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
-        });
+        assertThrows(InvalidPictureException.class, () -> pictureService.createFor(animalId, organization, imagePicture));
     }
 
     @Test
-    public void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalidOnUpdate() {
+    void shouldThrowInvalidPictureExceptionWhenImagePictureIsInvalidOnUpdate() {
         ImagePicture imagePicture = mock(ImagePicture.class);
         when(imagePicture.getPictureType()).thenReturn(PRIMARY);
         when(imagePicture.isValid()).thenReturn(false);
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationFactory.random().build();
 
-        assertThrows(InvalidPictureException.class, () -> {
-            pictureService.updateFor(UUID.randomUUID(), OrganizationFactory.random().build(), imagePicture);
-        });
+        assertThrows(InvalidPictureException.class, () -> pictureService.createFor(animalId, organization, imagePicture));
     }
 
     @Test
-    public void shouldGetPrimaryLinkPictureByAnimalId() {
+    void shouldGetPrimaryLinkPictureByAnimalId() {
         LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
                                                                    .withPictureType(PRIMARY).build();
         UUID animalId = UUID.randomUUID();
@@ -208,7 +210,7 @@ public class PictureServiceTest {
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoPrimaryLinkPictureForAnimal() {
+    void shouldThrowEntityNotFoundExceptionWhenThereIsNoPrimaryLinkPictureForAnimal() {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalFactory.random().build();
         when(animalRepository.getBy(animalId)).thenReturn(animal);

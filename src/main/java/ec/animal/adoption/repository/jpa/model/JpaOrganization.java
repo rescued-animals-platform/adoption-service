@@ -30,7 +30,7 @@ import java.util.UUID;
 @Entity(name = "organization")
 public class JpaOrganization implements Serializable {
 
-    private transient static final long serialVersionUID = -579031381673428820L;
+    private static final transient long serialVersionUID = -579031381673428820L;
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")

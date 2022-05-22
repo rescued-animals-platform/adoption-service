@@ -137,7 +137,7 @@ class CharacteristicsRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullSize() {
+    void shouldValidateNonNullSize() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
                 null, getRandomPhysicalActivity(), TemperamentsRequestBuilder.random().build()
         );
@@ -151,7 +151,7 @@ class CharacteristicsRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullPhysicalActivity() {
+    void shouldValidateNonNullPhysicalActivity() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
                 getRandomSize(), null, TemperamentsRequestBuilder.random().build()
         );
@@ -165,7 +165,7 @@ class CharacteristicsRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullTemperaments() {
+    void shouldValidateNonNullTemperaments() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
                 getRandomSize(), getRandomPhysicalActivity(), null
         );
@@ -179,7 +179,7 @@ class CharacteristicsRequestTest {
     }
 
     @Test
-    public void shouldValidateNonEmptyTemperaments() {
+    void shouldValidateNonEmptyTemperaments() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
                 getRandomSize(), getRandomPhysicalActivity(), TemperamentsRequestBuilder.empty().build()
         );

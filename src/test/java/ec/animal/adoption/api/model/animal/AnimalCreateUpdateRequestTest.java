@@ -134,7 +134,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullClinicalRecord() {
+    void shouldValidateNonNullClinicalRecord() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withClinicalRecord(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -146,7 +146,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonEmptyClinicalRecord() {
+    void shouldValidateNonEmptyClinicalRecord() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withClinicalRecord("").build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -158,7 +158,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldAllowNullName() {
+    void shouldAllowNullName() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withName(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -167,7 +167,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonEmptyName() {
+    void shouldValidateNonEmptyName() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withName(" ").build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -179,7 +179,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullSpecies() {
+    void shouldValidateNonNullSpecies() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withSpecies(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -191,7 +191,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullEstimatedAge() {
+    void shouldValidateNonNullEstimatedAge() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withEstimatedAge(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -203,7 +203,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullSex() {
+    void shouldValidateNonNullSex() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withSex(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -215,7 +215,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldAllowNullStateRequest() {
+    void shouldAllowNullStateRequest() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random().withState(null).build();
 
         Set<ConstraintViolation<AnimalCreateUpdateRequest>> constraintViolations = getValidator().validate(animalCreateUpdateRequest);
@@ -224,7 +224,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldValidateStateRequestWhenPresent() {
+    void shouldValidateStateRequestWhenPresent() {
         StateRequest stateRequest = new StateRequest(null, null, null);
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random()
                                                                                         .withCreateStateRequest(stateRequest)
@@ -239,7 +239,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithNoStateRequest() throws IOException, JSONException {
+    void shouldDeserializeCreateAnimalRequestWithNoStateRequest() throws IOException, JSONException {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random()
                                                                                         .withClinicalRecord(clinicalRecord)
                                                                                         .withName(name)
@@ -262,7 +262,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithLookingForHumanStateRequest() throws IOException, JSONException {
+    void shouldDeserializeCreateAnimalRequestWithLookingForHumanStateRequest() throws IOException, JSONException {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random()
                                                                                         .withClinicalRecord(clinicalRecord)
                                                                                         .withName(name)
@@ -287,7 +287,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithAdoptedStateRequest() throws IOException, JSONException {
+    void shouldDeserializeCreateAnimalRequestWithAdoptedStateRequest() throws IOException, JSONException {
         String adoptionFormId = randomAlphabetic(10);
         State adoptedState = State.adopted(adoptionFormId);
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random()
@@ -315,7 +315,7 @@ class AnimalCreateUpdateRequestTest {
     }
 
     @Test
-    public void shouldDeserializeCreateAnimalRequestWithUnavailableStateRequest() throws IOException, JSONException {
+    void shouldDeserializeCreateAnimalRequestWithUnavailableStateRequest() throws IOException, JSONException {
         String notes = randomAlphabetic(50);
         State unavailableState = State.unavailable(notes);
         AnimalCreateUpdateRequest animalCreateUpdateRequest = CreateAnimalRequestBuilder.random()

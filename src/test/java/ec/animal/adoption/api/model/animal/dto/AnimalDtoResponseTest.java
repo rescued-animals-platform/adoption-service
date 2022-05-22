@@ -39,7 +39,7 @@ import static ec.animal.adoption.TestUtils.getObjectMapper;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AnimalDtoResponseTest {
+class AnimalDtoResponseTest {
 
     private ObjectMapper objectMapper;
 
@@ -49,7 +49,7 @@ public class AnimalDtoResponseTest {
     }
 
     @Test
-    public void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
+    void shouldSerializeAnimalDtoWithPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         String smallPrimaryPictureUrl = randomAlphabetic(10);
         MediaLink smallImageMediaLink = new MediaLink(randomAlphabetic(10), smallPrimaryPictureUrl);
@@ -71,7 +71,7 @@ public class AnimalDtoResponseTest {
     }
 
     @Test
-    public void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
+    void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalFactory.random().withIdentifier(animalId).build();
         AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
@@ -87,7 +87,7 @@ public class AnimalDtoResponseTest {
     }
 
     @Test
-    public void shouldBeDeserializable() throws JSONException, JsonProcessingException {
+    void shouldBeDeserializable() throws JSONException, JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         Animal animal = AnimalFactory.random().withPrimaryLinkPicture(primaryLinkPicture).build();
         AnimalDtoResponse expectedAnimalDtoResponse = new AnimalDtoResponse(animal);

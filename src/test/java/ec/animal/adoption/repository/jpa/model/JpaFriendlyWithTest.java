@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class JpaFriendlyWithTest {
+class JpaFriendlyWithTest {
 
     @Test
-    public void shouldCreateJpaFriendlyWithFromFriendlyWith() {
+    void shouldCreateJpaFriendlyWithFromFriendlyWith() {
         FriendlyWith friendlyWith = TestUtils.getRandomFriendlyWith();
 
         JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith);
@@ -40,7 +40,7 @@ public class JpaFriendlyWithTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAnsHashCode() {
+    void shouldVerifyEqualsAnsHashCode() {
         EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().suppress(Warning.SURROGATE_KEY).verify();
     }
 }

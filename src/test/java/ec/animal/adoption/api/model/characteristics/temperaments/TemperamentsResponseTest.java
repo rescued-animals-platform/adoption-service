@@ -21,13 +21,19 @@ package ec.animal.adoption.api.model.characteristics.temperaments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.characteristics.temperaments.*;
+import ec.animal.adoption.domain.characteristics.temperaments.Balance;
+import ec.animal.adoption.domain.characteristics.temperaments.Docility;
+import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomBalance;
+import static ec.animal.adoption.TestUtils.getRandomDocility;
+import static ec.animal.adoption.TestUtils.getRandomSociability;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,7 +47,7 @@ class TemperamentsResponseTest {
     }
 
     @Test
-    public void shouldBeSerializable() throws IOException {
+    void shouldBeSerializable() throws IOException {
         Sociability sociability = getRandomSociability();
         Docility docility = getRandomDocility();
         Balance balance = getRandomBalance();
@@ -60,7 +66,7 @@ class TemperamentsResponseTest {
     }
 
     @Test
-    public void shouldBeSerializableContainingOnlySociability() throws IOException {
+    void shouldBeSerializableContainingOnlySociability() throws IOException {
         Sociability sociability = getRandomSociability();
         Temperaments temperaments = TemperamentsFactory.empty().withSociability(sociability).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
@@ -73,7 +79,7 @@ class TemperamentsResponseTest {
     }
 
     @Test
-    public void shouldBeSerializableContainingOnlyDocility() throws IOException {
+    void shouldBeSerializableContainingOnlyDocility() throws IOException {
         Docility docility = getRandomDocility();
         Temperaments temperaments = TemperamentsFactory.empty().withDocility(docility).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
@@ -86,7 +92,7 @@ class TemperamentsResponseTest {
     }
 
     @Test
-    public void shouldBeSerializableContainingOnlyBalance() throws IOException {
+    void shouldBeSerializableContainingOnlyBalance() throws IOException {
         Balance balance = getRandomBalance();
         Temperaments temperaments = TemperamentsFactory.empty().withBalance(balance).build();
         TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);

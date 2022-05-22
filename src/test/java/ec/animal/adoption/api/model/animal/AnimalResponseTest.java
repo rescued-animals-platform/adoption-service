@@ -35,7 +35,7 @@ class AnimalResponseTest {
     }
 
     @Test
-    public void shouldSerializeAnimalResponse() throws JsonProcessingException {
+    void shouldSerializeAnimalResponse() throws JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         Characteristics characteristics = CharacteristicsFactory.random().build();
         Story story = StoryFactory.random().build();

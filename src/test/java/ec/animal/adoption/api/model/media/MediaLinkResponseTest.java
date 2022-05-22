@@ -23,7 +23,7 @@ class MediaLinkResponseTest {
     }
 
     @Test
-    public void shouldBeSerializable() throws IOException {
+    void shouldBeSerializable() throws IOException {
         String url = randomAlphabetic(10);
         MediaLinkResponse mediaLinkResponse = MediaLinkResponse.from(url);
 
@@ -33,7 +33,7 @@ class MediaLinkResponseTest {
     }
 
     @Test
-    public void shouldBeDeSerializable() throws IOException, JSONException {
+    void shouldBeDeSerializable() throws IOException, JSONException {
         String url = randomAlphabetic(10);
         MediaLinkResponse expectedMediaLinkResponse = MediaLinkResponse.from(url);
         String mediaLinkResponseAsJson = new JSONObject().put("url", url).toString();

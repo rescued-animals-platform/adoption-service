@@ -26,10 +26,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
-public class InvalidPictureExceptionTest {
+class InvalidPictureExceptionTest {
 
     @Test
-    public void shouldReturnMessage() {
+    void shouldReturnMessage() {
         InvalidPictureException invalidPictureException = new InvalidPictureException(mock(Throwable.class));
 
         assertThat(invalidPictureException.getMessage(), is(notNullValue()));

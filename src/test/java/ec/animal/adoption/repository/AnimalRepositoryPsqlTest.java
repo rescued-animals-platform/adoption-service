@@ -60,12 +60,17 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AnimalRepositoryPsqlTest {
+class AnimalRepositoryPsqlTest {
 
     @Mock
     private JpaAnimalRepository jpaAnimalRepository;
@@ -80,12 +85,12 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldBeAnInstanceOfAnimalRepository() {
+    void shouldBeAnInstanceOfAnimalRepository() {
         assertThat(animalRepositoryPsql, is(instanceOf(AnimalRepository.class)));
     }
 
     @Test
-    public void shouldCreateAnimal() {
+    void shouldCreateAnimal() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
@@ -98,18 +103,17 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldThrowEntityAlreadyExistExceptionIfAnyExceptionIsThrownByJpaAnimalRepositoryWhenCreatingAnimal() {
+    void shouldThrowEntityAlreadyExistExceptionIfAnyExceptionIsThrownByJpaAnimalRepositoryWhenCreatingAnimal() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
+        AnimalDto animalDto = AnimalDtoFactory.random().build();
 
-        assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalRepositoryPsql.create(AnimalDtoFactory.random().build());
-        });
+        assertThrows(EntityAlreadyExistsException.class, () -> animalRepositoryPsql.create(animalDto));
     }
 
     @Test
-    public void shouldSaveAnimal() {
+    void shouldSaveAnimal() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
@@ -121,7 +125,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldThrowEntityAlreadyExistExceptionIfAnyExceptionIsThrownByJpaAnimalRepositoryWhenSavingAnimal() {
+    void shouldThrowEntityAlreadyExistExceptionIfAnyExceptionIsThrownByJpaAnimalRepositoryWhenSavingAnimal() {
         doAnswer((Answer<Object>) invocation -> {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
@@ -132,7 +136,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetAnimalByClinicalRecordAndOrganization() {
+    void shouldGetAnimalByClinicalRecordAndOrganization() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
@@ -147,7 +151,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldReturnEmptyWhenAnimalByClinicalRecordAndOrganizationDoesNotExist() {
+    void shouldReturnEmptyWhenAnimalByClinicalRecordAndOrganizationDoesNotExist() {
         String clinicalRecord = randomAlphabetic(10);
         Organization organization = OrganizationFactory.random().build();
         when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(clinicalRecord, organization.getOrganizationId()))
@@ -183,7 +187,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldGetAnimalByItsIdentifier() {
+    void shouldGetAnimalByItsIdentifier() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
@@ -195,14 +199,14 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierIsNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            animalRepositoryPsql.getBy(UUID.randomUUID());
-        });
+    void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierIsNotFound() {
+        UUID animalId = UUID.randomUUID();
+
+        assertThrows(EntityNotFoundException.class, () -> animalRepositoryPsql.getBy(animalId));
     }
 
     @Test
-    public void shouldGetAnimalByItsIdentifierAndOrganization() {
+    void shouldGetAnimalByItsIdentifierAndOrganization() {
         JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
         Animal expectedAnimal = AnimalFactory.random().build();
         when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
@@ -215,14 +219,15 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierAndOrganizationIsNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            animalRepositoryPsql.getBy(UUID.randomUUID(), OrganizationFactory.random().build());
-        });
+    void shouldThrowEntityNotFoundExceptionWhenAnimalByItsIdentifierAndOrganizationIsNotFound() {
+        UUID animalId = UUID.randomUUID();
+        Organization organization = OrganizationFactory.random().build();
+
+        assertThrows(EntityNotFoundException.class, () -> animalRepositoryPsql.getBy(animalId, organization));
     }
 
     @Test
-    public void shouldReturnAllAnimalsForOrganizationWithPagination() {
+    void shouldReturnAllAnimalsForOrganizationWithPagination() {
         Pageable pageable = mock(Pageable.class);
         List<JpaAnimal> listOfJpaAnimals = newArrayList(
                 AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
@@ -240,7 +245,7 @@ public class AnimalRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsWithFiltersAndPagination() {
+    void shouldReturnAllAnimalsWithFiltersAndPagination() {
         State lookingForHuman = State.lookingForHuman();
         Species dog = Species.DOG;
         PhysicalActivity high = PhysicalActivity.HIGH;

@@ -41,7 +41,7 @@ class StoryRequestTest {
     }
 
     @Test
-    public void shouldDeSerializeAndReturnStory() throws IOException, JSONException {
+    void shouldDeSerializeAndReturnStory() throws IOException, JSONException {
         String expectedText = randomAlphabetic(100);
         String storyRequestAsJson = new JSONObject().put("text", expectedText).toString();
 
@@ -54,7 +54,7 @@ class StoryRequestTest {
     }
 
     @Test
-    public void shouldValidateNonNullText() {
+    void shouldValidateNonNullText() {
         StoryRequest storyRequest = new StoryRequest(null);
 
         Set<ConstraintViolation<StoryRequest>> constraintViolations = getValidator().validate(storyRequest);
@@ -66,7 +66,7 @@ class StoryRequestTest {
     }
 
     @Test
-    public void shouldValidateNonEmptyText() {
+    void shouldValidateNonEmptyText() {
         StoryRequest storyRequest = new StoryRequest("");
 
         Set<ConstraintViolation<StoryRequest>> constraintViolations = getValidator().validate(storyRequest);

@@ -35,7 +35,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ApiErrorResponseTest {
+class ApiErrorResponseTest {
 
     private ApiErrorResponse apiErrorResponse;
 
@@ -52,7 +52,7 @@ public class ApiErrorResponseTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ApiErrorResponse.class)
                       .usingGetClass()
                       .withIgnoredFields("timestamp")
@@ -61,7 +61,7 @@ public class ApiErrorResponseTest {
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    void shouldBeSerializableAndDeserializable() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
         String serializedApiError = objectMapper.writeValueAsString(apiErrorResponse);
 

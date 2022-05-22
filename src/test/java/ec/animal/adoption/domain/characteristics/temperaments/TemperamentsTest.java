@@ -26,10 +26,10 @@ import static ec.animal.adoption.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TemperamentsTest {
+class TemperamentsTest {
 
     @Test
-    public void shouldSetSociability() {
+    void shouldSetSociability() {
         Sociability sociability = getRandomSociability();
         Temperaments temperaments = TemperamentsFactory.random().withSociability(sociability).build();
 
@@ -38,7 +38,7 @@ public class TemperamentsTest {
     }
 
     @Test
-    public void shouldSetDocility() {
+    void shouldSetDocility() {
         Docility docility = getRandomDocility();
         Temperaments temperaments = TemperamentsFactory.random().withDocility(docility).build();
 
@@ -47,7 +47,7 @@ public class TemperamentsTest {
     }
 
     @Test
-    public void shouldSetBalance() {
+    void shouldSetBalance() {
         Balance balance = getRandomBalance();
         Temperaments temperaments = TemperamentsFactory.random().withBalance(balance).build();
 
@@ -56,7 +56,7 @@ public class TemperamentsTest {
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Temperaments.class).usingGetClass().verify();
     }
 }

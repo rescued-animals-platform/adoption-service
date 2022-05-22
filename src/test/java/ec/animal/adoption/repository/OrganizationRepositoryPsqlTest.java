@@ -56,12 +56,12 @@ class OrganizationRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldBeAnInstanceOfOrganizationRepository() {
+    void shouldBeAnInstanceOfOrganizationRepository() {
         assertThat(organizationRepositoryPsql, is(instanceOf(OrganizationRepository.class)));
     }
 
     @Test
-    public void shouldGetOrganizationByItsIdentifier() {
+    void shouldGetOrganizationByItsIdentifier() {
         Organization organization = OrganizationFactory.random().build();
         UUID organizationId = organization.getOrganizationId();
         when(jpaOrganizationRepository.findById(organizationId)).thenReturn(of(new JpaOrganization(organization)));
@@ -73,7 +73,7 @@ class OrganizationRepositoryPsqlTest {
     }
 
     @Test
-    public void shouldReturnEmptyOrganization() {
+    void shouldReturnEmptyOrganization() {
         UUID organizationId = UUID.randomUUID();
         when(jpaOrganizationRepository.findById(organizationId)).thenReturn(empty());
         Optional<Organization> organization = organizationRepositoryPsql.getBy(organizationId);

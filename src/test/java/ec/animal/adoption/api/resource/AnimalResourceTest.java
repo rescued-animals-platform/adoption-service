@@ -56,7 +56,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AnimalResourceTest {
+class AnimalResourceTest {
 
     @Mock
     private AnimalService animalService;
@@ -82,7 +82,7 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldCreateAnAnimal() {
+    void shouldCreateAnAnimal() {
         AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
@@ -98,7 +98,7 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldUpdateAnAnimal() {
+    void shouldUpdateAnAnimal() {
         UUID animalId = UUID.randomUUID();
         AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
@@ -117,7 +117,7 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldGetAnAnimalByItsIdentifier() {
+    void shouldGetAnAnimalByItsIdentifier() {
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
@@ -132,7 +132,7 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalsWithPagination() {
+    void shouldReturnAllAnimalsWithPagination() {
         Pageable pageable = mock(Pageable.class);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
@@ -148,7 +148,7 @@ public class AnimalResourceTest {
     }
 
     @Test
-    public void shouldReturnAllAnimalDtosWithFiltersAndPagination() {
+    void shouldReturnAllAnimalDtosWithFiltersAndPagination() {
         StateName stateName = getRandomStateName();
         Species species = getRandomSpecies();
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();

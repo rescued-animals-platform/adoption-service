@@ -77,14 +77,14 @@ class TemperamentsRequestTest {
     }
 
     @Test
-    public void shouldReturnTrueIfTemperamentsRequestIsEmpty() {
+    void shouldReturnTrueIfTemperamentsRequestIsEmpty() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty().build();
 
         assertThat(temperamentsRequest.isEmpty(), is(true));
     }
 
     @Test
-    public void shouldReturnFalseIfOnlySociabilityIsSet() {
+    void shouldReturnFalseIfOnlySociabilityIsSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty()
                                                                             .withSociability(getRandomSociability())
                                                                             .build();
@@ -93,7 +93,7 @@ class TemperamentsRequestTest {
     }
 
     @Test
-    public void shouldReturnFalseIfOnlyDocilityIsSet() {
+    void shouldReturnFalseIfOnlyDocilityIsSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty()
                                                                             .withDocility(getRandomDocility())
                                                                             .build();
@@ -102,7 +102,7 @@ class TemperamentsRequestTest {
     }
 
     @Test
-    public void shouldReturnFalseIfOnlyBalanceIsSet() {
+    void shouldReturnFalseIfOnlyBalanceIsSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty()
                                                                             .withBalance(getRandomBalance())
                                                                             .build();
@@ -111,28 +111,28 @@ class TemperamentsRequestTest {
     }
 
     @Test
-    public void shouldReturnFalseIfSociabilityAndDocilityAreSet() {
+    void shouldReturnFalseIfSociabilityAndDocilityAreSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.random().withBalance(null).build();
 
         assertThat(temperamentsRequest.isEmpty(), is(false));
     }
 
     @Test
-    public void shouldReturnFalseIfSociabilityAndBalanceAreSet() {
+    void shouldReturnFalseIfSociabilityAndBalanceAreSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.random().withDocility(null).build();
 
         assertThat(temperamentsRequest.isEmpty(), is(false));
     }
 
     @Test
-    public void shouldReturnFalseIfDocilityAndBalanceAreSet() {
+    void shouldReturnFalseIfDocilityAndBalanceAreSet() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.random().withSociability(null).build();
 
         assertThat(temperamentsRequest.isEmpty(), is(false));
     }
 
     @Test
-    public void shouldValidateNonEmptyTemperamentsRequest() {
+    void shouldValidateNonEmptyTemperamentsRequest() {
         TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty().build();
 
         Set<ConstraintViolation<TemperamentsRequest>> constraintViolations = getValidator().validate(temperamentsRequest);

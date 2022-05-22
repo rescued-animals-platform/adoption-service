@@ -25,7 +25,7 @@ class LinkPictureResponseTest {
     }
 
     @Test
-    public void shouldBeSerializable() throws IOException {
+    void shouldBeSerializable() throws IOException {
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         LinkPictureResponse linkPictureResponse = LinkPictureResponse.from(linkPicture);
 
@@ -44,7 +44,7 @@ class LinkPictureResponseTest {
     }
 
     @Test
-    public void shouldBeDeSerializable() throws IOException, JSONException {
+    void shouldBeDeSerializable() throws IOException, JSONException {
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
         String linkPictureResponseAsJson = new JSONObject()

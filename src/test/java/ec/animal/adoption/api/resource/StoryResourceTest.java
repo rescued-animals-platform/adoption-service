@@ -43,7 +43,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class StoryResourceTest {
+class StoryResourceTest {
 
     @Mock
     private StoryService storyService;
@@ -71,7 +71,7 @@ public class StoryResourceTest {
     }
 
     @Test
-    public void shouldCreateAStoryForAnimal() {
+    void shouldCreateAStoryForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
         StoryRequest storyRequest = mock(StoryRequest.class);
@@ -103,7 +103,7 @@ public class StoryResourceTest {
     }
 
     @Test
-    public void shouldGetStoryForAnimal() {
+    void shouldGetStoryForAnimal() {
         Story foundStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponse.from(foundStory);
         when(storyService.getBy(animalId)).thenReturn(foundStory);

@@ -22,10 +22,10 @@ package ec.animal.adoption.domain.media;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-public class MediaLinkTest {
+class MediaLinkTest {
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(MediaLink.class).usingGetClass().verify();
     }
 }

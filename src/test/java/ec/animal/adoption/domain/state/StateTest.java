@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StateTest {
+class StateTest {
 
     private String adoptionFormId;
     private String notes;

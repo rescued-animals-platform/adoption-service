@@ -37,12 +37,17 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class StoryServiceTest {
+class StoryServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
@@ -55,7 +60,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    public void shouldCreateStory() {
+    void shouldCreateStory() {
         ArgumentCaptor<Animal> animalArgumentCaptor = ArgumentCaptor.forClass(Animal.class);
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().build();
@@ -94,7 +99,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    public void shouldUpdateStoryWithADifferentOneWhenItAlreadyExists() {
+    void shouldUpdateStoryWithADifferentOneWhenItAlreadyExists() {
         UUID animalId = UUID.randomUUID();
         Organization organization = OrganizationFactory.random().build();
         Story existingStory = mock(Story.class);
@@ -152,7 +157,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    public void shouldGetStoryByAnimalId() {
+    void shouldGetStoryByAnimalId() {
         UUID animalId = UUID.randomUUID();
         Story expectedStory = mock(Story.class);
         Animal animal = AnimalFactory.random().withIdentifier(animalId).withStory(expectedStory).build();
@@ -164,7 +169,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    public void shouldThrowEntityNotFoundExceptionWhenThereIsNoStoryForAnimal() {
+    void shouldThrowEntityNotFoundExceptionWhenThereIsNoStoryForAnimal() {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalFactory.random().build();
         when(animalRepository.getBy(animalId)).thenReturn(animal);

@@ -41,7 +41,7 @@ import java.util.UUID;
 @Component
 public class MediaRepositoryCloudinary implements MediaRepository {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MediaRepositoryCloudinary.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaRepositoryCloudinary.class);
 
     private final Cloudinary cloudinary;
 
@@ -63,7 +63,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
                                    largeMediaLink,
                                    smallMediaLink);
         } catch (IOException exception) {
-            LOGGER.error("Exception thrown when communicating to Cloudinary", exception);
+            LOGGER.error("Exception thrown when communicating to Cloudinary");
             throw new CloudinaryImageStorageException(exception);
         }
     }
@@ -76,6 +76,7 @@ public class MediaRepositoryCloudinary implements MediaRepository {
         return new MediaLink(publicId, url);
     }
 
+    @SuppressWarnings(value = "java:S1144")
     private LinkPicture saveFallback(@NonNull final ImagePicture imagePicture,
                                      @NonNull final Organization organization) {
         LOGGER.info("Fallback for Cloudinary save");
@@ -90,11 +91,12 @@ public class MediaRepositoryCloudinary implements MediaRepository {
             cloudinary.uploader().destroy(existingLinkPicture.getLargeImagePublicId(), options);
             cloudinary.uploader().destroy(existingLinkPicture.getSmallImagePublicId(), options);
         } catch (IOException exception) {
-            LOGGER.error("Exception thrown when communicating to Cloudinary to delete resource", exception);
+            LOGGER.error("Exception thrown when communicating to Cloudinary to delete resource");
             throw new CloudinaryImageStorageException(exception);
         }
     }
 
+    @SuppressWarnings(value = "java:S1144")
     private void deleteFallback(@NonNull final LinkPicture existingLinkPicture) {
         LOGGER.info("Fallback for Cloudinary delete. Couldn't delete one or more resources with public ids: {}, {}",
                     existingLinkPicture.getLargeImagePublicId(),

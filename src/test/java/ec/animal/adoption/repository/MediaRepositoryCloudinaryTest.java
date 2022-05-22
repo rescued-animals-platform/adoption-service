@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MediaRepositoryCloudinaryTest {
+class MediaRepositoryCloudinaryTest {
 
     private static final String URL = "url";
     private static final String PUBLIC_ID = "public_id";
@@ -70,12 +70,12 @@ public class MediaRepositoryCloudinaryTest {
     }
 
     @Test
-    public void shouldBeAnInstanceOfMediaStorageClient() {
+    void shouldBeAnInstanceOfMediaStorageClient() {
         assertThat(cloudinaryMediaStorageClient, is(instanceOf(MediaRepository.class)));
     }
 
     @Test
-    public void shouldSavePicture() throws IOException {
+    void shouldSavePicture() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
         String largeImageUrl = randomAlphabetic(10);
         String largeImagePublicId = randomAlphabetic(10);
@@ -97,7 +97,7 @@ public class MediaRepositoryCloudinaryTest {
     }
 
     @Test
-    public void shouldThrowImageStorageExceptionWhenStoringLargeImage() throws IOException {
+    void shouldThrowImageStorageExceptionWhenStoringLargeImage() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
         when(cloudinary.uploader()).thenReturn(uploader);
         when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))
@@ -109,7 +109,7 @@ public class MediaRepositoryCloudinaryTest {
     }
 
     @Test
-    public void shouldThrowImageStorageExceptionWhenStoringSmallImage() throws IOException {
+    void shouldThrowImageStorageExceptionWhenStoringSmallImage() throws IOException {
         ImagePicture imagePicture = ImagePictureFactory.random().build();
         when(cloudinary.uploader()).thenReturn(uploader);
         when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))

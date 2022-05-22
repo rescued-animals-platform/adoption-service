@@ -23,15 +23,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static ec.animal.adoption.domain.media.SupportedImageExtension.*;
+import static ec.animal.adoption.domain.media.SupportedImageExtension.JPEG;
+import static ec.animal.adoption.domain.media.SupportedImageExtension.JPG;
+import static ec.animal.adoption.domain.media.SupportedImageExtension.PNG;
+import static ec.animal.adoption.domain.media.SupportedImageExtension.getMatchFor;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class SupportedImageExtensionTest {
+class SupportedImageExtensionTest {
 
     @Test
-    public void shouldReturnJpegFromExtensionAndContent() {
+    void shouldReturnJpegFromExtensionAndContent() {
         byte[] jpegImageContent = {(byte) 0xff, (byte) 0xd8};
         Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("jpeg", jpegImageContent);
 
@@ -40,7 +43,7 @@ public class SupportedImageExtensionTest {
     }
 
     @Test
-    public void shouldReturnJpgFromExtensionAndContent() {
+    void shouldReturnJpgFromExtensionAndContent() {
         byte[] jpgImageContent = {(byte) 0xff, (byte) 0xd8};
         Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("jpg", jpgImageContent);
 
@@ -49,7 +52,7 @@ public class SupportedImageExtensionTest {
     }
 
     @Test
-    public void shouldReturnPngFromExtensionAndContent() {
+    void shouldReturnPngFromExtensionAndContent() {
         byte[] pngImageContent = {
                 (byte) 0x89, (byte) 0x50, (byte) 0x4e, (byte) 0x47, (byte) 0x0d, (byte) 0x0a, (byte) 0x1a, (byte) 0x0a
         };
@@ -60,18 +63,18 @@ public class SupportedImageExtensionTest {
     }
 
     @Test
-    public void shouldReturnEmptyFromUnmatchingExtension() {
-        String unmatchingExtension = randomAlphabetic(10);
+    void shouldReturnEmptyFromNonMatchingExtension() {
+        String nonMatchingExtension = randomAlphabetic(10);
         byte[] jpgImageContent = {(byte) 0xff, (byte) 0xd8};
-        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor(unmatchingExtension, jpgImageContent);
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor(nonMatchingExtension, jpgImageContent);
 
         assertThat(supportedImageExtension.isPresent(), is(false));
     }
 
     @Test
-    public void shouldReturnEmptyFromUnmatchingContent() {
-        byte[] unmatchingContent = {};
-        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("png", unmatchingContent);
+    void shouldReturnEmptyFromNonMatchingContent() {
+        byte[] nonMatchingContent = {};
+        Optional<SupportedImageExtension> supportedImageExtension = getMatchFor("png", nonMatchingContent);
 
         assertThat(supportedImageExtension.isPresent(), is(false));
     }

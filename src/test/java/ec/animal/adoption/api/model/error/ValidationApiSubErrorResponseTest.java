@@ -31,22 +31,22 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ValidationApiSubErrorResponseTest {
+class ValidationApiSubErrorResponseTest {
 
     @Test
-    public void shouldBeAnInstanceOfApiSubError() {
+    void shouldBeAnInstanceOfApiSubError() {
         ValidationApiSubErrorResponse validationApiSubError = new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10));
 
         assertThat(validationApiSubError, is(instanceOf(ApiSubErrorResponse.class)));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ValidationApiSubErrorResponse.class).usingGetClass().verify();
     }
 
     @Test
-    public void shouldBeSerializableAndDeserializable() throws IOException {
+    void shouldBeSerializableAndDeserializable() throws IOException {
         ObjectMapper objectMapper = TestUtils.getObjectMapper();
         ValidationApiSubErrorResponse validationApiSubError = new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10));
 

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TemperamentsRequestValidatorTest {
+class TemperamentsRequestValidatorTest {
 
     @Mock
     private ConstraintValidatorContext context;
@@ -49,12 +49,12 @@ public class TemperamentsRequestValidatorTest {
     }
 
     @Test
-    public void shouldBeAnInstanceOfConstraintValidator() {
+    void shouldBeAnInstanceOfConstraintValidator() {
         assertThat(temperamentsRequestValidator, is(instanceOf(ConstraintValidator.class)));
     }
 
     @Test
-    public void shouldBeValid() {
+    void shouldBeValid() {
         TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
         when(temperamentsRequest.isEmpty()).thenReturn(false);
 
@@ -62,7 +62,7 @@ public class TemperamentsRequestValidatorTest {
     }
 
     @Test
-    public void shouldBeInvalidIfTemperamentsIsEmpty() {
+    void shouldBeInvalidIfTemperamentsIsEmpty() {
         TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
         when(temperamentsRequest.isEmpty()).thenReturn(true);
 

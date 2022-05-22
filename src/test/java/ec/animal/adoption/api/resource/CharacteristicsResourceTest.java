@@ -42,7 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CharacteristicsResourceTest {
+class CharacteristicsResourceTest {
 
     @Mock
     private CharacteristicsService characteristicsService;
@@ -70,7 +70,7 @@ public class CharacteristicsResourceTest {
     }
 
     @Test
-    public void shouldCreateCharacteristicsForAnimalFromOrganization() {
+    void shouldCreateCharacteristicsForAnimalFromOrganization() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
         CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
@@ -112,7 +112,7 @@ public class CharacteristicsResourceTest {
     }
 
     @Test
-    public void shouldGetCharacteristicsForAnimal() {
+    void shouldGetCharacteristicsForAnimal() {
         Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
         when(characteristicsService.getBy(animalId)).thenReturn(expectedCharacteristics);
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(expectedCharacteristics);

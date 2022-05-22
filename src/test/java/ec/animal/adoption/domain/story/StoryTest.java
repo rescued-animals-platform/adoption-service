@@ -27,9 +27,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StoryTest {
+class StoryTest {
 
     private String text;
 
@@ -39,7 +42,7 @@ public class StoryTest {
     }
 
     @Test
-    public void shouldCreateAStoryWithNoIdentifierNorRegistrationDate() {
+    void shouldCreateAStoryWithNoIdentifierNorRegistrationDate() {
         Story story = new Story(text);
 
         assertEquals(text, story.getText());
@@ -48,7 +51,7 @@ public class StoryTest {
     }
 
     @Test
-    public void shouldCreateAStoryWithIdentifierAndRegistrationDate() {
+    void shouldCreateAStoryWithIdentifierAndRegistrationDate() {
         UUID storyId = UUID.randomUUID();
         LocalDateTime registrationDate = LocalDateTime.now();
         Story story = new Story(storyId, registrationDate, text);
@@ -83,23 +86,21 @@ public class StoryTest {
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoIdentifier() {
         Story story = StoryFactory.random().withIdentifier(null).build();
+        Story storyUpdate = new Story(randomAlphabetic(10));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            story.updateWith(new Story(randomAlphabetic(10)));
-        });
+        assertThrows(IllegalArgumentException.class, () -> story.updateWith(storyUpdate));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingStoryThatHasNoRegistrationDate() {
         Story story = StoryFactory.random().withRegistrationDate(null).build();
+        Story storyUpdate = new Story(randomAlphabetic(10));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            story.updateWith(new Story(randomAlphabetic(10)));
-        });
+        assertThrows(IllegalArgumentException.class, () -> story.updateWith(storyUpdate));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(Story.class).usingGetClass().verify();
     }
 }

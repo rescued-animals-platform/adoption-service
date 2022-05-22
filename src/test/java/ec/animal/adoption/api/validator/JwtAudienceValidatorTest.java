@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JwtAudienceValidatorTest {
+class JwtAudienceValidatorTest {
 
     @Test
-    public void shouldReturnValidatorResultWithNoErrorsWhenAudienceInTokenMatchAudienceInValidator() {
+    void shouldReturnValidatorResultWithNoErrorsWhenAudienceInTokenMatchAudienceInValidator() {
         String audience = randomAlphabetic(10);
         JwtAudienceValidator jwtAudienceValidator = new JwtAudienceValidator(audience);
         Jwt token = mock(Jwt.class);
@@ -46,7 +46,7 @@ public class JwtAudienceValidatorTest {
     }
 
     @Test
-    public void shouldReturnValidatorResultWithErrorWhenAudienceInTokenIsDifferentThanAudienceInValidator() {
+    void shouldReturnValidatorResultWithErrorWhenAudienceInTokenIsDifferentThanAudienceInValidator() {
         JwtAudienceValidator jwtAudienceValidator = new JwtAudienceValidator(randomAlphabetic(10));
         Jwt token = mock(Jwt.class);
         when(token.getAudience()).thenReturn(Collections.singletonList(randomAlphabetic(10)));

@@ -30,7 +30,7 @@ import java.util.UUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LinkPictureTest {
+class LinkPictureTest {
 
     private String name;
     private PictureType pictureType;
@@ -54,7 +54,7 @@ public class LinkPictureTest {
     }
 
     @Test
-    public void shouldCreateLinkPictureWithNoIdentifierNorRegistrationDate() {
+    void shouldCreateLinkPictureWithNoIdentifierNorRegistrationDate() {
         LinkPicture linkPicture = new LinkPicture(name, pictureType, largeImageMediaLink, smallImageMediaLink);
 
         assertNull(linkPicture.getIdentifier());
@@ -68,7 +68,7 @@ public class LinkPictureTest {
     }
 
     @Test
-    public void shouldCreateLinkPictureWithIdentifierAndRegistrationDate() {
+    void shouldCreateLinkPictureWithIdentifierAndRegistrationDate() {
         UUID linkPictureId = UUID.randomUUID();
         LocalDateTime registrationDate = LocalDateTime.now();
 
@@ -138,23 +138,21 @@ public class LinkPictureTest {
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingLinkPictureThatHasNoIdentifier() {
         LinkPicture linkPicture = LinkPictureFactory.random().withIdentifier(null).build();
+        LinkPicture linkPictureUpdate = LinkPictureFactory.random().build();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            linkPicture.updateWith(LinkPictureFactory.random().build());
-        });
+        assertThrows(IllegalArgumentException.class, () -> linkPicture.updateWith(linkPictureUpdate));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenUpdatingLinkPictureThatHasNoRegistrationDate() {
         LinkPicture linkPicture = LinkPictureFactory.random().withRegistrationDate(null).build();
+        LinkPicture linkPictureUpdate = LinkPictureFactory.random().build();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            linkPicture.updateWith(LinkPictureFactory.random().build());
-        });
+        assertThrows(IllegalArgumentException.class, () -> linkPicture.updateWith(linkPictureUpdate));
     }
 
     @Test
-    public void shouldVerifyEqualsAndHashCodeMethods() {
+    void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(LinkPicture.class).usingGetClass().verify();
     }
 }
