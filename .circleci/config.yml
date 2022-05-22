@@ -85,6 +85,7 @@ jobs:
             - .gitignore
             - .git
             - build/reports/jacoco
+            - build/test-results/test
 
   pitest:
     executor: builder
@@ -128,7 +129,8 @@ jobs:
           name: Analyze code on SonarCloud
           command: |
             pwd
-            ls -al
+            ls -al build/
+            ls -al build/reports/
             ./gradlew sonarqube
 
       - save_cache:
