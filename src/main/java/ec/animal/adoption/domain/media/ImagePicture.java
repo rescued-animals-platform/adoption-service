@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class ImagePicture {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ImagePicture.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImagePicture.class);
 
     private final String name;
     private final PictureType pictureType;

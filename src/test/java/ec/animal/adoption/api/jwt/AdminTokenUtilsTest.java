@@ -44,17 +44,13 @@ class AdminTokenUtilsTest {
     void shouldThrowUnauthorizedExceptionWhenOrganizationIdFromClaimIsNull() {
         when(token.getClaimAsString(organizationIdClaimName)).thenReturn(null);
 
-        assertThrows(UnauthorizedException.class, () -> {
-            adminTokenUtils.extractOrganizationIdFrom(token);
-        });
+        assertThrows(UnauthorizedException.class, () -> adminTokenUtils.extractOrganizationIdFrom(token));
     }
 
     @Test
     void shouldThrowUnauthorizedExceptionWhenOrganizationIdFromClaimIsNotAValidUUID() {
         when(token.getClaimAsString(organizationIdClaimName)).thenReturn(randomAlphabetic(10));
 
-        assertThrows(UnauthorizedException.class, () -> {
-            adminTokenUtils.extractOrganizationIdFrom(token);
-        });
+        assertThrows(UnauthorizedException.class, () -> adminTokenUtils.extractOrganizationIdFrom(token));
     }
 }

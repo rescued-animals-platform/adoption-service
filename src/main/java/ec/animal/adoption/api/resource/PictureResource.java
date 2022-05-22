@@ -22,7 +22,11 @@ package ec.animal.adoption.api.resource;
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
 import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.media.*;
+import ec.animal.adoption.domain.media.Image;
+import ec.animal.adoption.domain.media.ImagePicture;
+import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.media.PictureService;
+import ec.animal.adoption.domain.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import org.apache.commons.io.FilenameUtils;
@@ -37,12 +41,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 public class PictureResource {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(PictureResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PictureResource.class);
 
     private final PictureService pictureService;
     private final OrganizationService organizationService;
@@ -102,8 +107,11 @@ public class PictureResource {
         String originalFilename = multipartFile.getOriginalFilename();
 
         if (multipartFile.isEmpty() || originalFilename == null) {
+            var originalFilenameLogSafe = Optional.ofNullable(originalFilename)
+                                                  .map(s -> s.replaceAll("[\n\r\t]", "_"))
+                                                  .orElse(null);
             LOGGER.info("Invalid picture: multipartFile.isEmpty()={}, originalFilename={}",
-                        multipartFile.isEmpty(), originalFilename);
+                        multipartFile.isEmpty(), originalFilenameLogSafe);
             throw new InvalidPictureException();
         }
 
@@ -112,7 +120,6 @@ public class PictureResource {
                              multipartFile.getBytes(),
                              multipartFile.getSize());
         } catch (IOException exception) {
-            LOGGER.error("Exception thrown when creating an image for {}", originalFilename, exception);
             throw new InvalidPictureException(exception);
         }
     }
