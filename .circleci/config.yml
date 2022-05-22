@@ -35,7 +35,6 @@ jobs:
 
       - run:
           name: Running unit tests in parallel
-          # Use "./gradlew clean build" instead if tests are not run in parallel
           command: |
             cd src/test/java
             # Get list of classnames of tests that should run on this node
@@ -48,10 +47,6 @@ jobs:
             GRADLE_ARGS=$(echo $CLASSNAMES | awk '{for (i=1; i<=NF; i++) print "--tests",$i}')
             echo "Prepared arguments for Gradle: $GRADLE_ARGS"
             ./gradlew test $GRADLE_ARGS
-
-      - run:
-          name: Assembling JAR
-          command: ./gradlew bootJar
 
       - save_cache:
           paths:
@@ -75,7 +70,6 @@ jobs:
           root: .
           paths:
             - src
-            - migrations
             - scripts
             - docker
             - gradle
