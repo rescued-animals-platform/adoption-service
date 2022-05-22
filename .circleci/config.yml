@@ -20,7 +20,7 @@ jobs:
   build:
     executor: builder
     resource_class: large
-    parallelism: 4
+    parallelism: 8
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
