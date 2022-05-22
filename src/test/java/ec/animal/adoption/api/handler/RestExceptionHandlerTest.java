@@ -52,13 +52,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RestExceptionHandlerTest {
+class RestExceptionHandlerTest {
 
     private static final String INVALID_PICTURE_EXCEPTION_MESSAGE = "The image(s) could not be processed. Check they meet the " +
-            "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
-            "Only PRIMARY picture type is supported.";
+                                                                    "minimum requirements: Supported extensions: %s. Maximum size: 1MB. " +
+                                                                    "Only PRIMARY picture type is supported.";
     private static final String ILLEGAL_UPDATE_EXCEPTION_MESSAGE = "Can't update animal with clinical record: %s. " +
-            "An animal with id: %s already has this clinical record";
+                                                                   "An animal with id: %s already has this clinical record";
+    private static final String VALIDATION_FAILED = "Validation failed";
 
     @Mock
     private WebRequest webRequest;
@@ -76,23 +77,22 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldBeAnInstanceOfResponseEntityExceptionHandler() {
+    void shouldBeAnInstanceOfResponseEntityExceptionHandler() {
         assertThat(restExceptionHandler, is(instanceOf(ResponseEntityExceptionHandler.class)));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForHttpMessageNotReadableException() {
+    void shouldReturnAResponseEntityWithHttpStatusBadRequestForHttpMessageNotReadableException() {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleHttpMessageNotReadable(
-                httpMessageNotReadableException, headers, status, webRequest
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleHttpMessageNotReadable(httpMessageNotReadableException, headers, status, webRequest);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForHttpMessageNotReadableException() {
+    void shouldReturnAResponseEntityWithApiErrorForHttpMessageNotReadableException() {
         HttpMessageNotReadableException httpMessageNotReadableException = mock(HttpMessageNotReadableException.class);
         String debugMessage = randomAlphabetic(10);
         when(httpMessageNotReadableException.getMessage()).thenReturn(debugMessage);
@@ -100,9 +100,8 @@ public class RestExceptionHandlerTest {
                 HttpStatus.BAD_REQUEST, "Malformed JSON request", debugMessage
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleHttpMessageNotReadable(
-                httpMessageNotReadableException, headers, status, webRequest
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleHttpMessageNotReadable(httpMessageNotReadableException, headers, status, webRequest);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
         ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
@@ -110,20 +109,19 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusConflictForEntityAlreadyExistsException() {
+    void shouldReturnAResponseEntityWithHttpStatusConflictForEntityAlreadyExistsException() {
         EntityAlreadyExistsException entityAlreadyExistsException = new EntityAlreadyExistsException(
                 mock(Throwable.class)
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExistsException(
-                entityAlreadyExistsException
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleEntityAlreadyExistsException(entityAlreadyExistsException);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.CONFLICT));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForEntityAlreadyExistsException() {
+    void shouldReturnAResponseEntityWithApiErrorForEntityAlreadyExistsException() {
         Throwable throwable = mock(Throwable.class);
         String localizedMessage = randomAlphabetic(10);
         when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
@@ -132,7 +130,8 @@ public class RestExceptionHandlerTest {
                 HttpStatus.CONFLICT, "The resource already exists", localizedMessage
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityAlreadyExistsException(entityAlreadyExistsException);
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleEntityAlreadyExistsException(entityAlreadyExistsException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
         ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
@@ -140,20 +139,19 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForMethodArgumentNotValidException() {
+    void shouldReturnAResponseEntityWithHttpStatusBadRequestForMethodArgumentNotValidException() {
         MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
-                methodArgumentNotValidException, headers, status, webRequest
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleMethodArgumentNotValid(methodArgumentNotValidException, headers, status, webRequest);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForMethodArgumentNotValidException() {
+    void shouldReturnAResponseEntityWithApiErrorForMethodArgumentNotValidException() {
         MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
@@ -161,15 +159,16 @@ public class RestExceptionHandlerTest {
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         String debugMessage = randomAlphabetic(10);
         when(methodArgumentNotValidException.getMessage()).thenReturn(debugMessage);
-        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage).setSubErrors(
-                fieldErrors.stream()
-                           .map(fieldError -> new ValidationApiSubErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
-                           .collect(Collectors.toList())
-        );
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST,
+                                                                         VALIDATION_FAILED,
+                                                                         debugMessage).
+                setSubErrors(fieldErrors.stream()
+                                        .map(fieldError -> new ValidationApiSubErrorResponse(
+                                                fieldError.getField(), fieldError.getDefaultMessage()
+                                        )).collect(Collectors.toList()));
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleMethodArgumentNotValid(
-                methodArgumentNotValidException, headers, status, webRequest
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleMethodArgumentNotValid(methodArgumentNotValidException, headers, status, webRequest);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
         ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
@@ -177,25 +176,26 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForConstraintViolationException() {
+    void shouldReturnAResponseEntityWithHttpStatusBadRequestForConstraintViolationException() {
         ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
         when(constraintViolationException.getConstraintViolations()).thenReturn(new HashSet<>());
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleConstraintViolationException(
-                constraintViolationException
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.
+                handleConstraintViolationException(constraintViolationException);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForConstraintViolationException() {
+    void shouldReturnAResponseEntityWithApiErrorForConstraintViolationException() {
         ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
         Set<ConstraintViolation<?>> constraintViolations = createConstraintViolations();
         when(constraintViolationException.getConstraintViolations()).thenReturn(constraintViolations);
         String debugMessage = randomAlphabetic(10);
         when(constraintViolationException.getMessage()).thenReturn(debugMessage);
-        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", debugMessage)
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST,
+                                                                         VALIDATION_FAILED,
+                                                                         debugMessage)
                 .setSubErrors(constraintViolations.stream()
                                                   .map(violation -> new ValidationApiSubErrorResponse(violation.getPropertyPath().toString(), violation.getMessage()))
                                                   .collect(Collectors.toList()));
@@ -210,7 +210,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusNotFoundForEntityNotFoundException() {
+    void shouldReturnAResponseEntityWithHttpStatusNotFoundForEntityNotFoundException() {
         EntityNotFoundException entityNoyFoundException = mock(EntityNotFoundException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleEntityNotFoundException(entityNoyFoundException);
@@ -219,7 +219,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForEntityNotFoundException() {
+    void shouldReturnAResponseEntityWithApiErrorForEntityNotFoundException() {
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException();
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.NOT_FOUND, "Unable to find the resource");
 
@@ -231,7 +231,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForIllegalUpdateException() {
+    void shouldReturnAResponseEntityWithHttpStatusBadRequestForIllegalUpdateException() {
         IllegalUpdateException illegalUpdateException = mock(IllegalUpdateException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleIllegalUpdateException(illegalUpdateException);
@@ -240,7 +240,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForIllegalUpdateException() {
+    void shouldReturnAResponseEntityWithApiErrorForIllegalUpdateException() {
         UUID existingAnimalId = UUID.randomUUID();
         String clinicalRecord = randomAlphabetic(10);
         IllegalUpdateException illegalUpdateException = new IllegalUpdateException(existingAnimalId, clinicalRecord);
@@ -257,28 +257,25 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidPictureException() {
+    void shouldReturnAResponseEntityWithHttpStatusBadRequestForInvalidPictureException() {
         InvalidPictureException invalidPictureException = mock(InvalidPictureException.class);
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(
-                invalidPictureException
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(invalidPictureException);
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
+    void shouldReturnAResponseEntityWithApiErrorForInvalidPictureException() {
         InvalidPictureException invalidPictureException = new InvalidPictureException();
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
-                        map(SupportedImageExtension::getExtension).collect(Collectors.joining(", ")))
+                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values())
+                                                                       .map(SupportedImageExtension::getExtension)
+                                                                       .collect(Collectors.joining(", ")))
         );
 
-        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(
-                invalidPictureException
-        );
+        ResponseEntity<Object> responseEntity = restExceptionHandler.handleInvalidPictureException(invalidPictureException);
 
         assertThat(responseEntity.getBody(), is(instanceOf(ApiErrorResponse.class)));
         ApiErrorResponse apiErrorResponse = (ApiErrorResponse) responseEntity.getBody();
@@ -286,15 +283,16 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForInvalidPictureExceptionWithThrowableCause() {
+    void shouldReturnAResponseEntityWithApiErrorForInvalidPictureExceptionWithThrowableCause() {
         Throwable throwable = mock(Throwable.class);
         String localizedMessage = randomAlphabetic(10);
         when(throwable.getLocalizedMessage()).thenReturn(localizedMessage);
         InvalidPictureException invalidPictureException = new InvalidPictureException(throwable);
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values()).
-                        map(SupportedImageExtension::getExtension).collect(Collectors.joining(", "))),
+                String.format(INVALID_PICTURE_EXCEPTION_MESSAGE, Arrays.stream(SupportedImageExtension.values())
+                                                                       .map(SupportedImageExtension::getExtension)
+                                                                       .collect(Collectors.joining(", "))),
                 localizedMessage
         );
 
@@ -308,7 +306,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableErrorForMediaStorageException() {
+    void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableErrorForMediaStorageException() {
         MediaStorageException mediaStorageException = mock(MediaStorageException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleMediaStorageException(mediaStorageException);
@@ -317,7 +315,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForMediaStorageException() {
+    void shouldReturnAResponseEntityWithApiErrorForMediaStorageException() {
         MediaStorageException mediaStorageException = new MediaStorageException();
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
                 HttpStatus.SERVICE_UNAVAILABLE,
@@ -332,7 +330,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusForbiddenForUnauthorizedException() {
+    void shouldReturnAResponseEntityWithHttpStatusForbiddenForUnauthorizedException() {
         UnauthorizedException unauthorizedException = mock(UnauthorizedException.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleUnauthorizedException(unauthorizedException);
@@ -341,8 +339,8 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForUnauthorizedException() {
-        UnauthorizedException unauthorizedException = new UnauthorizedException();
+    void shouldReturnAResponseEntityWithApiErrorForUnauthorizedException() {
+        UnauthorizedException unauthorizedException = new UnauthorizedException(randomAlphabetic(10));
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, "Unauthorized");
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleUnauthorizedException(unauthorizedException);
@@ -353,7 +351,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableForException() {
+    void shouldReturnAResponseEntityWithHttpStatusServiceUnavailableForException() {
         Exception exception = mock(Exception.class);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.handleGlobalException(exception);
@@ -362,7 +360,7 @@ public class RestExceptionHandlerTest {
     }
 
     @Test
-    public void shouldReturnAResponseEntityWithApiErrorForException() {
+    void shouldReturnAResponseEntityWithApiErrorForException() {
         String message = randomAlphabetic(10);
         Exception exception = new Exception(message);
         ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, message);

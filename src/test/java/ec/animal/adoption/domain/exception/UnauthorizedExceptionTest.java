@@ -21,28 +21,31 @@ package ec.animal.adoption.domain.exception;
 
 import org.junit.jupiter.api.Test;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 class UnauthorizedExceptionTest {
 
+    private static final String EXPECTED_MESSAGE = "Unauthorized";
+
     @Test
-    public void shouldReturnMessage() {
-        String expectedMessage = "Unauthorized";
+    void shouldReturnCustomMessage() {
+        String contextualInfo = randomAlphabetic(10);
 
-        UnauthorizedException unauthorizedException = new UnauthorizedException();
+        UnauthorizedException unauthorizedException = new UnauthorizedException(contextualInfo);
 
-        assertEquals(expectedMessage, unauthorizedException.getMessage());
+        assertEquals(EXPECTED_MESSAGE, unauthorizedException.getMessage());
     }
 
     @Test
-    public void shouldReturnMessageAndSetCause() {
-        String expectedMessage = "Unauthorized";
+    void shouldReturnCustomMessageAndSetCause() {
+        String contextualInfo = randomAlphabetic(10);
         Throwable expectedCause = mock(Throwable.class);
 
-        UnauthorizedException unauthorizedException = new UnauthorizedException(expectedCause);
+        UnauthorizedException unauthorizedException = new UnauthorizedException(contextualInfo, expectedCause);
 
-        assertEquals(expectedMessage, unauthorizedException.getMessage());
+        assertEquals(EXPECTED_MESSAGE, unauthorizedException.getMessage());
         assertEquals(expectedCause, unauthorizedException.getCause());
     }
 }

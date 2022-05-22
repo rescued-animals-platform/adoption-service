@@ -44,8 +44,7 @@ public class OrganizationService {
         Optional<Organization> organization = organizationRepository.getBy(organizationId);
 
         if (organization.isEmpty()) {
-            LOGGER.info("Organization with id: {} doesn't exist", organizationId);
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(String.format("Organization with id: %s doesn't exist", organizationId));
         }
 
         return organization.get();
