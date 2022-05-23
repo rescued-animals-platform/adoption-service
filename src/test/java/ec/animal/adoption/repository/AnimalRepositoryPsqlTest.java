@@ -54,9 +54,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -229,9 +229,9 @@ class AnimalRepositoryPsqlTest {
     @Test
     void shouldReturnAllAnimalsForOrganizationWithPagination() {
         Pageable pageable = mock(Pageable.class);
-        List<JpaAnimal> listOfJpaAnimals = newArrayList(
+        List<JpaAnimal> listOfJpaAnimals = Stream.of(
                 AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
-        ).stream().map(JpaAnimal::new).collect(Collectors.toList());
+        ).map(JpaAnimal::new).collect(Collectors.toList());
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
                 listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
         );

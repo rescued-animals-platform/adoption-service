@@ -37,9 +37,15 @@ auth0:
   custom-claims:
     organization-id: https://adoption-service/organization_id
 
-hystrix:
-  command:
-    default:
-      execution:
-        timeout:
-          enabled: false
+resilience4j.circuitbreaker:
+    instances:
+      media-repository:
+        failureRateThreshold: 50
+        slowCallRateThreshold: 60
+        slowCallDurationThreshold: 5000
+        permittedNumberOfCallsInHalfOpenState: 10
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 20
+        waitDurationInOpenState: 60000
+        automaticTransitionFromOpenToHalfOpenEnabled: false

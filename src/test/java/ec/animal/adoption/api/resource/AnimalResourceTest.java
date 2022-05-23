@@ -46,12 +46,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
+import static ec.animal.adoption.TestUtils.getRandomSpecies;
+import static ec.animal.adoption.TestUtils.getRandomStateName;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -154,7 +157,7 @@ class AnimalResourceTest {
         PhysicalActivity physicalActivity = getRandomPhysicalActivity();
         Size size = getRandomSize();
         Pageable pageable = mock(Pageable.class);
-        List<Animal> animalsFiltered = newArrayList(
+        List<Animal> animalsFiltered = Arrays.asList(
                 AnimalFactory.randomWithPrimaryLinkPicture().build(),
                 AnimalFactory.randomWithPrimaryLinkPicture().build(),
                 AnimalFactory.randomWithPrimaryLinkPicture().build()

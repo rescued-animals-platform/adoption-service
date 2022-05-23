@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import static ec.animal.adoption.domain.state.StateName.*;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import static javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;

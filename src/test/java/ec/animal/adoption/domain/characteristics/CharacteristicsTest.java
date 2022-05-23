@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.domain.characteristics;
 
-import com.google.common.collect.Sets;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -50,7 +49,7 @@ class CharacteristicsTest {
         size = getRandomSize();
         physicalActivity = getRandomPhysicalActivity();
         temperaments = TemperamentsFactory.random().build();
-        friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
+        friendlyWith = Set.of(getRandomFriendlyWith());
     }
 
     @Test

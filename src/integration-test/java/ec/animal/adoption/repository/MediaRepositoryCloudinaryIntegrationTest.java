@@ -41,7 +41,10 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -89,16 +92,10 @@ public class MediaRepositoryCloudinaryIntegrationTest {
     public void shouldDeleteAnExistingLinkPicture() {
         LinkPicture existingLinkPicture = mediaRepositoryCloudinary.save(imagePicture, organization);
 
-        assertDoesNotThrow(() -> {
-            mediaRepositoryCloudinary.delete(existingLinkPicture);
-        });
+        assertDoesNotThrow(() -> mediaRepositoryCloudinary.delete(existingLinkPicture));
 
-        assertThrows(NotFound.class, () -> {
-            cloudinary.api().resource(existingLinkPicture.getLargeImagePublicId(), Collections.emptyMap());
-        });
-        assertThrows(NotFound.class, () -> {
-            cloudinary.api().resource(existingLinkPicture.getSmallImagePublicId(), Collections.emptyMap());
-        });
+        assertThrows(NotFound.class, () -> cloudinary.api().resource(existingLinkPicture.getLargeImagePublicId(), Collections.emptyMap()));
+        assertThrows(NotFound.class, () -> cloudinary.api().resource(existingLinkPicture.getSmallImagePublicId(), Collections.emptyMap()));
     }
 
     @AfterEach

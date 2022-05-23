@@ -37,11 +37,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
@@ -170,7 +170,7 @@ class AnimalServiceTest {
 
     @Test
     void shouldReturnAllAnimals() {
-        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(newArrayList(
+        PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(Arrays.asList(
                 AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
         ));
         Organization organization = OrganizationFactory.random().build();
@@ -184,7 +184,7 @@ class AnimalServiceTest {
     @Test
     void shouldReturnAllAnimalsWithFiltersAndSmallPrimaryPictureUrl() {
         State state = getRandomState();
-        List<Animal> animalsFilteredByState = newArrayList(
+        List<Animal> animalsFilteredByState = Arrays.asList(
                 AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build(),
                 AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build(),
                 AnimalFactory.randomWithPrimaryLinkPicture().withState(state).build()
@@ -205,7 +205,7 @@ class AnimalServiceTest {
     @Test
     void shouldReturnAllAnimalsWithFiltersAndNoSmallPrimaryPictureUrl() {
         State state = getRandomState();
-        List<Animal> animalsFilteredByState = newArrayList(
+        List<Animal> animalsFilteredByState = Arrays.asList(
                 AnimalFactory.random().withState(state).build(),
                 AnimalFactory.random().withState(state).build(),
                 AnimalFactory.random().withState(state).build()

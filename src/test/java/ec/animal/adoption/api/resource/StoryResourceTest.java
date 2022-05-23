@@ -38,7 +38,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

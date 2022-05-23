@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import static ec.animal.adoption.TestUtils.getValidator;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;

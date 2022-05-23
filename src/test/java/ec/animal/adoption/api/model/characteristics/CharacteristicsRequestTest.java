@@ -21,7 +21,6 @@ package ec.animal.adoption.api.model.characteristics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequestBuilder;
 import ec.animal.adoption.domain.characteristics.Characteristics;
@@ -41,10 +40,15 @@ import org.junit.jupiter.api.Test;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
+import static ec.animal.adoption.TestUtils.getValidator;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CharacteristicsRequestTest {
 
@@ -104,7 +108,7 @@ class CharacteristicsRequestTest {
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
                   () -> assertEquals(TemperamentsFactory.empty().withBalance(Balance.BALANCED).build(),
                                      characteristics.getTemperaments()),
-                  () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CHILDREN),
+                  () -> assertEquals(Set.of(FriendlyWith.DOGS, FriendlyWith.CHILDREN),
                                      characteristics.getFriendlyWith()),
                   () -> assertNull(characteristics.getIdentifier()),
                   () -> assertNull(characteristics.getRegistrationDate()));
@@ -130,7 +134,7 @@ class CharacteristicsRequestTest {
                   () -> assertEquals(TemperamentsFactory.empty().withDocility(Docility.DOCILE).build(),
                                      characteristics.getTemperaments()),
                   () -> assertEquals(2, characteristics.getFriendlyWith().size()),
-                  () -> assertEquals(Sets.newHashSet(FriendlyWith.DOGS, FriendlyWith.CATS),
+                  () -> assertEquals(Set.of(FriendlyWith.DOGS, FriendlyWith.CATS),
                                      characteristics.getFriendlyWith()),
                   () -> assertNull(characteristics.getIdentifier()),
                   () -> assertNull(characteristics.getRegistrationDate()));

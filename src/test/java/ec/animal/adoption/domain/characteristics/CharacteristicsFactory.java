@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.domain.characteristics;
 
-import com.google.common.collect.Sets;
 import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
 import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
 
@@ -27,7 +26,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static ec.animal.adoption.TestUtils.*;
+import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
+import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
+import static ec.animal.adoption.TestUtils.getRandomSize;
 
 public class CharacteristicsFactory {
 
@@ -45,7 +46,7 @@ public class CharacteristicsFactory {
         characteristicsFactory.size = getRandomSize();
         characteristicsFactory.physicalActivity = getRandomPhysicalActivity();
         characteristicsFactory.temperaments = TemperamentsFactory.random().build();
-        characteristicsFactory.friendlyWith = Sets.newHashSet(getRandomFriendlyWith());
+        characteristicsFactory.friendlyWith = Set.of(getRandomFriendlyWith());
         return characteristicsFactory;
     }
 
@@ -75,7 +76,7 @@ public class CharacteristicsFactory {
     }
 
     public CharacteristicsFactory withFriendlyWith(final FriendlyWith... friendlyWith) {
-        this.friendlyWith = Sets.newHashSet(friendlyWith);
+        this.friendlyWith = Set.of(friendlyWith);
         return this;
     }
 
