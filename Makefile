@@ -49,8 +49,12 @@ test-api: deploy ## Runs api tests from the builder container inside the docker-
 	$(docker_compose_builder) gradle apiTest --rerun-tasks
 	make clean
 
+.PHONY: test-arch-unit
+test-arch-unit: ## Runs architecture tests (atomic fitness functions) written with arch-unit
+	./gradlew clean archUnitTest --rerun-tasks
+
 .PHONY: test-all
-test-all: test-unit pitest deploy ## Runs all tests (unit, integration, api) and cleans the environment after a successful result
+test-all: test-unit test-arch-unit pitest deploy ## Runs all tests (unit, integration, api, architecture) and cleans the environment after a successful result
 	@docker-compose build adoption-service-builder
 	$(docker_compose_builder) gradle integrationTest apiTest --rerun-tasks
 	make clean

@@ -215,6 +215,41 @@ jobs:
       - store_artifacts:
           path: ~/test-results
 
+  arch-unit:
+    executor: builder
+    resource_class: large
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "build.gradle" }}
+            - v2-dependencies-
+
+      - run:
+          name: Run architecture atomic fitness functions
+          command: ./gradlew archUnitTest
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v2-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/archUnitTest/.*xml" -exec cp {} ~/test-results/archunit/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/test-results
+
+      - store_artifacts:
+          path: ~/test-results
+
   deploy-uat:
     executor: heroku/default
     resource_class: large
@@ -344,6 +379,12 @@ workflows:
             branches:
               only: master
       - api-test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - arch-unit:
           requires:
             - build
           filters:

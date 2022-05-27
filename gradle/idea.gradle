@@ -4,5 +4,7 @@ idea {
         testResourceDirs += file('src/integration-test/resources')
         testSourceDirs += file('src/api-test/java')
         testResourceDirs += file('src/api-test/resources')
+        testSourceDirs += file('src/archunit-test/java')
+        testResourceDirs += file('src/archunit-test/resources')
     }
 }

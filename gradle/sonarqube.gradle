@@ -7,6 +7,6 @@ sonarqube {
         property "sonar.dynamicAnalysis", "reuseReports"
 
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.exclusions", "**/ec/animal/adoption/AdoptionServiceApplication*,**/ec/animal/adoption/configuration/*,**/ec/animal/adoption/domain/PagedEntity*"
+        property "sonar.coverage.exclusions", "**/ec/animal/adoption/AdoptionServiceApplication*,**/ec/animal/adoption/configuration/*,**/ec/animal/adoption/adapter/cloudinary/CloudinaryConfiguration*,**/ec/animal/adoption/domain/service/PagedEntity*"
     }
 }

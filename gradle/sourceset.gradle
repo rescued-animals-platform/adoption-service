@@ -26,4 +26,15 @@ sourceSets {
             srcDir file('src/api-test/resources')
         }
     }
+
+    archUnitTest {
+        java {
+            srcDir file('src/archunit-test/java')
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+        resources {
+            srcDir file('src/archunit-test/resources')
+        }
+    }
 }

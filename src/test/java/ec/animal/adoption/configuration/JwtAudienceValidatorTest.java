@@ -19,7 +19,6 @@
 
 package ec.animal.adoption.configuration;
 
-import ec.animal.adoption.configuration.JwtAudienceValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;

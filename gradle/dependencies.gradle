@@ -32,4 +32,5 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation('nl.jqno.equalsverifier:equalsverifier:3.10')
+    testImplementation('com.tngtech.archunit:archunit-junit5:0.23.1')
 }
