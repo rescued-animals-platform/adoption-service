@@ -23,10 +23,8 @@ import ec.animal.adoption.api.validator.JwtAudienceValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -37,16 +35,15 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
     @Value("${auth0.audience}")
     private String audience;
@@ -54,34 +51,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuer;
 
-    @Override
-    public void configure(final HttpSecurity http) throws Exception {
-        http.cors()
-            .and()
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+//                .cors()
+//            .configurationSource(corsConfigurationSource())
+//            .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .authorizeRequests()
-            .antMatchers("/adoption/admin/animals/**").hasAuthority("SCOPE_manage:animals")
-            .antMatchers("/adoption/animals/**").hasAuthority("SCOPE_read:animals-public")
-            .and()
+            .authorizeHttpRequests(authorize -> authorize
+                    .antMatchers("/adoption/admin/animals/**").hasAuthority("SCOPE_manage:animals")
+                    .antMatchers("/adoption/animals/**").hasAuthority("SCOPE_read:animals-public")
+                    .anyRequest().authenticated()
+            )
             .oauth2ResourceServer().jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+        return http.build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),
-                                                      HttpMethod.POST.name(),
-                                                      HttpMethod.PUT.name()));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(this.issuer);
+    public JwtDecoder jwtDecoder() {
+        NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(this.issuer);
         OAuth2TokenValidator<Jwt> audienceValidator = new JwtAudienceValidator(audience);
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(this.issuer);
         OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
@@ -90,15 +80,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return jwtDecoder;
     }
 
-    @Bean
-    WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@NonNull final CorsRegistry registry) {
-                registry.addMapping("/adoption/animals/**");
-                registry.addMapping("/adoption/admin/animals/**");
-            }
-        };
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(@NonNull final CorsRegistry registry) {
+//                registry.addMapping("/adoption/animals/**");
+//                registry.addMapping("/adoption/admin/animals/**");
+//            }
+//        };
+//    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),
+                                                      HttpMethod.POST.name(),
+                                                      HttpMethod.PUT.name()));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {

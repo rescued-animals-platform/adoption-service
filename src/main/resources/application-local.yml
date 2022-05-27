@@ -1,5 +1,7 @@
 spring:
-  profiles: local
+  config:
+    activate:
+      on-profile: local
   datasource:
     url: jdbc:postgresql://localhost:5432/animal_adoption_db
     username: adoption_service
@@ -21,6 +23,11 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8123/
+
+auth0:
+  audience: https://dummy/dummy.ec
+  custom-claims:
+    organization-id: https://dummy/organization_id
 
 cloudinary:
   cloud-name: cloudinary-dummy-cloud-name

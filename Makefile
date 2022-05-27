@@ -1,4 +1,10 @@
+.DEFAULT_GOAL := help
+
 docker_compose_builder := docker-compose run adoption-service-builder
+
+.PHONY: help
+help:
+	@echo "Usage"
 
 .PHONY: deploy
 deploy:

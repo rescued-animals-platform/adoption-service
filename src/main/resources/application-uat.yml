@@ -1,5 +1,7 @@
 spring:
-  profiles: uat
+  config:
+    activate:
+      on-profile: uat
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -10,7 +12,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://emmeblm.auth0.com/
+          issuer-uri: ${OAUTH_RESOURCE_SERVER_ISSUER_URI}
+
+auth0:
+  audience: ${AUTH0_AUDIENCE}
+  custom-claims:
+    organization-id: ${AUTH0_CUSTOM_CLAIM_ORG_ID}
 
 logging:
   config: classpath:logback-spring-heroku.xml

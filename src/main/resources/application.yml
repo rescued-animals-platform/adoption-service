@@ -1,13 +1,10 @@
 server:
-  port: 8080
+  servlet:
+    context-path: /adoption
 
 spring:
-  mvc:
-    servlet:
-      path: /adoption
   datasource:
     driver-class-name: org.postgresql.Driver
-    platform: postgres
     hikari:
       connection-timeout: 2000
       validation-timeout: 500
@@ -28,14 +25,9 @@ spring:
     default-property-inclusion: NON_EMPTY
     serialization:
       write_dates_as_timestamps: false
-  security:
-    basic:
-      enabled: false
-
-auth0:
-  audience: https://animales-rescatados/servicio-adopciones.ec
-  custom-claims:
-    organization-id: https://adoption-service/organization_id
+  sql:
+    init:
+      platform: postgres
 
 resilience4j.circuitbreaker:
     instances:

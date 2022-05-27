@@ -18,13 +18,13 @@ Follow the next steps in the order they appear. After completing them, you would
 
         docker login
  
-- Run: `make all-test` to run all tests and verify everything works as expected.
+- Run: `make test.all` to run all tests and verify everything works as expected.
 
 ## [Important] If you want to run integration tests from the IDE
 
 Without these steps, you would be able to run all tests from a terminal. Only if you want to be able to run integration tests from your IDE, you can do the following:
         
-- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
+- Set up your preferred IDE to run tests with Gradle (instead of JUnit) and add the environment variable `SPRING_PROFILE=local` to it. For example, add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA.
 
 _**(Always, before running the integration tests)**_
 
@@ -32,7 +32,7 @@ _**(Always, before running the integration tests)**_
 
         docker ps -a    
   
-  If they're not, run: `make deploy-dependencies-only`
+  If they're not, run: `make deploy.dependencies-only`
   
 ## [Important] If you want to run api tests from the IDE
 
@@ -44,17 +44,18 @@ _**(Only for the first time)**_
 
         SPRING_PROFILE=local
         ADOPTION_SERVICE_URL=http://localhost:8080
-        JWT_ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNrc2hkYjgydHUzYm5pb3NodWprbnNraGRiYmprc2JvM3UifQ.eyJpc3MiOiJodHRwOi8vd2lyZW1vY2s6ODA4MC8iLCJzdWIiOiIxMjM0NTY3ODkwIiwiYXVkIjoiaHR0cHM6Ly9hbmltYWxlcy1yZXNjYXRhZG9zL3NlcnZpY2lvLWFkb3BjaW9uZXMuZWMiLCJpYXQiOjE1ODY2MzcwNDIsImV4cCI6OTA4NjcyMzQ0MiwiaHR0cHM6Ly9hZG9wdGlvbi1zZXJ2aWNlL29yZ2FuaXphdGlvbl9pZCI6IjU2MDA5MTE5LTQ0YmQtNDY5YS1hNTliLTQwMWFiMjNkMTljYSIsInBlcm1pc3Npb25zIjpbIm1hbmFnZTphbmltYWxzIiwicmVhZDphbmltYWxzLXB1YmxpYyJdfQ.O2mJvPPIc2NJKd5tfaORRUjXvXxAU6UppPiSuDF9fFZz2ukIZA3zX1GoPOUGyL9GL8zrCgorkMOYcYB5ECj8RkA6U3DGk6kjZ9J-wpGq3BmcrF-xlmYpHzwtgkBRfdmbKGO801TsobsSiWEdSCtenSN0OOzzBk1L3CrdYDOqAw4C5xsOdJ_wj5ILny8xZ4jSY3YymLBz2oApWLnwWiJNXiMQ0kaOJpiKXGbduEy39VPDahe3L2TJGwV1wKc_vpg3IyMxGztL_jK_s2fXHQ94mFzQ9Zo5bwyPK-eDHHZcRSciByky5EIFCpg2fhsKn4uPWFarCLTmCzg3cWQT9NCTvQ
+        JWT_ACCESS_TOKEN=eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxMjMvIiwic3ViIjoiMTIzNDU2Nzg5MCIsImF1ZCI6Imh0dHBzOi8vZHVtbXkvZHVtbXkuZWMiLCJpYXQiOjE1ODY2MzcwNDIsImV4cCI6OTA4NjcyMzQ0MiwiaHR0cHM6Ly9kdW1teS9vcmdhbml6YXRpb25faWQiOiI1NjAwOTExOS00NGJkLTQ2OWEtYTU5Yi00MDFhYjIzZDE5Y2EiLCJwZXJtaXNzaW9ucyI6WyJtYW5hZ2U6YW5pbWFscyIsInJlYWQ6YW5pbWFscy1wdWJsaWMiXX0.he8-N6E2VHVbqxlKZNfUGPo1Tnl8WfXopB5G1KhB9F6j5L-9D59Vhas0ORd48Lw_c4dtra3mueR3l_VRZ5xwmQAtGAkDI2k4S-Zcs3x0Bf5yZG3kT0rw0cZGvRDmR8-qcW8Q0fgw99slzhN9UQOYSgxmEtleRlR2Kad_lAsbwn9Eu3t_gs5mddsSv5QTgI5OB1QbZspOkSZFXF3tUlTNLdVVpkBUqYLAtw4FV3UQ9Xb4vNjCVcMUSv9wLWeC3ivnU6zPID7l0gNZEJ6RJ3wUslK1elWHeX-xfPBs1nVYh6Xn_1TkBOBtEDhOIY875ynfuSQnboHtP29InvdvhjwecQ
 
 _**(Always, before running the api tests)**_
 
-- Deploy the application in a docker container with `make deploy` or run the application from your IDE (remember to set up the SPRING_PROFILE env variable if running from the IDE and verify dependencies are running).
+- Deploy the application and all it's dependencies in a docker container with `make deploy` or run the application from your IDE.
+- If running from the IDE, remember to set up the VM option `-Dspring.profiles.active=local` and make sure dependencies are running: `make deploy.dependencies-only`.
         
 ## Useful commands
 
 1. Run unit test with:
         
-        make unit-test
+        make test.unit
 
 2. Run pitest (mutation testing) with:
     
@@ -64,28 +65,28 @@ _**(Always, before running the api tests)**_
 
 3. Run integration tests with:
 
-        make integration-test
+        make test.integration
 
 4. Run api tests with:
 
-        make api-test
+        make test.api
 
 5. Run all tests (unit, integration, and api) with:
 
-        make all-test
+        make test.all
 
 6. Deploy only the application dependencies (useful when running integration/api tests from the IDE) with:
 
-        make deploy-dependencies-only
+        make deploy.dependencies-only
         
 7. Local deployment of the adoption service (useful when running api tests from the IDE and for manual local testing):
 
         make deploy
         
-   Un-deploy all containers with `make undeploy`
+   Un-deploy all containers with `make clean`
         
 
-Check the **Makefile** file to discover more tasks.
+Check the **Makefile** file to discover more tasks. Or simply execute `make` to see usage documentation.
 
 # Postman collection with sample requests
 

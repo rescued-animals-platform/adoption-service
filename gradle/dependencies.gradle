@@ -1,6 +1,6 @@
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.2"
     }
 }
 
@@ -17,6 +17,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-config")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 
+    implementation("com.google.code.findbugs:jsr305:3.0.2") // Fixes Warning: unknown enum constant When.MAYBE
     implementation("com.cloudinary:cloudinary-http44:1.25.0")
     implementation("commons-io:commons-io:2.6")
     implementation('org.postgresql:postgresql:42.3.4')

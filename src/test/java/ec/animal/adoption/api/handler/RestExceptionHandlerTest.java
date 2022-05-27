@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.lang.reflect.Executable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -140,9 +142,10 @@ class RestExceptionHandlerTest {
 
     @Test
     void shouldReturnAResponseEntityWithHttpStatusBadRequestForMethodArgumentNotValidException() {
-        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        var bindingResult = mock(BindingResult.class);
+        var methodParameter = mock(MethodParameter.class);
+        when(methodParameter.getExecutable()).thenReturn(mock(Executable.class));
+        var methodArgumentNotValidException = new MethodArgumentNotValidException(methodParameter, bindingResult);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.
                 handleMethodArgumentNotValid(methodArgumentNotValidException, headers, status, webRequest);
@@ -152,20 +155,19 @@ class RestExceptionHandlerTest {
 
     @Test
     void shouldReturnAResponseEntityWithApiErrorForMethodArgumentNotValidException() {
-        MethodArgumentNotValidException methodArgumentNotValidException = mock(MethodArgumentNotValidException.class);
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        var bindingResult = mock(BindingResult.class);
+        var methodParameter = mock(MethodParameter.class);
+        when(methodParameter.getExecutable()).thenReturn(mock(Executable.class));
+        var methodArgumentNotValidException = new MethodArgumentNotValidException(methodParameter, bindingResult);
         List<FieldError> fieldErrors = createFieldErrors();
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
-        String debugMessage = randomAlphabetic(10);
-        when(methodArgumentNotValidException.getMessage()).thenReturn(debugMessage);
-        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST,
-                                                                         VALIDATION_FAILED,
-                                                                         debugMessage).
-                setSubErrors(fieldErrors.stream()
-                                        .map(fieldError -> new ValidationApiSubErrorResponse(
-                                                fieldError.getField(), fieldError.getDefaultMessage()
-                                        )).collect(Collectors.toList()));
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST, VALIDATION_FAILED, methodArgumentNotValidException.getMessage()
+        ).setSubErrors(fieldErrors.stream()
+                                  .map(fieldError -> new ValidationApiSubErrorResponse(
+                                          fieldError.getField(), fieldError.getDefaultMessage()
+                                  )).collect(Collectors.toList())
+        );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.
                 handleMethodArgumentNotValid(methodArgumentNotValidException, headers, status, webRequest);
