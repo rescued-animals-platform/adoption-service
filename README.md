@@ -90,4 +90,4 @@ Check the **Makefile** file to discover more tasks. Or simply execute `make` to 
 
 # Postman collection with sample requests
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3916ba8b54f6943cb99b)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/43b998c80b4e0f30dcf4)

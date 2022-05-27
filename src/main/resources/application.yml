@@ -4,7 +4,6 @@ server:
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 2000
       validation-timeout: 500
