@@ -18,7 +18,7 @@ Follow the next steps in the order they appear. After completing them, you would
 
         docker login
  
-- Run: `make test.all` to run all tests and verify everything works as expected.
+- Run: `make test-all` to run all tests and verify everything works as expected.
 
 ## [Important] If you want to run integration tests from the IDE
 
@@ -32,7 +32,7 @@ _**(Always, before running the integration tests)**_
 
         docker ps -a    
   
-  If they're not, run: `make deploy.dependencies-only`
+  If they're not, run: `make deploy-dependencies-only`
   
 ## [Important] If you want to run api tests from the IDE
 
@@ -49,44 +49,11 @@ _**(Only for the first time)**_
 _**(Always, before running the api tests)**_
 
 - Deploy the application and all it's dependencies in a docker container with `make deploy` or run the application from your IDE.
-- If running from the IDE, remember to set up the VM option `-Dspring.profiles.active=local` and make sure dependencies are running: `make deploy.dependencies-only`.
+- If running from the IDE, remember to set up the VM option `-Dspring.profiles.active=local` and make sure dependencies are running: `make deploy-dependencies-only`.
         
 ## Useful commands
 
-1. Run unit test with:
-        
-        make test.unit
-
-2. Run pitest (mutation testing) with:
-    
-        make pitest
-        
-3. Check code style with SonarLint.
-
-3. Run integration tests with:
-
-        make test.integration
-
-4. Run api tests with:
-
-        make test.api
-
-5. Run all tests (unit, integration, and api) with:
-
-        make test.all
-
-6. Deploy only the application dependencies (useful when running integration/api tests from the IDE) with:
-
-        make deploy.dependencies-only
-        
-7. Local deployment of the adoption service (useful when running api tests from the IDE and for manual local testing):
-
-        make deploy
-        
-   Un-deploy all containers with `make clean`
-        
-
-Check the **Makefile** file to discover more tasks. Or simply execute `make` to see usage documentation.
+Execute `make` to get the list and documentation of the make targets available for this project
 
 # Postman collection with sample requests
 
