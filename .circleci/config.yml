@@ -396,6 +396,7 @@ workflows:
             - sonar
             - integration-test
             - api-test
+            - arch-unit
           filters:
             branches:
               only: master
