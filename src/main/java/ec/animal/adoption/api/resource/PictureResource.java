@@ -21,12 +21,12 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
-import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.PictureService;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.media.Image;
+import ec.animal.adoption.domain.animal.media.ImagePicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.PictureService;
+import ec.animal.adoption.domain.animal.media.PictureType;
+import ec.animal.adoption.domain.animal.media.InvalidPictureException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationService;
 import org.apache.commons.io.FilenameUtils;

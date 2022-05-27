@@ -20,12 +20,12 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.Entity;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.story.Story;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.story.Story;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;

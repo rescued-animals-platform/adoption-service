@@ -23,12 +23,12 @@ import ec.animal.adoption.domain.animal.Animal;
 import ec.animal.adoption.domain.animal.EstimatedAge;
 import ec.animal.adoption.domain.animal.Sex;
 import ec.animal.adoption.domain.animal.Species;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.story.Story;
 import ec.animal.adoption.domain.state.State;
 import ec.animal.adoption.domain.state.StateName;
-import ec.animal.adoption.domain.story.Story;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;

@@ -19,9 +19,9 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.MediaLink;
+import ec.animal.adoption.domain.animal.media.PictureType;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;

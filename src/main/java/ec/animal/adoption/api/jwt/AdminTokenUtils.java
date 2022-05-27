@@ -1,6 +1,6 @@
 package ec.animal.adoption.api.jwt;
 
-import ec.animal.adoption.domain.exception.UnauthorizedException;
+import ec.animal.adoption.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

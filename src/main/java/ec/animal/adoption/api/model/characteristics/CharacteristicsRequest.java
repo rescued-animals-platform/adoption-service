@@ -22,10 +22,10 @@ package ec.animal.adoption.api.model.characteristics;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
-import ec.animal.adoption.domain.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
+import ec.animal.adoption.domain.animal.characteristics.FriendlyWith;
+import ec.animal.adoption.domain.animal.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.animal.characteristics.Size;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

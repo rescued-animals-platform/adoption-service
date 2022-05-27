@@ -4,7 +4,9 @@ import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
-import static ec.animal.adoption.domain.state.StateName.*;
+import static ec.animal.adoption.domain.state.StateName.ADOPTED;
+import static ec.animal.adoption.domain.state.StateName.LOOKING_FOR_HUMAN;
+import static ec.animal.adoption.domain.state.StateName.UNAVAILABLE;
 
 public final class State {
 

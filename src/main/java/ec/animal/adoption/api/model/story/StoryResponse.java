@@ -21,7 +21,7 @@ package ec.animal.adoption.api.model.story;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.animal.story.Story;
 
 public class StoryResponse {
 

@@ -21,10 +21,9 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import ec.animal.adoption.domain.media.*;
+import ec.animal.adoption.domain.animal.media.*;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
-import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,9 +102,7 @@ class MediaRepositoryCloudinaryTest {
         when(uploader.upload(imagePicture.getLargeImageContent(), cloudinarySaveOptions))
                 .thenThrow(IOException.class);
 
-        assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.save(imagePicture, organization);
-        });
+        assertThrows(CloudinaryImageStorageException.class, () -> cloudinaryMediaStorageClient.save(imagePicture, organization));
     }
 
     @Test
@@ -117,9 +114,7 @@ class MediaRepositoryCloudinaryTest {
         when(uploader.upload(imagePicture.getSmallImageContent(), cloudinarySaveOptions))
                 .thenThrow(IOException.class);
 
-        assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.save(imagePicture, organization);
-        });
+        assertThrows(CloudinaryImageStorageException.class, () -> cloudinaryMediaStorageClient.save(imagePicture, organization));
     }
 
     @Test
@@ -140,9 +135,7 @@ class MediaRepositoryCloudinaryTest {
         when(uploader.destroy(existingLinkPicture.getLargeImagePublicId(), cloudinaryDeleteOptions))
                 .thenThrow(IOException.class);
 
-        assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.delete(existingLinkPicture);
-        });
+        assertThrows(CloudinaryImageStorageException.class, () -> cloudinaryMediaStorageClient.delete(existingLinkPicture));
     }
 
     @Test
@@ -154,8 +147,6 @@ class MediaRepositoryCloudinaryTest {
         when(uploader.destroy(existingLinkPicture.getSmallImagePublicId(), cloudinaryDeleteOptions))
                 .thenThrow(IOException.class);
 
-        assertThrows(CloudinaryImageStorageException.class, () -> {
-            cloudinaryMediaStorageClient.delete(existingLinkPicture);
-        });
+        assertThrows(CloudinaryImageStorageException.class, () -> cloudinaryMediaStorageClient.delete(existingLinkPicture));
     }
 }

@@ -19,14 +19,14 @@
 
 package ec.animal.adoption.domain.animal;
 
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureFactory;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPictureFactory;
+import ec.animal.adoption.domain.animal.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.state.State;
-import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.animal.story.Story;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

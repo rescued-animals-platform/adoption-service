@@ -20,7 +20,7 @@
 package ec.animal.adoption.repository.jpa.model;
 
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
+import ec.animal.adoption.domain.animal.characteristics.FriendlyWith;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;

@@ -21,7 +21,7 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.media.PictureType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

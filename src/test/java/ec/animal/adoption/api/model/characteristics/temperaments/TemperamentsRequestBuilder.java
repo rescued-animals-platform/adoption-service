@@ -19,9 +19,9 @@
 
 package ec.animal.adoption.api.model.characteristics.temperaments;
 
-import ec.animal.adoption.domain.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.characteristics.temperaments.Sociability;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.Balance;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.Docility;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.Sociability;
 
 import static ec.animal.adoption.TestUtils.*;
 

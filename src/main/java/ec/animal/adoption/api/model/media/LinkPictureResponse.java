@@ -21,7 +21,7 @@ package ec.animal.adoption.api.model.media;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
 
 public class LinkPictureResponse {
 

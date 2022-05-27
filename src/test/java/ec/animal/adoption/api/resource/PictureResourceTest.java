@@ -21,8 +21,8 @@ package ec.animal.adoption.api.resource;
 
 import ec.animal.adoption.api.jwt.AdminTokenUtils;
 import ec.animal.adoption.api.model.media.LinkPictureResponse;
-import ec.animal.adoption.domain.exception.InvalidPictureException;
-import ec.animal.adoption.domain.media.*;
+import ec.animal.adoption.domain.animal.media.*;
+import ec.animal.adoption.domain.animal.media.InvalidPictureException;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import ec.animal.adoption.domain.organization.OrganizationService;

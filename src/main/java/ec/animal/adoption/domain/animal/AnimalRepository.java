@@ -20,9 +20,9 @@
 package ec.animal.adoption.domain.animal;
 
 import ec.animal.adoption.domain.PagedEntity;
+import ec.animal.adoption.domain.animal.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.animal.characteristics.Size;
 import ec.animal.adoption.domain.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.characteristics.Size;
 import ec.animal.adoption.domain.organization.Organization;
 import org.springframework.data.domain.Pageable;
 

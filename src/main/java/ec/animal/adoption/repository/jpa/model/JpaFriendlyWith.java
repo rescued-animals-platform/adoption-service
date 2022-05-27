@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
+import ec.animal.adoption.domain.animal.characteristics.FriendlyWith;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -19,8 +19,6 @@
 
 package ec.animal.adoption.api.model.characteristics.temperaments;
 
-import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
-import ec.animal.adoption.api.model.characteristics.temperaments.ValidTemperamentsRequest;
 import org.springframework.lang.NonNull;
 
 import javax.validation.ConstraintValidator;

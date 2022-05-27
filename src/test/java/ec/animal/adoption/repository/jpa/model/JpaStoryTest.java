@@ -19,8 +19,8 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryFactory;
+import ec.animal.adoption.domain.animal.story.Story;
+import ec.animal.adoption.domain.animal.story.StoryFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;

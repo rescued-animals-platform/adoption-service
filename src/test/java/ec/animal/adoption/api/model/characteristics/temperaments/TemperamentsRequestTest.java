@@ -22,7 +22,7 @@ package ec.animal.adoption.api.model.characteristics.temperaments;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.characteristics.temperaments.*;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;

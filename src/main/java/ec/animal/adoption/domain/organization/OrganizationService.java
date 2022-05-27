@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.domain.organization;
 
-import ec.animal.adoption.domain.exception.UnauthorizedException;
+import ec.animal.adoption.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

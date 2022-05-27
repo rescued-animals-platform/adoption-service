@@ -19,10 +19,10 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
-import ec.animal.adoption.domain.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.characteristics.temperaments.TemperamentsFactory;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
+import ec.animal.adoption.domain.animal.characteristics.CharacteristicsFactory;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.Temperaments;
+import ec.animal.adoption.domain.animal.characteristics.temperaments.TemperamentsFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;

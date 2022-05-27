@@ -21,9 +21,9 @@ package ec.animal.adoption.api.model.characteristics;
 
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequestBuilder;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
-import ec.animal.adoption.domain.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.characteristics.Size;
+import ec.animal.adoption.domain.animal.characteristics.FriendlyWith;
+import ec.animal.adoption.domain.animal.characteristics.PhysicalActivity;
+import ec.animal.adoption.domain.animal.characteristics.Size;
 
 import java.util.Arrays;
 

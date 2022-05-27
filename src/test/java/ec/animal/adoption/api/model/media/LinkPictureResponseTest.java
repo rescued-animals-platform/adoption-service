@@ -2,9 +2,9 @@ package ec.animal.adoption.api.model.media;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureFactory;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPictureFactory;
+import ec.animal.adoption.domain.animal.media.PictureType;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.json.JSONObject;

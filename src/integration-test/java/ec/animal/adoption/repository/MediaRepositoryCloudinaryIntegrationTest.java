@@ -21,10 +21,10 @@ package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.api.exceptions.NotFound;
-import ec.animal.adoption.domain.media.Image;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.PictureType;
+import ec.animal.adoption.domain.animal.media.Image;
+import ec.animal.adoption.domain.animal.media.ImagePicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.PictureType;
 import ec.animal.adoption.domain.organization.Organization;
 import ec.animal.adoption.domain.organization.OrganizationFactory;
 import org.apache.commons.io.IOUtils;

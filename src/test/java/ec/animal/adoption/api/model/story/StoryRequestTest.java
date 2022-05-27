@@ -3,7 +3,7 @@ package ec.animal.adoption.api.model.story;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.animal.story.Story;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;

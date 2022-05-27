@@ -20,12 +20,11 @@
 package ec.animal.adoption.repository;
 
 import com.cloudinary.Cloudinary;
-import ec.animal.adoption.domain.media.ImagePicture;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.MediaLink;
-import ec.animal.adoption.domain.media.MediaRepository;
+import ec.animal.adoption.domain.animal.media.ImagePicture;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.MediaLink;
+import ec.animal.adoption.domain.animal.media.MediaRepository;
 import ec.animal.adoption.domain.organization.Organization;
-import ec.animal.adoption.repository.exception.CloudinaryImageStorageException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

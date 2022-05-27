@@ -1,12 +1,12 @@
 package ec.animal.adoption.domain.animal;
 
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.CharacteristicsFactory;
-import ec.animal.adoption.domain.media.LinkPicture;
-import ec.animal.adoption.domain.media.LinkPictureFactory;
-import ec.animal.adoption.domain.media.PictureType;
-import ec.animal.adoption.domain.story.Story;
-import ec.animal.adoption.domain.story.StoryFactory;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
+import ec.animal.adoption.domain.animal.characteristics.CharacteristicsFactory;
+import ec.animal.adoption.domain.animal.media.LinkPicture;
+import ec.animal.adoption.domain.animal.media.LinkPictureFactory;
+import ec.animal.adoption.domain.animal.media.PictureType;
+import ec.animal.adoption.domain.animal.story.Story;
+import ec.animal.adoption.domain.animal.story.StoryFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

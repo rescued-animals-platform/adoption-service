@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.domain.organization;
 
-import ec.animal.adoption.domain.exception.UnauthorizedException;
+import ec.animal.adoption.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

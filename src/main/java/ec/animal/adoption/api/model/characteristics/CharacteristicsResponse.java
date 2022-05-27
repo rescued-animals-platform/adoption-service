@@ -22,8 +22,8 @@ package ec.animal.adoption.api.model.characteristics;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsResponse;
-import ec.animal.adoption.domain.characteristics.Characteristics;
-import ec.animal.adoption.domain.characteristics.FriendlyWith;
+import ec.animal.adoption.domain.animal.characteristics.Characteristics;
+import ec.animal.adoption.domain.animal.characteristics.FriendlyWith;
 
 import java.util.Set;
 import java.util.stream.Collectors;

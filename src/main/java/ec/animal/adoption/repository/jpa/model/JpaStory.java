@@ -19,7 +19,7 @@
 
 package ec.animal.adoption.repository.jpa.model;
 
-import ec.animal.adoption.domain.story.Story;
+import ec.animal.adoption.domain.animal.story.Story;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;

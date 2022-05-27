@@ -21,8 +21,9 @@ package ec.animal.adoption.api.handler;
 
 import ec.animal.adoption.api.model.error.ApiErrorResponse;
 import ec.animal.adoption.api.model.error.ValidationApiSubErrorResponse;
-import ec.animal.adoption.domain.exception.*;
-import ec.animal.adoption.domain.media.SupportedImageExtension;
+import ec.animal.adoption.domain.animal.media.InvalidPictureException;
+import ec.animal.adoption.exception.*;
+import ec.animal.adoption.domain.animal.media.SupportedImageExtension;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
