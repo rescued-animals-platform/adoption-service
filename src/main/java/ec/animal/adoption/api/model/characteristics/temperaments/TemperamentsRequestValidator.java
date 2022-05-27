@@ -17,9 +17,10 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.api.validator;
+package ec.animal.adoption.api.model.characteristics.temperaments;
 
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
+import ec.animal.adoption.api.model.characteristics.temperaments.ValidTemperamentsRequest;
 import org.springframework.lang.NonNull;
 
 import javax.validation.ConstraintValidator;

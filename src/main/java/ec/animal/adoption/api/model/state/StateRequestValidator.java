@@ -1,6 +1,5 @@
-package ec.animal.adoption.api.validator;
+package ec.animal.adoption.api.model.state;
 
-import ec.animal.adoption.api.model.state.StateRequest;
 import org.springframework.lang.NonNull;
 
 import javax.validation.ConstraintValidator;

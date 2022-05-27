@@ -1,4 +1,6 @@
-package ec.animal.adoption.api.validator;
+package ec.animal.adoption.api.model.state;
+
+import ec.animal.adoption.api.model.state.StateRequestValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

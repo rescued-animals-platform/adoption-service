@@ -1,6 +1,7 @@
 package ec.animal.adoption.api.validator;
 
 import ec.animal.adoption.api.model.state.StateRequest;
+import ec.animal.adoption.api.model.state.StateRequestValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

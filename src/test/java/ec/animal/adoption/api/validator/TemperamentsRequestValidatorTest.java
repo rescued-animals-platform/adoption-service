@@ -20,6 +20,7 @@
 package ec.animal.adoption.api.validator;
 
 import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequest;
+import ec.animal.adoption.api.model.characteristics.temperaments.TemperamentsRequestValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

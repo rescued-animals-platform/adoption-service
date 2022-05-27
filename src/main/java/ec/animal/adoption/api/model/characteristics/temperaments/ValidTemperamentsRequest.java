@@ -17,7 +17,7 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.api.validator;
+package ec.animal.adoption.api.model.characteristics.temperaments;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
