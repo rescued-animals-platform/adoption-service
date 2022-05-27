@@ -1,4 +1,4 @@
-FROM gradle:7.3.3-jdk11
+FROM gradle:7.3.3-jdk17
 
 ARG arg_spring_profile=docker
 ARG arg_adoption_service_url=http://adoption-service:8080

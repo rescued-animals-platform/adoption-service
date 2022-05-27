@@ -40,7 +40,7 @@ public class ApiErrorResponse {
     private String debugMessage;
 
     @JsonProperty("subErrors")
-    private List<ApiSubErrorResponse> subErrors;
+    private List<ValidationApiSubErrorResponse> subErrors;
 
     private ApiErrorResponse() {
         this.timestamp = LocalDateTime.now();
@@ -60,7 +60,7 @@ public class ApiErrorResponse {
         this.debugMessage = "";
     }
 
-    public ApiErrorResponse setSubErrors(final List<ApiSubErrorResponse> subErrors) {
+    public ApiErrorResponse setSubErrors(final List<ValidationApiSubErrorResponse> subErrors) {
         this.subErrors = subErrors;
         return this;
     }

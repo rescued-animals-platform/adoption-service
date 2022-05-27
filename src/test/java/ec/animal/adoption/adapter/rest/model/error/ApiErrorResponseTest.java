@@ -44,7 +44,7 @@ class ApiErrorResponseTest {
         String debugMessage = randomAlphabetic(10);
         HttpStatus status = HttpStatus.BAD_GATEWAY;
         String message = randomAlphabetic(10);
-        List<ApiSubErrorResponse> subErrors = new ArrayList<>();
+        List<ValidationApiSubErrorResponse> subErrors = new ArrayList<>();
         subErrors.add(new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10)));
         subErrors.add(new ValidationApiSubErrorResponse(randomAlphabetic(10), randomAlphabetic(10)));
         apiErrorResponse = new ApiErrorResponse(status, message, debugMessage);

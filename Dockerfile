@@ -1,10 +1,10 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.6_10-alpine AS builder
+FROM openjdk:17-jdk-alpine AS builder
 COPY . /app
 WORKDIR /app
 RUN ./gradlew bootJar --no-daemon
 
 
-FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine AS live
+FROM openjdk:17-jdk-alpine AS live
 MAINTAINER Luisa Emme emmeblm@gmail.com
 ENV LANG C.UTF-8
 EXPOSE 8080

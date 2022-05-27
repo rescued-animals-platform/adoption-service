@@ -42,7 +42,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.lang.reflect.Executable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -144,7 +143,6 @@ class RestExceptionHandlerTest {
     void shouldReturnAResponseEntityWithHttpStatusBadRequestForMethodArgumentNotValidException() {
         var bindingResult = mock(BindingResult.class);
         var methodParameter = mock(MethodParameter.class);
-        when(methodParameter.getExecutable()).thenReturn(mock(Executable.class));
         var methodArgumentNotValidException = new MethodArgumentNotValidException(methodParameter, bindingResult);
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.
@@ -157,17 +155,15 @@ class RestExceptionHandlerTest {
     void shouldReturnAResponseEntityWithApiErrorForMethodArgumentNotValidException() {
         var bindingResult = mock(BindingResult.class);
         var methodParameter = mock(MethodParameter.class);
-        when(methodParameter.getExecutable()).thenReturn(mock(Executable.class));
         var methodArgumentNotValidException = new MethodArgumentNotValidException(methodParameter, bindingResult);
         List<FieldError> fieldErrors = createFieldErrors();
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
-        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(
-                HttpStatus.BAD_REQUEST, VALIDATION_FAILED, methodArgumentNotValidException.getMessage()
-        ).setSubErrors(fieldErrors.stream()
-                                  .map(fieldError -> new ValidationApiSubErrorResponse(
-                                          fieldError.getField(), fieldError.getDefaultMessage()
-                                  )).collect(Collectors.toList())
-        );
+        ApiErrorResponse expectedApiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, VALIDATION_FAILED)
+                .setSubErrors(fieldErrors.stream()
+                                         .map(fieldError -> new ValidationApiSubErrorResponse(
+                                                 fieldError.getField(), fieldError.getDefaultMessage()
+                                         )).collect(Collectors.toList())
+                );
 
         ResponseEntity<Object> responseEntity = restExceptionHandler.
                 handleMethodArgumentNotValid(methodArgumentNotValidException, headers, status, webRequest);
