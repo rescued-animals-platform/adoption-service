@@ -13,7 +13,7 @@ class JpaOrganizationMapperTest {
     void shouldMapOrganizationAndJpaOrganizationCorrectly() {
         Organization expectedOrganization = OrganizationFactory.random().build();
 
-        JpaOrganization jpaOrganization = new JpaOrganization(expectedOrganization);
+        JpaOrganization jpaOrganization = JpaOrganizationMapper.MAPPER.toJpaOrganization(expectedOrganization);
         Organization actualOrganization = JpaOrganizationMapper.MAPPER.toOrganization(jpaOrganization);
 
         assertAll(

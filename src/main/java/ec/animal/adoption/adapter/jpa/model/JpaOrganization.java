@@ -19,7 +19,10 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.organization.Organization;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -29,6 +32,9 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "organization")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@Getter
 public class JpaOrganization implements Serializable {
 
     @Serial
@@ -43,42 +49,4 @@ public class JpaOrganization implements Serializable {
     private String email;
     private String receptionAddress;
     private String adoptionFormPdfUrl;
-
-    private JpaOrganization() {
-        // Required by jpa
-    }
-
-    public JpaOrganization(final Organization organization) {
-        this();
-        this.id = organization.getOrganizationId();
-        this.name = organization.getName();
-        this.city = organization.getCity();
-        this.email = organization.getEmail();
-        this.receptionAddress = organization.getReceptionAddress();
-        this.adoptionFormPdfUrl = organization.getAdoptionFormPdfUrl();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getReceptionAddress() {
-        return receptionAddress;
-    }
-
-    public String getAdoptionFormPdfUrl() {
-        return adoptionFormPdfUrl;
-    }
 }

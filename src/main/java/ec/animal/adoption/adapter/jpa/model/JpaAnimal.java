@@ -108,7 +108,7 @@ public class JpaAnimal implements Serializable {
         this.setJpaPrimaryLinkPicture(animal.getPrimaryLinkPicture().orElse(null));
         this.setJpaCharacteristics(animal.getCharacteristics().orElse(null));
         this.setJpaStory(animal.getStory().orElse(null));
-        this.jpaOrganization = new JpaOrganization(animal.getOrganization());
+        this.jpaOrganization = JpaOrganizationMapper.MAPPER.toJpaOrganization(animal.getOrganization());
     }
 
     public JpaAnimal(final AnimalDto animalDto) {
@@ -122,7 +122,7 @@ public class JpaAnimal implements Serializable {
         this.stateName = animalDto.getStateNameAsString();
         this.adoptionFormId = animalDto.getAdoptionFormId().orElse(null);
         this.unavailableStateNotes = animalDto.getNotes().orElse(null);
-        this.jpaOrganization = new JpaOrganization(animalDto.organization());
+        this.jpaOrganization = JpaOrganizationMapper.MAPPER.toJpaOrganization(animalDto.organization());
     }
 
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {

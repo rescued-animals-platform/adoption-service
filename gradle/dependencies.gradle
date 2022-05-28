@@ -1,6 +1,7 @@
 ext {
     springCloudDependenciesVersion = "2021.0.2"
     mapstructVersion = "1.4.2.Final"
+    lombokVersion = "1.18.24"
 }
 
 dependencyManagement {
@@ -26,11 +27,14 @@ dependencies {
     implementation("commons-io:commons-io:2.6")
     implementation('org.postgresql:postgresql:42.3.4')
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation("org.projectlombok:lombok:${lombokVersion}")
 
     runtimeOnly("org.flywaydb:flyway-core:6.3.2")
     runtimeOnly('net.logstash.logback:logstash-logback-encoder:7.1.1')
 
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
