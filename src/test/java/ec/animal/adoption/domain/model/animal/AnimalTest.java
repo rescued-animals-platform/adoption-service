@@ -183,12 +183,12 @@ class AnimalTest {
 
         assertEquals(animal.getIdentifier(), updatedAnimal.getIdentifier());
         assertEquals(animal.getRegistrationDate(), updatedAnimal.getRegistrationDate());
-        assertEquals(animalDto.getClinicalRecord(), updatedAnimal.getClinicalRecord());
-        assertEquals(animalDto.getName(), updatedAnimal.getName());
-        assertEquals(animalDto.getSpecies(), updatedAnimal.getSpecies());
-        assertEquals(animalDto.getEstimatedAge(), updatedAnimal.getEstimatedAge());
-        assertEquals(animalDto.getSex(), updatedAnimal.getSex());
-        assertEquals(animalDto.getState(), updatedAnimal.getState());
+        assertEquals(animalDto.clinicalRecord(), updatedAnimal.getClinicalRecord());
+        assertEquals(animalDto.name(), updatedAnimal.getName());
+        assertEquals(animalDto.species(), updatedAnimal.getSpecies());
+        assertEquals(animalDto.estimatedAge(), updatedAnimal.getEstimatedAge());
+        assertEquals(animalDto.sex(), updatedAnimal.getSex());
+        assertEquals(animalDto.state(), updatedAnimal.getState());
         assertEquals(animal.getPrimaryLinkPicture(), updatedAnimal.getPrimaryLinkPicture());
         assertEquals(animal.getCharacteristics(), updatedAnimal.getCharacteristics());
         assertEquals(animal.getStory(), updatedAnimal.getStory());

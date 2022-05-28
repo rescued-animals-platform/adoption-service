@@ -48,7 +48,7 @@ public class AnimalService {
     }
 
     public Animal create(final AnimalDto animalDto) {
-        if (animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId())) {
+        if (animalRepository.exists(animalDto.clinicalRecord(), animalDto.getOrganizationId())) {
             throw new EntityAlreadyExistsException();
         }
 
@@ -56,8 +56,8 @@ public class AnimalService {
     }
 
     public Animal update(final UUID animalId, final AnimalDto animalDto) {
-        Organization organization = animalDto.getOrganization();
-        String clinicalRecordInUpdateRequest = animalDto.getClinicalRecord();
+        Organization organization = animalDto.organization();
+        String clinicalRecordInUpdateRequest = animalDto.clinicalRecord();
 
         Animal animalToBeUpdated = animalRepository.getBy(animalId, organization);
         Optional<Animal> animalInOrganizationWithClinicalRecordInUpdate = animalRepository.getBy(

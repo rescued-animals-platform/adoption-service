@@ -114,15 +114,15 @@ public class JpaAnimal implements Serializable {
     public JpaAnimal(final AnimalDto animalDto) {
         this.id = UUID.randomUUID();
         this.registrationDate = LocalDateTime.now();
-        this.clinicalRecord = animalDto.getClinicalRecord();
-        this.name = animalDto.getName();
-        this.species = animalDto.getSpecies().name();
-        this.estimatedAge = animalDto.getEstimatedAge().name();
-        this.sex = animalDto.getSex().name();
+        this.clinicalRecord = animalDto.clinicalRecord();
+        this.name = animalDto.name();
+        this.species = animalDto.species().name();
+        this.estimatedAge = animalDto.estimatedAge().name();
+        this.sex = animalDto.sex().name();
         this.stateName = animalDto.getStateNameAsString();
         this.adoptionFormId = animalDto.getAdoptionFormId().orElse(null);
         this.unavailableStateNotes = animalDto.getNotes().orElse(null);
-        this.jpaOrganization = new JpaOrganization(animalDto.getOrganization());
+        this.jpaOrganization = new JpaOrganization(animalDto.organization());
     }
 
     private void setJpaPrimaryLinkPicture(final LinkPicture primaryLinkPicture) {

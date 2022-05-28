@@ -68,14 +68,14 @@ class AnimalDtoTest {
                                             adoptedState,
                                             organization);
 
-        assertAll(() -> assertEquals(clinicalRecord, animalDto.getClinicalRecord()),
-                  () -> assertEquals(name, animalDto.getName()),
-                  () -> assertEquals(species, animalDto.getSpecies()),
-                  () -> assertEquals(estimatedAge, animalDto.getEstimatedAge()),
-                  () -> assertEquals(sex, animalDto.getSex()),
-                  () -> assertEquals(adoptedState, animalDto.getState()),
+        assertAll(() -> assertEquals(clinicalRecord, animalDto.clinicalRecord()),
+                  () -> assertEquals(name, animalDto.name()),
+                  () -> assertEquals(species, animalDto.species()),
+                  () -> assertEquals(estimatedAge, animalDto.estimatedAge()),
+                  () -> assertEquals(sex, animalDto.sex()),
+                  () -> assertEquals(adoptedState, animalDto.state()),
                   () -> assertEquals(adoptedState.getName().name(), animalDto.getStateNameAsString()),
-                  () -> assertEquals(organization, animalDto.getOrganization()),
+                  () -> assertEquals(organization, animalDto.organization()),
                   () -> assertEquals(organization.getOrganizationId(), animalDto.getOrganizationId()));
 
     }

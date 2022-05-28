@@ -58,15 +58,15 @@ class JpaAnimalTest {
 
         assertAll(() -> assertNotNull(actualAnimal.getIdentifier()),
                   () -> assertNotNull(actualAnimal.getRegistrationDate()),
-                  () -> assertEquals(animalDto.getClinicalRecord(), actualAnimal.getClinicalRecord()),
-                  () -> assertEquals(animalDto.getName(), actualAnimal.getName()),
-                  () -> assertEquals(animalDto.getSpecies(), actualAnimal.getSpecies()),
-                  () -> assertEquals(animalDto.getEstimatedAge(), actualAnimal.getEstimatedAge()),
-                  () -> assertEquals(animalDto.getSex(), actualAnimal.getSex()),
+                  () -> assertEquals(animalDto.clinicalRecord(), actualAnimal.getClinicalRecord()),
+                  () -> assertEquals(animalDto.name(), actualAnimal.getName()),
+                  () -> assertEquals(animalDto.species(), actualAnimal.getSpecies()),
+                  () -> assertEquals(animalDto.estimatedAge(), actualAnimal.getEstimatedAge()),
+                  () -> assertEquals(animalDto.sex(), actualAnimal.getSex()),
                   () -> assertEquals(animalDto.getStateNameAsString(), actualAnimal.getStateName()),
                   () -> assertEquals(animalDto.getAdoptionFormId(), actualAnimal.getState().getAdoptionFormId()),
                   () -> assertEquals(animalDto.getNotes(), actualAnimal.getState().getNotes()),
-                  () -> assertEquals(animalDto.getOrganization(), actualAnimal.getOrganization()));
+                  () -> assertEquals(animalDto.organization(), actualAnimal.getOrganization()));
     }
 
     @Test

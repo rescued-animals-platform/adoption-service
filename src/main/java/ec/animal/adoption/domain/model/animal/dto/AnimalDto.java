@@ -30,23 +30,21 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AnimalDto {
+public record AnimalDto(String clinicalRecord,
+                        String name,
+                        Species species,
+                        EstimatedAge estimatedAge,
+                        Sex sex,
+                        State state,
+                        Organization organization) {
 
-    private final String clinicalRecord;
-    private final String name;
-    private final Species species;
-    private final EstimatedAge estimatedAge;
-    private final Sex sex;
-    private final State state;
-    private final Organization organization;
-
-    public AnimalDto(@NonNull final String clinicalRecord,
-                     @Nullable final String name,
-                     @NonNull final Species species,
-                     @NonNull final EstimatedAge estimatedAge,
-                     @NonNull final Sex sex,
-                     @Nullable final State state,
-                     @NonNull final Organization organization) {
+    public AnimalDto(@NonNull String clinicalRecord,
+                     @Nullable String name,
+                     @NonNull Species species,
+                     @NonNull EstimatedAge estimatedAge,
+                     @NonNull Sex sex,
+                     @Nullable State state,
+                     @NonNull Organization organization) {
         this.clinicalRecord = clinicalRecord;
         this.name = name;
         this.species = species;
@@ -56,52 +54,17 @@ public class AnimalDto {
         this.organization = organization;
     }
 
-    @NonNull
-    public String getClinicalRecord() {
-        return clinicalRecord;
+    public Optional<String> getAdoptionFormId() {
+        return Optional.of(this.state).flatMap(State::getAdoptionFormId);
     }
 
-    @Nullable
-    public String getName() {
-        return name;
-    }
-
-    @NonNull
-    public Species getSpecies() {
-        return species;
-    }
-
-    @NonNull
-    public EstimatedAge getEstimatedAge() {
-        return estimatedAge;
-    }
-
-    @NonNull
-    public Sex getSex() {
-        return sex;
-    }
-
-    @NonNull
-    public State getState() {
-        return state;
+    public Optional<String> getNotes() {
+        return Optional.of(this.state).flatMap(State::getNotes);
     }
 
     @NonNull
     public String getStateNameAsString() {
-        return state.getName().name();
-    }
-
-    public Optional<String> getAdoptionFormId() {
-        return Optional.ofNullable(state).flatMap(State::getAdoptionFormId);
-    }
-
-    public Optional<String> getNotes() {
-        return Optional.ofNullable(state).flatMap(State::getNotes);
-    }
-
-    @NonNull
-    public Organization getOrganization() {
-        return organization;
+        return this.state.getName().name();
     }
 
     @NonNull

@@ -88,7 +88,7 @@ class AnimalServiceTest {
     @Test
     void shouldCreateAnAnimalIfItDoesNotAlreadyExist() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
-        when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
+        when(animalRepository.exists(animalDto.clinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(false);
         when(animalRepository.create(animalDto)).thenReturn(expectedAnimal);
 
@@ -100,12 +100,10 @@ class AnimalServiceTest {
     @Test
     void shouldThrowEntityAlreadyExistExceptionWhenCreatingAnimalThatAlreadyExist() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
-        when(animalRepository.exists(animalDto.getClinicalRecord(), animalDto.getOrganizationId()))
+        when(animalRepository.exists(animalDto.clinicalRecord(), animalDto.getOrganizationId()))
                 .thenReturn(true);
 
-        assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalService.create(animalDto);
-        });
+        assertThrows(EntityAlreadyExistsException.class, () -> animalService.create(animalDto));
         verify(animalRepository, never()).save(any(Animal.class));
     }
 
@@ -114,8 +112,8 @@ class AnimalServiceTest {
         UUID animalId = UUID.randomUUID();
         AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
         Animal animalToBeUpdated = mock(Animal.class);
-        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
-        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.organization())).thenReturn(animalToBeUpdated);
+        when(animalRepository.getBy(animalDtoWithUpdatedData.clinicalRecord(), animalDtoWithUpdatedData.organization()))
                 .thenReturn(Optional.empty());
         Animal expectedUpdatedAnimal = mock(Animal.class);
         when(animalToBeUpdated.updateWith(animalDtoWithUpdatedData)).thenReturn(expectedUpdatedAnimal);
@@ -131,9 +129,9 @@ class AnimalServiceTest {
         UUID animalId = UUID.randomUUID();
         AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
         Animal animalToBeUpdated = mock(Animal.class);
-        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.organization())).thenReturn(animalToBeUpdated);
         Animal animalWithClinicalRecord = mock(Animal.class);
-        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+        when(animalRepository.getBy(animalDtoWithUpdatedData.clinicalRecord(), animalDtoWithUpdatedData.organization()))
                 .thenReturn(Optional.of(animalWithClinicalRecord));
         when(animalToBeUpdated.isSameAs(animalWithClinicalRecord)).thenReturn(true);
         Animal expectedUpdatedAnimal = mock(Animal.class);
@@ -150,15 +148,13 @@ class AnimalServiceTest {
         UUID animalId = UUID.randomUUID();
         AnimalDto animalDtoWithUpdatedData = AnimalDtoFactory.random().build();
         Animal animalToBeUpdated = mock(Animal.class);
-        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.getOrganization())).thenReturn(animalToBeUpdated);
+        when(animalRepository.getBy(animalId, animalDtoWithUpdatedData.organization())).thenReturn(animalToBeUpdated);
         Animal animalWithClinicalRecord = mock(Animal.class);
-        when(animalRepository.getBy(animalDtoWithUpdatedData.getClinicalRecord(), animalDtoWithUpdatedData.getOrganization()))
+        when(animalRepository.getBy(animalDtoWithUpdatedData.clinicalRecord(), animalDtoWithUpdatedData.organization()))
                 .thenReturn(Optional.of(animalWithClinicalRecord));
         when(animalToBeUpdated.isSameAs(animalWithClinicalRecord)).thenReturn(false);
 
-        assertThrows(IllegalUpdateException.class, () -> {
-            animalService.update(animalId, animalDtoWithUpdatedData);
-        });
+        assertThrows(IllegalUpdateException.class, () -> animalService.update(animalId, animalDtoWithUpdatedData));
     }
 
     @Test

@@ -97,12 +97,12 @@ class AnimalCreateUpdateRequestTest {
 
         AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
 
-        assertAll(() -> assertEquals(clinicalRecord, animalDto.getClinicalRecord()),
-                  () -> assertEquals(name, animalDto.getName()),
-                  () -> assertEquals(species, animalDto.getSpecies()),
-                  () -> assertEquals(estimatedAge, animalDto.getEstimatedAge()),
-                  () -> assertEquals(sex, animalDto.getSex()),
-                  () -> assertEquals(organization, animalDto.getOrganization()),
+        assertAll(() -> assertEquals(clinicalRecord, animalDto.clinicalRecord()),
+                  () -> assertEquals(name, animalDto.name()),
+                  () -> assertEquals(species, animalDto.species()),
+                  () -> assertEquals(estimatedAge, animalDto.estimatedAge()),
+                  () -> assertEquals(sex, animalDto.sex()),
+                  () -> assertEquals(organization, animalDto.organization()),
                   () -> assertEquals(LOOKING_FOR_HUMAN.name(), animalDto.getStateNameAsString()));
     }
 
@@ -120,12 +120,12 @@ class AnimalCreateUpdateRequestTest {
 
         AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
 
-        assertAll(() -> assertEquals(clinicalRecord, animalDto.getClinicalRecord()),
-                  () -> assertEquals(name, animalDto.getName()),
-                  () -> assertEquals(species, animalDto.getSpecies()),
-                  () -> assertEquals(estimatedAge, animalDto.getEstimatedAge()),
-                  () -> assertEquals(sex, animalDto.getSex()),
-                  () -> assertEquals(organization, animalDto.getOrganization()),
+        assertAll(() -> assertEquals(clinicalRecord, animalDto.clinicalRecord()),
+                  () -> assertEquals(name, animalDto.name()),
+                  () -> assertEquals(species, animalDto.species()),
+                  () -> assertEquals(estimatedAge, animalDto.estimatedAge()),
+                  () -> assertEquals(sex, animalDto.sex()),
+                  () -> assertEquals(organization, animalDto.organization()),
                   () -> assertEquals(ADOPTED.name(), animalDto.getStateNameAsString()),
                   () -> {
                       assertTrue(animalDto.getAdoptionFormId().isPresent());
