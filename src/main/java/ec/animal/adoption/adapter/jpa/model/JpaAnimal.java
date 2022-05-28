@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
@@ -136,7 +137,9 @@ public class JpaAnimal implements Serializable {
     }
 
     private void setJpaStory(final Story story) {
-        this.jpaStory = JpaStoryMapper.MAPPER.toJpaStory(story, this);
+        this.jpaStory = Optional.ofNullable(story)
+                                .map(s -> JpaStoryMapper.MAPPER.toJpaStory(s, this))
+                                .orElse(null);
     }
 
     public Animal toAnimal() {

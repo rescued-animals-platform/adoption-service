@@ -35,7 +35,7 @@ pitest: ## Executes mutation testing coverage analysis
 
 .PHONY: sonar
 sonar: ## Executes sonarqube static analysis
-	./gradlew clean build sonarqube --rerun-tasks
+	./gradlew build sonarqube --rerun-tasks
 
 .PHONY: test-integration
 test-integration: deploy-dependencies-only ## Runs integration tests from the builder container inside the docker-compose network
@@ -51,7 +51,7 @@ test-api: deploy ## Runs api tests from the builder container inside the docker-
 
 .PHONY: test-arch-unit
 test-arch-unit: ## Runs architecture tests (atomic fitness functions) written with arch-unit
-	./gradlew clean archUnitTest --rerun-tasks
+	./gradlew archUnitTest --rerun-tasks
 
 .PHONY: test-all
 test-all: test-unit test-arch-unit pitest deploy ## Runs all tests (unit, integration, api, architecture) and cleans the environment after a successful result
