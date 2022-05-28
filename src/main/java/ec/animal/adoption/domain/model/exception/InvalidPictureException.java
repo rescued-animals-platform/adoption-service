@@ -21,11 +21,13 @@ package ec.animal.adoption.domain.model.exception;
 
 import ec.animal.adoption.domain.model.media.SupportedImageExtension;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class InvalidPictureException extends RuntimeException {
 
+    @Serial
     private static final transient long serialVersionUID = -442435159749429820L;
 
     private static final String MESSAGE = "The image(s) could not be processed. Check they meet the minimum " +

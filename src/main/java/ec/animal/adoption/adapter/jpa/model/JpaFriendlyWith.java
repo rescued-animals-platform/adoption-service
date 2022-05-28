@@ -24,11 +24,13 @@ import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Entity(name = "friendly_with")
 public class JpaFriendlyWith implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -412422759164428810L;
 
     @Id

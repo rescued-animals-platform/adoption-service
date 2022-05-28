@@ -32,6 +32,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @Entity(name = "characteristics")
 public class JpaCharacteristics implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -132432659169428820L;
 
     @Id
@@ -82,8 +84,7 @@ public class JpaCharacteristics implements Serializable {
         this.size = characteristics.getSize().name();
         this.physicalActivity = characteristics.getPhysicalActivity().name();
         this.setTemperaments(characteristics.getTemperaments());
-        this.friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new)
-                                           .collect(Collectors.toList());
+        this.friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new).toList();
     }
 
     private void setId(final UUID id) {

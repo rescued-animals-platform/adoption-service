@@ -19,8 +19,11 @@
 
 package ec.animal.adoption.domain.model.exception;
 
+import java.io.Serial;
+
 public class EntityAlreadyExistsException extends RuntimeException {
 
+    @Serial
     private static final transient long serialVersionUID = -242436159149421823L;
 
     private static final String MESSAGE = "The resource already exists";

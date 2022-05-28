@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,6 +38,7 @@ import java.util.UUID;
 @Entity(name = "primary_link_picture")
 public class JpaPrimaryLinkPicture implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -832433659194420810L;
 
     @Id

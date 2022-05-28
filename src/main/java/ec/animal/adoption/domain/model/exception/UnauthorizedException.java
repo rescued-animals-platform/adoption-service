@@ -19,10 +19,14 @@
 
 package ec.animal.adoption.domain.model.exception;
 
+import java.io.Serial;
+
 public class UnauthorizedException extends RuntimeException {
 
-    private static final String UNAUTHORIZED = "Unauthorized";
+    @Serial
     private static final transient long serialVersionUID = -232426153813421923L;
+
+    private static final String UNAUTHORIZED = "Unauthorized";
 
     public UnauthorizedException() {
         super(UNAUTHORIZED);

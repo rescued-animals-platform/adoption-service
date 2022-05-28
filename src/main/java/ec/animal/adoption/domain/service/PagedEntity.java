@@ -28,12 +28,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.function.Function;
 
 @JsonIgnoreProperties({"pageable"})
 public class PagedEntity<T> extends PageImpl<T> {
 
+    @Serial
     private static final transient long serialVersionUID = -721000112304438810L;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)

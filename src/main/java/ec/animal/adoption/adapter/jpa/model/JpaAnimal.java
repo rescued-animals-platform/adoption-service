@@ -37,6 +37,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -46,6 +47,7 @@ import static java.util.Optional.ofNullable;
 @Entity(name = "animal")
 public class JpaAnimal implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -632732651164438810L;
 
     @Id

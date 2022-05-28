@@ -19,8 +19,11 @@
 
 package ec.animal.adoption.domain.model.exception;
 
+import java.io.Serial;
+
 public class MediaStorageException extends RuntimeException {
 
+    @Serial
     private static final transient long serialVersionUID = -232426153813421923L;
 
     public MediaStorageException() {

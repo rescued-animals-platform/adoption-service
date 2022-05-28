@@ -19,8 +19,11 @@
 
 package ec.animal.adoption.domain.model.exception;
 
+import java.io.Serial;
+
 public class EntityNotFoundException extends RuntimeException {
 
+    @Serial
     private static final transient long serialVersionUID = -242426159819421923L;
 
     public EntityNotFoundException() {

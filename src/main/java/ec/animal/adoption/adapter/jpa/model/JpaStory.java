@@ -28,6 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,6 +36,7 @@ import java.util.UUID;
 @Entity(name = "story")
 public class JpaStory implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -242532859161428810L;
 
     @Id

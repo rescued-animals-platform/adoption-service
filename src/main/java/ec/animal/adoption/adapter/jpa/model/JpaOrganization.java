@@ -24,12 +24,14 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "organization")
 public class JpaOrganization implements Serializable {
 
+    @Serial
     private static final transient long serialVersionUID = -579031381673428820L;
 
     @Id

@@ -1,11 +1,11 @@
 package ec.animal.adoption.domain.model.exception;
 
-import ec.animal.adoption.domain.model.animal.Animal;
-
+import java.io.Serial;
 import java.util.UUID;
 
 public class IllegalUpdateException extends RuntimeException {
 
+    @Serial
     private static final transient long serialVersionUID = -367826159819421923L;
 
     private static final String MESSAGE_TEMPLATE = "Can't update animal with clinical record: %s. " +
@@ -13,6 +13,5 @@ public class IllegalUpdateException extends RuntimeException {
 
     public IllegalUpdateException(final UUID existingAnimalId, final String clinicalRecord) {
         super(String.format(MESSAGE_TEMPLATE, clinicalRecord, existingAnimalId));
-        Animal animal;
     }
 }
