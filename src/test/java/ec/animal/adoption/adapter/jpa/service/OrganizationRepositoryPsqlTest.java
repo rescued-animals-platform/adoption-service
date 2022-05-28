@@ -17,10 +17,9 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.adapter.jpa;
+package ec.animal.adoption.adapter.jpa.service;
 
 import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
-import ec.animal.adoption.adapter.jpa.model.JpaOrganizationMapper;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.model.organization.OrganizationFactory;
 import ec.animal.adoption.domain.service.OrganizationRepository;

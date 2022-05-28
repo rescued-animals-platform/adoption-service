@@ -1,5 +1,7 @@
-package ec.animal.adoption.adapter.jpa.model;
+package ec.animal.adoption.adapter.jpa.service;
 
+import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
+import ec.animal.adoption.adapter.jpa.service.JpaOrganizationMapper;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.model.organization.OrganizationFactory;
 import org.junit.jupiter.api.Test;

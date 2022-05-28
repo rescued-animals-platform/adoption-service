@@ -1,6 +1,7 @@
-package ec.animal.adoption.adapter.jpa;
+package ec.animal.adoption.adapter.jpa.service;
 
 import ec.animal.adoption.adapter.jpa.model.JpaAnimal;
+import ec.animal.adoption.adapter.jpa.service.JpaAnimalRepository;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

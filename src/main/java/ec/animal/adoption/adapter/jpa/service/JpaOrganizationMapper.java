@@ -1,5 +1,6 @@
-package ec.animal.adoption.adapter.jpa.model;
+package ec.animal.adoption.adapter.jpa.service;
 
+import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
 import ec.animal.adoption.domain.model.organization.Organization;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;

@@ -17,12 +17,28 @@
     along with Adoption Service.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ec.animal.adoption.adapter.jpa;
+package ec.animal.adoption.adapter.jpa.service;
 
 import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
-import org.springframework.data.repository.CrudRepository;
+import ec.animal.adoption.domain.model.organization.Organization;
+import ec.animal.adoption.domain.service.OrganizationRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public interface JpaOrganizationRepository extends CrudRepository<JpaOrganization, UUID> {
+@Repository
+public class OrganizationRepositoryPsql implements OrganizationRepository {
+
+    private final JpaOrganizationRepository jpaOrganizationRepository;
+
+    public OrganizationRepositoryPsql(final JpaOrganizationRepository jpaOrganizationRepository) {
+        this.jpaOrganizationRepository = jpaOrganizationRepository;
+    }
+
+    @Override
+    public Optional<Organization> getBy(final UUID organizationId) {
+        Optional<JpaOrganization> jpaOrganization = jpaOrganizationRepository.findById(organizationId);
+        return jpaOrganization.map(JpaOrganizationMapper.MAPPER::toOrganization);
+    }
 }

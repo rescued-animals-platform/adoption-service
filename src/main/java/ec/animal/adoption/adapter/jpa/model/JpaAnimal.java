@@ -19,6 +19,8 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
+import ec.animal.adoption.adapter.jpa.service.JpaOrganizationMapper;
+import ec.animal.adoption.adapter.jpa.service.JpaStoryMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.EstimatedAge;
 import ec.animal.adoption.domain.model.animal.Sex;
