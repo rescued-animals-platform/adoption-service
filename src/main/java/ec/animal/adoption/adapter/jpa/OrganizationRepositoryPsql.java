@@ -20,6 +20,7 @@
 package ec.animal.adoption.adapter.jpa;
 
 import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
+import ec.animal.adoption.adapter.jpa.model.JpaOrganizationMapper;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.service.OrganizationRepository;
 import org.springframework.stereotype.Repository;
@@ -39,6 +40,6 @@ public class OrganizationRepositoryPsql implements OrganizationRepository {
     @Override
     public Optional<Organization> getBy(final UUID organizationId) {
         Optional<JpaOrganization> jpaOrganization = jpaOrganizationRepository.findById(organizationId);
-        return jpaOrganization.map(JpaOrganization::toOrganization);
+        return jpaOrganization.map(JpaOrganizationMapper.MAPPER::toOrganization);
     }
 }

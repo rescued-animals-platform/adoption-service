@@ -153,7 +153,7 @@ public class JpaAnimal implements Serializable {
                 ofNullable(jpaPrimaryLinkPicture).map(JpaPrimaryLinkPicture::toLinkPicture).orElse(null),
                 ofNullable(jpaCharacteristics).map(JpaCharacteristics::toCharacteristics).orElse(null),
                 ofNullable(jpaStory).map(JpaStory::toStory).orElse(null),
-                this.jpaOrganization.toOrganization()
+                JpaOrganizationMapper.MAPPER.toOrganization(this.jpaOrganization)
         );
     }
 

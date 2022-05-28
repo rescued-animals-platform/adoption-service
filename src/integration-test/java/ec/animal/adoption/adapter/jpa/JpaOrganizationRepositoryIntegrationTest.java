@@ -20,6 +20,7 @@
 package ec.animal.adoption.adapter.jpa;
 
 import ec.animal.adoption.adapter.jpa.model.JpaOrganization;
+import ec.animal.adoption.adapter.jpa.model.JpaOrganizationMapper;
 import ec.animal.adoption.domain.model.organization.Organization;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class JpaOrganizationRepositoryIntegrationTest extends AbstractJpaReposit
         Optional<JpaOrganization> optionalJpaOrganization = jpaOrganizationRepository.findById(DEFAULT_ORGANIZATION_ID);
 
         assertThat(optionalJpaOrganization.isPresent(), is(true));
-        Organization organization = optionalJpaOrganization.get().toOrganization();
+        Organization organization = JpaOrganizationMapper.MAPPER.toOrganization(optionalJpaOrganization.get());
         assertAll(
                 () -> assertEquals("My Test Organization", organization.getName()),
                 () -> assertEquals("QUITO", organization.getCity()),

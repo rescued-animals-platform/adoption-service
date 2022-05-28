@@ -58,12 +58,27 @@ public class JpaOrganization implements Serializable {
         this.adoptionFormPdfUrl = organization.getAdoptionFormPdfUrl();
     }
 
-    public Organization toOrganization() {
-        return new Organization(this.id,
-                                this.name,
-                                this.city,
-                                this.email,
-                                this.receptionAddress,
-                                this.adoptionFormPdfUrl);
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getReceptionAddress() {
+        return receptionAddress;
+    }
+
+    public String getAdoptionFormPdfUrl() {
+        return adoptionFormPdfUrl;
     }
 }
