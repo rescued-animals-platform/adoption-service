@@ -32,6 +32,7 @@ public abstract class Entity {
     @JsonProperty("registrationDate")
     protected final LocalDateTime registrationDate;
 
+    @Default
     protected Entity(final UUID identifier, final LocalDateTime registrationDate) {
         this.identifier = identifier;
         this.registrationDate = registrationDate;

@@ -19,79 +19,17 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.story.Story;
-import ec.animal.adoption.domain.model.story.StoryFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 class JpaStoryTest {
 
     @Test
-    void shouldGenerateAnIdWhenCreatingAJpaStoryForAStoryWithNoId() {
-        Story story = StoryFactory.random().withIdentifier(null).build();
-        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
-
-        Story jpaStoryToStory = jpaStory.toStory();
-
-        assertNotNull(jpaStoryToStory.getIdentifier());
-    }
-
-    @Test
-    void shouldGenerateARegistrationDateWhenCreatingAJpaStoryForAStoryWithNoRegistrationDate() {
-        Story story = StoryFactory.random().withRegistrationDate(null).build();
-        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
-
-        Story jpaStoryToStory = jpaStory.toStory();
-
-        assertNotNull(jpaStoryToStory.getRegistrationDate());
-    }
-
-    @Test
-    void shouldCreateAStoryWithId() {
-        UUID storyId = UUID.randomUUID();
-        Story story = StoryFactory.random().withIdentifier(storyId).build();
-        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
-
-        Story jpaStoryToStory = jpaStory.toStory();
-
-        assertThat(jpaStoryToStory.getIdentifier(), is(storyId));
-    }
-
-    @Test
-    void shouldCreateAStoryWithRegistrationDate() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        Story story = StoryFactory.random().withRegistrationDate(registrationDate).build();
-        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
-
-        Story jpaStoryToStory = jpaStory.toStory();
-
-        assertThat(jpaStoryToStory.getRegistrationDate(), is(registrationDate));
-    }
-
-    @Test
-    void shouldCreateJpaStoryFromStory() {
-        String text = randomAlphabetic(100);
-        Story story = StoryFactory.random().withText(text).build();
-        JpaStory jpaStory = new JpaStory(story, mock(JpaAnimal.class));
-
-        Story jpaStoryToStory = jpaStory.toStory();
-
-        assertThat(jpaStoryToStory.getText(), is(story.getText()));
-    }
-
-    @Test
     void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaStory.class).usingGetClass()
+        EqualsVerifier.forClass(JpaStory.class)
                       .withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))
                       .suppress(Warning.NONFINAL_FIELDS, Warning.REFERENCE_EQUALITY, Warning.SURROGATE_KEY).verify();
     }

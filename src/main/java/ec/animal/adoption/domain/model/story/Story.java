@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.model.story;
 
+import ec.animal.adoption.domain.model.Default;
 import ec.animal.adoption.domain.model.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,11 @@ public class Story extends Entity {
         this.text = text;
     }
 
-    public Story(@NonNull final UUID storyId,
+    @Default
+    public Story(@NonNull final UUID identifier,
                  @NonNull final LocalDateTime registrationDate,
                  @NonNull final String text) {
-        super(storyId, registrationDate);
+        super(identifier, registrationDate);
         this.text = text;
     }
 

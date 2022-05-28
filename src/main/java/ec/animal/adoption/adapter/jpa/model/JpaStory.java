@@ -19,7 +19,11 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.story.Story;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -34,6 +38,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "story")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class JpaStory implements Serializable {
 
     @Serial
@@ -41,6 +49,7 @@ public class JpaStory implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -51,47 +60,4 @@ public class JpaStory implements Serializable {
 
     @NotNull
     private String text;
-
-    private JpaStory() {
-        // Required by jpa
-    }
-
-    public JpaStory(final Story story, final JpaAnimal jpaAnimal) {
-        this();
-        this.setId(story.getIdentifier());
-        this.jpaAnimal = jpaAnimal;
-        this.setRegistrationDate(story.getRegistrationDate());
-        this.text = story.getText();
-    }
-
-    private void setId(final UUID id) {
-        this.id = id == null ? UUID.randomUUID() : id;
-    }
-
-    private void setRegistrationDate(final LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
-    }
-
-    public Story toStory() {
-        return new Story(this.id, this.registrationDate, this.text);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        JpaStory jpaStory = (JpaStory) o;
-
-        return id != null ? id.equals(jpaStory.id) : jpaStory.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
 }

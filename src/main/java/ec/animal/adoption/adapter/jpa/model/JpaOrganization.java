@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.jpa.model;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
@@ -32,9 +33,10 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "organization")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@Getter
 public class JpaOrganization implements Serializable {
 
     @Serial
@@ -42,6 +44,7 @@ public class JpaOrganization implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     private String name;

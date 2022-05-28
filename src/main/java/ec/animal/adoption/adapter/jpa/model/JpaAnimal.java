@@ -136,8 +136,7 @@ public class JpaAnimal implements Serializable {
     }
 
     private void setJpaStory(final Story story) {
-        this.jpaStory = story == null ? null :
-                        new JpaStory(story, this);
+        this.jpaStory = JpaStoryMapper.MAPPER.toJpaStory(story, this);
     }
 
     public Animal toAnimal() {
@@ -152,7 +151,7 @@ public class JpaAnimal implements Serializable {
                 State.from(StateName.valueOf(this.stateName), this.adoptionFormId, this.unavailableStateNotes),
                 ofNullable(jpaPrimaryLinkPicture).map(JpaPrimaryLinkPicture::toLinkPicture).orElse(null),
                 ofNullable(jpaCharacteristics).map(JpaCharacteristics::toCharacteristics).orElse(null),
-                ofNullable(jpaStory).map(JpaStory::toStory).orElse(null),
+                JpaStoryMapper.MAPPER.toStory(this.jpaStory),
                 JpaOrganizationMapper.MAPPER.toOrganization(this.jpaOrganization)
         );
     }

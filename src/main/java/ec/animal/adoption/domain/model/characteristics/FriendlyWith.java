@@ -26,6 +26,7 @@ public enum FriendlyWith {
     CHILDREN, ADULTS, DOGS, CATS, OTHER_ANIMALS;
 
     @JsonCreator
+    @SuppressWarnings("unused")
     private static FriendlyWith forValue(final String value) {
         return (FriendlyWith) EnumUtils.forValue(value)
                                        .apply(FriendlyWith.values())
