@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -167,5 +168,14 @@ class JpaCharacteristicsMapperTest {
         );
 
         assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getBalance().isEmpty());
+    }
+
+    @Test
+    void shouldReturnNullJpaCharacteristicsIfBothCharacteristicsAndJpaAnimalAreNull() {
+        JpaCharacteristics jpaCharacteristics = JpaCharacteristicsMapper.MAPPER.toJpaCharacteristics(
+                null, null
+        );
+
+        assertNull(jpaCharacteristics);
     }
 }

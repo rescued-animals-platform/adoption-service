@@ -13,6 +13,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 class JpaStoryMapperTest {
@@ -67,5 +68,12 @@ class JpaStoryMapperTest {
         assertThat(story.getIdentifier(), is(id));
         assertThat(story.getRegistrationDate(), is(registrationDate));
         assertThat(story.getText(), is(story.getText()));
+    }
+
+    @Test
+    void shouldReturnNullJpaStoryIfBothStoryAndJpaAnimalAreNull() {
+        JpaStory jpaStory = JpaStoryMapper.MAPPER.toJpaStory(null, null);
+
+        assertNull(jpaStory);
     }
 }
