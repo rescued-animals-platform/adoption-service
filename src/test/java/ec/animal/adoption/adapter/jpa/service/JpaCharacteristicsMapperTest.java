@@ -53,7 +53,7 @@ class JpaCharacteristicsMapperTest {
     }
 
     @Test
-    void shouldCreateJpaCharacteristicsFromCharacteristics() {
+    void shouldCreateJpaCharacteristicsFromCharacteristicsAndJpaAnimal() {
         Sociability sociability = getRandomSociability();
         Docility docility = getRandomDocility();
         Balance balance = getRandomBalance();
@@ -67,9 +67,10 @@ class JpaCharacteristicsMapperTest {
                                                                 .withTemperaments(temperaments)
                                                                 .withFriendlyWith(friendlyWith)
                                                                 .build();
+        JpaAnimal jpaAnimal = mock(JpaAnimal.class);
 
         JpaCharacteristics jpaCharacteristics = JpaCharacteristicsMapper.MAPPER.toJpaCharacteristics(
-                characteristics, mock(JpaAnimal.class)
+                characteristics, jpaAnimal
         );
 
         assertThat(jpaCharacteristics.getId(), is(characteristics.getIdentifier()));
@@ -81,6 +82,7 @@ class JpaCharacteristicsMapperTest {
         assertThat(jpaCharacteristics.getFriendlyWith(), hasSize(1));
         assertThat(jpaCharacteristics.getFriendlyWith(), contains(new JpaFriendlyWith(friendlyWith.name())));
         assertThat(jpaCharacteristics.getPhysicalActivity(), is(characteristics.getPhysicalActivity().name()));
+        assertThat(jpaCharacteristics.getJpaAnimal(), is(jpaAnimal));
     }
 
     @Test

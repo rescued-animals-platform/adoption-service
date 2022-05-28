@@ -2,7 +2,6 @@ package ec.animal.adoption.adapter.jpa.service;
 
 import ec.animal.adoption.adapter.jpa.model.JpaAnimal;
 import ec.animal.adoption.adapter.jpa.model.JpaStory;
-import ec.animal.adoption.adapter.jpa.service.JpaStoryMapper;
 import ec.animal.adoption.domain.model.story.Story;
 import ec.animal.adoption.domain.model.story.StoryFactory;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class JpaStoryMapperTest {
     }
 
     @Test
-    void shouldCreateJpaStoryFromStory() {
+    void shouldCreateJpaStoryFromStoryAndJpaAnimal() {
         UUID storyId = UUID.randomUUID();
         LocalDateTime registrationDate = LocalDateTime.now();
         String text = randomAlphabetic(100);
@@ -46,12 +45,14 @@ class JpaStoryMapperTest {
                                   .withRegistrationDate(registrationDate)
                                   .withText(text)
                                   .build();
+        JpaAnimal jpaAnimal = mock(JpaAnimal.class);
 
-        JpaStory jpaStory = JpaStoryMapper.MAPPER.toJpaStory(story, mock(JpaAnimal.class));
+        JpaStory jpaStory = JpaStoryMapper.MAPPER.toJpaStory(story, jpaAnimal);
 
         assertThat(jpaStory.getId(), is(storyId));
         assertThat(jpaStory.getRegistrationDate(), is(registrationDate));
-        assertThat(jpaStory.getText(), is(story.getText()));
+        assertThat(jpaStory.getText(), is(text));
+        assertThat(jpaStory.getJpaAnimal(), is(jpaAnimal));
     }
 
     @Test
