@@ -5,9 +5,10 @@ pitest {
             'ec.animal.adoption.AdoptionServiceApplication',
             'ec.animal.adoption.configuration.*',
             'ec.animal.adoption.adapter.cloudinary.CloudinaryConfiguration',
+            'ec.animal.adoption.adapter.jpa.service.*MapperImpl',
             'ec.animal.adoption.domain.service.PagedEntity',
     ]
-    excludedMethods = ['equals', 'hashCode']
+    excludedMethods = ['equals', 'hashCode', 'canEqual']
     threads = 5
     timestampedReports = false
     outputFormats = ['HTML']
