@@ -19,117 +19,17 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.characteristics.Characteristics;
-import ec.animal.adoption.domain.model.characteristics.CharacteristicsFactory;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Temperaments;
-import ec.animal.adoption.domain.model.characteristics.temperaments.TemperamentsFactory;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class JpaCharacteristicsTest {
 
     @Test
-    void shouldGenerateAnIdWhenCreatingJpaCharacteristicsForCharacteristicsWithNoId() {
-        Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(null).build();
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-
-        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertNotNull(jpaCharacteristicsToCharacteristics.getIdentifier());
-    }
-
-    @Test
-    void shouldGenerateARegistrationDateWhenCreatingJpaCharacteristicsForCharacteristicsWithNoRegistrationDate() {
-        Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(null).build();
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-
-        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertNotNull(jpaCharacteristicsToCharacteristics.getRegistrationDate());
-    }
-
-    @Test
-    void shouldCreateCharacteristicsWithId() {
-        UUID characteristicsId = UUID.randomUUID();
-        Characteristics characteristics = CharacteristicsFactory.random().withIdentifier(characteristicsId).build();
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-
-        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertThat(jpaCharacteristicsToCharacteristics.getIdentifier(), is(characteristicsId));
-    }
-
-    @Test
-    void shouldCreateCharacteristicsWithRegistrationDate() {
-        LocalDateTime registrationDate = LocalDateTime.now();
-        Characteristics characteristics = CharacteristicsFactory.random().withRegistrationDate(registrationDate)
-                                                                .build();
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-
-        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertThat(jpaCharacteristicsToCharacteristics.getRegistrationDate(), is(registrationDate));
-    }
-
-    @Test
-    void shouldCreateJpaCharacteristicsFromCharacteristics() {
-        Characteristics characteristics = CharacteristicsFactory.random().build();
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-
-        Characteristics jpaCharacteristicsToCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertThat(jpaCharacteristicsToCharacteristics.getSize(), is(characteristics.getSize()));
-        assertThat(jpaCharacteristicsToCharacteristics.getTemperaments(), is(characteristics.getTemperaments()));
-        assertThat(jpaCharacteristicsToCharacteristics.getFriendlyWith(), is(characteristics.getFriendlyWith()));
-        assertThat(jpaCharacteristicsToCharacteristics.getPhysicalActivity(), is(characteristics.getPhysicalActivity()));
-    }
-
-    @Test
-    void shouldAcceptNullSociability() {
-        Temperaments temperaments = TemperamentsFactory.random().withSociability(null).build();
-        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
-
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getSociability().isEmpty());
-    }
-
-    @Test
-    void shouldAcceptNullDocility() {
-        Temperaments temperaments = TemperamentsFactory.random().withDocility(null).build();
-        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
-
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getDocility().isEmpty());
-    }
-
-    @Test
-    void shouldAcceptNullBalance() {
-        Temperaments temperaments = TemperamentsFactory.random().withBalance(null).build();
-        Characteristics characteristics = CharacteristicsFactory.random().withTemperaments(temperaments).build();
-
-        JpaCharacteristics jpaCharacteristics = new JpaCharacteristics(characteristics, mock(JpaAnimal.class));
-        Characteristics characteristicsFromJpaCharacteristics = jpaCharacteristics.toCharacteristics();
-
-        assertTrue(characteristicsFromJpaCharacteristics.getTemperaments().getBalance().isEmpty());
-    }
-
-    @Test
     void shouldVerifyEqualsAndHashCodeMethods() {
-        EqualsVerifier.forClass(JpaCharacteristics.class).usingGetClass()
+        EqualsVerifier.forClass(JpaCharacteristics.class)
                       .withPrefabValues(
                               JpaFriendlyWith.class, mock(JpaFriendlyWith.class), mock(JpaFriendlyWith.class)
                       ).withPrefabValues(JpaAnimal.class, mock(JpaAnimal.class), mock(JpaAnimal.class))

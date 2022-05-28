@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.model.characteristics;
 
+import ec.animal.adoption.domain.model.Default;
 import ec.animal.adoption.domain.model.Entity;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Temperaments;
 import org.slf4j.Logger;
@@ -40,13 +41,14 @@ public class Characteristics extends Entity {
     private final Temperaments temperaments;
     private final Set<FriendlyWith> friendlyWith;
 
-    public Characteristics(@NonNull final UUID characteristicsId,
+    @Default
+    public Characteristics(@NonNull final UUID identifier,
                            @NonNull final LocalDateTime registrationDate,
                            @NonNull final Size size,
                            @NonNull final PhysicalActivity physicalActivity,
                            @NonNull final Temperaments temperaments,
                            @NonNull final Set<FriendlyWith> friendlyWith) {
-        super(characteristicsId, registrationDate);
+        super(identifier, registrationDate);
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.friendlyWith = friendlyWith;

@@ -19,13 +19,11 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.characteristics.Characteristics;
-import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
-import ec.animal.adoption.domain.model.characteristics.Size;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Temperaments;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
@@ -37,9 +35,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity(name = "characteristics")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class JpaCharacteristics implements Serializable {
 
     @Serial
@@ -47,6 +48,7 @@ public class JpaCharacteristics implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -71,67 +73,4 @@ public class JpaCharacteristics implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "characteristics_id", nullable = false)
     private List<JpaFriendlyWith> friendlyWith;
-
-    private JpaCharacteristics() {
-        // Required by jpa
-    }
-
-    public JpaCharacteristics(final Characteristics characteristics, final JpaAnimal jpaAnimal) {
-        this();
-        this.setId(characteristics.getIdentifier());
-        this.jpaAnimal = jpaAnimal;
-        this.setRegistrationDate(characteristics.getRegistrationDate());
-        this.size = characteristics.getSize().name();
-        this.physicalActivity = characteristics.getPhysicalActivity().name();
-        this.setTemperaments(characteristics.getTemperaments());
-        this.friendlyWith = characteristics.getFriendlyWith().stream().map(JpaFriendlyWith::new).toList();
-    }
-
-    private void setId(final UUID id) {
-        this.id = id == null ? UUID.randomUUID() : id;
-    }
-
-    private void setRegistrationDate(final LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
-    }
-
-    private void setTemperaments(final Temperaments temperaments) {
-        this.sociability = temperaments.getSociability().map(Enum::name).orElse(null);
-        this.docility = temperaments.getDocility().map(Enum::name).orElse(null);
-        this.balance = temperaments.getBalance().map(Enum::name).orElse(null);
-    }
-
-    public Characteristics toCharacteristics() {
-        return new Characteristics(
-                this.id,
-                this.registrationDate,
-                Size.valueOf(this.size),
-                PhysicalActivity.valueOf(this.physicalActivity),
-                new Temperaments(
-                        this.sociability == null ? null : Sociability.valueOf(sociability),
-                        this.docility == null ? null : Docility.valueOf(this.docility),
-                        this.balance == null ? null : Balance.valueOf(this.balance)
-                ),
-                this.friendlyWith.stream().map(JpaFriendlyWith::toFriendlyWith).collect(Collectors.toSet())
-        );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        JpaCharacteristics that = (JpaCharacteristics) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
 }

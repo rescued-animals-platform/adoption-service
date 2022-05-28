@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
+import ec.animal.adoption.adapter.jpa.service.JpaCharacteristicsMapper;
 import ec.animal.adoption.adapter.jpa.service.JpaOrganizationMapper;
 import ec.animal.adoption.adapter.jpa.service.JpaStoryMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -134,8 +135,9 @@ public class JpaAnimal implements Serializable {
     }
 
     private void setJpaCharacteristics(final Characteristics characteristics) {
-        this.jpaCharacteristics = characteristics == null ? null :
-                                  new JpaCharacteristics(characteristics, this);
+        this.jpaCharacteristics = Optional.ofNullable(characteristics)
+                                          .map(c -> JpaCharacteristicsMapper.MAPPER.toJpaCharacteristics(c, this))
+                                          .orElse(null);
     }
 
     private void setJpaStory(final Story story) {
@@ -155,7 +157,7 @@ public class JpaAnimal implements Serializable {
                 Sex.valueOf(sex),
                 State.from(StateName.valueOf(this.stateName), this.adoptionFormId, this.unavailableStateNotes),
                 ofNullable(jpaPrimaryLinkPicture).map(JpaPrimaryLinkPicture::toLinkPicture).orElse(null),
-                ofNullable(jpaCharacteristics).map(JpaCharacteristics::toCharacteristics).orElse(null),
+                JpaCharacteristicsMapper.MAPPER.toCharacteristics(this.jpaCharacteristics),
                 JpaStoryMapper.MAPPER.toStory(this.jpaStory),
                 JpaOrganizationMapper.MAPPER.toOrganization(this.jpaOrganization)
         );

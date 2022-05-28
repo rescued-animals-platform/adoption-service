@@ -19,7 +19,11 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,6 +32,10 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Entity(name = "friendly_with")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class JpaFriendlyWith implements Serializable {
 
     @Serial
@@ -35,37 +43,6 @@ public class JpaFriendlyWith implements Serializable {
 
     @Id
     @NotNull
+    @EqualsAndHashCode.Include
     private String friendlyWith;
-
-    private JpaFriendlyWith() {
-        // Required by jpa
-    }
-
-    public JpaFriendlyWith(final FriendlyWith friendlyWith) {
-        this();
-        this.friendlyWith = friendlyWith.name();
-    }
-
-    public FriendlyWith toFriendlyWith() {
-        return FriendlyWith.valueOf(this.friendlyWith);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        JpaFriendlyWith that = (JpaFriendlyWith) o;
-
-        return friendlyWith != null ? friendlyWith.equals(that.friendlyWith) : that.friendlyWith == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return friendlyWith != null ? friendlyWith.hashCode() : 0;
-    }
 }

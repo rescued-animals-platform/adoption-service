@@ -13,7 +13,6 @@ public interface JpaStoryMapper {
     JpaStoryMapper MAPPER = Mappers.getMapper(JpaStoryMapper.class);
 
     @Mapping(source = "id", target = "identifier")
-    @Mapping(source = "registrationDate", target = "registrationDate")
     @Mapping(target = "updateWith", ignore = true)
     Story toStory(JpaStory jpaStory);
 

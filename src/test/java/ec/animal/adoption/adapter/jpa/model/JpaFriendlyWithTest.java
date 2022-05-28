@@ -19,28 +19,14 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 class JpaFriendlyWithTest {
 
     @Test
-    void shouldCreateJpaFriendlyWithFromFriendlyWith() {
-        FriendlyWith friendlyWith = TestUtils.getRandomFriendlyWith();
-
-        JpaFriendlyWith jpaFriendlyWith = new JpaFriendlyWith(friendlyWith);
-
-        assertThat(jpaFriendlyWith.toFriendlyWith(), is(friendlyWith));
-    }
-
-    @Test
     void shouldVerifyEqualsAnsHashCode() {
-        EqualsVerifier.forClass(JpaFriendlyWith.class).usingGetClass().suppress(Warning.SURROGATE_KEY).verify();
+        EqualsVerifier.forClass(JpaFriendlyWith.class).suppress(Warning.SURROGATE_KEY).verify();
     }
 }
