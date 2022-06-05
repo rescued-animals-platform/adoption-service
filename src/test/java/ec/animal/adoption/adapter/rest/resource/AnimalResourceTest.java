@@ -24,14 +24,13 @@ import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateRequest;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalResponse;
 import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
+import ec.animal.adoption.adapter.rest.model.state.StateRequest;
 import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import ec.animal.adoption.domain.model.animal.Species;
-import ec.animal.adoption.domain.model.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.model.animal.dto.AnimalDtoFactory;
 import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.model.characteristics.Size;
 import ec.animal.adoption.domain.model.organization.Organization;
@@ -56,6 +55,8 @@ import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
 import static ec.animal.adoption.TestUtils.getRandomSize;
 import static ec.animal.adoption.TestUtils.getRandomSpecies;
 import static ec.animal.adoption.TestUtils.getRandomStateName;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,10 +92,16 @@ class AnimalResourceTest {
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
-        AnimalCreateUpdateRequest animalCreateUpdateRequest = mock(AnimalCreateUpdateRequest.class);
-        when(animalCreateUpdateRequest.toDomainWith(organization)).thenReturn(animalDto);
-        when(animalService.create(animalDto)).thenReturn(expectedAnimal);
+        StateRequest stateRequest = new StateRequest(expectedAnimal.getState().getName(),
+                                                     expectedAnimal.getState().getAdoptionFormId().orElse(null),
+                                                     expectedAnimal.getState().getNotes().orElse(null));
+        AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(expectedAnimal.getClinicalRecord(),
+                                                                                            expectedAnimal.getName(),
+                                                                                            expectedAnimal.getSpecies(),
+                                                                                            expectedAnimal.getEstimatedAge(),
+                                                                                            expectedAnimal.getSex(),
+                                                                                            stateRequest);
+        when(animalService.create(any())).thenReturn(expectedAnimal);
 
         AnimalCreateUpdateResponse animalCreateUpdateResponse = animalResource.create(animalCreateUpdateRequest, token);
 
@@ -108,10 +115,16 @@ class AnimalResourceTest {
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        AnimalDto animalDto = AnimalDtoFactory.random().withOrganization(organization).build();
-        AnimalCreateUpdateRequest animalCreateUpdateRequest = mock(AnimalCreateUpdateRequest.class);
-        when(animalCreateUpdateRequest.toDomainWith(organization)).thenReturn(animalDto);
-        when(animalService.update(animalId, animalDto)).thenReturn(expectedAnimal);
+        StateRequest stateRequest = new StateRequest(expectedAnimal.getState().getName(),
+                                                     expectedAnimal.getState().getAdoptionFormId().orElse(null),
+                                                     expectedAnimal.getState().getNotes().orElse(null));
+        AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(expectedAnimal.getClinicalRecord(),
+                                                                                            expectedAnimal.getName(),
+                                                                                            expectedAnimal.getSpecies(),
+                                                                                            expectedAnimal.getEstimatedAge(),
+                                                                                            expectedAnimal.getSex(),
+                                                                                            stateRequest);
+        when(animalService.update(eq(animalId), any())).thenReturn(expectedAnimal);
 
         AnimalCreateUpdateResponse animalCreateUpdateResponse = animalResource.update(animalId,
                                                                                       animalCreateUpdateRequest,

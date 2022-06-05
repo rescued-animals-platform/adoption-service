@@ -19,45 +19,13 @@
 
 package ec.animal.adoption.adapter.rest.model.state;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.state.State;
 import ec.animal.adoption.domain.model.state.StateName;
 
 @ValidStateRequest
-public class StateRequest {
-
-    @JsonProperty("name")
-    private final StateName name;
-
-    @JsonProperty("adoptionFormId")
-    private final String adoptionFormId;
-
-    @JsonProperty("notes")
-    private final String notes;
-
-    @JsonCreator
-    public StateRequest(@JsonProperty("name") final StateName name,
-                        @JsonProperty("adoptionFormId") final String adoptionFormId,
-                        @JsonProperty("notes") final String notes) {
-        this.name = name;
-        this.adoptionFormId = adoptionFormId;
-        this.notes = notes;
-    }
-
-    public State toDomain() {
-        switch (this.name) {
-            case LOOKING_FOR_HUMAN:
-                return State.lookingForHuman();
-            case ADOPTED:
-                return State.adopted(adoptionFormId);
-            case UNAVAILABLE:
-                return State.unavailable(notes);
-            default:
-                throw new IllegalStateException();
-        }
-    }
+public record StateRequest(StateName name,
+                           String adoptionFormId,
+                           String notes) {
 
     @JsonIgnore
     public boolean hasName() {

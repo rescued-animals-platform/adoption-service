@@ -19,76 +19,23 @@
 
 package ec.animal.adoption.adapter.rest.model.animal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.adapter.rest.model.state.StateRequest;
 import ec.animal.adoption.domain.model.animal.EstimatedAge;
 import ec.animal.adoption.domain.model.animal.Sex;
 import ec.animal.adoption.domain.model.animal.Species;
-import ec.animal.adoption.domain.model.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.model.organization.Organization;
-import ec.animal.adoption.domain.model.state.State;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Optional;
 
-public class AnimalCreateUpdateRequest {
-
-    @NotEmpty(message = "Animal clinical record is required")
-    @JsonProperty("clinicalRecord")
-    private final String clinicalRecord;
-
-    @Size(min = 1, message = "Animal name must be a non-empty string")
-    @Pattern(regexp = "^(?!\\s*$).+$", message = "Animal name must be a non-empty string")
-    @JsonProperty("name")
-    private final String name;
-
-    @NotNull(message = "Animal species is required")
-    @JsonProperty("species")
-    private final Species species;
-
-    @NotNull(message = "Animal estimated age is required")
-    @JsonProperty("estimatedAge")
-    private final EstimatedAge estimatedAge;
-
-    @NotNull(message = "Animal sex is required")
-    @JsonProperty("sex")
-    private final Sex sex;
-
-    @Valid
-    @JsonProperty("state")
-    private final StateRequest stateRequest;
-
-    @JsonCreator
-    AnimalCreateUpdateRequest(@JsonProperty("clinicalRecord") final String clinicalRecord,
-                              @JsonProperty("name") final String name,
-                              @JsonProperty("species") final Species species,
-                              @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-                              @JsonProperty("sex") final Sex sex,
-                              @JsonProperty("state") final StateRequest stateRequest) {
-        this.clinicalRecord = clinicalRecord;
-        this.name = name;
-        this.species = species;
-        this.estimatedAge = estimatedAge;
-        this.sex = sex;
-        this.stateRequest = stateRequest;
-    }
-
-    public AnimalDto toDomainWith(final Organization organization) {
-        State state = Optional.ofNullable(this.stateRequest)
-                              .map(StateRequest::toDomain)
-                              .orElse(null);
-
-        return new AnimalDto(this.clinicalRecord,
-                             this.name,
-                             this.species,
-                             this.estimatedAge,
-                             this.sex,
-                             state,
-                             organization);
-    }
+public record AnimalCreateUpdateRequest(
+        @NotEmpty(message = "Animal clinical record is required") String clinicalRecord,
+        @Size(min = 1, message = "Animal name must be a non-empty string") @Pattern(regexp = "^(?!\\s*$).+$", message = "Animal name must be a non-empty string") String name,
+        @NotNull(message = "Animal species is required") Species species,
+        @NotNull(message = "Animal estimated age is required") EstimatedAge estimatedAge,
+        @NotNull(message = "Animal sex is required") Sex sex,
+        @Valid @JsonProperty("state") StateRequest stateRequest) {
 }

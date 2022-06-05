@@ -1,7 +1,5 @@
 package ec.animal.adoption.adapter.rest.model.state;
 
-import ec.animal.adoption.domain.model.state.State;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static ec.animal.adoption.domain.model.state.StateName.ADOPTED;
@@ -12,56 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StateRequestTest {
-
-    @Test
-    void shouldReturnLookingForHumanState() {
-        StateRequest stateRequest = new StateRequest(LOOKING_FOR_HUMAN,
-                                                     null,
-                                                     null);
-        State expectedState = State.lookingForHuman();
-
-        State state = stateRequest.toDomain();
-
-        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
-    }
-
-    @Test
-    void shouldReturnAdoptedStateWithAdoptionFormId() {
-        String adoptionFormId = randomAlphabetic(10);
-        StateRequest stateRequest = new StateRequest(ADOPTED,
-                                                     adoptionFormId,
-                                                     null);
-        State expectedState = State.adopted(adoptionFormId);
-
-        State state = stateRequest.toDomain();
-
-        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
-    }
-
-    @Test
-    void shouldReturnAdoptedStateWithoutAdoptionFormId() {
-        StateRequest stateRequest = new StateRequest(ADOPTED,
-                                                     null,
-                                                     null);
-        State expectedState = State.adopted(null);
-
-        State state = stateRequest.toDomain();
-
-        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
-    }
-
-    @Test
-    void shouldReturnUnavailableStateWithMandatoryNotes() {
-        String notes = randomAlphabetic(10);
-        StateRequest stateRequest = new StateRequest(UNAVAILABLE,
-                                                     null,
-                                                     notes);
-        State expectedState = State.unavailable(notes);
-
-        State state = stateRequest.toDomain();
-
-        Assertions.assertThat(state).usingRecursiveComparison().isEqualTo(expectedState);
-    }
 
     @Test
     void shouldReturnTrueWhenNameIsPresent() {

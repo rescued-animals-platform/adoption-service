@@ -24,6 +24,7 @@ import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateRequest;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalResponse;
 import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
+import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateRequestMapper;
 import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
@@ -69,7 +70,7 @@ public class AnimalResource {
                                              @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
+        AnimalDto animalDto = AnimalCreateUpdateRequestMapper.MAPPER.toAnimalDto(animalCreateUpdateRequest, organization);
         Animal animal = animalService.create(animalDto);
 
         return AnimalCreateUpdateResponse.from(animal);
@@ -81,7 +82,7 @@ public class AnimalResource {
                                              @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
+        AnimalDto animalDto = AnimalCreateUpdateRequestMapper.MAPPER.toAnimalDto(animalCreateUpdateRequest, organization);
         Animal animal = animalService.update(animalId, animalDto);
 
         return AnimalCreateUpdateResponse.from(animal);

@@ -25,9 +25,6 @@ import ec.animal.adoption.adapter.rest.model.state.StateRequest;
 import ec.animal.adoption.domain.model.animal.EstimatedAge;
 import ec.animal.adoption.domain.model.animal.Sex;
 import ec.animal.adoption.domain.model.animal.Species;
-import ec.animal.adoption.domain.model.animal.dto.AnimalDto;
-import ec.animal.adoption.domain.model.organization.Organization;
-import ec.animal.adoption.domain.model.organization.OrganizationFactory;
 import ec.animal.adoption.domain.model.state.State;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
@@ -49,9 +46,6 @@ import static ec.animal.adoption.domain.model.state.StateName.UNAVAILABLE;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnimalCreateUpdateRequestTest {
 
@@ -83,54 +77,6 @@ class AnimalCreateUpdateRequestTest {
         species = getRandomSpecies();
         estimatedAge = getRandomEstimatedAge();
         sex = getRandomSex();
-    }
-
-    @Test
-    void shouldBuildCreateAnimalDtoFromCreateAnimalRequestWhenCreateStateRequestIsNull() {
-        AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(clinicalRecord,
-                                                                                            name,
-                                                                                            species,
-                                                                                            estimatedAge,
-                                                                                            sex,
-                                                                                            null);
-        Organization organization = OrganizationFactory.random().build();
-
-        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
-
-        assertAll(() -> assertEquals(clinicalRecord, animalDto.clinicalRecord()),
-                  () -> assertEquals(name, animalDto.name()),
-                  () -> assertEquals(species, animalDto.species()),
-                  () -> assertEquals(estimatedAge, animalDto.estimatedAge()),
-                  () -> assertEquals(sex, animalDto.sex()),
-                  () -> assertEquals(organization, animalDto.organization()),
-                  () -> assertEquals(LOOKING_FOR_HUMAN.name(), animalDto.getStateNameAsString()));
-    }
-
-    @Test
-    void shouldBuildCreateAnimalDtoFromCreateAnimalRequestWhenCreateStateRequestIsNotNull() {
-        String adoptionFormId = randomAlphabetic(10);
-        StateRequest stateRequest = new StateRequest(ADOPTED, adoptionFormId, null);
-        AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(clinicalRecord,
-                                                                                            name,
-                                                                                            species,
-                                                                                            estimatedAge,
-                                                                                            sex,
-                                                                                            stateRequest);
-        Organization organization = OrganizationFactory.random().build();
-
-        AnimalDto animalDto = animalCreateUpdateRequest.toDomainWith(organization);
-
-        assertAll(() -> assertEquals(clinicalRecord, animalDto.clinicalRecord()),
-                  () -> assertEquals(name, animalDto.name()),
-                  () -> assertEquals(species, animalDto.species()),
-                  () -> assertEquals(estimatedAge, animalDto.estimatedAge()),
-                  () -> assertEquals(sex, animalDto.sex()),
-                  () -> assertEquals(organization, animalDto.organization()),
-                  () -> assertEquals(ADOPTED.name(), animalDto.getStateNameAsString()),
-                  () -> {
-                      assertTrue(animalDto.getAdoptionFormId().isPresent());
-                      assertEquals(adoptionFormId, animalDto.getAdoptionFormId().get());
-                  });
     }
 
     @Test
