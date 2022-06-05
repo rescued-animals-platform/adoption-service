@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.model.animal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import ec.animal.adoption.domain.model.state.State;
@@ -49,7 +50,7 @@ class AnimalCreateUpdateResponseTest {
     void shouldBeSerializable() throws JsonProcessingException {
         Animal animal = AnimalFactory.random().withState(State.adopted(null)).build();
         String expectedRegistrationDateAsJson = objectMapper.writeValueAsString(animal.getRegistrationDate());
-        AnimalCreateUpdateResponse animalCreateUpdateResponse = AnimalCreateUpdateResponse.from(animal);
+        AnimalCreateUpdateResponse animalCreateUpdateResponse = AnimalCreateUpdateResponseMapper.MAPPER.toAnimalCreateUpdateResponse(animal);
 
         String createAnimalResponseAsJson = objectMapper.writeValueAsString(animalCreateUpdateResponse);
 
@@ -69,7 +70,7 @@ class AnimalCreateUpdateResponseTest {
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         String notes = randomAlphabetic(10);
         Animal animal = AnimalFactory.random().withState(State.unavailable(notes)).build();
-        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(animal);
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponseMapper.MAPPER.toAnimalCreateUpdateResponse(animal);
         String createAnimalResponseAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())
                 .put("registrationDate", animal.getRegistrationDate())

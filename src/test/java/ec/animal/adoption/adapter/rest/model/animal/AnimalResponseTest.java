@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResponse;
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
-import ec.animal.adoption.adapter.rest.model.state.StateResponse;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
@@ -47,7 +47,7 @@ class AnimalResponseTest {
                                      .withRegistrationDate(LocalDateTime.now())
                                      .build();
         AnimalResponse animalResponse = AnimalResponse.from(animal);
-        String expectedSerializedState = objectMapper.writeValueAsString(StateResponse.from(animal.getState()));
+        String expectedSerializedState = objectMapper.writeValueAsString(StateResponseMapper.MAPPER.toStateResponse(animal.getState()));
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
         String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(LinkPictureResponse.from(primaryLinkPicture));
         String expectedCharacteristics = objectMapper.writeValueAsString(CharacteristicsResponse.from(characteristics));
@@ -55,7 +55,7 @@ class AnimalResponseTest {
 
         String serializedAnimalResponse = objectMapper.writeValueAsString(animalResponse);
 
-        assertThat(serializedAnimalResponse, containsString(String.format("\"id\":\"%s\"", animal.getIdentifier().toString())));
+        assertThat(serializedAnimalResponse, containsString(String.format("\"id\":\"%s\"", animal.getIdentifier())));
         assertThat(serializedAnimalResponse, containsString(String.format("\"registrationDate\":%s", expectedRegistrationDate)));
         assertThat(serializedAnimalResponse, containsString(String.format("\"clinicalRecord\":\"%s\"", animal.getClinicalRecord())));
         assertThat(serializedAnimalResponse, containsString(String.format("\"name\":\"%s\"", animal.getName())));

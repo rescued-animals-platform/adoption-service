@@ -25,6 +25,7 @@ import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalResponse;
 import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.adapter.rest.model.state.StateRequest;
+import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateResponseMapper;
 import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
@@ -88,7 +89,7 @@ class AnimalResourceTest {
 
     @Test
     void shouldCreateAnAnimal() {
-        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponseMapper.MAPPER.toAnimalCreateUpdateResponse(expectedAnimal);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
@@ -111,7 +112,7 @@ class AnimalResourceTest {
     @Test
     void shouldUpdateAnAnimal() {
         UUID animalId = UUID.randomUUID();
-        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponse.from(expectedAnimal);
+        AnimalCreateUpdateResponse expectedAnimalCreateUpdateResponse = AnimalCreateUpdateResponseMapper.MAPPER.toAnimalCreateUpdateResponse(expectedAnimal);
         Organization organization = OrganizationFactory.random().withIdentifier(organizationId).build();
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);

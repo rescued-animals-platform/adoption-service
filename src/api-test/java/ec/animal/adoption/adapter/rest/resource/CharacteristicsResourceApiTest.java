@@ -73,7 +73,7 @@ public class CharacteristicsResourceApiTest extends AbstractApiTest {
                                                         .withDocility(docility)
                                                         .build();
         AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animalCreateUpdateResponse.getAnimalId();
+        animalId = animalCreateUpdateResponse.id();
     }
 
     @Test

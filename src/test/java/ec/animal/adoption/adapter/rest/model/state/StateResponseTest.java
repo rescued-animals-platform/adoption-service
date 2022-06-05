@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.model.state;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
 import ec.animal.adoption.domain.model.state.State;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
@@ -45,7 +46,7 @@ class StateResponseTest {
     @Test
     void shouldBeSerializableForLookingForHumanStateResponse() throws JsonProcessingException {
         State state = State.lookingForHuman();
-        StateResponse stateResponse = StateResponse.from(state);
+        StateResponse stateResponse = StateResponseMapper.MAPPER.toStateResponse(state);
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
@@ -56,7 +57,7 @@ class StateResponseTest {
     void shouldBeSerializableForAdoptedStateResponse() throws JsonProcessingException {
         String adoptionFormId = randomAlphabetic(10);
         State state = State.adopted(adoptionFormId);
-        StateResponse stateResponse = StateResponse.from(state);
+        StateResponse stateResponse = StateResponseMapper.MAPPER.toStateResponse(state);
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
@@ -68,7 +69,7 @@ class StateResponseTest {
     void shouldBeSerializableForUnavailableStateResponse() throws JsonProcessingException {
         String notes = randomAlphabetic(10);
         State state = State.unavailable(notes);
-        StateResponse stateResponse = StateResponse.from(state);
+        StateResponse stateResponse = StateResponseMapper.MAPPER.toStateResponse(state);
 
         String createStateResponseAsJson = objectMapper.writeValueAsString(stateResponse);
 
@@ -79,7 +80,7 @@ class StateResponseTest {
     @Test
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         State state = getRandomState();
-        StateResponse expectedStateResponse = StateResponse.from(state);
+        StateResponse expectedStateResponse = StateResponseMapper.MAPPER.toStateResponse(state);
         String createStateResponseAsJson = new JSONObject()
                 .put("name", state.getName().name())
                 .put("adoptionFormId", state.getAdoptionFormId().orElse(null))

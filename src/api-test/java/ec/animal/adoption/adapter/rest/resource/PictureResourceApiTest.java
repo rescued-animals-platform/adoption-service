@@ -51,7 +51,7 @@ public class PictureResourceApiTest extends AbstractApiTest {
     @BeforeEach
     public void setUp() {
         AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animalCreateUpdateResponse.getAnimalId();
+        animalId = animalCreateUpdateResponse.id();
         name = randomAlphabetic(10);
         pictureType = PictureType.PRIMARY;
         validMultipartPicturesFormData = new LinkedMultiValueMap<>();

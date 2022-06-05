@@ -42,7 +42,7 @@ public class StoryResourceApiTest extends AbstractApiTest {
     @BeforeEach
     public void setUp() {
         AnimalCreateUpdateResponse animalCreateUpdateResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        animalId = animalCreateUpdateResponse.getAnimalId();
+        animalId = animalCreateUpdateResponse.id();
     }
 
     @Test

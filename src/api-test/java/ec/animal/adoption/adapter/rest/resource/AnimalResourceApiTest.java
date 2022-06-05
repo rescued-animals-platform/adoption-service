@@ -70,11 +70,11 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         sex = getRandomSex();
         estimatedAge = getRandomEstimatedAge();
         createAnimalRequestBuilder = CreateAnimalRequestBuilder.random()
-                .withClinicalRecord(clinicalRecord)
-                .withName(name)
-                .withSpecies(species)
-                .withSex(sex)
-                .withEstimatedAge(estimatedAge);
+                                                               .withClinicalRecord(clinicalRecord)
+                                                               .withName(name)
+                                                               .withSpecies(species)
+                                                               .withSex(sex)
+                                                               .withEstimatedAge(estimatedAge);
     }
 
     @Test
@@ -84,23 +84,23 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = createAnimalRequestBuilder.withState(state).build();
 
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .bodyValue(animalCreateUpdateRequest)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody()
-                .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.registrationDate").isNotEmpty()
-                .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
-                .jsonPath("$.name").isEqualTo(name)
-                .jsonPath("$.species").isEqualTo(species.name())
-                .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
-                .jsonPath("$.sex").isEqualTo(sex.name())
-                .jsonPath("$.state[?(@.name == '%s' && @.adoptionFormId == '%s')]",
-                        state.getName().name(),
-                        adoptionFormId)
-                .exists();
+                     .uri(ANIMALS_ADMIN_URL)
+                     .bodyValue(animalCreateUpdateRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated()
+                     .expectBody()
+                     .jsonPath("$.id").isNotEmpty()
+                     .jsonPath("$.registrationDate").isNotEmpty()
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.state[?(@.name == '%s' && @.adoptionFormId == '%s')]",
+                               state.getName().name(),
+                               adoptionFormId)
+                     .exists();
     }
 
     @Test
@@ -108,20 +108,20 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = createAnimalRequestBuilder.withState(null).build();
 
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .bodyValue(animalCreateUpdateRequest)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody()
-                .jsonPath("$.id").isNotEmpty()
-                .jsonPath("$.registrationDate").isNotEmpty()
-                .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
-                .jsonPath("$.name").isEqualTo(name)
-                .jsonPath("$.species").isEqualTo(species.name())
-                .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
-                .jsonPath("$.sex").isEqualTo(sex.name())
-                .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.name());
+                     .uri(ANIMALS_ADMIN_URL)
+                     .bodyValue(animalCreateUpdateRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated()
+                     .expectBody()
+                     .jsonPath("$.id").isNotEmpty()
+                     .jsonPath("$.registrationDate").isNotEmpty()
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.state.name").isEqualTo(StateName.LOOKING_FOR_HUMAN.name());
     }
 
     @Test
@@ -136,16 +136,16 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 .toString();
 
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(createAnimalRequestWithWrongData)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
-                .jsonPath("$.message").isEqualTo("Malformed JSON request")
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMALS_ADMIN_URL)
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(createAnimalRequestWithWrongData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -157,67 +157,67 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 .toString();
 
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(createAnimalRequestWithMissingData)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
-                .jsonPath("$.message").isEqualTo("Validation failed")
-                .jsonPath("$.subErrors").isNotEmpty();
+                     .uri(ANIMALS_ADMIN_URL)
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(createAnimalRequestWithMissingData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
     }
 
     @Test
     public void shouldReturn409ConflictWhenCreatingAnAnimalThatAlreadyExists() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = createAnimalRequestBuilder.build();
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .bodyValue(animalCreateUpdateRequest)
-                .exchange()
-                .expectStatus()
-                .isCreated();
+                     .uri(ANIMALS_ADMIN_URL)
+                     .bodyValue(animalCreateUpdateRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated();
 
         webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .bodyValue(animalCreateUpdateRequest)
-                .exchange()
-                .expectStatus()
-                .isEqualTo(CONFLICT)
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(CONFLICT.name())
-                .jsonPath("$.message").isEqualTo("The resource already exists")
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMALS_ADMIN_URL)
+                     .bodyValue(animalCreateUpdateRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isEqualTo(CONFLICT)
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(CONFLICT.name())
+                     .jsonPath("$.message").isEqualTo("The resource already exists")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     void shouldReturn200OkWithUpdatedAnimal() {
         AnimalCreateUpdateResponse createdAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
-        UUID animalId = createdAnimalResponse.getAnimalId();
-        String expectedRegistrationDate = createdAnimalResponse.getRegistrationDate().toLocalDate().toString();
+        UUID animalId = createdAnimalResponse.id();
+        String expectedRegistrationDate = createdAnimalResponse.registrationDate().toLocalDate().toString();
         String notes = randomAlphabetic(10);
         State state = State.unavailable(notes);
         AnimalCreateUpdateRequest updateAnimalRequest = createAnimalRequestBuilder.withState(state).build();
 
         webTestClient.put()
-                .uri(ANIMAL_ADMIN_URL, animalId)
-                .bodyValue(updateAnimalRequest)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(animalId.toString())
-                .jsonPath("$.registrationDate").value(Matchers.containsString(expectedRegistrationDate))
-                .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
-                .jsonPath("$.name").isEqualTo(name)
-                .jsonPath("$.species").isEqualTo(species.name())
-                .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
-                .jsonPath("$.sex").isEqualTo(sex.name())
-                .jsonPath("$.state[?(@.name == '%s' && @.notes == '%s')]",
-                        state.getName().name(),
-                        notes)
-                .exists();
+                     .uri(ANIMAL_ADMIN_URL, animalId)
+                     .bodyValue(updateAnimalRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.id").isEqualTo(animalId.toString())
+                     .jsonPath("$.registrationDate").value(Matchers.containsString(expectedRegistrationDate))
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.state[?(@.name == '%s' && @.notes == '%s')]",
+                               state.getName().name(),
+                               notes)
+                     .exists();
     }
 
     @Test
@@ -233,16 +233,16 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 .toString();
 
         webTestClient.put()
-                .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.getAnimalId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(updateAnimalRequestWithWrongData)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
-                .jsonPath("$.message").isEqualTo("Malformed JSON request")
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.id())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(updateAnimalRequestWithWrongData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Malformed JSON request")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -255,51 +255,51 @@ public class AnimalResourceApiTest extends AbstractApiTest {
                 .toString();
 
         webTestClient.put()
-                .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.getAnimalId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(updateAnimalRequestWithMissingData)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
-                .jsonPath("$.message").isEqualTo("Validation failed")
-                .jsonPath("$.subErrors").isNotEmpty();
+                     .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.id())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(updateAnimalRequestWithMissingData)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").isEqualTo("Validation failed")
+                     .jsonPath("$.subErrors").isNotEmpty();
     }
 
     @Test
     public void shouldReturn400BadRequestWhenUpdatingAnimalWithClinicalRecordFromAnotherAnimalThatAlreadyExists() {
         AnimalCreateUpdateResponse createdAnimalWithClinicalRecord = createRandomAnimalWithDefaultLookingForHumanState();
-        String clinicalRecord = createdAnimalWithClinicalRecord.getClinicalRecord();
+        String clinicalRecord = createdAnimalWithClinicalRecord.clinicalRecord();
         AnimalCreateUpdateResponse createdAnimalResponse = createRandomAnimalWithDefaultLookingForHumanState();
         AnimalCreateUpdateRequest updateAnimalRequest = createAnimalRequestBuilder.withClinicalRecord(clinicalRecord).build();
 
         webTestClient.put()
-                .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.getAnimalId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(updateAnimalRequest)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
-                .jsonPath("$.message").value(matchesPattern("^Can't update animal with clinical record.*"))
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMAL_ADMIN_URL, createdAnimalResponse.id())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(updateAnimalRequest)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(BAD_REQUEST.name())
+                     .jsonPath("$.message").value(matchesPattern("^Can't update animal with clinical record.*"))
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
     public void shouldReturn404NotFoundWhenUpdatingAnimalThatDoesNotExist() {
         webTestClient.put()
-                .uri(ANIMAL_ADMIN_URL, UUID.randomUUID())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(createAnimalRequestBuilder.build())
-                .exchange()
-                .expectStatus()
-                .isNotFound()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
-                .jsonPath("$.message").isEqualTo("Unable to find the resource")
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMAL_ADMIN_URL, UUID.randomUUID())
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .bodyValue(createAnimalRequestBuilder.build())
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -307,30 +307,30 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         AnimalCreateUpdateResponse animalCreateUpdateResponse = createAnimal(createAnimalRequestBuilder.build());
 
         webTestClient.get()
-                .uri(ANIMAL_ADMIN_URL, animalCreateUpdateResponse.getAnimalId())
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(animalCreateUpdateResponse.getAnimalId().toString())
-                .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
-                .jsonPath("$.name").isEqualTo(name)
-                .jsonPath("$.species").isEqualTo(species.name())
-                .jsonPath("$.sex").isEqualTo(sex.name())
-                .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name());
+                     .uri(ANIMAL_ADMIN_URL, animalCreateUpdateResponse.id())
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody()
+                     .jsonPath("$.id").isEqualTo(animalCreateUpdateResponse.id().toString())
+                     .jsonPath("$.clinicalRecord").isEqualTo(clinicalRecord)
+                     .jsonPath("$.name").isEqualTo(name)
+                     .jsonPath("$.species").isEqualTo(species.name())
+                     .jsonPath("$.sex").isEqualTo(sex.name())
+                     .jsonPath("$.estimatedAge").isEqualTo(estimatedAge.name());
     }
 
     @Test
     public void shouldReturn404NotFoundWhenAnimalDoesNotExist() {
         webTestClient.get()
-                .uri(ANIMAL_ADMIN_URL, UUID.randomUUID())
-                .exchange()
-                .expectStatus()
-                .isNotFound()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
-                .jsonPath("$.message").isEqualTo("Unable to find the resource")
-                .jsonPath("$.subErrors").doesNotExist();
+                     .uri(ANIMAL_ADMIN_URL, UUID.randomUUID())
+                     .exchange()
+                     .expectStatus()
+                     .isNotFound()
+                     .expectBody()
+                     .jsonPath("$.status").isEqualTo(NOT_FOUND.name())
+                     .jsonPath("$.message").isEqualTo("Unable to find the resource")
+                     .jsonPath("$.subErrors").doesNotExist();
     }
 
     @Test
@@ -339,20 +339,20 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         createRandomAnimalWithDefaultLookingForHumanState();
 
         webTestClient.get()
-                .uri(ANIMALS_ADMIN_URL + "?page=0&size=2")
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(PagedEntity.class)
-                .consumeWith(entity -> {
-                    var pagedEntity = entity.getResponseBody();
-                    assertNotNull(pagedEntity);
-                    assertThat(pagedEntity.isEmpty(), is(false));
-                    assertThat(pagedEntity.getNumberOfElements(), is(2));
-                    assertThat(pagedEntity.getSize(), is(2));
-                    assertThat(pagedEntity.isFirst(), is(true));
-                    assertThat(pagedEntity.getContent().size(), is(2));
-                });
+                     .uri(ANIMALS_ADMIN_URL + "?page=0&size=2")
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(PagedEntity.class)
+                     .consumeWith(entity -> {
+                         var pagedEntity = entity.getResponseBody();
+                         assertNotNull(pagedEntity);
+                         assertThat(pagedEntity.isEmpty(), is(false));
+                         assertThat(pagedEntity.getNumberOfElements(), is(2));
+                         assertThat(pagedEntity.getSize(), is(2));
+                         assertThat(pagedEntity.isFirst(), is(true));
+                         assertThat(pagedEntity.getContent().size(), is(2));
+                     });
     }
 
     @Test
@@ -364,66 +364,66 @@ public class AnimalResourceApiTest extends AbstractApiTest {
         int numberOfAnimals = 3;
         for (int n = 1; n <= numberOfAnimals; n++) {
             UUID animalId = createAnimal(CreateAnimalRequestBuilder.random()
-                    .withState(state)
-                    .withSpecies(species)
-                    .build()).getAnimalId();
+                                                                   .withState(state)
+                                                                   .withSpecies(species)
+                                                                   .build()).id();
             createCharacteristics(animalId, CharacteristicsFactory.random()
-                    .withPhysicalActivity(physicalActivity)
-                    .withSize(size)
-                    .build());
+                                                                  .withPhysicalActivity(physicalActivity)
+                                                                  .withSize(size)
+                                                                  .build());
         }
         String uri = ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
-                "&animalSize={size}&page=0&size=3";
+                     "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                .uri(uri, state.getName().name(), species.name(), physicalActivity.name(), size.name())
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(PagedEntity.class)
-                .consumeWith(entity -> {
-                    var pagedEntity = entity.getResponseBody();
-                    assertNotNull(pagedEntity);
-                    assertThat(pagedEntity.isEmpty(), is(false));
-                    assertThat(pagedEntity.getNumberOfElements(), is(numberOfAnimals));
-                    assertThat(pagedEntity.getSize(), is(numberOfAnimals));
-                    assertThat(pagedEntity.isFirst(), is(true));
-                    assertThat(pagedEntity.getContent().size(), is(numberOfAnimals));
-                });
+                     .uri(uri, state.getName().name(), species.name(), physicalActivity.name(), size.name())
+                     .exchange()
+                     .expectStatus()
+                     .isOk()
+                     .expectBody(PagedEntity.class)
+                     .consumeWith(entity -> {
+                         var pagedEntity = entity.getResponseBody();
+                         assertNotNull(pagedEntity);
+                         assertThat(pagedEntity.isEmpty(), is(false));
+                         assertThat(pagedEntity.getNumberOfElements(), is(numberOfAnimals));
+                         assertThat(pagedEntity.getSize(), is(numberOfAnimals));
+                         assertThat(pagedEntity.isFirst(), is(true));
+                         assertThat(pagedEntity.getContent().size(), is(numberOfAnimals));
+                     });
     }
 
     @ParameterizedTest(name = "{index} returns BAD_REQUEST for filters [state: {0}, species: {1}, physicalActivity: {2}, size: {3}]")
     @CsvSource(value = {"invalidState,DOG,LOW,TINY",
-            "ADOPTED,invalidSpecies,HIGH,SMALL",
-            "UNAVAILABLE,CAT,invalidPhysicalActivity,MEDIUM",
-            "LOOKING_FOR_HUMAN,DOG,MEDIUM,invalidSize"},
-            delimiter = ',')
+                        "ADOPTED,invalidSpecies,HIGH,SMALL",
+                        "UNAVAILABLE,CAT,invalidPhysicalActivity,MEDIUM",
+                        "LOOKING_FOR_HUMAN,DOG,MEDIUM,invalidSize"},
+               delimiter = ',')
     public void shouldReturn400BadRequestWhenFilterIsInvalid(final String state,
                                                              final String species,
                                                              final String physicalActivity,
                                                              final String size) {
         String uri = ANIMALS_URL + "?state={state}&species={species}&physicalActivity={physicalActivity}" +
-                "&animalSize={size}&page=0&size=3";
+                     "&animalSize={size}&page=0&size=3";
 
         webTestClient.get()
-                .uri(uri, state, species, physicalActivity, size)
-                .exchange()
-                .expectStatus()
-                .isBadRequest()
-                .expectBody()
-                .isEmpty();
+                     .uri(uri, state, species, physicalActivity, size)
+                     .exchange()
+                     .expectStatus()
+                     .isBadRequest()
+                     .expectBody()
+                     .isEmpty();
     }
 
     private static AnimalCreateUpdateResponse createAnimal(final AnimalCreateUpdateRequest animalCreateUpdateRequest) {
         AnimalCreateUpdateResponse animalCreateUpdateResponse = webTestClient.post()
-                .uri(ANIMALS_ADMIN_URL)
-                .bodyValue(animalCreateUpdateRequest)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(AnimalCreateUpdateResponse.class)
-                .returnResult()
-                .getResponseBody();
+                                                                             .uri(ANIMALS_ADMIN_URL)
+                                                                             .bodyValue(animalCreateUpdateRequest)
+                                                                             .exchange()
+                                                                             .expectStatus()
+                                                                             .isCreated()
+                                                                             .expectBody(AnimalCreateUpdateResponse.class)
+                                                                             .returnResult()
+                                                                             .getResponseBody();
         assertNotNull(animalCreateUpdateResponse);
 
         return animalCreateUpdateResponse;
@@ -431,10 +431,10 @@ public class AnimalResourceApiTest extends AbstractApiTest {
 
     private static void createCharacteristics(final UUID animalId, final Characteristics characteristics) {
         webTestClient.post()
-                .uri(CHARACTERISTICS_ADMIN_URL, animalId)
-                .bodyValue(characteristics)
-                .exchange()
-                .expectStatus()
-                .isCreated();
+                     .uri(CHARACTERISTICS_ADMIN_URL, animalId)
+                     .bodyValue(characteristics)
+                     .exchange()
+                     .expectStatus()
+                     .isCreated();
     }
 }

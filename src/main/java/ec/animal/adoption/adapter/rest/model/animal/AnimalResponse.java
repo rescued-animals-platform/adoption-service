@@ -25,6 +25,7 @@ import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResp
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
 import ec.animal.adoption.adapter.rest.model.state.StateResponse;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 
 import java.time.LocalDateTime;
@@ -98,7 +99,7 @@ public class AnimalResponse {
                                   animal.getSpecies().name(),
                                   animal.getEstimatedAge().name(),
                                   animal.getSex().name(),
-                                  StateResponse.from(animal.getState()),
+                                  StateResponseMapper.MAPPER.toStateResponse(animal.getState()),
                                   animal.getPrimaryLinkPicture().map(LinkPictureResponse::from).orElse(null),
                                   animal.getCharacteristics().map(CharacteristicsResponse::from).orElse(null),
                                   animal.getStory().map(StoryResponse::from).orElse(null));

@@ -19,33 +19,7 @@
 
 package ec.animal.adoption.adapter.rest.model.state;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.state.State;
-
-public class StateResponse {
-
-    @JsonProperty("name")
-    private final String name;
-
-    @JsonProperty("adoptionFormId")
-    private final String adoptionFormId;
-
-    @JsonProperty("notes")
-    private final String notes;
-
-    @JsonCreator
-    private StateResponse(@JsonProperty("name") final String name,
-                          @JsonProperty("adoptionFormId") final String adoptionFormId,
-                          @JsonProperty("notes") final String notes) {
-        this.name = name;
-        this.adoptionFormId = adoptionFormId;
-        this.notes = notes;
-    }
-
-    public static StateResponse from(final State state) {
-        return new StateResponse(state.getName().name(),
-                                 state.getAdoptionFormId().orElse(null),
-                                 state.getNotes().orElse(null));
-    }
+public record StateResponse(String name,
+                            String adoptionFormId,
+                            String notes) {
 }
