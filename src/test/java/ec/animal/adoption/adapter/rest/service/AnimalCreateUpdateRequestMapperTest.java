@@ -19,6 +19,7 @@ import static ec.animal.adoption.domain.model.state.StateName.LOOKING_FOR_HUMAN;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnimalCreateUpdateRequestMapperTest {
@@ -39,7 +40,7 @@ class AnimalCreateUpdateRequestMapperTest {
     }
 
     @Test
-    void shouldBuildAnimalDtoFromCreateAnimalRequestWhenCreateStateRequestIsNull() {
+    void shouldBuildAnimalDtoFromCreateAnimalRequestWhenStateRequestIsNull() {
         AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(clinicalRecord,
                                                                                             name,
                                                                                             species,
@@ -60,7 +61,7 @@ class AnimalCreateUpdateRequestMapperTest {
     }
 
     @Test
-    void shouldBuildAnimalDtoFromCreateAnimalRequestWhenCreateStateRequestIsNotNull() {
+    void shouldBuildAnimalDtoFromCreateAnimalRequestWhenStateRequestIsNotNull() {
         String adoptionFormId = randomAlphabetic(10);
         StateRequest stateRequest = new StateRequest(ADOPTED, adoptionFormId, null);
         AnimalCreateUpdateRequest animalCreateUpdateRequest = new AnimalCreateUpdateRequest(clinicalRecord,
@@ -84,5 +85,10 @@ class AnimalCreateUpdateRequestMapperTest {
                       assertTrue(animalDto.getAdoptionFormId().isPresent());
                       assertEquals(adoptionFormId, animalDto.getAdoptionFormId().get());
                   });
+    }
+
+    @Test
+    void shouldReturnNullAnimalDtoIfBothCreateUpdateRequestAndOrganizationAreNull() {
+        assertNull(AnimalCreateUpdateRequestMapper.MAPPER.toAnimalDto(null, null));
     }
 }

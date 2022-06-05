@@ -80,6 +80,11 @@ public class CharacteristicsFactory {
         return this;
     }
 
+    public CharacteristicsFactory withFriendlyWith(final Set<FriendlyWith> friendlyWith) {
+        this.friendlyWith = friendlyWith;
+        return this;
+    }
+
     public Characteristics build() {
         return new Characteristics(
                 this.characteristicsId,
