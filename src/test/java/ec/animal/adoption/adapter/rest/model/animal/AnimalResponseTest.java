@@ -3,10 +3,10 @@ package ec.animal.adoption.adapter.rest.model.animal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
 import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
+import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
@@ -51,7 +51,7 @@ class AnimalResponseTest {
         String expectedRegistrationDate = objectMapper.writeValueAsString(animal.getRegistrationDate());
         String expectedPrimaryLinkPicture = objectMapper.writeValueAsString(LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(primaryLinkPicture));
         String expectedCharacteristics = objectMapper.writeValueAsString(CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics));
-        String expectedStory = objectMapper.writeValueAsString(StoryResponse.from(story));
+        String expectedStory = objectMapper.writeValueAsString(StoryResponseMapper.MAPPER.toStoryResponse(story));
 
         String serializedAnimalResponse = objectMapper.writeValueAsString(animalResponse);
 

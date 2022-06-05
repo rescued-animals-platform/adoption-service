@@ -3,6 +3,7 @@ package ec.animal.adoption.adapter.rest.model.story;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.domain.model.story.Story;
 import ec.animal.adoption.domain.model.story.StoryFactory;
 import org.assertj.core.api.Assertions;
@@ -27,7 +28,7 @@ class StoryResponseTest {
     void shouldBeSerializable() throws JsonProcessingException {
         String text = randomAlphabetic(50);
         Story story = new Story(text);
-        StoryResponse storyResponse = StoryResponse.from(story);
+        StoryResponse storyResponse = StoryResponseMapper.MAPPER.toStoryResponse(story);
 
         String storyResponseAsJson = objectMapper.writeValueAsString(storyResponse);
 
@@ -37,7 +38,7 @@ class StoryResponseTest {
     @Test
     void shouldBeDeSerializable() throws JsonProcessingException, JSONException {
         Story story = StoryFactory.random().build();
-        StoryResponse expectedStoryResponse = StoryResponse.from(story);
+        StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(story);
         String storyResponseAsJson = new JSONObject().put("text", story.getText()).toString();
 
         StoryResponse storyResponse = objectMapper.readValue(storyResponseAsJson, StoryResponse.class);

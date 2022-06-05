@@ -19,23 +19,6 @@
 
 package ec.animal.adoption.adapter.rest.model.story;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.story.Story;
-
-public class StoryResponse {
-
-    @JsonProperty("text")
-    private final String text;
-
-    @JsonCreator
-    private StoryResponse(@JsonProperty("text") final String text) {
-        super();
-        this.text = text;
-    }
-
-    public static StoryResponse from(final Story story) {
-        return new StoryResponse(story.getText());
-    }
+public record StoryResponse(String text) {
 }
 

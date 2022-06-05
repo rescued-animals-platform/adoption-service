@@ -28,6 +28,7 @@ import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
 import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
+import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 
 import java.time.LocalDateTime;
@@ -104,7 +105,7 @@ public class AnimalResponse {
                                   StateResponseMapper.MAPPER.toStateResponse(animal.getState()),
                                   animal.getPrimaryLinkPicture().map(LinkPictureResponseMapper.MAPPER::toLinkPictureResponse).orElse(null),
                                   animal.getCharacteristics().map(CharacteristicsResponseMapper.MAPPER::toCharacteristicsResponse).orElse(null),
-                                  animal.getStory().map(StoryResponse::from).orElse(null));
+                                  animal.getStory().map(StoryResponseMapper.MAPPER::toStoryResponse).orElse(null));
     }
 
     public UUID getId() {

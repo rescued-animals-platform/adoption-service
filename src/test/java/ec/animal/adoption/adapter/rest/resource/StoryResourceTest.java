@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.story.StoryRequest;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.application.StoryService;
 import ec.animal.adoption.domain.model.organization.Organization;
@@ -78,7 +79,7 @@ class StoryResourceTest {
         Story storyFromRequest = new Story(randomAlphabetic(10));
         when(storyRequest.toDomain()).thenReturn(storyFromRequest);
         Story createdStory = StoryFactory.random().build();
-        StoryResponse expectedStoryResponse = StoryResponse.from(createdStory);
+        StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(createdStory);
         when(storyService.createFor(animalId, organization, storyFromRequest)).thenReturn(createdStory);
 
         StoryResponse storyResponse = storyResource.create(animalId, storyRequest, token);
@@ -94,7 +95,7 @@ class StoryResourceTest {
         Story storyFromRequest = new Story(randomAlphabetic(10));
         when(storyRequest.toDomain()).thenReturn(storyFromRequest);
         Story updatedStory = StoryFactory.random().build();
-        StoryResponse expectedStoryResponse = StoryResponse.from(updatedStory);
+        StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(updatedStory);
         when(storyService.updateFor(animalId, organization, storyFromRequest)).thenReturn(updatedStory);
 
         StoryResponse storyResponse = storyResource.update(animalId, storyRequest, token);
@@ -105,7 +106,7 @@ class StoryResourceTest {
     @Test
     void shouldGetStoryForAnimal() {
         Story foundStory = StoryFactory.random().build();
-        StoryResponse expectedStoryResponse = StoryResponse.from(foundStory);
+        StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(foundStory);
         when(storyService.getBy(animalId)).thenReturn(foundStory);
 
         StoryResponse storyResponse = storyResource.get(animalId);

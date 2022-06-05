@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.story.StoryRequest;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.application.StoryService;
 import ec.animal.adoption.domain.model.organization.Organization;
@@ -60,7 +61,7 @@ public class StoryResource {
         Organization organization = organizationService.getBy(organizationId);
         Story story = storyService.createFor(animalId, organization, storyRequest.toDomain());
 
-        return StoryResponse.from(story);
+        return StoryResponseMapper.MAPPER.toStoryResponse(story);
     }
 
     @PutMapping("/admin/animals/{id}/story")
@@ -71,13 +72,13 @@ public class StoryResource {
         Organization organization = organizationService.getBy(organizationId);
         Story story = storyService.updateFor(animalId, organization, storyRequest.toDomain());
 
-        return StoryResponse.from(story);
+        return StoryResponseMapper.MAPPER.toStoryResponse(story);
     }
 
     @GetMapping("/animals/{id}/story")
     public StoryResponse get(@PathVariable("id") final UUID animalId) {
         Story story = storyService.getBy(animalId);
 
-        return StoryResponse.from(story);
+        return StoryResponseMapper.MAPPER.toStoryResponse(story);
     }
 }
