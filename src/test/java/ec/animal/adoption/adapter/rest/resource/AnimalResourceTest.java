@@ -27,6 +27,7 @@ import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.adapter.rest.model.state.StateRequest;
 import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateResponseMapper;
 import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
+import ec.animal.adoption.adapter.rest.service.AnimalResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -141,7 +142,7 @@ class AnimalResourceTest {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
         Animal animal = AnimalFactory.random().build();
-        AnimalResponse expectedAnimalResponse = AnimalResponse.from(animal);
+        AnimalResponse expectedAnimalResponse = AnimalResponseMapper.MAPPER.toAnimalResponse(animal);
         when(animalService.getBy(animalId, organization)).thenReturn(animal);
 
         AnimalResponse animalResponse = animalResource.get(animalId, token);
@@ -162,7 +163,7 @@ class AnimalResourceTest {
 
         Assertions.assertThat(pageOfAnimalResponses)
                   .usingRecursiveFieldByFieldElementComparator()
-                  .isEqualTo(pageOfAnimals.map(AnimalResponse::from));
+                  .isEqualTo(pageOfAnimals.map(AnimalResponseMapper.MAPPER::toAnimalResponse));
     }
 
     @Test

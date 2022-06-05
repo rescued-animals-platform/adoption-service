@@ -27,6 +27,7 @@ import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
 import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateRequestMapper;
 import ec.animal.adoption.adapter.rest.service.AnimalCreateUpdateResponseMapper;
 import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
+import ec.animal.adoption.adapter.rest.service.AnimalResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -96,7 +97,7 @@ public class AnimalResource {
         Organization organization = organizationService.getBy(organizationId);
         Animal animal = animalService.getBy(animalId, organization);
 
-        return AnimalResponse.from(animal);
+        return AnimalResponseMapper.MAPPER.toAnimalResponse(animal);
     }
 
     @GetMapping("/admin/animals")
@@ -106,7 +107,7 @@ public class AnimalResource {
         Organization organization = organizationService.getBy(organizationId);
         PagedEntity<Animal> animals = animalService.listAllFor(organization, pageable);
 
-        return animals.map(AnimalResponse::from);
+        return animals.map(AnimalResponseMapper.MAPPER::toAnimalResponse);
     }
 
     @GetMapping("/animals")
