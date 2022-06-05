@@ -40,14 +40,4 @@ public interface JpaPrimaryLinkPictureMapper {
     @Mapping(source = "linkPicture.smallImagePublicId", target = "smallImagePublicId")
     @Mapping(source = "linkPicture.smallImageUrl", target = "smallImageUrl")
     JpaPrimaryLinkPicture toJpaPrimaryLinkPicture(LinkPicture linkPicture, JpaAnimal jpaAnimal);
-
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getIdentifier).orElse(UUID.randomUUID()) )", target = "id")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getRegistrationDate).orElse(LocalDateTime.now()) )", target = "registrationDate")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getName).orElse(null) )", target = "name")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getLargeImagePublicId).orElse(null) )", target = "largeImagePublicId")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getLargeImageUrl).orElse(null) )", target = "largeImageUrl")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getSmallImagePublicId).orElse(null) )", target = "smallImagePublicId")
-//    @Mapping(expression = "java( animal.getPrimaryLinkPicture().map(LinkPicture::getSmallImageUrl).orElse(null) )", target = "smallImageUrl")
-//    @Mapping(source = "animal", target = "jpaAnimal")
-//    JpaPrimaryLinkPicture toJpaPrimaryLinkPicture(Animal animal, @Context CycleAvoidingMappingContext cycleAvoidingMappingContext);
 }
