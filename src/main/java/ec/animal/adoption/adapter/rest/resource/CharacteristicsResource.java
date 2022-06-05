@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsRequest;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResponse;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.application.CharacteristicsService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
@@ -62,7 +63,7 @@ public class CharacteristicsResource {
                                                                            organization,
                                                                            characteristicsRequest.toDomain());
 
-        return CharacteristicsResponse.from(characteristics);
+        return CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
     }
 
     @PutMapping("/admin/animals/{id}/characteristics")
@@ -75,13 +76,13 @@ public class CharacteristicsResource {
                                                                            organization,
                                                                            characteristicsRequest.toDomain());
 
-        return CharacteristicsResponse.from(characteristics);
+        return CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
     }
 
     @GetMapping("/animals/{id}/characteristics")
     public CharacteristicsResponse get(@PathVariable("id") final UUID animalId) {
         Characteristics characteristics = characteristicsService.getBy(animalId);
 
-        return CharacteristicsResponse.from(characteristics);
+        return CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
     }
 }

@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.rest.model.characteristics.temperaments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.TemperamentsResponseMapper;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Sociability;
@@ -56,7 +57,7 @@ class TemperamentsResponseTest {
                                                        .withDocility(docility)
                                                        .withBalance(balance)
                                                        .build();
-        TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
+        TemperamentsResponse temperamentsResponse = TemperamentsResponseMapper.MAPPER.toTemperamentsResponse(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
@@ -69,7 +70,7 @@ class TemperamentsResponseTest {
     void shouldBeSerializableContainingOnlySociability() throws IOException {
         Sociability sociability = getRandomSociability();
         Temperaments temperaments = TemperamentsFactory.empty().withSociability(sociability).build();
-        TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
+        TemperamentsResponse temperamentsResponse = TemperamentsResponseMapper.MAPPER.toTemperamentsResponse(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
@@ -82,7 +83,7 @@ class TemperamentsResponseTest {
     void shouldBeSerializableContainingOnlyDocility() throws IOException {
         Docility docility = getRandomDocility();
         Temperaments temperaments = TemperamentsFactory.empty().withDocility(docility).build();
-        TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
+        TemperamentsResponse temperamentsResponse = TemperamentsResponseMapper.MAPPER.toTemperamentsResponse(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 
@@ -95,7 +96,7 @@ class TemperamentsResponseTest {
     void shouldBeSerializableContainingOnlyBalance() throws IOException {
         Balance balance = getRandomBalance();
         Temperaments temperaments = TemperamentsFactory.empty().withBalance(balance).build();
-        TemperamentsResponse temperamentsResponse = TemperamentsResponse.from(temperaments);
+        TemperamentsResponse temperamentsResponse = TemperamentsResponseMapper.MAPPER.toTemperamentsResponse(temperaments);
 
         String temperamentsResponseAsJson = objectMapper.writeValueAsString(temperamentsResponse);
 

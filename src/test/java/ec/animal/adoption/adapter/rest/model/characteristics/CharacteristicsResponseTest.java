@@ -21,7 +21,8 @@ package ec.animal.adoption.adapter.rest.model.characteristics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
-import ec.animal.adoption.adapter.rest.model.characteristics.temperaments.TemperamentsResponse;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
+import ec.animal.adoption.adapter.rest.service.TemperamentsResponseMapper;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
 import ec.animal.adoption.domain.model.characteristics.CharacteristicsFactory;
 import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
@@ -52,9 +53,9 @@ class CharacteristicsResponseTest {
     void shouldBeSerializable() throws IOException {
         Characteristics characteristics = CharacteristicsFactory.random().withFriendlyWith(FriendlyWith.ADULTS).build();
         String expectedTemperamentsResponseAsJson = objectMapper.writeValueAsString(
-                TemperamentsResponse.from(characteristics.getTemperaments())
+                TemperamentsResponseMapper.MAPPER.toTemperamentsResponse(characteristics.getTemperaments())
         );
-        CharacteristicsResponse characteristicsResponse = CharacteristicsResponse.from(characteristics);
+        CharacteristicsResponse characteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
 
         String characteristicsResponseAsJson = objectMapper.writeValueAsString(characteristicsResponse);
 
@@ -73,7 +74,7 @@ class CharacteristicsResponseTest {
                                                                 .withTemperaments(temperaments)
                                                                 .withFriendlyWith(FriendlyWith.DOGS)
                                                                 .build();
-        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(characteristics);
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
         String characteristicsResponseAsJson = new JSONObject()
                 .put("size", characteristics.getSize().name())
                 .put("physicalActivity", characteristics.getPhysicalActivity().name())

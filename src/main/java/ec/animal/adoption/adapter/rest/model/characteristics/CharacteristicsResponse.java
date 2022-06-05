@@ -19,47 +19,13 @@
 
 package ec.animal.adoption.adapter.rest.model.characteristics;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.adapter.rest.model.characteristics.temperaments.TemperamentsResponse;
-import ec.animal.adoption.domain.model.characteristics.Characteristics;
-import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class CharacteristicsResponse {
-
-    @JsonProperty("size")
-    private final String size;
-
-    @JsonProperty("physicalActivity")
-    private final String physicalActivity;
-
-    @JsonProperty("temperaments")
-    private final TemperamentsResponse temperaments;
-
-    @JsonProperty("friendlyWith")
-    private final Set<String> friendlyWith;
-
-    @JsonCreator
-    private CharacteristicsResponse(@JsonProperty("size") final String size,
-                                    @JsonProperty("physicalActivity") final String physicalActivity,
-                                    @JsonProperty("temperaments") final TemperamentsResponse temperaments,
-                                    @JsonProperty("friendlyWith") final Set<String> friendlyWith) {
-        this.size = size;
-        this.physicalActivity = physicalActivity;
-        this.temperaments = temperaments;
-        this.friendlyWith = friendlyWith;
-    }
-
-    public static CharacteristicsResponse from(final Characteristics characteristics) {
-        return new CharacteristicsResponse(characteristics.getSize().name(),
-                                           characteristics.getPhysicalActivity().name(),
-                                           TemperamentsResponse.from(characteristics.getTemperaments()),
-                                           characteristics.getFriendlyWith().stream()
-                                                          .map(FriendlyWith::name)
-                                                          .collect(Collectors.toSet()));
-    }
+public record CharacteristicsResponse(String size,
+                                      String physicalActivity,
+                                      TemperamentsResponse temperaments,
+                                      Set<String> friendlyWith) {
 }
 

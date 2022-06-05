@@ -25,6 +25,7 @@ import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResp
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
 import ec.animal.adoption.adapter.rest.model.state.StateResponse;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -102,7 +103,7 @@ public class AnimalResponse {
                                   animal.getSex().name(),
                                   StateResponseMapper.MAPPER.toStateResponse(animal.getState()),
                                   animal.getPrimaryLinkPicture().map(LinkPictureResponseMapper.MAPPER::toLinkPictureResponse).orElse(null),
-                                  animal.getCharacteristics().map(CharacteristicsResponse::from).orElse(null),
+                                  animal.getCharacteristics().map(CharacteristicsResponseMapper.MAPPER::toCharacteristicsResponse).orElse(null),
                                   animal.getStory().map(StoryResponse::from).orElse(null));
     }
 

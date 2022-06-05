@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsRequest;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResponse;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.application.CharacteristicsService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
@@ -77,7 +78,7 @@ class CharacteristicsResourceTest {
         Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
         when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
         Characteristics createdCharacteristics = CharacteristicsFactory.random().build();
-        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(createdCharacteristics);
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(createdCharacteristics);
         when(characteristicsService.createFor(animalId, organization, characteristicsFromRequest))
                 .thenReturn(createdCharacteristics);
 
@@ -98,7 +99,7 @@ class CharacteristicsResourceTest {
         Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
         when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
         Characteristics updatedCharacteristics = CharacteristicsFactory.random().build();
-        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(updatedCharacteristics);
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(updatedCharacteristics);
         when(characteristicsService.updateFor(animalId, organization, characteristicsFromRequest))
                 .thenReturn(updatedCharacteristics);
 
@@ -115,7 +116,7 @@ class CharacteristicsResourceTest {
     void shouldGetCharacteristicsForAnimal() {
         Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
         when(characteristicsService.getBy(animalId)).thenReturn(expectedCharacteristics);
-        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponse.from(expectedCharacteristics);
+        CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(expectedCharacteristics);
 
         CharacteristicsResponse characteristicsResponse = characteristicsResource.get(animalId);
 

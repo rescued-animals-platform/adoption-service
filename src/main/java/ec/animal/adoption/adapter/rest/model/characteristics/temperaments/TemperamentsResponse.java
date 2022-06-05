@@ -19,39 +19,8 @@
 
 package ec.animal.adoption.adapter.rest.model.characteristics.temperaments;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Balance;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Docility;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Temperaments;
-
-public class TemperamentsResponse {
-
-    @JsonProperty("sociability")
-    private final String sociability;
-
-    @JsonProperty("docility")
-    private final String docility;
-
-    @JsonProperty("balance")
-    private final String balance;
-
-    @JsonCreator
-    private TemperamentsResponse(@JsonProperty("sociability") final String sociability,
-                                 @JsonProperty("docility") final String docility,
-                                 @JsonProperty("balance") final String balance) {
-        this.sociability = sociability;
-        this.docility = docility;
-        this.balance = balance;
-    }
-
-    public static TemperamentsResponse from(final Temperaments temperaments) {
-        return new TemperamentsResponse(
-                temperaments.getSociability().map(Sociability::name).orElse(null),
-                temperaments.getDocility().map(Docility::name).orElse(null),
-                temperaments.getBalance().map(Balance::name).orElse(null)
-        );
-    }
+public record TemperamentsResponse(String sociability,
+                                   String docility,
+                                   String balance) {
 }
 
