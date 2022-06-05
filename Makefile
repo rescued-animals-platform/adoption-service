@@ -8,7 +8,7 @@ help:
 
 .PHONY: deploy
 deploy: ## Deploys the application and it's dependencies (db container and wiremock container) with docker-compose
-	./gradlew clean bootJar --rerun-tasks
+	./gradlew bootJar --rerun-tasks
 	@docker-compose build adoption-service
 	@docker-compose up -d --scale adoption-service-builder=0
 

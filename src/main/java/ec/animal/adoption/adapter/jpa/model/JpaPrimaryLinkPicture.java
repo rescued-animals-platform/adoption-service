@@ -19,9 +19,11 @@
 
 package ec.animal.adoption.adapter.jpa.model;
 
-import ec.animal.adoption.domain.model.media.LinkPicture;
-import ec.animal.adoption.domain.model.media.MediaLink;
-import ec.animal.adoption.domain.model.media.PictureType;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -36,6 +38,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "primary_link_picture")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class JpaPrimaryLinkPicture implements Serializable {
 
     @Serial
@@ -43,6 +49,7 @@ public class JpaPrimaryLinkPicture implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -58,58 +65,4 @@ public class JpaPrimaryLinkPicture implements Serializable {
     private String largeImageUrl;
     private String smallImagePublicId;
     private String smallImageUrl;
-
-    private JpaPrimaryLinkPicture() {
-        // Required by jpa
-    }
-
-    public JpaPrimaryLinkPicture(final LinkPicture linkPicture, final JpaAnimal jpaAnimal) {
-        this();
-        this.setId(linkPicture.getIdentifier());
-        this.jpaAnimal = jpaAnimal;
-        this.setRegistrationDate(linkPicture.getRegistrationDate());
-        this.name = linkPicture.getName();
-        this.largeImagePublicId = linkPicture.getLargeImagePublicId();
-        this.largeImageUrl = linkPicture.getLargeImageUrl();
-        this.smallImagePublicId = linkPicture.getSmallImagePublicId();
-        this.smallImageUrl = linkPicture.getSmallImageUrl();
-    }
-
-    private void setId(final UUID id) {
-        this.id = id == null ? UUID.randomUUID() : id;
-    }
-
-    private void setRegistrationDate(final LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate == null ? LocalDateTime.now() : registrationDate;
-    }
-
-    public LinkPicture toLinkPicture() {
-        return new LinkPicture(
-                this.id,
-                this.registrationDate,
-                this.name,
-                PictureType.PRIMARY,
-                new MediaLink(this.largeImagePublicId, this.largeImageUrl),
-                new MediaLink(this.smallImagePublicId, this.smallImageUrl)
-        );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        JpaPrimaryLinkPicture that = (JpaPrimaryLinkPicture) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
 }

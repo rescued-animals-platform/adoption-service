@@ -55,8 +55,8 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @Override
     public Animal create(final AnimalDto animalDto) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animalDto));
-            return savedJpaAnimal.toAnimal();
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(JpaAnimalMapper.MAPPER.toJpaAnimal(animalDto));
+            return JpaAnimalMapper.MAPPER.toAnimal(savedJpaAnimal);
         } catch (Exception exception) {
             LOGGER.error("Exception thrown when creating a new animal");
             throw new EntityAlreadyExistsException(exception);
@@ -66,8 +66,8 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @Override
     public Animal save(final Animal animal) {
         try {
-            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(new JpaAnimal(animal));
-            return savedJpaAnimal.toAnimal();
+            JpaAnimal savedJpaAnimal = jpaAnimalRepository.save(JpaAnimalMapper.MAPPER.toJpaAnimal(animal));
+            return JpaAnimalMapper.MAPPER.toAnimal(savedJpaAnimal);
         } catch (Exception exception) {
             LOGGER.error("Exception thrown when saving animal with id: {}", animal.getIdentifier());
             throw new EntityAlreadyExistsException(exception);
@@ -77,7 +77,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
     @Override
     public Animal getBy(final UUID animalId) {
         Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findById(animalId);
-        return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
+        return jpaAnimal.map(JpaAnimalMapper.MAPPER::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
         Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByIdAndJpaOrganizationId(
                 animalId, organization.getOrganizationId()
         );
-        return jpaAnimal.map(JpaAnimal::toAnimal).orElseThrow(EntityNotFoundException::new);
+        return jpaAnimal.map(JpaAnimalMapper.MAPPER::toAnimal).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
         Optional<JpaAnimal> jpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
                 clinicalRecord, organization.getOrganizationId()
         );
-        return jpaAnimal.map(JpaAnimal::toAnimal);
+        return jpaAnimal.map(JpaAnimalMapper.MAPPER::toAnimal);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class AnimalRepositoryPsql implements AnimalRepository {
         Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationId(
                 organization.getOrganizationId(), pageable
         );
-        return new PagedEntity<>(jpaAnimals.map(JpaAnimal::toAnimal));
+        return new PagedEntity<>(jpaAnimals.map(JpaAnimalMapper.MAPPER::toAnimal));
     }
 
     @Override
@@ -118,6 +118,6 @@ public class AnimalRepositoryPsql implements AnimalRepository {
         Page<JpaAnimal> jpaAnimals = jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
                 stateName, species.name(), physicalActivity.name(), size.name(), pageable
         );
-        return new PagedEntity<>(jpaAnimals.map(JpaAnimal::toAnimal));
+        return new PagedEntity<>(jpaAnimals.map(JpaAnimalMapper.MAPPER::toAnimal));
     }
 }

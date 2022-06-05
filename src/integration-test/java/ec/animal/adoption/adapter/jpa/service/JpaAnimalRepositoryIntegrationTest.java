@@ -45,7 +45,6 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static ec.animal.adoption.domain.model.organization.OrganizationFactory.DEFAULT_ORGANIZATION_ID;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -57,7 +56,8 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
 
     @Test
     public void shouldSaveAJpaAnimal() {
-        JpaAnimal entity = new JpaAnimal(AnimalFactory.randomWithDefaultOrganization().build());
+        Animal animal = AnimalFactory.randomWithDefaultOrganization().build();
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
 
         assertEquals(jpaAnimal, entity);
@@ -71,10 +71,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animal = AnimalFactory.randomWithDefaultOrganization()
                                      .withPrimaryLinkPicture(expectedPrimaryLinkPicture)
                                      .build();
-        JpaAnimal entity = new JpaAnimal(animal);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithPrimaryLinkPicture = jpaAnimal.toAnimal();
+        Animal animalWithPrimaryLinkPicture = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<LinkPicture> primaryLinkPicture = animalWithPrimaryLinkPicture.getPrimaryLinkPicture();
 
         assertTrue(primaryLinkPicture.isPresent());
@@ -90,10 +90,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animal = AnimalFactory.randomWithDefaultOrganization()
                                      .withCharacteristics(expectedCharacteristics)
                                      .build();
-        JpaAnimal entity = new JpaAnimal(animal);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithCharacteristics = jpaAnimal.toAnimal();
+        Animal animalWithCharacteristics = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<Characteristics> characteristics = animalWithCharacteristics.getCharacteristics();
 
         assertTrue(characteristics.isPresent());
@@ -107,10 +107,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     public void shouldSaveJpaAnimalWithJpaStory() {
         Story expectedStory = StoryFactory.random().build();
         Animal animal = AnimalFactory.randomWithDefaultOrganization().withStory(expectedStory).build();
-        JpaAnimal entity = new JpaAnimal(animal);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal animalWithStory = jpaAnimal.toAnimal();
+        Animal animalWithStory = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<Story> story = animalWithStory.getStory();
 
         assertTrue(story.isPresent());
@@ -120,7 +120,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldAddJpaPrimaryLinkPictureToJpaAnimal() {
         JpaAnimal jpaAnimalWithNoPrimaryLinkPicture = createAndSaveJpaAnimalForDefaultOrganization();
-        Animal animalWithNoPrimaryLinkPicture = jpaAnimalWithNoPrimaryLinkPicture.toAnimal();
+        Animal animalWithNoPrimaryLinkPicture = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimalWithNoPrimaryLinkPicture);
         assertTrue(animalWithNoPrimaryLinkPicture.getPrimaryLinkPicture().isEmpty());
         LinkPicture expectedPrimaryLinkPicture = LinkPictureFactory.random()
                                                                    .withPictureType(PictureType.PRIMARY)
@@ -128,10 +128,10 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Animal animalWithPrimaryLinkPicture = AnimalBuilder.copyOf(animalWithNoPrimaryLinkPicture)
                                                            .with(expectedPrimaryLinkPicture)
                                                            .build();
-        JpaAnimal entity = new JpaAnimal(animalWithPrimaryLinkPicture);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animalWithPrimaryLinkPicture);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal savedAnimal = jpaAnimal.toAnimal();
+        Animal savedAnimal = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<LinkPicture> primaryLinkPicture = savedAnimal.getPrimaryLinkPicture();
 
         assertTrue(primaryLinkPicture.isPresent());
@@ -144,16 +144,16 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldAddJpaCharacteristicsToJpaAnimal() {
         JpaAnimal jpaAnimalWithNoCharacteristics = createAndSaveJpaAnimalForDefaultOrganization();
-        Animal animalWithNoCharacteristics = jpaAnimalWithNoCharacteristics.toAnimal();
+        Animal animalWithNoCharacteristics = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimalWithNoCharacteristics);
         assertTrue(animalWithNoCharacteristics.getCharacteristics().isEmpty());
         Characteristics expectedCharacteristics = CharacteristicsFactory.random().build();
         Animal animalWithCharacteristics = AnimalBuilder.copyOf(animalWithNoCharacteristics)
                                                         .with(expectedCharacteristics)
                                                         .build();
-        JpaAnimal entity = new JpaAnimal(animalWithCharacteristics);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animalWithCharacteristics);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal savedAnimal = jpaAnimal.toAnimal();
+        Animal savedAnimal = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<Characteristics> characteristics = savedAnimal.getCharacteristics();
 
         assertTrue(characteristics.isPresent());
@@ -166,16 +166,16 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldAddJpaStoryToJpaAnimal() {
         JpaAnimal jpaAnimalWithNoStory = createAndSaveJpaAnimalForDefaultOrganization();
-        Animal animalWithNoStory = jpaAnimalWithNoStory.toAnimal();
+        Animal animalWithNoStory = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimalWithNoStory);
         assertTrue(animalWithNoStory.getStory().isEmpty());
         Story expectedStory = StoryFactory.random().build();
         Animal animalWithStory = AnimalBuilder.copyOf(animalWithNoStory)
                                               .with(expectedStory)
                                               .build();
-        JpaAnimal entity = new JpaAnimal(animalWithStory);
+        JpaAnimal entity = JpaAnimalMapper.MAPPER.toJpaAnimal(animalWithStory);
 
         JpaAnimal jpaAnimal = jpaAnimalRepository.save(entity);
-        Animal savedAnimal = jpaAnimal.toAnimal();
+        Animal savedAnimal = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
         Optional<Story> story = savedAnimal.getStory();
 
         assertTrue(story.isPresent());
@@ -185,7 +185,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     public void shouldFindJpaAnimalByAnimalIdAndOrganizationId() {
         JpaAnimal jpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
-        UUID animalId = jpaAnimal.toAnimal().getIdentifier();
+        UUID animalId = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal).getIdentifier();
 
         Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByIdAndJpaOrganizationId(
                 animalId, DEFAULT_ORGANIZATION_ID
@@ -204,12 +204,12 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
         Page<JpaAnimal> pageOfJpaAnimals = jpaAnimalRepository.findAllByJpaOrganizationId(
                 DEFAULT_ORGANIZATION_ID, pageable
         );
-        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
+        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().toList();
 
         assertEquals(pageable, pageOfJpaAnimals.getPageable());
         assertEquals(4, jpaAnimals.size());
         jpaAnimals.forEach(jpaAnimal -> {
-            Animal animal = jpaAnimal.toAnimal();
+            Animal animal = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
             assertEquals(DEFAULT_ORGANIZATION_ID, animal.getOrganizationId());
         });
     }
@@ -217,7 +217,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     void shouldFindJpaAnimalByClinicalRecordAndOrganizationId() {
         JpaAnimal jpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
-        String clinicalRecord = jpaAnimal.toAnimal().getClinicalRecord();
+        String clinicalRecord = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal).getClinicalRecord();
 
         Optional<JpaAnimal> optionalJpaAnimal = jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
                 clinicalRecord, DEFAULT_ORGANIZATION_ID
@@ -230,7 +230,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
     @Test
     void shouldReturnTrueWhenJpaAnimalMatchingClinicalRecordAndOrganizationIdExists() {
         JpaAnimal expectedJpaAnimal = createAndSaveJpaAnimalForDefaultOrganization();
-        Animal animal = expectedJpaAnimal.toAnimal();
+        Animal animal = JpaAnimalMapper.MAPPER.toAnimal(expectedJpaAnimal);
 
         boolean exists = jpaAnimalRepository.existsByClinicalRecordAndJpaOrganizationId(
                 animal.getClinicalRecord(), animal.getOrganizationId()
@@ -262,7 +262,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
                         lookingForHuman.getName().name(), dog.name(), high.name(), tiny.name(), pageable
                 );
-        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
+        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().toList();
 
         assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
         assertThat(jpaAnimals.size(), is(8));
@@ -287,7 +287,7 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
                 .findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
                         adopted.getName().name(), cat.name(), low.name(), medium.name(), pageable
                 );
-        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().collect(toList());
+        List<JpaAnimal> jpaAnimals = pageOfJpaAnimals.get().toList();
 
         assertThat(pageOfJpaAnimals.getPageable(), is(pageable));
         assertThat(jpaAnimals.size(), is(20));
@@ -301,16 +301,20 @@ public class JpaAnimalRepositoryIntegrationTest extends AbstractJpaRepositoryInt
                                                                 .withPhysicalActivity(physicalActivity)
                                                                 .withSize(size)
                                                                 .build();
-        return new JpaAnimal(AnimalFactory.randomWithDefaultOrganization()
-                                          .withState(state)
-                                          .withSpecies(species)
-                                          .withCharacteristics(characteristics)
-                                          .build());
+
+        return JpaAnimalMapper.MAPPER.toJpaAnimal(AnimalFactory.randomWithDefaultOrganization()
+                                                               .withState(state)
+                                                               .withSpecies(species)
+                                                               .withCharacteristics(characteristics)
+                                                               .build());
     }
 
     private void saveOtherJpaAnimalsWithDifferentState(final State state) {
-        IntStream.rangeClosed(1, 10).forEach(n -> jpaAnimalRepository.save(
-                new JpaAnimal(AnimalFactory.randomWithDefaultOrganization().withState(state).build())
-        ));
+        IntStream.rangeClosed(1, 10).forEach(n -> {
+            Animal animal = AnimalFactory.randomWithDefaultOrganization()
+                                         .withState(state)
+                                         .build();
+            jpaAnimalRepository.save(JpaAnimalMapper.MAPPER.toJpaAnimal(animal));
+        });
     }
 }

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.model.animal;
 
+import ec.animal.adoption.domain.model.Default;
 import ec.animal.adoption.domain.model.Entity;
 import ec.animal.adoption.domain.model.animal.dto.AnimalDto;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
@@ -45,7 +46,8 @@ public class Animal extends Entity {
     private final Story story;
     private final Organization organization;
 
-    public Animal(@NonNull final UUID animalId,
+    @Default
+    public Animal(@NonNull final UUID identifier,
                   @NonNull final LocalDateTime registrationDate,
                   final String clinicalRecord,
                   final String name,
@@ -57,7 +59,7 @@ public class Animal extends Entity {
                   final Characteristics characteristics,
                   final Story story,
                   final Organization organization) {
-        super(animalId, registrationDate);
+        super(identifier, registrationDate);
 
         if (primaryLinkPicture != null && !primaryLinkPicture.isPrimary()) {
             throw new IllegalArgumentException("Picture type should be PRIMARY");

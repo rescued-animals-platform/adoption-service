@@ -17,16 +17,11 @@ public final class State {
     public static State from(@NonNull final StateName name,
                              final String adoptionFormId,
                              final String notes) {
-        switch (name) {
-            case LOOKING_FOR_HUMAN:
-                return State.lookingForHuman();
-            case ADOPTED:
-                return State.adopted(adoptionFormId);
-            case UNAVAILABLE:
-                return State.unavailable(notes);
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (name) {
+            case LOOKING_FOR_HUMAN -> State.lookingForHuman();
+            case ADOPTED -> State.adopted(adoptionFormId);
+            case UNAVAILABLE -> State.unavailable(notes);
+        };
     }
 
     private State(@NonNull final StateName name) {

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.model.media;
 
+import ec.animal.adoption.domain.model.Default;
 import ec.animal.adoption.domain.model.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,13 +49,14 @@ public class LinkPicture extends Entity {
         this.smallImageMediaLink = smallImageMediaLink;
     }
 
-    public LinkPicture(@NonNull final UUID linkPictureId,
+    @Default
+    public LinkPicture(@NonNull final UUID identifier,
                        @NonNull final LocalDateTime registrationDate,
                        final String name,
                        final PictureType pictureType,
                        final MediaLink largeImageMediaLink,
                        final MediaLink smallImageMediaLink) {
-        super(linkPictureId, registrationDate);
+        super(identifier, registrationDate);
         this.name = name;
         this.pictureType = pictureType;
         this.largeImageMediaLink = largeImageMediaLink;

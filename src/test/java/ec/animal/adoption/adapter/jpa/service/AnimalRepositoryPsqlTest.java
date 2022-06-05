@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -59,7 +58,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,6 +65,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @ExtendWith(MockitoExtension.class)
 class AnimalRepositoryPsqlTest {
@@ -91,14 +90,13 @@ class AnimalRepositoryPsqlTest {
     @Test
     void shouldCreateAnimal() {
         AnimalDto animalDto = AnimalDtoFactory.random().build();
-        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalFactory.random().build();
-        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
-        when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
+        JpaAnimal jpaAnimal = JpaAnimalMapper.MAPPER.toJpaAnimal(animalDto);
+        when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(jpaAnimal);
+        Animal expectedAnimal = JpaAnimalMapper.MAPPER.toAnimal(jpaAnimal);
 
         Animal createdAnimal = animalRepositoryPsql.create(animalDto);
 
-        assertEquals(expectedAnimal, createdAnimal);
+        assertReflectionEquals(expectedAnimal, createdAnimal);
     }
 
     @Test
@@ -113,14 +111,12 @@ class AnimalRepositoryPsqlTest {
 
     @Test
     void shouldSaveAnimal() {
-        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalFactory.random().build();
-        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
-        when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(expectedJpaAnimal);
+        JpaAnimal jpaAnimal = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
+        when(jpaAnimalRepository.save(any(JpaAnimal.class))).thenReturn(jpaAnimal);
 
         Animal savedAnimal = animalRepositoryPsql.save(animal);
 
-        assertEquals(expectedAnimal, savedAnimal);
+        assertReflectionEquals(animal, savedAnimal);
     }
 
     @Test
@@ -129,24 +125,20 @@ class AnimalRepositoryPsqlTest {
             throw mock(PSQLException.class);
         }).when(jpaAnimalRepository).save(any(JpaAnimal.class));
 
-        assertThrows(EntityAlreadyExistsException.class, () -> {
-            animalRepositoryPsql.save(animal);
-        });
+        assertThrows(EntityAlreadyExistsException.class, () -> animalRepositoryPsql.save(animal));
     }
 
     @Test
     void shouldGetAnimalByClinicalRecordAndOrganization() {
-        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalFactory.random().build();
-        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
+        JpaAnimal expectedJpaAnimal = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
         when(jpaAnimalRepository.findByClinicalRecordAndJpaOrganizationId(
-                expectedAnimal.getClinicalRecord(), expectedAnimal.getOrganizationId())
+                animal.getClinicalRecord(), animal.getOrganizationId())
         ).thenReturn(Optional.of(expectedJpaAnimal));
 
-        Optional<Animal> animalFound = animalRepositoryPsql.getBy(expectedAnimal.getClinicalRecord(), expectedAnimal.getOrganization());
+        Optional<Animal> animalFound = animalRepositoryPsql.getBy(animal.getClinicalRecord(), animal.getOrganization());
 
         assertTrue(animalFound.isPresent());
-        assertEquals(expectedAnimal, animalFound.get());
+        assertReflectionEquals(animal, animalFound.get());
     }
 
     @Test
@@ -187,14 +179,12 @@ class AnimalRepositoryPsqlTest {
 
     @Test
     void shouldGetAnimalByItsIdentifier() {
-        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalFactory.random().build();
-        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
-        when(jpaAnimalRepository.findById(expectedAnimal.getIdentifier())).thenReturn(Optional.of(expectedJpaAnimal));
+        JpaAnimal expectedJpaAnimal = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
+        when(jpaAnimalRepository.findById(animal.getIdentifier())).thenReturn(Optional.of(expectedJpaAnimal));
 
-        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getIdentifier());
+        Animal animalFound = animalRepositoryPsql.getBy(animal.getIdentifier());
 
-        assertEquals(expectedAnimal, animalFound);
+        assertReflectionEquals(animal, animalFound);
     }
 
     @Test
@@ -206,15 +196,13 @@ class AnimalRepositoryPsqlTest {
 
     @Test
     void shouldGetAnimalByItsIdentifierAndOrganization() {
-        JpaAnimal expectedJpaAnimal = mock(JpaAnimal.class);
-        Animal expectedAnimal = AnimalFactory.random().build();
-        when(expectedJpaAnimal.toAnimal()).thenReturn(expectedAnimal);
-        when(jpaAnimalRepository.findByIdAndJpaOrganizationId(expectedAnimal.getIdentifier(), expectedAnimal.getOrganizationId()))
+        JpaAnimal expectedJpaAnimal = JpaAnimalMapper.MAPPER.toJpaAnimal(animal);
+        when(jpaAnimalRepository.findByIdAndJpaOrganizationId(animal.getIdentifier(), animal.getOrganizationId()))
                 .thenReturn(Optional.of(expectedJpaAnimal));
 
-        Animal animalFound = animalRepositoryPsql.getBy(expectedAnimal.getIdentifier(), expectedAnimal.getOrganization());
+        Animal animalFound = animalRepositoryPsql.getBy(animal.getIdentifier(), animal.getOrganization());
 
-        assertEquals(expectedAnimal, animalFound);
+        assertReflectionEquals(animal, animalFound);
     }
 
     @Test
@@ -228,11 +216,13 @@ class AnimalRepositoryPsqlTest {
     @Test
     void shouldReturnAllAnimalsForOrganizationWithPagination() {
         Pageable pageable = mock(Pageable.class);
-        List<JpaAnimal> listOfJpaAnimals = Stream.of(
-                AnimalFactory.random().build(), AnimalFactory.random().build(), AnimalFactory.random().build()
-        ).map(JpaAnimal::new).collect(Collectors.toList());
+        List<JpaAnimal> listOfJpaAnimals = Stream.of(AnimalFactory.random().build(),
+                                                     AnimalFactory.random().build(),
+                                                     AnimalFactory.random().build())
+                                                 .map(JpaAnimalMapper.MAPPER::toJpaAnimal)
+                                                 .toList();
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
-                listOfJpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+                listOfJpaAnimals.stream().map(JpaAnimalMapper.MAPPER::toAnimal).toList()
         );
         Organization organization = OrganizationFactory.random().build();
         when(jpaAnimalRepository.findAllByJpaOrganizationId(organization.getOrganizationId(), pageable))
@@ -261,10 +251,10 @@ class AnimalRepositoryPsqlTest {
                                          .withSpecies(dog)
                                          .withCharacteristics(characteristics)
                                          .build();
-            jpaAnimals.add(new JpaAnimal(animal));
+            jpaAnimals.add(JpaAnimalMapper.MAPPER.toJpaAnimal(animal));
         });
         PagedEntity<Animal> expectedPageOfAnimals = new PagedEntity<>(
-                jpaAnimals.stream().map(JpaAnimal::toAnimal).collect(Collectors.toList())
+                jpaAnimals.stream().map(JpaAnimalMapper.MAPPER::toAnimal).toList()
         );
         when(jpaAnimalRepository.findAllByStateNameAndSpeciesOrJpaCharacteristicsPhysicalActivityOrJpaCharacteristicsSize(
                 lookingForHuman.getName().name(), dog.name(), high.name(), tiny.name(), pageable)
