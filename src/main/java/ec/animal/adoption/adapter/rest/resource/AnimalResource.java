@@ -24,6 +24,7 @@ import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateRequest;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalResponse;
 import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
+import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -115,6 +116,6 @@ public class AnimalResource {
             final Pageable pageable
     ) {
         return animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable)
-                            .map(AnimalDtoResponse::new);
+                            .map(AnimalDtoResponseMapper.MAPPER::toAnimalDtoResponse);
     }
 }

@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.rest.model.animal.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.AnimalFactory;
 import ec.animal.adoption.domain.model.media.LinkPicture;
@@ -60,11 +61,11 @@ class AnimalDtoResponseTest {
                                                            .withSmallImageMediaLink(smallImageMediaLink)
                                                            .build();
         Animal animal = AnimalFactory.random().withIdentifier(animalId).withPrimaryLinkPicture(primaryLinkPicture).build();
-        AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
+        AnimalDtoResponse animalDtoResponse = AnimalDtoResponseMapper.MAPPER.toAnimalDtoResponse(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
 
-        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
+        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().toString()))),
@@ -76,11 +77,11 @@ class AnimalDtoResponseTest {
     void shouldSerializeAnimalDtoWithoutPrimaryLinkPicture() throws JsonProcessingException {
         UUID animalId = UUID.randomUUID();
         Animal animal = AnimalFactory.random().withIdentifier(animalId).build();
-        AnimalDtoResponse animalDtoResponse = new AnimalDtoResponse(animal);
+        AnimalDtoResponse animalDtoResponse = AnimalDtoResponseMapper.MAPPER.toAnimalDtoResponse(animal);
 
         String serializedAnimalDto = objectMapper.writeValueAsString(animalDtoResponse);
 
-        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId.toString()))),
+        assertAll(() -> assertTrue(serializedAnimalDto.contains(String.format("\"id\":\"%s\"", animalId))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"name\":\"%s\"", animal.getName()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"species\":\"%s\"", animal.getSpecies().toString()))),
                   () -> assertTrue(serializedAnimalDto.contains(String.format("\"estimatedAge\":\"%s\"", animal.getEstimatedAge().toString()))),
@@ -92,7 +93,7 @@ class AnimalDtoResponseTest {
     void shouldBeDeserializable() throws JSONException, JsonProcessingException {
         LinkPicture primaryLinkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         Animal animal = AnimalFactory.random().withPrimaryLinkPicture(primaryLinkPicture).build();
-        AnimalDtoResponse expectedAnimalDtoResponse = new AnimalDtoResponse(animal);
+        AnimalDtoResponse expectedAnimalDtoResponse = AnimalDtoResponseMapper.MAPPER.toAnimalDtoResponse(animal);
         String animalDtoAsJson = new JSONObject()
                 .put("id", animal.getIdentifier())
                 .put("name", animal.getName())

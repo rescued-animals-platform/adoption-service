@@ -24,6 +24,7 @@ import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateRequest;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalCreateUpdateResponse;
 import ec.animal.adoption.adapter.rest.model.animal.AnimalResponse;
 import ec.animal.adoption.adapter.rest.model.animal.dto.AnimalDtoResponse;
+import ec.animal.adoption.adapter.rest.service.AnimalDtoResponseMapper;
 import ec.animal.adoption.application.AnimalService;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.domain.model.animal.Animal;
@@ -165,7 +166,7 @@ class AnimalResourceTest {
         PagedEntity<Animal> pageOfAnimalsFiltered = new PagedEntity<>(animalsFiltered);
         when(animalService.listAllWithFilters(stateName, species, physicalActivity, size, pageable))
                 .thenReturn(pageOfAnimalsFiltered);
-        PagedEntity<AnimalDtoResponse> expectedPageOfAnimalDtosFiltered = pageOfAnimalsFiltered.map(AnimalDtoResponse::new);
+        PagedEntity<AnimalDtoResponse> expectedPageOfAnimalDtosFiltered = pageOfAnimalsFiltered.map(AnimalDtoResponseMapper.MAPPER::toAnimalDtoResponse);
 
         PagedEntity<AnimalDtoResponse> pageOfAnimalDtosFiltered = animalResource.listAllWithFilters(
                 stateName, species, physicalActivity, size, pageable

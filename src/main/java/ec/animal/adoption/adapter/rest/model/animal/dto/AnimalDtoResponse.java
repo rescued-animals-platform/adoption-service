@@ -19,59 +19,16 @@
 
 package ec.animal.adoption.adapter.rest.model.animal.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.EstimatedAge;
 import ec.animal.adoption.domain.model.animal.Sex;
 import ec.animal.adoption.domain.model.animal.Species;
-import ec.animal.adoption.domain.model.media.LinkPicture;
 
 import java.util.UUID;
 
-public class AnimalDtoResponse {
-
-    @JsonProperty("id")
-    private final UUID animalId;
-
-    @JsonProperty("name")
-    private final String name;
-
-    @JsonProperty("species")
-    private final Species species;
-
-    @JsonProperty("estimatedAge")
-    private final EstimatedAge estimatedAge;
-
-    @JsonProperty("sex")
-    private final Sex sex;
-
-    @JsonProperty("smallPrimaryPictureUrl")
-    private final String smallPrimaryPictureUrl;
-
-    @JsonCreator
-    private AnimalDtoResponse(@JsonProperty("id") final UUID animalId,
-                              @JsonProperty("name") final String name,
-                              @JsonProperty("species") final Species species,
-                              @JsonProperty("estimatedAge") final EstimatedAge estimatedAge,
-                              @JsonProperty("sex") final Sex sex,
-                              @JsonProperty("smallPrimaryPictureUrl") final String smallPrimaryPictureUrl) {
-        this.animalId = animalId;
-        this.name = name;
-        this.species = species;
-        this.estimatedAge = estimatedAge;
-        this.sex = sex;
-        this.smallPrimaryPictureUrl = smallPrimaryPictureUrl;
-    }
-
-    public AnimalDtoResponse(final Animal animal) {
-        this.animalId = animal.getIdentifier();
-        this.name = animal.getName();
-        this.species = animal.getSpecies();
-        this.estimatedAge = animal.getEstimatedAge();
-        this.sex = animal.getSex();
-        this.smallPrimaryPictureUrl = animal.getPrimaryLinkPicture()
-                                            .map(LinkPicture::getSmallImageUrl)
-                                            .orElse(null);
-    }
+public record AnimalDtoResponse(UUID id,
+                                String name,
+                                Species species,
+                                EstimatedAge estimatedAge,
+                                Sex sex,
+                                String smallPrimaryPictureUrl) {
 }
