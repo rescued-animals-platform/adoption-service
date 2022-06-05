@@ -20,15 +20,18 @@
 package ec.animal.adoption.adapter.rest.model.error;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode
 public class ApiErrorResponse {
 
     @JsonProperty("timestamp")
-    private final LocalDateTime timestamp;
+    @EqualsAndHashCode.Exclude
+    private LocalDateTime timestamp;
 
     @JsonProperty("status")
     private HttpStatus status;
@@ -63,37 +66,5 @@ public class ApiErrorResponse {
     public ApiErrorResponse setSubErrors(final List<ValidationApiSubErrorResponse> subErrors) {
         this.subErrors = subErrors;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ApiErrorResponse apiErrorResponse = (ApiErrorResponse) o;
-
-        if (status != apiErrorResponse.status) {
-            return false;
-        }
-        if (message != null ? !message.equals(apiErrorResponse.message) : apiErrorResponse.message != null) {
-            return false;
-        }
-        if (debugMessage != null ? !debugMessage.equals(apiErrorResponse.debugMessage) : apiErrorResponse.debugMessage != null) {
-            return false;
-        }
-        return subErrors != null ? subErrors.equals(apiErrorResponse.subErrors) : apiErrorResponse.subErrors == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = status != null ? status.hashCode() : 0;
-        result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (debugMessage != null ? debugMessage.hashCode() : 0);
-        result = 31 * result + (subErrors != null ? subErrors.hashCode() : 0);
-        return result;
     }
 }

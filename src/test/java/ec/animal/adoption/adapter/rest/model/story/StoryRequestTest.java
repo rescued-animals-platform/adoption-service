@@ -3,6 +3,7 @@ package ec.animal.adoption.adapter.rest.model.story;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.StoryRequestMapper;
 import ec.animal.adoption.domain.model.story.Story;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +49,7 @@ class StoryRequestTest {
         String storyRequestAsJson = new JSONObject().put("text", expectedText).toString();
 
         StoryRequest storyRequest = objectMapper.readValue(storyRequestAsJson, StoryRequest.class);
-        Story story = storyRequest.toDomain();
+        Story story = StoryRequestMapper.MAPPER.toStory(storyRequest);
 
         assertEquals(expectedText, story.getText());
         assertNull(story.getIdentifier());

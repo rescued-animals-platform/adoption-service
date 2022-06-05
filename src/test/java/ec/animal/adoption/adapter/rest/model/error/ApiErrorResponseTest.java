@@ -54,9 +54,8 @@ class ApiErrorResponseTest {
     @Test
     void shouldVerifyEqualsAndHashCodeMethods() {
         EqualsVerifier.forClass(ApiErrorResponse.class)
-                      .usingGetClass()
                       .withIgnoredFields("timestamp")
-                      .suppress(Warning.NONFINAL_FIELDS)
+                      .suppress(Warning.NONFINAL_FIELDS, Warning.STRICT_INHERITANCE)
                       .verify();
     }
 

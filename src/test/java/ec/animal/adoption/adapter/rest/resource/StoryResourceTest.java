@@ -40,7 +40,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,12 +76,10 @@ class StoryResourceTest {
     void shouldCreateAStoryForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        StoryRequest storyRequest = mock(StoryRequest.class);
-        Story storyFromRequest = new Story(randomAlphabetic(10));
-        when(storyRequest.toDomain()).thenReturn(storyFromRequest);
+        StoryRequest storyRequest = new StoryRequest(randomAlphabetic(10));
         Story createdStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(createdStory);
-        when(storyService.createFor(animalId, organization, storyFromRequest)).thenReturn(createdStory);
+        when(storyService.createFor(eq(animalId), eq(organization), any())).thenReturn(createdStory);
 
         StoryResponse storyResponse = storyResource.create(animalId, storyRequest, token);
 
@@ -91,12 +90,10 @@ class StoryResourceTest {
     void shouldUpdateStoryForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        StoryRequest storyRequest = mock(StoryRequest.class);
-        Story storyFromRequest = new Story(randomAlphabetic(10));
-        when(storyRequest.toDomain()).thenReturn(storyFromRequest);
+        StoryRequest storyRequest = new StoryRequest(randomAlphabetic(10));
         Story updatedStory = StoryFactory.random().build();
         StoryResponse expectedStoryResponse = StoryResponseMapper.MAPPER.toStoryResponse(updatedStory);
-        when(storyService.updateFor(animalId, organization, storyFromRequest)).thenReturn(updatedStory);
+        when(storyService.updateFor(eq(animalId), eq(organization), any())).thenReturn(updatedStory);
 
         StoryResponse storyResponse = storyResource.update(animalId, storyRequest, token);
 

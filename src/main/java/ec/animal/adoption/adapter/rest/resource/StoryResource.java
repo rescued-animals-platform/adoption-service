@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.story.StoryRequest;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.StoryRequestMapper;
 import ec.animal.adoption.adapter.rest.service.StoryResponseMapper;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.application.StoryService;
@@ -59,7 +60,7 @@ public class StoryResource {
                                 @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        Story story = storyService.createFor(animalId, organization, storyRequest.toDomain());
+        Story story = storyService.createFor(animalId, organization, StoryRequestMapper.MAPPER.toStory(storyRequest));
 
         return StoryResponseMapper.MAPPER.toStoryResponse(story);
     }
@@ -70,7 +71,7 @@ public class StoryResource {
                                 @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        Story story = storyService.updateFor(animalId, organization, storyRequest.toDomain());
+        Story story = storyService.updateFor(animalId, organization, StoryRequestMapper.MAPPER.toStory(storyRequest));
 
         return StoryResponseMapper.MAPPER.toStoryResponse(story);
     }

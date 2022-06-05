@@ -19,45 +19,5 @@
 
 package ec.animal.adoption.adapter.rest.model.error;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class ValidationApiSubErrorResponse implements ApiSubErrorResponse {
-
-    @JsonProperty("field")
-    private final String field;
-
-    @JsonProperty("message")
-    private final String message;
-
-    @JsonCreator
-    public ValidationApiSubErrorResponse(@JsonProperty("field") final String field,
-                                         @JsonProperty("message") final String message) {
-        this.field = field;
-        this.message = message;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ValidationApiSubErrorResponse that = (ValidationApiSubErrorResponse) o;
-
-        if (field != null ? !field.equals(that.field) : that.field != null) {
-            return false;
-        }
-        return message != null ? message.equals(that.message) : that.message == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = field != null ? field.hashCode() : 0;
-        result = 31 * result + (message != null ? message.hashCode() : 0);
-        return result;
-    }
+public record ValidationApiSubErrorResponse(String field, String message) implements ApiSubErrorResponse {
 }

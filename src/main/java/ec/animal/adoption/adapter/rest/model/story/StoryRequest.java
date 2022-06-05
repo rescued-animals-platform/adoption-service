@@ -19,26 +19,8 @@
 
 package ec.animal.adoption.adapter.rest.model.story;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.story.Story;
-
 import javax.validation.constraints.NotEmpty;
 
-public class StoryRequest {
-
-    @NotEmpty(message = "Story text is required")
-    @JsonProperty("text")
-    private final String text;
-
-    @JsonCreator
-    public StoryRequest(@JsonProperty("text") final String text) {
-        super();
-        this.text = text;
-    }
-
-    public Story toDomain() {
-        return new Story(this.text);
-    }
+public record StoryRequest(@NotEmpty(message = "Story text is required") String text) {
 }
 
