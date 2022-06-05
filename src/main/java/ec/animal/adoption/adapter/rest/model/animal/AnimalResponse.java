@@ -25,6 +25,7 @@ import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResp
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
 import ec.animal.adoption.adapter.rest.model.state.StateResponse;
 import ec.animal.adoption.adapter.rest.model.story.StoryResponse;
+import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.adapter.rest.service.StateResponseMapper;
 import ec.animal.adoption.domain.model.animal.Animal;
 
@@ -34,7 +35,7 @@ import java.util.UUID;
 public class AnimalResponse {
 
     @JsonProperty("id")
-    private final UUID animalId;
+    private final UUID id;
 
     @JsonProperty("registrationDate")
     private final LocalDateTime registrationDate;
@@ -67,7 +68,7 @@ public class AnimalResponse {
     private final StoryResponse story;
 
     @JsonCreator
-    private AnimalResponse(@JsonProperty("id") final UUID animalId,
+    private AnimalResponse(@JsonProperty("id") final UUID id,
                            @JsonProperty("registrationDate") final LocalDateTime registrationDate,
                            @JsonProperty("clinicalRecord") final String clinicalRecord,
                            @JsonProperty("name") final String name,
@@ -78,7 +79,7 @@ public class AnimalResponse {
                            @JsonProperty(value = "primaryLinkPicture") final LinkPictureResponse primaryLinkPicture,
                            @JsonProperty(value = "characteristics") final CharacteristicsResponse characteristics,
                            @JsonProperty(value = "story") final StoryResponse story) {
-        this.animalId = animalId;
+        this.id = id;
         this.registrationDate = registrationDate;
         this.clinicalRecord = clinicalRecord;
         this.name = name;
@@ -100,12 +101,12 @@ public class AnimalResponse {
                                   animal.getEstimatedAge().name(),
                                   animal.getSex().name(),
                                   StateResponseMapper.MAPPER.toStateResponse(animal.getState()),
-                                  animal.getPrimaryLinkPicture().map(LinkPictureResponse::from).orElse(null),
+                                  animal.getPrimaryLinkPicture().map(LinkPictureResponseMapper.MAPPER::toLinkPictureResponse).orElse(null),
                                   animal.getCharacteristics().map(CharacteristicsResponse::from).orElse(null),
                                   animal.getStory().map(StoryResponse::from).orElse(null));
     }
 
-    public UUID getAnimalId() {
-        return animalId;
+    public UUID getId() {
+        return id;
     }
 }

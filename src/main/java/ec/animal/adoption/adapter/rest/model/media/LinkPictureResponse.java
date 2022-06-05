@@ -19,40 +19,8 @@
 
 package ec.animal.adoption.adapter.rest.model.media;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ec.animal.adoption.domain.model.media.LinkPicture;
-
-public class LinkPictureResponse {
-
-    @JsonProperty("name")
-    private final String name;
-
-    @JsonProperty("pictureType")
-    private final String pictureType;
-
-    @JsonProperty("largeImageMediaLink")
-    private final MediaLinkResponse largeImageMediaLink;
-
-    @JsonProperty("smallImageMediaLink")
-    private final MediaLinkResponse smallImageMediaLink;
-
-    @JsonCreator
-    private LinkPictureResponse(@JsonProperty("name") final String name,
-                                @JsonProperty("pictureType") final String pictureType,
-                                @JsonProperty("largeImageMediaLink") final MediaLinkResponse largeImageMediaLink,
-                                @JsonProperty("smallImageMediaLink") final MediaLinkResponse smallImageMediaLink) {
-        super();
-        this.name = name;
-        this.pictureType = pictureType;
-        this.largeImageMediaLink = largeImageMediaLink;
-        this.smallImageMediaLink = smallImageMediaLink;
-    }
-
-    public static LinkPictureResponse from(final LinkPicture linkPicture) {
-        return new LinkPictureResponse(linkPicture.getName(),
-                                       linkPicture.getPictureType().name(),
-                                       MediaLinkResponse.from(linkPicture.getLargeImageUrl()),
-                                       MediaLinkResponse.from(linkPicture.getSmallImageUrl()));
-    }
+public record LinkPictureResponse(String name,
+                                  String pictureType,
+                                  MediaLinkResponse largeImageMediaLink,
+                                  MediaLinkResponse smallImageMediaLink) {
 }

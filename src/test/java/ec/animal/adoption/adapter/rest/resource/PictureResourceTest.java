@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.rest.resource;
 
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
+import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.application.PictureService;
 import ec.animal.adoption.domain.model.exception.InvalidPictureException;
@@ -104,7 +105,7 @@ class PictureResourceTest {
                                                             .withPictureType(imagePicture.getPictureType())
                                                             .build();
         when(pictureService.createFor(animalId, organization, imagePicture)).thenReturn(expectedLinkPicture);
-        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(expectedLinkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(expectedLinkPicture);
 
         LinkPictureResponse linkPictureResponse = pictureResource.createPrimaryPicture(animalId,
                                                                                        imagePicture.getName(),
@@ -245,7 +246,7 @@ class PictureResourceTest {
                                                             .withPictureType(imagePicture.getPictureType())
                                                             .build();
         when(pictureService.updateFor(animalId, organization, imagePicture)).thenReturn(expectedLinkPicture);
-        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(expectedLinkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(expectedLinkPicture);
 
         LinkPictureResponse linkPictureResponse = pictureResource.updatePrimaryPicture(animalId,
                                                                                        imagePicture.getName(),
@@ -372,7 +373,7 @@ class PictureResourceTest {
         UUID animalId = UUID.randomUUID();
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
         when(pictureService.getBy(animalId)).thenReturn(linkPicture);
-        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
 
         LinkPictureResponse linkPictureResponse = pictureResource.get(animalId);
 

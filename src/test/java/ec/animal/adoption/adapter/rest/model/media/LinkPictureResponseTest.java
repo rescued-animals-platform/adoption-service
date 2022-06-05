@@ -2,6 +2,7 @@ package ec.animal.adoption.adapter.rest.model.media;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.domain.model.media.LinkPicture;
 import ec.animal.adoption.domain.model.media.LinkPictureFactory;
 import ec.animal.adoption.domain.model.media.PictureType;
@@ -27,7 +28,7 @@ class LinkPictureResponseTest {
     @Test
     void shouldBeSerializable() throws IOException {
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
-        LinkPictureResponse linkPictureResponse = LinkPictureResponse.from(linkPicture);
+        LinkPictureResponse linkPictureResponse = LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
 
         String linkPictureResponseAsJson = objectMapper.writeValueAsString(linkPictureResponse);
 
@@ -46,7 +47,7 @@ class LinkPictureResponseTest {
     @Test
     void shouldBeDeSerializable() throws IOException, JSONException {
         LinkPicture linkPicture = LinkPictureFactory.random().withPictureType(PictureType.PRIMARY).build();
-        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponse.from(linkPicture);
+        LinkPictureResponse expectedLinkPictureResponse = LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
         String linkPictureResponseAsJson = new JSONObject()
                 .put("name", linkPicture.getName())
                 .put("pictureType", linkPicture.getPictureType().name())

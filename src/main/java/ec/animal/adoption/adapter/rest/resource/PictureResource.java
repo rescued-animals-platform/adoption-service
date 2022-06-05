@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.rest.resource;
 
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.media.LinkPictureResponse;
+import ec.animal.adoption.adapter.rest.service.LinkPictureResponseMapper;
 import ec.animal.adoption.application.OrganizationService;
 import ec.animal.adoption.application.PictureService;
 import ec.animal.adoption.domain.model.exception.InvalidPictureException;
@@ -80,7 +81,7 @@ public class PictureResource {
                                                      createImageFromMultipartFile(smallImageMultipartFile));
         LinkPicture linkPicture = pictureService.createFor(animalId, organization, imagePicture);
 
-        return LinkPictureResponse.from(linkPicture);
+        return LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
     }
 
     @PutMapping(path = "/admin/animals/{id}/pictures",
@@ -100,7 +101,7 @@ public class PictureResource {
                                                      createImageFromMultipartFile(smallImageMultipartFile));
         LinkPicture linkPicture = pictureService.updateFor(animalId, organization, imagePicture);
 
-        return LinkPictureResponse.from(linkPicture);
+        return LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
     }
 
     private Image createImageFromMultipartFile(final MultipartFile multipartFile) {
@@ -128,6 +129,6 @@ public class PictureResource {
     public LinkPictureResponse get(@PathVariable("id") final UUID animalId) {
         LinkPicture linkPicture = pictureService.getBy(animalId);
 
-        return LinkPictureResponse.from(linkPicture);
+        return LinkPictureResponseMapper.MAPPER.toLinkPictureResponse(linkPicture);
     }
 }

@@ -25,7 +25,7 @@ class MediaLinkResponseTest {
     @Test
     void shouldBeSerializable() throws IOException {
         String url = randomAlphabetic(10);
-        MediaLinkResponse mediaLinkResponse = MediaLinkResponse.from(url);
+        MediaLinkResponse mediaLinkResponse = new MediaLinkResponse(url);
 
         String mediaLinkResponseAsJson = objectMapper.writeValueAsString(mediaLinkResponse);
 
@@ -35,7 +35,7 @@ class MediaLinkResponseTest {
     @Test
     void shouldBeDeSerializable() throws IOException, JSONException {
         String url = randomAlphabetic(10);
-        MediaLinkResponse expectedMediaLinkResponse = MediaLinkResponse.from(url);
+        MediaLinkResponse expectedMediaLinkResponse = new MediaLinkResponse(url);
         String mediaLinkResponseAsJson = new JSONObject().put("url", url).toString();
 
         MediaLinkResponse mediaLinkResponse = objectMapper.readValue(mediaLinkResponseAsJson, MediaLinkResponse.class);

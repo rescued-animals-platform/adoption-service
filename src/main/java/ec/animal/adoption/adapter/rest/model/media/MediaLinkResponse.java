@@ -19,20 +19,5 @@
 
 package ec.animal.adoption.adapter.rest.model.media;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class MediaLinkResponse {
-
-    @JsonProperty("url")
-    private final String url;
-
-    @JsonCreator
-    public MediaLinkResponse(@JsonProperty("url") final String url) {
-        this.url = url;
-    }
-
-    public static MediaLinkResponse from(final String url) {
-        return new MediaLinkResponse(url);
-    }
+public record MediaLinkResponse(String url) {
 }
