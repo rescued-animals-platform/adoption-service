@@ -31,8 +31,6 @@ import javax.validation.ConstraintValidatorContext;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TemperamentsRequestValidatorTest {
@@ -54,16 +52,14 @@ class TemperamentsRequestValidatorTest {
 
     @Test
     void shouldBeValid() {
-        TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
-        when(temperamentsRequest.isEmpty()).thenReturn(false);
+        TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.random().build();
 
         assertThat(temperamentsRequestValidator.isValid(temperamentsRequest, context), is(true));
     }
 
     @Test
     void shouldBeInvalidIfTemperamentsIsEmpty() {
-        TemperamentsRequest temperamentsRequest = mock(TemperamentsRequest.class);
-        when(temperamentsRequest.isEmpty()).thenReturn(true);
+        TemperamentsRequest temperamentsRequest = TemperamentsRequestBuilder.empty().build();
 
         assertThat(temperamentsRequestValidator.isValid(temperamentsRequest, context), is(false));
     }

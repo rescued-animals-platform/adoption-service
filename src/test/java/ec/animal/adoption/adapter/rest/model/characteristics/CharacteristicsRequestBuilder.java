@@ -26,6 +26,7 @@ import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.model.characteristics.Size;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import static ec.animal.adoption.TestUtils.getRandomFriendlyWith;
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
@@ -71,6 +72,6 @@ public class CharacteristicsRequestBuilder {
         return new CharacteristicsRequest(this.size,
                                           this.physicalActivity,
                                           this.temperamentsRequest,
-                                          this.friendlyWith);
+                                          Set.of(this.friendlyWith));
     }
 }

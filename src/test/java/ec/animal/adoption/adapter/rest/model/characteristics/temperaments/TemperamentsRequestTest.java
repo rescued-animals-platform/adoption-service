@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.model.characteristics.temperaments;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
+import ec.animal.adoption.adapter.rest.service.TemperamentsRequestMapper;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Sociability;
@@ -69,7 +70,7 @@ class TemperamentsRequestTest {
 
         TemperamentsRequest temperamentsRequest = objectMapper.readValue(temperamentsRequestAsJson,
                                                                          TemperamentsRequest.class);
-        Temperaments temperaments = temperamentsRequest.toDomain();
+        Temperaments temperaments = TemperamentsRequestMapper.MAPPER.toTemperaments(temperamentsRequest);
 
         assertEquals(expectedTemperaments, temperaments);
     }

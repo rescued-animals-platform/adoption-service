@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ec.animal.adoption.TestUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.temperaments.TemperamentsRequestBuilder;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsRequestMapper;
 import ec.animal.adoption.domain.model.characteristics.Characteristics;
 import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
+import java.util.HashSet;
 import java.util.Set;
 
 import static ec.animal.adoption.TestUtils.getRandomPhysicalActivity;
@@ -78,7 +80,7 @@ class CharacteristicsRequestTest {
 
         CharacteristicsRequest characteristicsRequest = objectMapper.readValue(characteristicsRequestAsJson,
                                                                                CharacteristicsRequest.class);
-        Characteristics characteristics = characteristicsRequest.toDomain();
+        Characteristics characteristics = CharacteristicsRequestMapper.MAPPER.toCharacteristics(characteristicsRequest);
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
@@ -102,7 +104,7 @@ class CharacteristicsRequestTest {
 
         CharacteristicsRequest characteristicsRequest = objectMapper.readValue(characteristicsRequestAsJson,
                                                                                CharacteristicsRequest.class);
-        Characteristics characteristics = characteristicsRequest.toDomain();
+        Characteristics characteristics = CharacteristicsRequestMapper.MAPPER.toCharacteristics(characteristicsRequest);
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
@@ -127,7 +129,7 @@ class CharacteristicsRequestTest {
 
         CharacteristicsRequest characteristicsRequest = objectMapper.readValue(characteristicsRequestAsJson,
                                                                                CharacteristicsRequest.class);
-        Characteristics characteristics = characteristicsRequest.toDomain();
+        Characteristics characteristics = CharacteristicsRequestMapper.MAPPER.toCharacteristics(characteristicsRequest);
 
         assertAll(() -> assertEquals(size, characteristics.getSize()),
                   () -> assertEquals(physicalActivity, characteristics.getPhysicalActivity()),
@@ -143,7 +145,7 @@ class CharacteristicsRequestTest {
     @Test
     void shouldValidateNonNullSize() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
-                null, getRandomPhysicalActivity(), TemperamentsRequestBuilder.random().build()
+                null, getRandomPhysicalActivity(), TemperamentsRequestBuilder.random().build(), new HashSet<>()
         );
 
         Set<ConstraintViolation<CharacteristicsRequest>> constraintViolations = getValidator().validate(characteristicsRequest);
@@ -157,7 +159,7 @@ class CharacteristicsRequestTest {
     @Test
     void shouldValidateNonNullPhysicalActivity() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
-                getRandomSize(), null, TemperamentsRequestBuilder.random().build()
+                getRandomSize(), null, TemperamentsRequestBuilder.random().build(), new HashSet<>()
         );
 
         Set<ConstraintViolation<CharacteristicsRequest>> constraintViolations = getValidator().validate(characteristicsRequest);
@@ -171,7 +173,7 @@ class CharacteristicsRequestTest {
     @Test
     void shouldValidateNonNullTemperaments() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
-                getRandomSize(), getRandomPhysicalActivity(), null
+                getRandomSize(), getRandomPhysicalActivity(), null, new HashSet<>()
         );
 
         Set<ConstraintViolation<CharacteristicsRequest>> constraintViolations = getValidator().validate(characteristicsRequest);
@@ -185,7 +187,7 @@ class CharacteristicsRequestTest {
     @Test
     void shouldValidateNonEmptyTemperaments() {
         CharacteristicsRequest characteristicsRequest = new CharacteristicsRequest(
-                getRandomSize(), getRandomPhysicalActivity(), TemperamentsRequestBuilder.empty().build()
+                getRandomSize(), getRandomPhysicalActivity(), TemperamentsRequestBuilder.empty().build(), new HashSet<>()
         );
 
         Set<ConstraintViolation<CharacteristicsRequest>> constraintViolations = getValidator().validate(characteristicsRequest);

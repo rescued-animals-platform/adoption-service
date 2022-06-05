@@ -21,6 +21,7 @@ package ec.animal.adoption.adapter.rest.resource;
 
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsRequest;
+import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsRequestBuilder;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResponse;
 import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.application.CharacteristicsService;
@@ -39,7 +40,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,12 +76,11 @@ class CharacteristicsResourceTest {
     void shouldCreateCharacteristicsForAnimalFromOrganization() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
-        Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
-        when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
+        CharacteristicsRequest characteristicsRequest = CharacteristicsRequestBuilder.random().build();
+
         Characteristics createdCharacteristics = CharacteristicsFactory.random().build();
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(createdCharacteristics);
-        when(characteristicsService.createFor(animalId, organization, characteristicsFromRequest))
+        when(characteristicsService.createFor(eq(animalId), eq(organization), any()))
                 .thenReturn(createdCharacteristics);
 
         CharacteristicsResponse characteristicsResponse = characteristicsResource.create(animalId,
@@ -95,12 +96,10 @@ class CharacteristicsResourceTest {
     void shouldUpdateCharacteristicsForAnimal() {
         when(adminTokenUtils.extractOrganizationIdFrom(token)).thenReturn(organizationId);
         when(organizationService.getBy(organizationId)).thenReturn(organization);
-        CharacteristicsRequest characteristicsRequest = mock(CharacteristicsRequest.class);
-        Characteristics characteristicsFromRequest = CharacteristicsFactory.random().build();
-        when(characteristicsRequest.toDomain()).thenReturn(characteristicsFromRequest);
+        CharacteristicsRequest characteristicsRequest = CharacteristicsRequestBuilder.random().build();
         Characteristics updatedCharacteristics = CharacteristicsFactory.random().build();
         CharacteristicsResponse expectedCharacteristicsResponse = CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(updatedCharacteristics);
-        when(characteristicsService.updateFor(animalId, organization, characteristicsFromRequest))
+        when(characteristicsService.updateFor(eq(animalId), eq(organization), any()))
                 .thenReturn(updatedCharacteristics);
 
         CharacteristicsResponse characteristicsResponse = characteristicsResource.update(animalId,

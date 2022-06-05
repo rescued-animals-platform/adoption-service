@@ -22,6 +22,7 @@ package ec.animal.adoption.adapter.rest.resource;
 import ec.animal.adoption.adapter.rest.jwt.AdminTokenUtils;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsRequest;
 import ec.animal.adoption.adapter.rest.model.characteristics.CharacteristicsResponse;
+import ec.animal.adoption.adapter.rest.service.CharacteristicsRequestMapper;
 import ec.animal.adoption.adapter.rest.service.CharacteristicsResponseMapper;
 import ec.animal.adoption.application.CharacteristicsService;
 import ec.animal.adoption.application.OrganizationService;
@@ -59,9 +60,11 @@ public class CharacteristicsResource {
                                           @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        Characteristics characteristics = characteristicsService.createFor(animalId,
-                                                                           organization,
-                                                                           characteristicsRequest.toDomain());
+        Characteristics characteristics = characteristicsService.createFor(
+                animalId,
+                organization,
+                CharacteristicsRequestMapper.MAPPER.toCharacteristics(characteristicsRequest)
+        );
 
         return CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
     }
@@ -72,9 +75,11 @@ public class CharacteristicsResource {
                                           @AuthenticationPrincipal final Jwt token) {
         UUID organizationId = adminTokenUtils.extractOrganizationIdFrom(token);
         Organization organization = organizationService.getBy(organizationId);
-        Characteristics characteristics = characteristicsService.updateFor(animalId,
-                                                                           organization,
-                                                                           characteristicsRequest.toDomain());
+        Characteristics characteristics = characteristicsService.updateFor(
+                animalId,
+                organization,
+                CharacteristicsRequestMapper.MAPPER.toCharacteristics(characteristicsRequest)
+        );
 
         return CharacteristicsResponseMapper.MAPPER.toCharacteristicsResponse(characteristics);
     }

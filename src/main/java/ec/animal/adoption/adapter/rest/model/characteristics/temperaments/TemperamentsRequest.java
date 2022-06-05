@@ -19,44 +19,19 @@
 
 package ec.animal.adoption.adapter.rest.model.characteristics.temperaments;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Balance;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Docility;
 import ec.animal.adoption.domain.model.characteristics.temperaments.Sociability;
-import ec.animal.adoption.domain.model.characteristics.temperaments.Temperaments;
 
 @ValidTemperamentsRequest
-public class TemperamentsRequest {
-
-    @JsonProperty("sociability")
-    private final Sociability sociability;
-
-    @JsonProperty("docility")
-    private final Docility docility;
-
-    @JsonProperty("balance")
-    private final Balance balance;
-
-    @JsonCreator
-    public TemperamentsRequest(@JsonProperty("sociability") final Sociability sociability,
-                               @JsonProperty("docility") final Docility docility,
-                               @JsonProperty("balance") final Balance balance) {
-        this.sociability = sociability;
-        this.docility = docility;
-        this.balance = balance;
-    }
+public record TemperamentsRequest(Sociability sociability,
+                                  Docility docility,
+                                  Balance balance) {
 
     @JsonIgnore
     public boolean isEmpty() {
         return sociability == null && docility == null && balance == null;
-    }
-
-    public Temperaments toDomain() {
-        return new Temperaments(this.sociability,
-                                this.docility,
-                                this.balance);
     }
 }
 

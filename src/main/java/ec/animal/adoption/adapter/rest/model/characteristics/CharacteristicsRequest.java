@@ -19,58 +19,29 @@
 
 package ec.animal.adoption.adapter.rest.model.characteristics;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.animal.adoption.adapter.rest.model.characteristics.temperaments.TemperamentsRequest;
-import ec.animal.adoption.domain.model.characteristics.Characteristics;
 import ec.animal.adoption.domain.model.characteristics.FriendlyWith;
 import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.model.characteristics.Size;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Optional.ofNullable;
+public record CharacteristicsRequest(@NotNull(message = "Size is required") Size size,
+                                     @NotNull(message = "Physical activity is required") PhysicalActivity physicalActivity,
+                                     @Valid @NotNull(message = "At least one temperament is required") TemperamentsRequest temperaments,
+                                     Set<FriendlyWith> friendlyWith) {
 
-public class CharacteristicsRequest {
-
-    @NotNull(message = "Size is required")
-    @JsonProperty("size")
-    private final Size size;
-
-    @NotNull(message = "Physical activity is required")
-    @JsonProperty("physicalActivity")
-    private final PhysicalActivity physicalActivity;
-
-    @Valid
-    @NotNull(message = "At least one temperament is required")
-    @JsonProperty("temperaments")
-    private final TemperamentsRequest temperaments;
-
-    @JsonProperty("friendlyWith")
-    private final Set<FriendlyWith> friendlyWith;
-
-    @JsonCreator
-    public CharacteristicsRequest(@JsonProperty("size") final Size size,
-                                  @JsonProperty("physicalActivity") final PhysicalActivity physicalActivity,
-                                  @JsonProperty("temperaments") final TemperamentsRequest temperaments,
-                                  @JsonProperty("friendlyWith") final FriendlyWith... friendlyWith) {
+    public CharacteristicsRequest(Size size,
+                                  PhysicalActivity physicalActivity,
+                                  TemperamentsRequest temperaments,
+                                  Set<FriendlyWith> friendlyWith) {
         this.size = size;
         this.physicalActivity = physicalActivity;
         this.temperaments = temperaments;
-        this.friendlyWith = ofNullable(friendlyWith).map(Arrays::asList)
-                                                    .map(HashSet::new)
-                                                    .orElse(new HashSet<>());
-    }
-
-    public Characteristics toDomain() {
-        return new Characteristics(this.size,
-                                   this.physicalActivity,
-                                   this.temperaments.toDomain(),
-                                   this.friendlyWith);
+        this.friendlyWith = friendlyWith == null ? new HashSet<>() : friendlyWith;
     }
 }
 
