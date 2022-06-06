@@ -1,6 +1,6 @@
 ext {
     springCloudDependenciesVersion = "2021.0.2"
-    mapstructVersion = "1.4.2.Final"
+    mapstructVersion = "1.5.1.Final"
     lombokVersion = "1.18.24"
 }
 
