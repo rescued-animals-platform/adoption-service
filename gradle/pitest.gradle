@@ -5,7 +5,7 @@ pitest {
             'ec.animal.adoption.AdoptionServiceApplication',
             'ec.animal.adoption.configuration.*',
             'ec.animal.adoption.adapter.cloudinary.CloudinaryConfiguration',
-            'ec.animal.adoption.domain.service.PagedEntity',
+            'ec.animal.adoption.domain.model.PagedEntity',
     ]
     excludedMethods = ['equals', 'hashCode', 'canEqual']
     threads = 5

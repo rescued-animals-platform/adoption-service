@@ -1,0 +1,73 @@
+testing {
+    suites {
+        configureEach {
+            useJUnitJupiter()
+            targets {
+                all {
+                    testTask.configure {
+                        useJUnitPlatform()
+                        maxParallelForks 5
+                        testLogging.exceptionFormat "full"
+                        testLogging.events "passed", "skipped", "failed"
+                    }
+                }
+            }
+        }
+
+        integrationTest(JvmTestSuite) {
+            testType = TestSuiteType.INTEGRATION_TEST
+
+            sources {
+                java {
+                    srcDirs = ['src/integration-test/java']
+                }
+                resources {
+                    srcDirs = ['src/integration-test/resources']
+                }
+                compileClasspath += project.configurations.compileClasspath.plus(sourceSets.test.output)
+                runtimeClasspath += project.configurations.runtimeClasspath.plus(sourceSets.test.output)
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        systemProperty 'spring.profiles.active', System.env.SPRING_PROFILE
+                    }
+                }
+            }
+        }
+
+        apiTest(JvmTestSuite) {
+            testType = TestSuiteType.FUNCTIONAL_TEST
+
+            sources {
+                java {
+                    srcDirs = ['src/api-test/java']
+                }
+                resources {
+                    srcDirs = ['src/api-test/resources']
+                }
+                compileClasspath += project.configurations.compileClasspath.plus(sourceSets.test.output)
+                runtimeClasspath += project.configurations.runtimeClasspath.plus(sourceSets.test.output)
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        systemProperty 'spring.profiles.active', System.env.SPRING_PROFILE
+                    }
+                }
+            }
+        }
+
+        archUnitTest(JvmTestSuite) {
+            testType = "architecture-test"
+
+            sources {
+                java {
+                    srcDirs = ['src/archunit-test/java']
+                }
+            }
+        }
+    }
+}

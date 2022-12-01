@@ -2,6 +2,8 @@ ext {
     springCloudDependenciesVersion = "2021.0.2"
     mapstructVersion = "1.5.1.Final"
     lombokVersion = "1.18.24"
+    cloudinaryVersion = "1.25.0"
+    apacheCommonsIoVersion = "2.6"
 }
 
 dependencyManagement {
@@ -23,8 +25,8 @@ dependencies {
     implementation("org.springframework.security:spring-security-config")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
     implementation("com.google.code.findbugs:jsr305:3.0.2") // Fixes Warning: unknown enum constant When.MAYBE
-    implementation("com.cloudinary:cloudinary-http44:1.25.0")
-    implementation("commons-io:commons-io:2.6")
+    implementation("com.cloudinary:cloudinary-http44:${cloudinaryVersion}")
+    implementation("commons-io:commons-io:${apacheCommonsIoVersion}")
     implementation('org.postgresql:postgresql:42.3.4')
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation("org.projectlombok:lombok:${lombokVersion}")
@@ -35,14 +37,45 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+}
 
-    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude module: "junit"
-        exclude module: "junit-vintage-engine"
+testing {
+    suites {
+        configureEach {
+            dependencies {
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude module: "junit"
+                    exclude module: "junit-vintage-engine"
+                }
+            }
+        }
+
+        test {
+            dependencies {
+                implementation('nl.jqno.equalsverifier:equalsverifier:3.10')
+                implementation("org.unitils:unitils-core:3.4.6")
+            }
+        }
+
+        integrationTest(JvmTestSuite) {
+            dependencies {
+                implementation project()
+                implementation("commons-io:commons-io:${apacheCommonsIoVersion}")
+            }
+        }
+
+        apiTest(JvmTestSuite) {
+            dependencies {
+                implementation project()
+                implementation("org.springframework.boot:spring-boot-starter-webflux")
+            }
+        }
+
+        archUnitTest(JvmTestSuite) {
+            dependencies {
+                implementation project()
+                implementation('com.tngtech.archunit:archunit-junit5:0.23.1')
+            }
+        }
     }
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.10')
-    testImplementation('com.tngtech.archunit:archunit-junit5:0.23.1')
-    testImplementation("org.unitils:unitils-core:3.4.6")
 }

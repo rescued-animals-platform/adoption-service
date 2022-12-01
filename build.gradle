@@ -14,12 +14,11 @@ plugins {
     id "org.springframework.boot" version "2.7.0"
 }
 
-apply from: "gradle/idea.gradle"
 apply from: "gradle/dependencies.gradle"
-apply from: "gradle/sourceset.gradle"
+apply from: "gradle/jacoco.gradle"
 apply from: "gradle/pitest.gradle"
 apply from: "gradle/sonarqube.gradle"
-apply from: "gradle/jacoco.gradle"
+apply from: "gradle/testingsuites.gradle"
 
 
 group "ec.animal.adoption"
@@ -34,49 +33,17 @@ repositories {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom(testCompile)
-    integrationTestRuntime.extendsFrom(testRuntime)
     apiTestCompile.extendsFrom(testCompile)
     apiTestRuntime.extendsFrom(testRuntime)
     archUnitTestCompile.extendsFrom(testCompile)
     archUnitTestRuntime.extendsFrom(testRuntime)
 
-    integrationTestImplementation.extendsFrom(testImplementation)
     apiTestImplementation.extendsFrom(testImplementation)
     archUnitTestImplementation.extendsFrom(testImplementation)
-    integrationTestCompileOnly.extendsFrom(testCompileOnly)
     apiTestCompileOnly.extendsFrom(testCompileOnly)
     archUnitTestCompileOnly.extendsFrom(testCompileOnly)
-    integrationTestRuntimeOnly.extendsFrom(testRuntimeOnly)
     apiTestRuntimeOnly.extendsFrom(testRuntimeOnly)
     archUnitTestRuntimeOnly.extendsFrom(testRuntimeOnly)
-}
-
-task integrationTest(type: Test) {
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-task apiTest(type: Test) {
-    testClassesDirs = sourceSets.apiTest.output.classesDirs
-    classpath = sourceSets.apiTest.runtimeClasspath
-}
-
-task archUnitTest(type: Test) {
-    testClassesDirs = sourceSets.archUnitTest.output.classesDirs
-    classpath = sourceSets.archUnitTest.runtimeClasspath
-}
-
-tasks.withType(Test) {
-    useJUnitPlatform()
-    maxParallelForks = 5
-    testLogging {
-        exceptionFormat "full"
-        events "passed", "skipped", "failed"
-    }
-    configure {
-        systemProperties = ['spring.profiles.active': System.env.SPRING_PROFILE]
-    }
 }
 
 tasks.withType(JavaCompile) {

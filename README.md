@@ -40,7 +40,7 @@ Without these steps, you would be able to run all tests from a terminal. Only if
 
 _**(Only for the first time)**_
         
-- Setup your preferred IDE to run tests with Gradle (instead of JUnit) and add the following environment variables to it. (e.g. add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA):
+- Set up your preferred IDE to run tests with Gradle (instead of JUnit) and add the following environment variables to it. (e.g. add the env variable to the Gradle Template in the running configurations of IntelliJ IDEA):
 
         SPRING_PROFILE=local
         ADOPTION_SERVICE_URL=http://localhost:8080
@@ -48,8 +48,8 @@ _**(Only for the first time)**_
 
 _**(Always, before running the api tests)**_
 
-- Deploy the application and all it's dependencies in a docker container with `make deploy` or run the application from your IDE.
-- If running from the IDE, remember to set up the VM option `-Dspring.profiles.active=local` and make sure dependencies are running: `make deploy-dependencies-only`.
+- Make sure dependencies are running: `make deploy-dependencies-only`
+- Run the application from your IDE setting up the VM option `-Dspring.profiles.active=local`
         
 ## Useful commands
 
