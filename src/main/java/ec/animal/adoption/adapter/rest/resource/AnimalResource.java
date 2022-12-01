@@ -37,7 +37,7 @@ import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.model.characteristics.Size;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.model.state.StateName;
-import ec.animal.adoption.domain.service.PagedEntity;
+import ec.animal.adoption.domain.model.PagedEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

@@ -19,6 +19,7 @@
 
 package ec.animal.adoption.domain.service;
 
+import ec.animal.adoption.domain.model.PagedEntity;
 import ec.animal.adoption.domain.model.animal.Animal;
 import ec.animal.adoption.domain.model.animal.Species;
 import ec.animal.adoption.domain.model.animal.dto.AnimalDto;

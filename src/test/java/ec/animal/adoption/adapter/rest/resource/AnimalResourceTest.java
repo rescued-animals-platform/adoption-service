@@ -38,7 +38,7 @@ import ec.animal.adoption.domain.model.characteristics.Size;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.model.organization.OrganizationFactory;
 import ec.animal.adoption.domain.model.state.StateName;
-import ec.animal.adoption.domain.service.PagedEntity;
+import ec.animal.adoption.domain.model.PagedEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

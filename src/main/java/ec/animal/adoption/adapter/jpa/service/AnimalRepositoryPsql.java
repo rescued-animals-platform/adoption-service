@@ -29,7 +29,7 @@ import ec.animal.adoption.domain.model.exception.EntityAlreadyExistsException;
 import ec.animal.adoption.domain.model.exception.EntityNotFoundException;
 import ec.animal.adoption.domain.model.organization.Organization;
 import ec.animal.adoption.domain.service.AnimalRepository;
-import ec.animal.adoption.domain.service.PagedEntity;
+import ec.animal.adoption.domain.model.PagedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

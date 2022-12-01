@@ -31,7 +31,7 @@ import ec.animal.adoption.domain.model.characteristics.PhysicalActivity;
 import ec.animal.adoption.domain.model.characteristics.Size;
 import ec.animal.adoption.domain.model.state.State;
 import ec.animal.adoption.domain.model.state.StateName;
-import ec.animal.adoption.domain.service.PagedEntity;
+import ec.animal.adoption.domain.model.PagedEntity;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.json.JSONObject;
